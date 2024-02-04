@@ -1,0 +1,17 @@
+ [{
+   "image": "assets/images/goal.png",
+   "titre": "Our Mission",
+   "description": "To offer young leaders opportunities for leadership development by enhancing their ability to create positive change."
+ },
+   {
+     "image": "assets/images/vision.png",
+        "titre": "Our Vision",
+     "description": "To be the principal global network of leaders."
+   },
+   {
+     "image": "assets/images/us.png",
+"titre": "Our beliefs",
+
+     "description": "Dedicated to serving the community based on six creed principles and four opportunities: Individual, Community, Internationalism, and Business."
+   }
+ ]
