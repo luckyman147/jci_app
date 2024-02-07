@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SnackBarMessage {
-  void showSuccessSnackBar(
+ static  void showSuccessSnackBar(
       {required String message, required BuildContext context}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

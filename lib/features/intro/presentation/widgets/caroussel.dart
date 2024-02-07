@@ -19,7 +19,6 @@ class CarouselWidget extends StatefulWidget {
 class _CarouselWidgetState extends State<CarouselWidget> {
   final controller=CarouselController();
   late IndexBloc indexBloc;
-
   @override
   void initState() {
     super.initState();
@@ -35,6 +34,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
   }
   @override
   Widget build(BuildContext context) {
+    final mediaQuery=MediaQuery.of(context);
 
     return FutureBuilder<List<dynamic>>(
       future: _loadJsonData(context),
@@ -47,16 +47,18 @@ class _CarouselWidgetState extends State<CarouselWidget> {
             return Column(
               children: [
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 150.0,left: 7),
-                    child: CarouselSlider.builder(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: BlocBuilder<IndexBloc, IndexState>(
+  builder: (context, state) {
+    return CarouselSlider.builder(
 carouselController:controller ,
                       options: CarouselOptions(
                        height: 500,
                         enlargeFactor: 1,
 
                         viewportFraction: 1,
-
+initialPage: state.props[0] as int,
 
 
                         enableInfiniteScroll: false,
@@ -74,9 +76,11 @@ carouselController:controller ,
                         final titre = jsondata[index]['titre'];
                         final description = jsondata[index]['description'];
 
-                        return _buildDescription(urlImage, titre, description, index);
+                        return _buildDescription(urlImage, titre, description, index,mediaQuery.size.width/2);
                       },
-                    ),
+                    );
+  },
+),
                   ),
                 ),
 
@@ -122,12 +126,12 @@ carouselController:controller ,
     );
   }
 
-  Widget _buildDescription(String image, String titre, String description, int index) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
+  Widget _buildDescription(String image, String titre, String description, int index,double size) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SingleChildScrollView(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               BlocBuilder<IndexBloc, IndexState>(
@@ -139,13 +143,16 @@ carouselController:controller ,
                     }
                   }
               ),
-              Center(
-
-                child: Image.asset(image, width: 270, height: 250, fit: BoxFit.contain),
+              Align(
+alignment: Alignment.center,
+                child: Image.asset(image, width: size, height: 250, fit: BoxFit.contain),
               ),
               BlocBuilder<IndexBloc, IndexState>(
                   builder: (context, state) {
-                    if(state is IndexLoaded){
+                    if (state is IndexInitial){
+                      return right_Arrow(0, controller);
+                    }
+                 else    if(state is IndexLoaded){
                       return right_Arrow(state.currentIndex, controller);
                     }else{
                       return right_Arrow(0, controller);
@@ -155,17 +162,17 @@ carouselController:controller ,
               )
             ],
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(titre, style: PoppinsSemiBold(44,Colors.black,TextDecoration.none),),
-              Padding(padding: EdgeInsets.only(left: 65,right: 30),
-                  child: Text(description, style: PoppinsNorml(16,Colors.black),textAlign: TextAlign.start,)),
-            ],
-          )
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(titre, style: PoppinsSemiBold(44,Colors.black,TextDecoration.none),),
+            Padding(padding: EdgeInsets.only(left: 65,right: 30),
+                child: Text(description, style: PoppinsNorml(16,Colors.black),textAlign: TextAlign.start,)),
+          ],
+        )
 
-        ],
-      ),
+      ],
     );
   }
 
@@ -186,8 +193,8 @@ Future<List< dynamic>> _loadJsonData(BuildContext context) async {
 }
 Widget _buildIndicator(int index,int len)=>Padding(
   padding: const EdgeInsets.only(bottom: 30.0),
-  child:   Padding(
-    padding: const EdgeInsets.symmetric(vertical: 28.0),
+  child:   Align(
+    alignment: Alignment.bottomCenter,
     child: AnimatedSmoothIndicator(activeIndex: index, count: len, effect:const  WormEffect(
         dotColor: dotscolor,
         activeDotColor: Colors.black,
@@ -199,9 +206,9 @@ Widget _buildIndicator(int index,int len)=>Padding(
 Widget right_Arrow(int index, CarouselController controller) {
   if (index==0 || index ==1) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal:index==1? 12.0:0),
+      padding: EdgeInsets.symmetric(horizontal:index==1? 1.0:0),
       child: IconButton(
-        icon: const Icon(Icons.keyboard_arrow_right, color: dotscolor, size: 60,),
+        icon: const Icon(Icons.keyboard_arrow_right, color: dotscolor, size: 50,),
         onPressed: () {
           controller.nextPage();
         },

@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:jci_app/features/auth/domain/usecases/SignUp.dart';
+
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 class AuthenticationRepository {
@@ -20,6 +22,19 @@ class AuthenticationRepository {
           () => _controller.add(AuthenticationStatus.authenticated),
     );
   }
+    Future<void> SignUp({
+    required String Email,
+      required String FirstName,
+      required String LastName,
+
+    required String password,
+  }) async {
+    await Future.delayed(
+      const Duration(milliseconds: 300),
+          () => _controller.add(AuthenticationStatus.authenticated),
+    );
+  }
+
 
   void logOut() {
     _controller.add(AuthenticationStatus.unauthenticated);

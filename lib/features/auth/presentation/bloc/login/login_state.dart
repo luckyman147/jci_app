@@ -1,6 +1,6 @@
 part of 'login_bloc.dart';
 
-final class LoginState extends Equatable {
+class LoginState extends Equatable {
   const LoginState({
     this.status = FormzSubmissionStatus.initial,
     this.email = const Email.pure(),
@@ -29,4 +29,25 @@ final class LoginState extends Equatable {
 
   @override
   List<Object> get props => [status, email, password];
+}
+class LoginInitial extends LoginState{}
+class LoadingLogin extends LoginState
+{}
+class ErrorLogin extends LoginState{
+  final String message;
+   ErrorLogin({ required this.message});
+  @override
+  List<Object> get props =>
+      [message];
+
+
+}
+class MessageLogin extends LoginState{
+  final String message;
+  MessageLogin({ required this.message});
+  @override
+  List<Object> get props =>
+      [message];
+
+
 }

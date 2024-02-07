@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/features/auth/presentation/pages/login_pages.dart';
 
-import '../features/auth/domain/repositories/Authentication.dart';
+import '../features/auth/domain/usecases/Authentication.dart';
 import '../features/auth/presentation/bloc/authentication/authentication_bloc.dart';
+import '../features/auth/presentation/pages/SignUPPage.dart';
 import '../features/intro/presentation/pages/Introduction.dart';
 import '../features/intro/presentation/pages/Splash_screen.dart';
 
@@ -24,6 +25,7 @@ import '../features/intro/presentation/pages/Splash_screen.dart';
           case AuthenticationStatus.authenticated:
             return '/login';
           case AuthenticationStatus.unauthenticated:
+            print('true');
             return '/Intro';
           case AuthenticationStatus.unknown:
             return null;
@@ -31,6 +33,7 @@ import '../features/intro/presentation/pages/Splash_screen.dart';
       },
 
     ),
+
 
     GoRoute(
       path: '/Intro',
@@ -41,6 +44,8 @@ import '../features/intro/presentation/pages/Splash_screen.dart';
     ),
     GoRoute(path: '/login',
       builder: (BuildContext context, GoRouterState state)=>LoginPage(),
+    ),GoRoute(path: '/SignUp',
+      builder: (BuildContext context, GoRouterState state)=>SignUpPage(),
     )
 
 

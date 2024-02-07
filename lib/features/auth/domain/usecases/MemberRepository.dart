@@ -6,13 +6,13 @@ import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
 
 class MemberRepository {
-  Member? _member;
+  MemberSignUp? _member;
 
-  Future<Member?> getMember() async {
+  Future<MemberSignUp?> getMember() async {
     if (_member != null) return _member;
     return Future.delayed(
       const Duration(milliseconds: 300),
-          () => _member = Member("d"),
+          () => _member = MemberSignUp( email: '', password: '', FirstName: '', LastName: ''),
     );
   }
 }

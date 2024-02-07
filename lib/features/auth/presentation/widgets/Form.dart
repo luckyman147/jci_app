@@ -5,26 +5,40 @@ import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/strings/svgs.dart';
+import 'package:jci_app/features/auth/domain/entities/LoginMember.dart';
 import 'package:jci_app/features/auth/presentation/widgets/Text.dart';
+import 'package:jci_app/features/auth/presentation/widgets/button_auth.dart';
+import 'package:jci_app/features/auth/presentation/widgets/formText.dart';
 
 import '../../../../core/util/snackbar_message.dart';
 import '../bloc/login/login_bloc.dart';
 
-class LoginForm extends StatelessWidget {
+class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: BlocListener<LoginBloc, LoginState>(
-        listener: (context, state) {
-          if (state.status.isFailure) {
-            SnackBarMessage.showErrorSnackBar(  message: 'Error', context:  context);
-          }
-        },
-        child: Column(
-           mainAxisAlignment: MainAxisAlignment.start,
+  State<LoginForm> createState() => _LoginFormState();
+}
 
+class _LoginFormState extends State<LoginForm> {
+  final _key = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+final mediaquery = MediaQuery.of(context);
+
+    return BlocBuilder<LoginBloc, LoginState>(
+      builder: (context, state) {
+        //if (state.status.isFailure) {
+        //  SnackBarMessage.showErrorSnackBar(  message: 'Error', context:  context);
+        //}
+      
+   return  Form(
+     key: _key,
+     child: Column(
+           mainAxisAlignment: MainAxisAlignment.start,
+     
           children: [
             Align(
                 alignment: Alignment.topLeft,
@@ -34,15 +48,12 @@ class LoginForm extends StatelessWidget {
                       onTap: (){
                         context.go('/Intro');
                       },
-
+     
                       child: SvgPicture.string(pic)),
                 )),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30.0),
-              child: TextWidget(text: "Login", size: 43),
-            ),
-
-
+            TextWidget(text: "Login", size: 43),
+     
+     
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
               child: Column(
@@ -51,7 +62,7 @@ class LoginForm extends StatelessWidget {
                   Align(
                       alignment:    Alignment.topLeft,
                       child: Label(text: "Email", size: 22)),
-                  _UsernameInput(),
+                  _UsernameInput(controller: _emailController,),
                 ],
               ),
             ),
@@ -63,7 +74,7 @@ class LoginForm extends StatelessWidget {
                   Align(
                       alignment:    Alignment.topLeft,
                       child: Label(text: "Password", size: 22)),
-                  _PasswordInput(),
+                  _PasswordInput(controller: _passwordController,),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Align(
@@ -73,70 +84,95 @@ class LoginForm extends StatelessWidget {
                 ],
               ),
             ),
-
+     
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 18.0,horizontal: 25.0),
               child: _LoginButton(),
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                line(mediaquery.size.width/3),
+     
+     
+                Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Text("Or",style: PoppinsNorml(20, ThirdColor),),
+      ),
+             line(mediaquery.size.width/3)
+             //   Divider(),
+     
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0,vertical: 18.0),
+              child: Column(
+     
+                children: [
+                  authButton(onPressed: (){}, text: 'Login With Google', string: google),
+     
+                  authButton(onPressed: (){}, text: 'Login With Facebook', string: facebook),
+                ],
+     
+              ),
+            ),
+     Row(
+     mainAxisAlignment: MainAxisAlignment.center,
+       children: [
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: mediaquery.size.width/60.5),
+        child: Text("Don't have an account?",style:PoppinsLight(20, textColorBlack),),
+      ),
+      InkWell(
+        onTap: (){
+          context.go('/SignUp');
+        },
+        child: LinkedText(text: "Sign Up", size: 20,
+        ),
+      )
+       ],
+     )
           ],
         ),
-      ),
+   );}
     );
   }
 }
 
 class _UsernameInput extends StatelessWidget {
+  final TextEditingController controller;
+
+  const _UsernameInput({super.key, required this.controller});
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
       buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
-        return TextField(
-          style: PoppinsNorml(20, textColorBlack,),
-          key: const Key('loginForm_EmailInput_textField'),
-          onChanged: (email) =>
-              context.read<LoginBloc>().add(LoginEmailnameChanged(email)),
-          decoration: InputDecoration(
+        return FormText(inputkey: "loginForm_EmailInput_textField",
+            Onchanged:
+            (email) => context.read<LoginBloc>().add(LoginEmailnameChanged(email)),
 
-
-enabledBorder: border(textColorBlack) ,
-focusedBorder: border(PrimaryColor),
-            focusedErrorBorder: border(Colors.red),
-errorStyle: ErrorStyle(12, Colors.red),
-            errorText:
-            state.email.displayError != null ? 'Invalid Email' : null,
-          ),
-        );
+            errorText: state.email.displayError != null ? 'Invalid Email' : null, controller: controller,);
       },
     );
   }
 }
 
 class _PasswordInput extends StatelessWidget {
+  final TextEditingController controller;
+
+  const _PasswordInput({super.key, required this.controller});
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
       buildWhen: (previous, current) => previous.password != current.password,
       builder: (context, state) {
-        return TextField(
-          style: PoppinsNorml(20, textColorBlack,),
-
-          key: const Key('loginForm_passwordInput_textField'),
-          onChanged: (password) =>
-              context.read<LoginBloc>().add(LoginPasswordChanged(password)),
-          obscureText: true,
-          decoration: InputDecoration(
-
-            enabledBorder: border(textColorBlack) ,
-            focusedBorder: border(PrimaryColor),
-focusedErrorBorder: border(Colors.red),
-            errorStyle: ErrorStyle(15, Colors.red),
-            suffixIcon: Icon(Icons.visibility_off,color: textColorBlack,),
-            errorText:
-            state.password.displayError != null ? 'Invalid Password' : null,
-          ),
-        );
-      },
+        return FormTextPassword(inputkey: "loginForm_passwordInput_textField",
+            Onchanged: (password) =>
+                context.read<LoginBloc>().add(LoginPasswordChanged(password)),
+            errortext:
+            state.password.displayError != null ? 'Invalid Password' : null, controller: controller,
+        );}
     );
   }
 }
@@ -157,25 +193,25 @@ class _LoginButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.0),
           border: Border.all(color: textColorBlack, width: 2.0),
           ) ,
-              child: ElevatedButton(
-
-
-
-
-
-
-
+              child: InkWell(
 
           key: const Key('loginForm_continue_raisedButton'),
-          onPressed: state.isValid
+          onTap: state.isValid
                 ? () {
-              context.read<LoginBloc>().add(const LoginSubmitted());
+            final member = LoginMember(email: state.email.value,
+              password: state.password.value,
+              );
+              context.read<LoginBloc>().add( LoginSubmitted(member));
           }
                 : null,
-          child:  Text('Login',style: PoppinsSemiBold(24, textColorWhite, TextDecoration.none) ,),
+          child:  Center(child: Text('Login',style: PoppinsSemiBold(24, textColorWhite, TextDecoration.none) ,)),
         ),
             );
       },
     );
   }
 }
+Widget line(double width)=> SizedBox(
+width: width, // Set a fixed width for the Divider
+child: Divider(color:ThirdColor ,thickness: 1,height: 20,),
+);

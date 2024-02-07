@@ -1,0 +1,80 @@
+  import 'package:dartz/dartz.dart';
+import 'package:jci_app/core/error/Exception.dart';
+
+import 'package:jci_app/core/error/Failure.dart';
+import 'package:jci_app/core/network/network_info.dart';
+import 'package:jci_app/features/auth/data/datasources/LoginRemote.dart';
+import 'package:jci_app/features/auth/data/datasources/signUpRemote.dart';
+import 'package:jci_app/features/auth/data/models/MemberModel.dart';
+import 'package:jci_app/features/auth/domain/entities/LoginMember.dart';
+
+import 'package:jci_app/features/auth/domain/entities/Member.dart';
+import 'package:jci_app/features/auth/domain/repositories/LoginRepo.dart';
+  import 'package:secure_shared_preferences/secure_shared_preferences.dart';
+
+typedef Future<Unit> LogIn();
+class LoginRepoImpl implements LoginRepo {
+
+  final LoginRemoteDataSource loginRemoteDataSource;
+  final NetworkInfo networkInfo;
+
+  LoginRepoImpl({ required this.loginRemoteDataSource,required this.networkInfo});
+  @override
+
+
+
+  Future<Either<Failure, Unit>> _getMessage(
+      LogIn logIn) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await logIn();
+        return Right(unit);
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map>> LogInWithCredentials(LoginMember loginMember) async {
+    SecureSharedPref secureSharedPref= await SecureSharedPref.getInstance()                                       ;
+
+    if  (await networkInfo.isConnected){
+
+      try{
+        final MemberModelLogin memberModelLogin=MemberModelLogin(email: loginMember.email, password: loginMember.password);
+        final message=await loginRemoteDataSource.Login(memberModelLogin );
+        secureSharedPref.putStringList('tokens', [message['AccessToken'],message['RefreshToken']],isEncrypted: true);
+        print("shared stored");
+        return Right(message);
+
+      }
+
+      on ServerException{
+        return Left(ServerFailure());
+
+      }
+    }
+    else{
+      return Left(OfflineFailure());
+    }
+
+  }
+
+  @override
+  Future<Either<Failure, Map>> LogInWithFacebook() {
+    // TODO: implement LogInWithFacebook
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<Failure, Map>> LogInWithGoogle() {
+    // TODO: implement LogInWithGoogle
+    throw UnimplementedError();
+  }
+  }
+
+
+

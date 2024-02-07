@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
-import 'package:jci_app/features/auth/domain/repositories/MemberRepository.dart';
+
 import 'package:meta/meta.dart';
 
-import '../../../domain/repositories/Authentication.dart';
+import '../../../domain/usecases/Authentication.dart';
+import '../../../domain/usecases/MemberRepository.dart';
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
@@ -63,7 +64,7 @@ class AuthenticationBloc
     _authenticationRepository.logOut();
   }
 
-  Future<Member?> _tryGetUser() async {
+  Future<MemberSignUp?> _tryGetUser() async {
     try {
       final user = await _memberRepository.getMember();
       return user;

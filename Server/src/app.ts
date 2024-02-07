@@ -8,7 +8,7 @@ const startServer=async()=>{
     await database()
     await appli(app)
     app.listen(8000,()=>{
-        console.log('server started')
+        console.log('server started 8000')
     })
 }
 startServer()

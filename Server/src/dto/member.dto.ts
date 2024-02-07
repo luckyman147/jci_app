@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, Length, isNotEmpty } from 'class-validator'
+import { IsEmail, IsNotEmpty, Length,IsStrongPassword, isNotEmpty } from 'class-validator'
 
 export class CreateMemberInputs{
     @IsEmail()
@@ -7,13 +7,14 @@ export class CreateMemberInputs{
   
       
     @IsNotEmpty()
-    @Length(6,12)
+    @Length(6,20)
+
     password:string
     @IsNotEmpty()
-    @Length(6,16)
+    @Length(6,20)
     firstName:string
     @IsNotEmpty()
-    @Length(6,16)
+    @Length(6,20)
     lastName:string
 }
 export class EditMemberProfileInputs{

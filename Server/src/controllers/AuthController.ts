@@ -17,6 +17,7 @@ const memberInputs=plainToClass(CreateMemberInputs,req.body)
 const errors= await validate(memberInputs,{validationError:{target:true}})
 if(errors.length>0){
     return res.status(400).json(errors)
+console.log(errors)
 }
 
     const {email,password,firstName,lastName}=memberInputs
@@ -24,6 +25,7 @@ if(errors.length>0){
     const existmember= await Member.findOne({email:email})
 if (existmember !==null){
     return res.status(409).json({message:'A member exist the same '})
+
 }
 const role = await findrole('member')
 console.log(role)
@@ -48,11 +50,13 @@ console.log(role)
             await role.save()
 
         }
+        console.log(result)
         return res.status(201).json({message:"sign up completed ",_id:result.id,is_validated:result.is_validated,email:result.email})
 
         
 }
 return res.status(400).json({message:'something went wrong'})
+console.log('something')
 }
 
 
