@@ -18,9 +18,16 @@ class FormText extends StatelessWidget {
   Widget build(BuildContext context) {
 
         return TextFormField(
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'Please enter some text';
+            }
+            return null;
+          },
+          keyboardType: TextInputType.emailAddress,
           controller: controller,
 textInputAction: TextInputAction.next,
-          style: PoppinsRegular(18, textColorBlack,),
+          style: PoppinsRegular(16, textColorBlack,),
           key:Key(inputkey),
           //const Key('SignUpForm_EmailInput_textField'),
           onChanged: (value) => Onchanged(value),
@@ -29,7 +36,7 @@ textInputAction: TextInputAction.next,
             focusedBorder: border(PrimaryColor),
             errorBorder: border(Colors.red),
             focusedErrorBorder: border(Colors.red),
-            errorStyle: ErrorStyle(12, Colors.red),
+            errorStyle: ErrorStyle(18, Colors.red),
           errorText:errorText
 
           ),
@@ -38,12 +45,60 @@ textInputAction: TextInputAction.next,
   }
 }
 class FormTextPassword extends StatelessWidget {
+
   final String? errortext;
 final TextEditingController controller ;
   final Function(String) Onchanged  ;
+  final Function(String) validator  ;
   final String inputkey;
 
-  const FormTextPassword({Key? key, required this.inputkey, required this.Onchanged,required this.errortext, required this.controller, }) : super(key: key);
+  const FormTextPassword({Key? key, required this.inputkey, required this.Onchanged,required this.errortext, required this.controller, required this.validator, }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+
+        return BlocBuilder<ToggleBooleanBloc, ToggleBooleanState>(
+  builder: (context, state) {
+    return TextFormField(
+          style: PoppinsRegular(16, textColorBlack,),
+      textInputAction: TextInputAction.done,
+controller: controller,
+
+validator: (value) {validator(value!);},
+          key: Key(inputkey),
+          onChanged: (password) {
+
+            Onchanged(password);},
+          obscureText: state.value,
+          decoration: InputDecoration(
+
+            enabledBorder: border(textColorBlack) ,
+            focusedBorder: border(PrimaryColor),
+            focusedErrorBorder: border(Colors.red),
+            errorBorder: border(Colors.red),
+            errorStyle: ErrorStyle(18, Colors.red),
+            suffixIcon: IconButton(  onPressed: () {
+                context.read<ToggleBooleanBloc>().add(ToggleBoolean());
+            },
+
+                icon:Icon(state.value ? Icons.visibility : Icons.visibility_off, color: textColorBlack,)),
+            errorText:errortext
+
+          ),
+        );
+  },
+);
+
+  }
+}class FormTextConPassword extends StatelessWidget {
+
+  final String? errortext;
+final TextEditingController controller ;
+  final Function(String) Onchanged  ;
+  final Function(String) validator  ;
+  final String inputkey;
+
+  const FormTextConPassword({Key? key, required this.inputkey, required this.Onchanged,required this.errortext, required this.controller, required this.validator, }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +109,7 @@ final TextEditingController controller ;
           style: PoppinsRegular(18, textColorBlack,),
       textInputAction: TextInputAction.done,
 controller: controller,
+validator: (value) {validator(value!);},
           key: Key(inputkey),
           onChanged: (password) {
 

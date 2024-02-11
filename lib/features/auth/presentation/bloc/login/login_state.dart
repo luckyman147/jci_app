@@ -12,6 +12,16 @@ class LoginState extends Equatable {
   final Email email;
   final Password password;
   final bool isValid;
+  factory LoginState.initial() {
+    return const  LoginState(
+      status: FormzSubmissionStatus.initial,
+      email: Email.pure(),
+      password: Password.pure(),
+
+      isValid: false,
+
+    );
+  }
 
   LoginState copyWith({
     FormzSubmissionStatus? status,
@@ -25,6 +35,8 @@ class LoginState extends Equatable {
       password: password ?? this.password,
       isValid: isValid ?? this.isValid,
     );
+
+
   }
 
   @override

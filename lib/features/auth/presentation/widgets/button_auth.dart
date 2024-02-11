@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:formz/formz.dart';
 import 'package:jci_app/core/app_theme.dart';
+
+import '../../domain/entities/Member.dart';
+import '../bloc/sign_up_bloc.dart';
 
 class authButton extends StatelessWidget {
   const authButton({Key? key, required this.onPressed, required this.text, required this.string})
@@ -35,7 +40,7 @@ Padding(
   padding: EdgeInsets.symmetric(horizontal: mediaQuery.size.width/20),
   child:   SvgPicture.string(string),
 ),
-              Text(text,style: PoppinsRegular(mediaQuery.size.width/20, textColorBlack),),
+              Text(text,style: PoppinsRegular(mediaQuery.size.width/24, textColorBlack),),
             ],
           ),
         ),
@@ -43,3 +48,5 @@ Padding(
     );
   }
 }
+
+

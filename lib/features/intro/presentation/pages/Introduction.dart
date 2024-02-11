@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:jci_app/core/app_theme.dart';
+
+import 'package:jci_app/core/config/locale/app__localizations.dart';
+
 
 
 import '../widgets/button_intro.dart';
@@ -12,36 +14,32 @@ class IntroductionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-          decoration:const  BoxDecoration(color: backgroundColored),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+      body: Center(
+        child: Flex(
 
-                Expanded(
 
-                    child: CarouselWidget()
+          mainAxisAlignment: MainAxisAlignment.center,
+          direction: Axis.vertical,
+          children: [
+//ElevatedButton(onPressed: (){context.go('/screen');}, child: Text('Change Language')),
+            const Flexible(child: CarouselWidget()),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                children: [
+                  button_intro_widget(text:"Explore".tr(context), onPressed: () {
+                    context.go( '/home');
+                  }),
 
-                ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      button_intro_widget(text:"Explore", onPressed: () {
-                        context.go( '/login');
-                      }),
+                  button_intro_widget_filled(text:"Get Started".tr(context), onPressed: () {
+                    context.go( '/login');
+                  }),
+                ],
+              ),
+            )
 
-                      button_intro_widget(text:"Login", onPressed: () {
-                        context.go( '/login');
-                      }),
-                    ],
-                  ),
-                )
-
-              ],
-            ),
-          )
+          ],
+        ),
       ),
     );
   }

@@ -13,9 +13,25 @@ const textColorWhite = Color.fromRGBO(255, 255, 255, 1);
 TextStyle PoppinsLight(double size,Color color)=> GoogleFonts.poppins(fontWeight: FontWeight.w400,fontSize: size,color: color);
 TextStyle PoppinsNorml(double size,Color color) => GoogleFonts.poppins(fontWeight: FontWeight.normal,fontSize: size,color: color);
 TextStyle PoppinsRegular(double size,Color color) => GoogleFonts.poppins(fontWeight: FontWeight.w500,fontSize: size,color: color);
-TextStyle PoppinsSemiBold(double size,Color color,TextDecoration decoration) => GoogleFonts.poppins(fontWeight: FontWeight.w600,fontSize: size,color: color,decoration: decoration);
+TextStyle PoppinsSemiBold(double size,Color color,TextDecoration decoration) => GoogleFonts.poppins(fontWeight: FontWeight.w600,fontSize: size,color: color,decoration: decoration,decorationColor: PrimaryColor);
 TextStyle ErrorStyle(double size,Color color) => GoogleFonts.poppins(fontWeight: FontWeight.w600,fontSize: size,color: color);
 OutlineInputBorder border(Color color)=> OutlineInputBorder(
   borderRadius: BorderRadius.circular(16.0),
   borderSide: BorderSide(color: color,width: 3 ),
+);
+final decoration=BoxDecoration(
+  color: PrimaryColor,
+
+  borderRadius: BorderRadius.circular(16.0),
+  border: Border.all(color: textColorBlack, width: 2.0),
+);
+
+ThemeData themeData = ThemeData(
+  primaryColor: PrimaryColor,
+scaffoldBackgroundColor:backgroundColored ,
+
+
+  textTheme: TextTheme(
+
+  ),
 );

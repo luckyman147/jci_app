@@ -11,22 +11,30 @@ import 'package:meta/meta.dart';
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
 import '../../../data/models/login/password.dart';
-import '../../../domain/usecases/Authentication.dart';
+
 import '../../../domain/usecases/SIgnIn.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc(this.loginUseCase, )  :
-        super(const LoginState()) {
+  LoginBloc({ required this.loginUseCase })  :super(const LoginState()) {
     on<LoginEmailnameChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
     on<LoginSubmitted>(_onSubmitted);
+  on<ResetForm>(_reset_form);
+
   }
 
   final LoginUseCase loginUseCase;
-
+  void _reset_form(
+      ResetForm  event,
+      Emitter<LoginState> emit,
+      ) {
+    emit(
+        LoginState.initial()
+    );
+  }
   void _onEmailChanged(
       LoginEmailnameChanged event,
       Emitter<LoginState> emit,
@@ -58,38 +66,49 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       Emitter<LoginState> emit,
       ) async {
     if (state.isValid) {
-      emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
-      try {
+
+
         print('event'+ event.toString());
 
         if (event is LoginSubmitted){
+
           print('im here');
           final failureOrDoneMessage=await loginUseCase.LoginCredentials(event.loginMember);
 
 
-          print( "sign"+ failureOrDoneMessage.toString());
+          print( "login"+ failureOrDoneMessage.toString());
+
+              emit( _eitherDoneMessageOrErrorState(failureOrDoneMessage, 'Login Successful'));
+              await Future.delayed(const Duration(seconds: 1));
+
 
           emit(state.copyWith(status: FormzSubmissionStatus.success));
 
-              emit( _eitherDoneMessageOrErrorState(failureOrDoneMessage, 'Login Successful'));
-
         }
 
-      } catch (e) {
-        print('yaatek asba'+e.toString());
-        emit(state.copyWith(status: FormzSubmissionStatus.failure));
+      } else{
+      if (!state.email.isValid) {
+        emit(ErrorLogin(message: "Email is invalid"));
       }
+      else if (!state.password.isValid) {
+        emit(ErrorLogin(message: "Password is invalid"));
+      }
+      else {
+        emit(ErrorLogin(message: "Something invalid"));
+      }
+      emit(const LoginState(status: FormzSubmissionStatus.canceled));
     }
+
 
 
 }
   LoginState _eitherDoneMessageOrErrorState(
-      Either<Failure, Map> either, String message) {
+      Either<Failure, Unit> either, String message) {
     return either.fold(
           (failure) => ErrorLogin(
         message: mapFailureToMessage(failure),
       ),
-          (_) => ErrorLogin(message: message),
+          (_) => MessageLogin(message: message),
     );
   }
 

@@ -38,6 +38,6 @@ class PasswordValidationErrorText {
   );
 
   static const empty = PasswordValidationErrorText(
-    'Please enter a password',
+    'Password must be at least 8 characters',
   );
 }

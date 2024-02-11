@@ -10,8 +10,7 @@ class Firstname extends FormzInput<String, FirstnameValidationError> {
   @override
   FirstnameValidationError? validator(String value) {
     if (value.isEmpty) return FirstnameValidationError.empty;
-    else if (value.length < _minLength) return FirstnameValidationError.tooShort;
-    else if (value.length > _maxLength) return FirstnameValidationError.tooLong;
+
     return null;
   }
 }

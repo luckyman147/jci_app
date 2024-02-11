@@ -11,10 +11,10 @@ export class CreateMemberInputs{
 
     password:string
     @IsNotEmpty()
-    @Length(6,20)
+
     firstName:string
     @IsNotEmpty()
-    @Length(6,20)
+
     lastName:string
 }
 export class EditMemberProfileInputs{
@@ -48,5 +48,7 @@ export interface MemberPayload{
     _id:string
     email:string 
     role:string
+  accessTokenExpiration: number
+  refreshTokenExpiration: number
     
 }

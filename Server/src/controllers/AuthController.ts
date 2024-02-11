@@ -16,7 +16,7 @@ const memberInputs=plainToClass(CreateMemberInputs,req.body)
 
 const errors= await validate(memberInputs,{validationError:{target:true}})
 if(errors.length>0){
-    return res.status(400).json(errors)
+    return res.status(400).json({message:'validation error',errors:errors[0].constraints})
 console.log(errors)
 }
 
@@ -65,7 +65,7 @@ export const MemberLogin= async(req:Request,res:Response,next:NextFunction)=>{
     const loginInputs=plainToClass(MemberLoginInputs,req.body)
     const errors=await validate(loginInputs,{validationError:{target:false}})
     if(errors.length>0){
-        return res.status(400).json(errors)
+        return res.status(400).json({message:'validation error'})
     }
     const {email,password}=loginInputs
     let MemberInfo =await Member.findOne({email:email})
@@ -90,7 +90,8 @@ export const MemberLogin= async(req:Request,res:Response,next:NextFunction)=>{
                 
           
           })
-          refreshTokens.push(refreshToken)
+        MemberInfo.refreshToken=refreshToken
+        await MemberInfo.save()
           return res.status(200).json({message:'login success',refreshToken:refreshToken,accessToken:accessToken,email:MemberInfo.email})
          }
          else{
@@ -121,9 +122,9 @@ export const RefreshTokenAccess=async(req:Request,res:Response,next:NextFunction
     }
     
     if (refreshTokenInput.refreshToken == null) return res.sendStatus(401).json('no token found')
-    if (!refreshTokens.includes(refreshTokenInput.refreshToken)) return res.sendStatus(403)
+  
     let accessTokenOrError= VerifyrefreshToken(refreshTokenInput.refreshToken);
-      res.json({ accessToken: accessTokenOrError })
+
     }
 
 

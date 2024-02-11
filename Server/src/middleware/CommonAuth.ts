@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthPayload } from "../dto/auth.dto";
-import { validateAdminSignature, validateSignature, validateSuperAdminSignature } from "../utility";
+import { validateSignature} from "../utility";
 
 
 
@@ -23,6 +23,7 @@ export const Authenticate=async (req:Request,res:Response,next:NextFunction)=>{
     }
 
 }
+/*
 export const AuthenticateAdmin=async (req:Request,res:Response,next:NextFunction)=>{
     const validate=await validateAdminSignature(req)
     if(validate){
@@ -35,15 +36,16 @@ export const AuthenticateAdmin=async (req:Request,res:Response,next:NextFunction
     }
 
 }
-export const AuthenticateSuperAdmin=async (req:Request,res:Response,next:NextFunction)=>{
-    const validate=await validateSuperAdminSignature(req)
-    if(validate){
-        next()
-    }
-    else{
-        res.status(401).json({
-            message:"Unauthorized"
-        })
-    }
+*/
+// export const AuthenticateSuperAdmin=async (req:Request,res:Response,next:NextFunction)=>{
+//     const validate=await validateSuperAdminSignature(req)
+//     if(validate){
+//         next()
+//     }
+//     else{
+//         res.status(401).json({
+//             message:"Unauthorized"
+//         })
+//     }
 
-}
+// }

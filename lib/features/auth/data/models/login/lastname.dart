@@ -12,8 +12,7 @@ class Lastname extends FormzInput<String, LastnameValidationError> {
   @override
   LastnameValidationError? validator(String value) {
     if (value.isEmpty) return LastnameValidationError.empty;
-  else  if (value.length < _minLength) return LastnameValidationError.tooShort;
-    else if (value.length > _maxLength) return LastnameValidationError.tooLong;
+
     return null;
   }
 }

@@ -4,6 +4,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/core/config/locale/app_localizations_delegate.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../bloc/index_bloc.dart';
@@ -84,37 +86,7 @@ initialPage: state.props[0] as int,
                   ),
                 ),
 
-        BlocConsumer<IndexBloc, IndexState>(
-          listener: (context, state) {
-          if (state is IndexInitial) {
-             _buildIndicator(0, jsondata.length);
 
-          }
-        },
-        builder: (context, state) {
-          if (state is IndexInitial) {
-            return _buildIndicator(0, jsondata.length);
-          }
-          else
-
-        if (state is IndexLoaded) {
-          print((state.currentIndex));
-        return _buildIndicator(state.currentIndex, jsondata.length);
-
-        }
-        else if (state is ResetState){
-          return _buildIndicator(state.index, jsondata.length);
-        }
-
-        else {
-
-        // Handle other states if needed
-          return _buildIndicator(0, jsondata.length);
-
-        }
-        },
-
-)
 
               ],
             );
@@ -131,44 +103,48 @@ initialPage: state.props[0] as int,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SingleChildScrollView(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              BlocBuilder<IndexBloc, IndexState>(
-                  builder: (context, state) {
-                    if(state is IndexLoaded){
-                      return left_Arrow(state.currentIndex, controller);
-                    }else{
-                      return Container();
-                    }
-                  }
-              ),
-              Align(
-alignment: Alignment.center,
-                child: Image.asset(image, width: size, height: 250, fit: BoxFit.contain),
-              ),
-              BlocBuilder<IndexBloc, IndexState>(
-                  builder: (context, state) {
-                    if (state is IndexInitial){
-                      return right_Arrow(0, controller);
-                    }
-                 else    if(state is IndexLoaded){
-                      return right_Arrow(state.currentIndex, controller);
-                    }else{
-                      return right_Arrow(0, controller);
-
-                    }
-                  }
-              )
-            ],
+          child: Align(
+          alignment: Alignment.center,
+            child: Image.asset(image, width: size, height: 250, fit: BoxFit.contain),
           ),
+        ),
+        BlocConsumer<IndexBloc, IndexState>(
+          listener: (context, state) {
+            if (state is IndexInitial) {
+              _buildIndicator(0,3);
+
+            }
+          },
+          builder: (context, state) {
+            if (state is IndexInitial) {
+              return _buildIndicator(0, 3);
+            }
+            else
+
+            if (state is IndexLoaded) {
+              print((state.currentIndex));
+              return _buildIndicator(state.currentIndex, 3);
+
+            }
+            else if (state is ResetState){
+              return _buildIndicator(state.index, 3);
+            }
+
+            else {
+
+              // Handle other states if needed
+              return _buildIndicator(0, 3);
+
+            }
+          },
+
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(titre, style: PoppinsSemiBold(44,Colors.black,TextDecoration.none),),
+            Text("titre_$index".tr(context), style: PoppinsSemiBold(44,Colors.black,TextDecoration.none),),
             Padding(padding: EdgeInsets.only(left: 65,right: 30),
-                child: Text(description, style: PoppinsNorml(16,Colors.black),textAlign: TextAlign.start,)),
+                child: Text("description_$index". tr(context), style: PoppinsNorml(16,Colors.black),textAlign: TextAlign.start,)),
           ],
         )
 
@@ -191,46 +167,18 @@ Future<List< dynamic>> _loadJsonData(BuildContext context) async {
   // Now you can work with the parsed JSON data
   return jsonData;
 }
-Widget _buildIndicator(int index,int len)=>Padding(
-  padding: const EdgeInsets.only(bottom: 30.0),
-  child:   Align(
-    alignment: Alignment.bottomCenter,
-    child: AnimatedSmoothIndicator(activeIndex: index, count: len, effect:const  WormEffect(
+Widget _buildIndicator(int index,int len){
+  MediaQueryData mediaQuery=MediaQueryData();
+  return Padding(
+    padding:  EdgeInsets.only(bottom: 20,top:30 ),
+    child:   Align(
+      alignment: Alignment.bottomCenter,
+      child: AnimatedSmoothIndicator(activeIndex: index, count: len, effect:const  WormEffect(
         dotColor: dotscolor,
         activeDotColor: Colors.black,
-      type: WormType.thin,
+        type: WormType.thin,
 
-    )),
-  ),
-);
-Widget right_Arrow(int index, CarouselController controller) {
-  if (index==0 || index ==1) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal:index==1? 1.0:0),
-      child: IconButton(
-        icon: const Icon(Icons.keyboard_arrow_right, color: dotscolor, size: 50,),
-        onPressed: () {
-          controller.nextPage();
-        },
-      ),
-    );
-  }
-  else { return Container();
+      )),
+    ),
+  );}
 
-  }
-}Widget left_Arrow(int index, CarouselController controller) {
-  if (index==2 || index ==1) {
-    return Padding(
-      padding:  EdgeInsets.only(right: index ==1?8:1),
-      child: IconButton(
-        icon: const Icon(Icons.keyboard_arrow_left, color: dotscolor, size: 60,),
-        onPressed: () {
-          controller.previousPage();
-        },
-      ),
-    );
-  }
-  else { return Container();
-
-  }
-}

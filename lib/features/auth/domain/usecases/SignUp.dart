@@ -9,7 +9,7 @@ class SignUpUseCase{
 final SignUpRepo authRepo;
 
   SignUpUseCase({required this.authRepo});
-  Future<Either<Failure,String>> SignUpCred(MemberSignUp member) async {
+  Future<Either<Failure,Unit>> SignUpCred(MemberSignUp member) async {
     return await authRepo.signUpWithCredentials(member);
   }
   Future<Either<Failure,Unit>> SignUpGoogle() async {

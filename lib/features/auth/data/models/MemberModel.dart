@@ -5,7 +5,7 @@ import '../../domain/entities/Member.dart';
 
 class MemberModelSignUp extends MemberSignUp {
 
-  MemberModelSignUp({required super.email, required super.password, required super.FirstName, required super.LastName})
+  MemberModelSignUp({required super.email, required super.password, required super.FirstName, required super.LastName, required super.confirmPassword})
 
 ;
   factory MemberModelSignUp.fromJson(Map<String, dynamic> json) {
@@ -14,7 +14,7 @@ class MemberModelSignUp extends MemberSignUp {
     email:  json['email'],
      password: json['password'],
     FirstName:   json['firstName'],
-     LastName: json['lastName'],);
+     LastName: json['lastName'], confirmPassword: json[''],);
   }
 
   Map<String, dynamic> toJson() {

@@ -17,25 +17,38 @@ class SignUpRepoImpl implements SignUpRepo {
   SignUpRepoImpl(this.signUpRemoteDataSource, this.networkInfo);
   @override
 
-  Future<Either<Failure, String>> signUpWithCredentials(MemberSignUp member)async  {
-    if  (await networkInfo.isConnected){
+  Future<Either<Failure, Unit>> signUpWithCredentials(MemberSignUp member)async  {
 
-      try{
-        final MemberModelSignUp memberModelSignUp=MemberModelSignUp(email: member.email, password: member.password, FirstName: member.FirstName, LastName: member.LastName);
-        final message=await signUpRemoteDataSource.signUp(memberModelSignUp );
-        return Right(message);
 
-      }
+        final MemberModelSignUp memberModelSignUp=MemberModelSignUp(email: member.email, password: member.password, FirstName: member.FirstName, LastName: member.LastName, confirmPassword: member.confirmPassword);
+  return    await  getMessage   (signUpRemoteDataSource.signUp(memberModelSignUp ) );
 
-      on ServerException{
+
+
+
+
+
+
+
+
+
+
+}
+  Future<Either<Failure, Unit>> getMessage(
+      Future<Unit> signUP) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await signUP;
+        return Right(unit);
+      } on ServerException {
         return Left(ServerFailure());
-
       }
-    }
-    else{
+      on IsEmailException {
+        return Left(EmailExistedFailure());
+      }
+    } else {
       return Left(OfflineFailure());
     }
-
   }
 
   @override
@@ -49,18 +62,4 @@ class SignUpRepoImpl implements SignUpRepo {
     // TODO: implement signUpWithGoogle
     throw UnimplementedError();
   }
-  Future<Either<Failure, Unit>> _getMessage(
-      SignUP signUP) async {
-    if (await networkInfo.isConnected) {
-      try {
-        await signUP();
-        return Right(unit);
-      } on ServerException {
-        return Left(ServerFailure());
-      }
-    } else {
-      return Left(OfflineFailure());
-    }
-}
-
 }

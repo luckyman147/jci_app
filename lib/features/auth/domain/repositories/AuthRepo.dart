@@ -12,7 +12,7 @@ abstract class AuthRepo {
   Future<Either<Failure, MemberSignUp>> sendPasswordResetEmail(String email);
   Future<Either<Failure, MemberSignUp>> verifyEmail();
   Future<Either<Failure, MemberSignUp>> updatePassword(String password);
-
+  Future<Either<Failure,bool>> refreshToken();
 
   Future<Either<Failure, MemberSignUp>> deleteAccount();
 }

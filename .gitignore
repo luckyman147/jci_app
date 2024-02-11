@@ -6,6 +6,8 @@
 .env
 .DS_Store
 .atom/
+.vscode/
+.build/
 .buildlog/
 .history
 .svn/

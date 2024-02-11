@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jci_app/core/app_theme.dart';
 
 class SnackBarMessage {
  static  void showSuccessSnackBar(
@@ -7,7 +8,7 @@ class SnackBarMessage {
       SnackBar(
         content: Text(
           message,
-          style: TextStyle(color: Colors.white),
+          style: PoppinsNorml(20, Colors.white),
         ),
         backgroundColor: Colors.green,
       ),
@@ -19,8 +20,8 @@ class SnackBarMessage {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          message,
-          style: TextStyle(color: Colors.white),
+          message,          style: PoppinsNorml(20, Colors.white),
+
         ),
         backgroundColor: Colors.redAccent,
       ),

@@ -1,36 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jci_app/features/Home/presentation/pages/Home_page.dart';
 import 'package:jci_app/features/auth/presentation/pages/login_pages.dart';
+import 'package:jci_app/features/changelanguages/presentation/pages/screen.dart';
 
-import '../features/auth/domain/usecases/Authentication.dart';
-import '../features/auth/presentation/bloc/authentication/authentication_bloc.dart';
+
+import '../features/auth/presentation/bloc/auth/auth_bloc.dart';
 import '../features/auth/presentation/pages/SignUPPage.dart';
 import '../features/intro/presentation/pages/Introduction.dart';
 import '../features/intro/presentation/pages/Splash_screen.dart';
 
 
- GoRouter router(navigatorKey) => GoRouter(
-  navigatorKey:navigatorKey ,
+GoRouter router(navigatorKey) => GoRouter(
+  initialLocation: '/',
+
   routes: [
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
         return SplashScreen();
       },
-      redirect: (context, state) {
-        final authBloc = context.read<AuthenticationBloc>();
-        final authState = authBloc.state;
-        switch (authState.status) {
-          case AuthenticationStatus.authenticated:
-            return '/login';
-          case AuthenticationStatus.unauthenticated:
-            print('true');
-            return '/Intro';
-          case AuthenticationStatus.unknown:
-            return null;
-        }
-      },
+
+
+
 
     ),
 
@@ -41,6 +34,17 @@ import '../features/intro/presentation/pages/Splash_screen.dart';
         return IntroductionPage();
 
       },
+    ),GoRoute(
+      path: '/screen',
+      builder: (BuildContext context, GoRouterState state) {
+        return SettingsPage();
+
+      },
+    ),
+    GoRoute(path: '/home',
+      builder: (BuildContext context, GoRouterState state)=>HomePage(),
+
+
     ),
     GoRoute(path: '/login',
       builder: (BuildContext context, GoRouterState state)=>LoginPage(),

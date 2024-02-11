@@ -4,7 +4,7 @@ class SignUpState extends Equatable {
   const SignUpState({
       this.status = FormzSubmissionStatus.initial,
     this.email = const Email.pure(),
-    this.confirmPassword = const ConfirmPassword.pure(password: Password.pure()),
+  this.confirmPassword = const ConfirmPassword.pure(),
     this.firstname = const Firstname.pure(),
     this.lastname = const Lastname.pure(),
     this.isValid = false,
@@ -69,7 +69,7 @@ confirmPassword: confirmPassword??this.confirmPassword
       firstname: Firstname.pure(),
       lastname: Lastname.pure(),
       isValid: false,
-      confirmPassword: ConfirmPassword.pure(password: Password.pure()),
+      confirmPassword: ConfirmPassword.pure(),
     );
   }
 
