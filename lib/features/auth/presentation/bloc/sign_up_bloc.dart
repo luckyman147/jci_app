@@ -150,7 +150,7 @@ void _reset_form(
           emit(LoadingSignUp());
           final failureOrDoneMessage = await signUpUseCase.SignUpCred(
               event.member);
-       //   print("sign" + failureOrDoneMessage.toString());
+         print("sign" + failureOrDoneMessage.toString());
 
           emit(_eitherDoneMessageOrErrorState(
               failureOrDoneMessage, SIGNUP_SUCCESS_MESS));

@@ -48,7 +48,5 @@ export interface MemberPayload{
     _id:string
     email:string 
     role:string
-  accessTokenExpiration: number
-  refreshTokenExpiration: number
-    
+
 }

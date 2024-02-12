@@ -24,4 +24,15 @@ class EmailExistedFailure extends Failure {
 class WrongCredentialsFailure extends Failure {
   @override
   List<Object?> get props => [];
+}class ExpiredFailure extends Failure {
+  @override
+  List<Object?> get props => [];
+}
+class AlreadyLogoutFailure extends Failure {
+  @override
+  List<Object?> get props => [];
+}
+class UnauthorizedFailure extends Failure {
+  @override
+  List<Object?> get props => [];
 }

@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:jci_app/core/config/services/store.dart';
 import 'package:jci_app/core/error/Exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,7 +10,7 @@ import 'package:http/http.dart' as http;
 import '../../../../core/error/Failure.dart';
 import '../../domain/entities/Member.dart';
 abstract class  AuthRemote {
-  Future<Either<Failure, MemberSignUp>> signOut();
+  Future<bool>  signOut();
   Future<Either<Failure, MemberSignUp>> sendPasswordResetEmail(String email);
   Future<Either<Failure, MemberSignUp>> verifyEmail();
   Future<Either<Failure, MemberSignUp>> updatePassword(String password);
@@ -45,25 +44,28 @@ final http.Client client;
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken',
+
         },
         body: jsonEncode({
           'refreshToken': '${tokens[0]}', // replace with your actual refresh token
         }),
       );
-      final response = jsonDecode(Response.body);
-      if (response.statusCode == 201) {
+print(Response.statusCode);
+      if (Response.statusCode == 200) {
+        final Map<String, dynamic> response = jsonDecode(Response.body);
+
         // Request was successful
-        print('Request successful: ${response.body}');
+
         Store.setTokens( response['refreshToken'],response['accessToken'] );
         return true;
       } else {
         // Request failed
-        print('Request failed with status: ${response.statusCode}');
-        print('Response body: ${response.body}');
-        throw ServerException();
+        print('Request failed with status: ${Response.statusCode}');
+
+        throw ExpiredException();
       }
     } catch (e) {
+
       // Exception occurred during the request
       print('Exception during request: $e');
     throw ServerException();
@@ -82,9 +84,56 @@ final http.Client client;
   }
 
   @override
-  Future<Either<Failure, MemberSignUp>> signOut() {
-    // TODO: implement signOut
-    throw UnimplementedError();
+  Future<bool> signOut()async {
+    const String apiUrl = 'http://10.0.2.2:8080/auth/logout';
+    final tokens=await Store.GetTokens();
+    if (tokens[0] == null ) {
+      print('famech token');
+      throw EmptyCacheException();
+
+    }
+
+    // replace with your API endpoint
+    final  accessToken =  tokens[1]; // replace with your actual access token
+
+    try {
+      final Response = await client.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+        body: jsonEncode({
+          'refreshToken': '${tokens[0]}', // replace with your actual refresh token
+        }),
+      );
+      print(" ya bonay ${Response.statusCode}");
+      if (Response.statusCode == 200) {
+        final Map<String, dynamic> response = jsonDecode(Response.body);
+
+        Store.clear();
+        return true;
+      } else  if (Response.statusCode == 400 ){
+        final Map<String, dynamic> response = jsonDecode(Response.body);
+if (response['message']=='Already logged out'){
+        throw AlreadyLogoutException();
+      }
+      else{
+      throw UnauthorizedException()  ;
+      }
+      }
+      else {
+        // Request failed
+        print('Request failed with status: ${Response.statusCode}');
+        print('Response body: ${Response.body}');
+        throw ServerException();
+      }
+    } catch (e) {
+      // Exception occurred during the request
+      print('Exception during request: $e');
+      throw ServerException();
+    }
+    // ;
   }
 
   @override

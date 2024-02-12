@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/features/Home/presentation/pages/Home_page.dart';
+import 'package:jci_app/features/auth/presentation/pages/Forget_password_page.dart';
 import 'package:jci_app/features/auth/presentation/pages/login_pages.dart';
 import 'package:jci_app/features/changelanguages/presentation/pages/screen.dart';
 
@@ -21,14 +22,18 @@ GoRouter router(navigatorKey) => GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         return SplashScreen();
       },
-
-
-
-
     ),
+GoRoute(
+path: '/forget',
+builder: (BuildContext context, GoRouterState state) {
+return ForgetPasswordPage();
+},
 
 
-    GoRoute(
+),
+
+
+GoRoute(
       path: '/Intro',
       builder: (BuildContext context, GoRouterState state) {
         return IntroductionPage();

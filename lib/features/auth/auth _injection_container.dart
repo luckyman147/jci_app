@@ -1,4 +1,4 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:jci_app/features/auth/data/datasources/authRemote.dart';
@@ -7,7 +7,7 @@ import 'package:jci_app/features/auth/domain/repositories/AuthRepo.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/sign_up_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 import '../../core/network/network_info.dart';
 import 'data/datasources/LoginRemote.dart';
@@ -26,7 +26,7 @@ final sl = GetIt.instance;
 
 Future <void > initAuth()async{
 sl.registerFactory(() => AuthBloc(
-     refreshTokenUseCase: sl(),
+     refreshTokenUseCase: sl(), signoutUseCase: sl(),
   ));
   sl.registerFactory(() => SignUpBloc(
     signUpUseCase: sl(),
@@ -45,6 +45,7 @@ sl.registerLazySingleton<AuthRemote>(() => AuthRemoteImpl(client: sl()));
 
 
 //use cases
+  sl.registerLazySingleton(() => SignOutUseCase(authRepository: sl()));
   sl.registerLazySingleton(() => RefreshTokenUseCase( authRepository: sl()));
   sl.registerLazySingleton(() => SignUpUseCase(authRepo: sl()));
   sl.registerLazySingleton(() => LoginUseCase(sl()));

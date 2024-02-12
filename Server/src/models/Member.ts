@@ -9,7 +9,8 @@ export interface MemberDoc extends Document{
     lastName:string
     address:string;
     phone:string;
-    refreshToken:string
+    refreshTokenRevoked:[string];
+    accessTokenRevoked:[string]
     
     
 Images:[string];
@@ -30,7 +31,8 @@ export const MemberSchema=new Schema({
     is_validated:{type:Boolean},
     cotisation:{type:[Boolean]},
     Images:{type:[String]},
-    refreshToken:{type:String},
+    refreshTokenRevoked:{type:[String],default:[]},
+    accessTokenRevoked  :{type:[String],default:[]},
     role: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Role',
@@ -43,6 +45,8 @@ export const MemberSchema=new Schema({
             delete ret.password
             delete ret.salt
             delete ret.__v
+     
+
             delete ret.createdAt
             delete ret.updatedAt
         }

@@ -18,25 +18,32 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _navigateAfterDelay();
+  }
 
+  void _navigateAfterDelay() async {
+    await Future.delayed(Duration(seconds: 3));
+
+    // Check if the widget is still mounted before accessing the context
+    if (mounted) {
+      final authState = BlocProvider.of<AuthBloc>(context).state;
+      if (authState is AuthFailureState) {
+        context.go('/Intro');
+      } else if (authState is AuthSuccessState) {
+        context.go('/home');
+      } else {
+        context.go('/login');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthBloc, AuthState>(
-      listener: (context, state) {
 
-        // TODO: implement listener
-      },
-      builder: (context, state) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (state is AuthFailureState) {
-            context.go('/Intro'); // Redirect to login if token refresh fails
-          } else if (state is AuthSuccessState) {
-            context.go('/home'); // Redirect to home if token refresh succeeds
-          } else {
-            context.go('/login'); // Redirect to intro if token refresh succeeds
-          }
-        });
+
 
         return Container(
             decoration: BoxDecoration(color: backgroundColored),
@@ -53,7 +60,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 ],
               ),
             ));
-      },
-    );
+      }
   }
-}
+

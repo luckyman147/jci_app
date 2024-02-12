@@ -66,27 +66,30 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       Emitter<LoginState> emit,
       ) async {
     if (state.isValid) {
+        print('event' + event.toString());
+
+        if (event is LoginSubmitted) {
+          try {
+
+          print(' ya said im here');
+          final failureOrDoneMessage = await loginUseCase.LoginCredentials(
+              event.loginMember);
 
 
-        print('event'+ event.toString());
+          print("login" + failureOrDoneMessage.toString());
 
-        if (event is LoginSubmitted){
-
-          print('im here');
-          final failureOrDoneMessage=await loginUseCase.LoginCredentials(event.loginMember);
-
-
-          print( "login"+ failureOrDoneMessage.toString());
-
-              emit( _eitherDoneMessageOrErrorState(failureOrDoneMessage, 'Login Successful'));
-              await Future.delayed(const Duration(seconds: 1));
+          emit(_eitherDoneMessageOrErrorState(
+              failureOrDoneMessage, 'Login Successful'));
+          await Future.delayed(const Duration(seconds: 1));
 
 
           emit(state.copyWith(status: FormzSubmissionStatus.success));
+        }
+        catch (e) {
+          emit(ErrorLogin(message: "Something went wrong ${e.toString()}"));
 
         }
-
-      } else{
+      } else {
       if (!state.email.isValid) {
         emit(ErrorLogin(message: "Email is invalid"));
       }
@@ -98,6 +101,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       }
       emit(const LoginState(status: FormzSubmissionStatus.canceled));
     }
+    }
+  }
 
 
 
@@ -112,4 +117,4 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
   }
 
-}
+

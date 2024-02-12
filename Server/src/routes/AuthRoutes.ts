@@ -1,6 +1,6 @@
 import express from "express";
 import { MemberLogin, MemberSignUp, RefreshTokenAccess, forgetPassword, logout } from "../controllers";
-import { Authenticate} from "../middleware/CommonAuth";
+import { Authenticate, AuthenticateSuperAdmin } from "../middleware/CommonAuth";
 
 
 const router =express.Router()
@@ -15,11 +15,11 @@ router.patch('/forgetPassword',forgetPassword)
 router.post('/login',MemberLogin)
 // router.post('/loginWithFacebook',MemberLogin)
 // router.post('/loginWithGoogle',MemberLogin)
-router .delete('/logout',logout)
-router .get('/RefreshToken',Authenticate,RefreshTokenAccess)
-router .get('/AccessToken')
-//router.use(AuthenticateSuperAdmin)
-//router .get('/getRole')
+router .post('/logout',  Authenticate,logout)
+router .post ('/RefreshToken',RefreshTokenAccess)
+router .get('/verifyAccessToken')
+router.use(AuthenticateSuperAdmin)
+router .get('/getRole')
 
 export { router as AuthRouter };
 

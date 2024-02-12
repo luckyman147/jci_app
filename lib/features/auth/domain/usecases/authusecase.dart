@@ -16,3 +16,13 @@ class RefreshTokenUseCase extends UseCase<bool, NoParams> {
     return await authRepository.refreshToken();
   }
 }
+class SignOutUseCase extends UseCase<bool, NoParams> {
+  final AuthRepo authRepository;
+
+  SignOutUseCase({required this.authRepository});
+
+  @override
+  Future<Either<Failure, bool>> call(NoParams params) async {
+    return await authRepository.signOut();
+  }
+}

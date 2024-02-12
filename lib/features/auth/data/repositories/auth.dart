@@ -26,8 +26,14 @@ final NetworkInfo networkInfo;
 
     on EmptyCacheException{
       return Left(EmptyCacheFailure());}
+      catch(e){
 
-    } else {
+        return Left(ServerFailure());
+      }
+    }
+
+
+    else {
       return Left(OfflineFailure());
     }
   }
@@ -51,9 +57,8 @@ final NetworkInfo networkInfo;
   }
 
   @override
-  Future<Either<Failure, MemberSignUp>> signOut() {
-    // TODO: implement signOut
-    throw UnimplementedError();
+  Future<Either<Failure, bool>> signOut() {
+return _getMessage(api.signOut());
   }
 
   @override

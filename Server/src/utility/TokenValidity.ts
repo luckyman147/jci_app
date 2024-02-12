@@ -1,34 +1,37 @@
 
 import { Request } from 'express';
 import jwt from 'jsonwebtoken';
-import { AuthPayload } from '../dto/auth.dto';
-import { MemberPayload } from '../dto/member.dto';
-import { Role } from '../models/role';
+
 import { ADminPayload } from '../dto/admin.dto';
+import { AuthPayload } from '../dto/auth.dto';
+import { MemberPayload, } from '../dto/member.dto';
 import { SuperAdminPayload } from '../dto/superAdmin.dto';
+import { Role } from '../models/role';
+import { isAccessTokenValid, isRefreshTokenValid } from './verification';
+
 require('dotenv').config();
 
 
-export const generateAccessToken = (payload: AuthPayload) => {
+export const generateAccessToken =async (payload: MemberPayload) => {
     // Ensure APP_SECRET is defined
     if (!process.env.APP_SECRET) {
       throw new Error('APP_SECRET environment variable is not defined');
     }
   
-    const accessToken = jwt.sign(payload
-
-
-    , process.env.APP_SECRET , {
+    const accessToken = jwt.sign(payload , process.env.APP_SECRET , {
       expiresIn: '1h',
     });
+    if (!await isAccessTokenValid(payload._id,accessToken)){
+     await generateAccessToken(payload)
+    }
     
   
     return {
-      accessToken,
+      accessToken
       
     };
   };
-  export const generateRefreshToken = (payload: AuthPayload) => {
+  export const generateRefreshToken = async (payload: AuthPayload) => {
     // Ensure APP_SECRET is defined
     if (!process.env.APP_SECRET) {
       throw new Error('APP_SECRET environment variable is not defined');
@@ -38,26 +41,44 @@ export const generateAccessToken = (payload: AuthPayload) => {
     const refreshToken = jwt.sign(payload, process.env.APP_SECRET , {
       expiresIn: '1d',
     });
+    if (!await isRefreshTokenValid(payload._id,refreshToken)){
+await generateAccessToken(payload)
+    }
   
     return {
-      refreshToken,
+      refreshToken
       
     };
   };
   
   
-  export const validateSignature = async (req: Request) => {
+  export const validateSignature = async (req: Request) => {   
+     if (!process.env.APP_SECRET) {
+    throw new Error('APP_SECRET environment variable is not defined');
+  }
     const signature = req.get('Authorization');
+    
+
     if (signature) {
-      const payload = jwt.verify(signature.split(' ')[1], process.env.APP_SECRET as string) as MemberPayload;
-  
-      req.user = payload;
-      return true;
+    try{
+    const payload = jwt.verify(signature.split(' ')[1], process.env.APP_SECRET as string) as MemberPayload;
+          const check=await isAccessTokenValid(payload._id,signature)
+          console.log("check",check)
+      if (check){
+        req.user = payload;
+          return true;
+      }return false 
+    }
+    catch{
+      console.log('error')
+    }
+
+     
     }
     return false;
   };
   
- /* export const validateAdminSignature = async (req: Request) => {
+  export const validateAdminSignature = async (req: Request) => {
     const signature = req.get('Authorization');
     if (signature) {
       const payload = jwt.verify(signature.split(' ')[1], process.env.APP_SECRET as string) as ADminPayload;
@@ -81,18 +102,5 @@ export const generateAccessToken = (payload: AuthPayload) => {
       }
     }
     return false;
-  };*/
- export const  VerifyrefreshToken =async(refrecshToken:string)=>{
+  };
 
-
- try{
-
-    const payload = jwt.verify(refrecshToken, process.env.APP_SECRET as string) as AuthPayload;
-
-    const accessToken = generateAccessToken(payload)
-return accessToken}
-catch (e){
-
-    throw new Error('Invalid refresh token');
-}
- }

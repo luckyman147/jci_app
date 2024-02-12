@@ -32,8 +32,9 @@ class LoginRepoImpl implements LoginRepo {
         return Right(unit);
       }
 
-      on WrongCredentialsException{
-        return Left(WrongCredentialsFailure());
+      catch (e) {
+        print(e);
+        return Left(ServerFailure());
       }
 
     } else {
@@ -45,11 +46,10 @@ class LoginRepoImpl implements LoginRepo {
   Future<Either<Failure, Unit>> LogInWithCredentials(LoginMember loginMember) async {
 
 
-
-
-
         final MemberModelLogin memberModelLogin=MemberModelLogin(email: loginMember.email, password: loginMember.password);
+        print("heelo from login repo");
         final message= loginRemoteDataSource.Login(memberModelLogin );
+        print(message);
     return  await _getMessage(message);
 
 

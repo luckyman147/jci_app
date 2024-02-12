@@ -62,7 +62,11 @@ class _MyAppState extends State<MyApp> {
         // BlocProvider(create: (context) => AuthBloc(authRepository: AuthRepository())),
         BlocProvider(create: (_) => IndexBloc(initialIndex)),
       ],
-      child: BlocBuilder<localeCubit, LocaleState>(
+      child: BlocBuilder<AuthBloc, AuthState>(
+
+  builder: (context, state) {
+
+    return BlocBuilder<localeCubit, LocaleState>(
         buildWhen: (previous, current) => previous != current,
         builder: (context, state) {
 
@@ -95,7 +99,9 @@ if (state is ChangeLocalState) {
           );}
 return SizedBox();
         },
-      ),
+      );
+  },
+),
     );
   }
 }

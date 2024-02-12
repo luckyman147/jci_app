@@ -89,7 +89,11 @@ final mediaquery = MediaQuery.of(context);
                     padding: const EdgeInsets.all(8.0),
                     child: Align(
                     alignment:  Alignment.centerRight,
-                        child: LinkedText(text: "Forgot Password?".tr(context), size: 17)),
+                        child: InkWell(
+                            onTap: (){
+                              context.go('/forget');
+                            },
+                            child: LinkedText(text: "Forgot Password?".tr(context), size: 17))),
                   ),
                 ],
               ),
@@ -97,7 +101,7 @@ final mediaquery = MediaQuery.of(context);
 
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 18.0,horizontal: 25.0),
-              child: _LoginButton( _key, resetform,),
+              child: _LoginButton( _key,),
             ),
           divider(mediaquery),
             Padding(
@@ -133,6 +137,48 @@ final mediaquery = MediaQuery.of(context);
    );}
     );
   }
+  Widget _LoginButton  (
+      GlobalKey<FormState> keyConr,
+      ) {
+    return BlocBuilder<LoginBloc, LoginState>(
+      builder: (context, state) {
+        return state.status.isInProgress
+            ? const CircularProgressIndicator()
+            : Container(
+          width: double.infinity,
+          height: 66,
+          decoration: BoxDecoration(
+            color: PrimaryColor,
+
+            borderRadius: BorderRadius.circular(16.0),
+            border: Border.all(color: textColorBlack, width: 2.0),
+          ),
+          child: InkWell(
+
+            key: const Key('loginForm_continue_raisedButton'),
+            onTap: () {
+
+              if (keyConr.currentState!.validate()) {
+                final member = LoginMember(email: state.email.value,
+                  password: state.password.value,
+                );
+
+
+                context.read<LoginBloc>().add(LoginSubmitted(member));
+                resetform();
+                context.read<LoginBloc>().add(ResetForm());
+
+              }
+            },
+
+            child: Center(child: Text('Login'.tr(context),
+              style: PoppinsSemiBold(24, textColorWhite, TextDecoration.none),)),
+          ),
+        );
+      },
+    );
+  }
+
 }
 
 class _UsernameInput extends StatelessWidget {
@@ -173,43 +219,6 @@ class _PasswordInput extends StatelessWidget {
   }
 }
 
-Widget _LoginButton  (
-   GlobalKey<FormState> keyConr,
-   VoidCallback oncall) {
-  return BlocBuilder<LoginBloc, LoginState>(
-    builder: (context, state) {
-      return state.status.isInProgress
-          ? const CircularProgressIndicator()
-          : Container(
-        width: double.infinity,
-        height: 66,
-        decoration: BoxDecoration(
-          color: PrimaryColor,
-
-          borderRadius: BorderRadius.circular(16.0),
-          border: Border.all(color: textColorBlack, width: 2.0),
-        ),
-        child: InkWell(
-
-          key: const Key('loginForm_continue_raisedButton'),
-          onTap: () {
-
-            if (keyConr.currentState!.validate()) {
-              final member = LoginMember(email: state.email.value,
-                password: state.password.value,
-              );
-              context.read<LoginBloc>().add(LoginSubmitted(member));
-
-            }
-          },
-
-          child: Center(child: Text('Login'.tr(context),
-            style: PoppinsSemiBold(24, textColorWhite, TextDecoration.none),)),
-        ),
-      );
-    },
-  );
-}
 
 Widget line(double width)=> SizedBox(
 width: width, // Set a fixed width for the Divider

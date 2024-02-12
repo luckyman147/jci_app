@@ -7,7 +7,7 @@ abstract class AuthRepo {
 
 
 
-  Future<Either<Failure, MemberSignUp>> signOut();
+  Future<Either<Failure, bool>> signOut();
 
   Future<Either<Failure, MemberSignUp>> sendPasswordResetEmail(String email);
   Future<Either<Failure, MemberSignUp>> verifyEmail();

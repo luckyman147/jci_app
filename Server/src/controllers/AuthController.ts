@@ -4,10 +4,9 @@ import { NextFunction, Request, Response } from 'express';
 import { CreateMemberInputs, MemberLoginInputs } from '../dto/member.dto';
 
 
-
 import { TokenInput, forgetPasswordInputs } from '../dto/auth.dto';
 import { Member } from '../models/Member';
-import { GenerateSalt, HashPassword, ValidatePassword, VerifyrefreshToken, generateAccessToken, generateRefreshToken } from '../utility';
+import { GenerateSalt, HashPassword, ValidatePassword, VerifyrefreshToken, generateAccessToken, generateRefreshToken, revokeRefreshToken } from '../utility';
 import { findrole } from '../utility/role';
 let refreshTokens:any = []
 //**  Sign Up*/
@@ -42,7 +41,8 @@ console.log(role)
         adress:'',
         phone:'',
         lastName:lastName,
-        role:role
+        role:role,
+
     })
     if (result){
         if(role){
@@ -73,25 +73,25 @@ export const MemberLogin= async(req:Request,res:Response,next:NextFunction)=>{
        const validate=await ValidatePassword(password,MemberInfo.password,MemberInfo.salt)
          if(validate){
           const {accessToken}=
-          generateAccessToken({
+        await  generateAccessToken({
                 _id:MemberInfo._id,
                 email:MemberInfo.email,
-                role:MemberInfo.role._id
+                role:MemberInfo.role._id,
                 
                 
           
           }) 
           const {refreshToken}=
-          generateRefreshToken({
-                _id:MemberInfo._id,
+          await generateRefreshToken({
+            _id :MemberInfo._id,
+            role:MemberInfo.role._id,
+               
                 email:MemberInfo.email,
-                role:MemberInfo.role._id
+             
                 
-                
-          
+
           })
-        MemberInfo.refreshToken=refreshToken
-        await MemberInfo.save()
+        console.log("login")
           return res.status(200).json({message:'login success',refreshToken:refreshToken,accessToken:accessToken,email:MemberInfo.email})
          }
          else{
@@ -103,18 +103,36 @@ export const MemberLogin= async(req:Request,res:Response,next:NextFunction)=>{
 }
 //& logout 
 
-export const logout=async(req:Request,res:Response,next:NextFunction)=>{
-    console.log(refreshTokens)
-    const tokens=req.body.token
-    if (refreshTokens.length == 0) return res.sendStatus(400)
-        
-    
-    refreshTokens = refreshTokens.filter((token: any) => token !== tokens)
-    res.sendStatus(204)
-
-}
-export const RefreshTokenAccess=async(req:Request,res:Response,next:NextFunction)=>{
+export const logout = async (req: Request, res: Response, next: NextFunction) => {
+    const signature = req.get('Authorization');
     const member=req.user
+
+    try {
+      const {refreshToken} = req.body;
+  
+   
+  
+  if (member && signature){
+
+   const respnse=   await revokeRefreshToken(member?._id, refreshToken,signature);
+
+      res.status(200).json(respnse);
+  }
+  else{
+    res.status(400).json({ message: "You are not logged in"});
+  }
+      // Revoke the refresh token
+  
+      
+    } catch (error) {
+      console.error('Error during logout:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+  
+//* refreh token
+export const RefreshTokenAccess=async(req:Request,res:Response,next:NextFunction)=>{
+ 
     const refreshTokenInput=plainToClass(TokenInput,req.body)
     const errors=await validate(refreshTokenInput,{validationError:{target:false}})
     if(errors.length>0){
@@ -123,9 +141,17 @@ export const RefreshTokenAccess=async(req:Request,res:Response,next:NextFunction
     
     if (refreshTokenInput.refreshToken == null) return res.sendStatus(401).json('no token found')
   
-    let accessTokenOrError= VerifyrefreshToken(refreshTokenInput.refreshToken);
+    const accessTokenOrError= await VerifyrefreshToken(refreshTokenInput.refreshToken);
+  console.log(accessTokenOrError)
+  if (accessTokenOrError?.accessToken.toString().length>0){
+    return res.status(200).json(accessTokenOrError)
 
     }
+    else{
+        return res.status(400).json(accessTokenOrError)
+    }
+
+}
 
 
 export const AccessTokenAccess=async(req:Request,res:Response,next:NextFunction)=>{

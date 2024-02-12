@@ -10,7 +10,10 @@
   "SignUp": "S'inscrire",
   "First Name": "Prénom",
     "Last Name": "Nom ",
-    "Confirm Password": "Mot de passe de confirmation",
+  "reset your password": "Réinitialiser Votre Mot De Passe",
+  "Next": "Suivant",
+
+  "Confirm Password": "Mot de passe de confirmation",
 "Already have an account?": "Vous avez déjà un compte?",
   "Sign In": "Se connecter",
   "Sign Out": "Se déconnecter",

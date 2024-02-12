@@ -12,3 +12,9 @@ class RefreshTokenEvent extends AuthEvent {
 }
 
 
+class SignoutEvent extends AuthEvent {
+  const SignoutEvent();
+
+  @override
+  List<Object?> get props => [];
+}

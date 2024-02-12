@@ -27,3 +27,7 @@ class AuthSuccessState extends AuthState {
   @override
   List<Object?> get props => [];
 }
+class AuthLogoutState extends AuthState {
+  @override
+  List<Object?> get props => [];
+}

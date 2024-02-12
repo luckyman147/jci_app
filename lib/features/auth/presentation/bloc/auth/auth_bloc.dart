@@ -15,11 +15,36 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RefreshTokenUseCase refreshTokenUseCase;
+  final SignOutUseCase signoutUseCase;
 
-  AuthBloc({required this.refreshTokenUseCase}) : super(AuthInitial()){
+  AuthBloc({required this.refreshTokenUseCase,required this.signoutUseCase}) : super(AuthInitial()){
     on<RefreshTokenEvent>(
 _onRefreshToken,
-    );}
+
+    );
+    on<SignoutEvent>(_onSignoutEvent);
+
+  }
+
+
+
+  Future <void> _onSignoutEvent(
+      SignoutEvent event,
+      Emitter<AuthState> emit,
+      ) async {
+    if (event is SignoutEvent) {
+      emit(AuthLoading());
+      final result = await signoutUseCase.call(NoParams());
+      emit(_eitherDoneMessageOrErrorState(
+          result, 'Signout Successfully'));
+emit(AuthLogoutState());
+
+  }
+  }
+
+
+
+
   Future<void> _onRefreshToken(
       RefreshTokenEvent event,
       Emitter<AuthState> emit,

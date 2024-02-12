@@ -9,6 +9,10 @@ const String OFFLINE_FAILURE_MESSAGE = 'Please Check your Internet Connection';
 const String SIGNUP_FAILURE_MESSAGE = "Sign up failed Please try again";
 const String EMAIL_EXISTED_FAILURE_MESSAGE = "Email already existed";
 const String WRONG_CRED_Failure = "Wrong credentials Check Again";
+const String ALREA_FAILURE_MESSAGE = 'Already logged out';
+const String  UNAUTHORIZED_MESSAGE= 'Unauthorized';
+
+const String TOKEN_EXPIRED_FAILURE_MESSAGE = 'Token Expired';
 String mapFailureToMessage(Failure failure) {
   switch (failure.runtimeType) {
     case ServerFailure:
@@ -21,6 +25,12 @@ String mapFailureToMessage(Failure failure) {
       return EMAIL_EXISTED_FAILURE_MESSAGE;
     case WrongCredentialsFailure:
       return WRONG_CRED_Failure;
+    case ExpiredFailure:
+      return TOKEN_EXPIRED_FAILURE_MESSAGE;
+    case AlreadyLogoutFailure:
+      return ALREA_FAILURE_MESSAGE;
+    case UnauthorizedFailure:
+      return UNAUTHORIZED_MESSAGE;
 
     default:
       return "Unexpected Error , Please try again later .";
