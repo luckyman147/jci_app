@@ -4,13 +4,15 @@ import 'package:jci_app/core/error/Exception.dart';
 import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/core/network/network_info.dart';
 import 'package:jci_app/features/auth/data/datasources/authRemote.dart';
+import 'package:jci_app/features/auth/data/models/MemberModel.dart';
+import 'package:jci_app/features/auth/domain/entities/LoginMember.dart';
 
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
 
 import '../../domain/repositories/AuthRepo.dart';
 typedef Future<bool> Auth();
-
+typedef Future<Unit> ResetPassword();
 class AuthRepositoryImpl implements AuthRepo {
   final AuthRemote api ;
 final NetworkInfo networkInfo;
@@ -24,12 +26,32 @@ final NetworkInfo networkInfo;
         return Right(true);
       }
 
-    on EmptyCacheException{
-      return Left(EmptyCacheFailure());}
+      on EmptyCacheException {
+        return Left(EmptyCacheFailure());
+      }
+      catch (e) {
+        return Left(ServerFailure());
+      }
+    }
+
+      else {
+        return Left(OfflineFailure());
+      }
+  }
+    Future<Either<Failure, Unit>> _getMessageReset(
+      Future<Unit> AuthReset) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await AuthReset;
+        return Right(unit);
+      }
+
+
       catch(e){
 
         return Left(ServerFailure());
       }
+
     }
 
 
@@ -62,9 +84,10 @@ return _getMessage(api.signOut());
   }
 
   @override
-  Future<Either<Failure, MemberSignUp>> updatePassword(String password) {
-    // TODO: implement updatePassword
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> updatePassword(Member member) {
+final MemberModel memberModel=MemberModel(email: member.email, password: member.password);
+
+      return _getMessageReset(api.updatePassword(memberModel));
   }
 
   @override

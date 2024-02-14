@@ -166,25 +166,32 @@ export const verifyexpiry=async(req:Request,res:Response,next:NextFunction)=>{
 export  const forgetPassword=async(req:Request,res:Response,next:NextFunction)=>{ 
 
 const NewCred=plainToClass(forgetPasswordInputs,req.body)
-    const errors=await validate(forgetPasswordInputs,{validationError:{target:false}})
+    const errors=await validate(NewCred,{validationError:{target:false}})
     if(errors.length>0){
-        return res.status(400).json(errors)
+        console.log(errors)
+        return res.status(401).json(errors)
     }
 
 
 // send email to the user with reset password link
 // let code=generate_code();
 let status=200
-const ischanged=await Changepassword(NewCred.email,NewCred.Newpassword)
+const ischanged=await Changepassword(NewCred.email,NewCred.password)
 if (ischanged) {
 
-    
+    console.log('password changed')
     return res.status(status).json({message:"password changed"})
 }
+else{
+    console.log('password not changed')
+    return res.status(400).json({message:"Something missed"})
 
 }
 
-const Changepassword=async(email:string,password:string)=>{
+
+}
+
+export const Changepassword=async(email:string,password:string)=>{
     const member=await Member.findOne({email:email})
     try{
     if(member){

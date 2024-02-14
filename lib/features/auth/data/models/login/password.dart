@@ -28,16 +28,3 @@ extension on PasswordValidationError {
     }
   }
 }
-class PasswordValidationErrorText {
-  final String text;
-
-  const PasswordValidationErrorText(this.text);
-
-  static const invalid = PasswordValidationErrorText(
-    '''Password must be at least 8 characters and contain at least one letter and number''',
-  );
-
-  static const empty = PasswordValidationErrorText(
-    'Password must be at least 8 characters',
-  );
-}

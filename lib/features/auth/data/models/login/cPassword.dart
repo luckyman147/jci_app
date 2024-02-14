@@ -16,13 +16,4 @@ class ConfirmPassword extends FormzInput<String, ConfirmPasswordValidationError>
   }
 }
 
-extension on ConfirmPasswordValidationError {
-  String text() {
-    switch (this) {
-      case ConfirmPasswordValidationError.notEqual:
-        return 'Passwords do not match';
-      case ConfirmPasswordValidationError.empty:
-        return 'Please enter a password';
-    }
-  }
-}
+

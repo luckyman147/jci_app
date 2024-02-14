@@ -27,13 +27,13 @@ class MemberModelSignUp extends MemberSignUp {
     };
   }
 }
-class MemberModelLogin extends LoginMember {
+class MemberModel extends Member {
 
-  MemberModelLogin({required super.email, required super.password})
+  MemberModel({required super.email, required super.password})
 
   ;
-  factory MemberModelLogin.fromJson(Map<String, dynamic> json) {
-    return MemberModelLogin(
+  factory MemberModel.fromJson(Map<String, dynamic> json) {
+    return MemberModel(
 
       email:  json['email'],
       password: json['password']) ;

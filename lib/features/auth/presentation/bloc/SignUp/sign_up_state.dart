@@ -3,40 +3,28 @@ part of 'sign_up_bloc.dart';
 class SignUpState extends Equatable {
   const SignUpState({
       this.status = FormzSubmissionStatus.initial,
-    this.email = const Email.pure(),
-  this.confirmPassword = const ConfirmPassword.pure(),
+
+
     this.firstname = const Firstname.pure(),
     this.lastname = const Lastname.pure(),
     this.isValid = false,
-
-
+    this.email = const Email.pure(),
+    this.confirmPassword = const ConfirmPassword.pure(),
     this.password = const Password.pure(),
 
   });
 
   final FormzSubmissionStatus status;
-  final Email email;
+
   final Firstname firstname;
   final Lastname lastname;
   final bool isValid;
 
 
-
+  final Email email;
   final Password password;
   final ConfirmPassword confirmPassword;
-  List<PasswordValidationErrorText> get passwordValidationErrorTexts => [
-    PasswordValidationErrorText.invalid,
-    PasswordValidationErrorText.empty,
-  ];
 
-  PasswordValidationErrorText? get passwordValidationErrorText {
-    final passwordValidationError = password.displayError;
-    if (passwordValidationError == null) return null;
-    return passwordValidationErrorTexts.firstWhere(
-          (element) => element.text == passwordValidationError.name,
-      orElse: () => PasswordValidationErrorText.empty,
-    );
-  }
 
   SignUpState copyWith({
     FormzSubmissionStatus? status,

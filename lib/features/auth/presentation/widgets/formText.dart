@@ -64,7 +64,12 @@ final TextEditingController controller ;
       textInputAction: TextInputAction.done,
 controller: controller,
 
-validator: (value) {validator(value!);},
+ validator: (value) {
+  if (value!.isEmpty) {
+    return 'Please enter some text';
+  }
+  return null;
+},
           key: Key(inputkey),
           onChanged: (password) {
 
@@ -95,7 +100,7 @@ validator: (value) {validator(value!);},
   final String? errortext;
 final TextEditingController controller ;
   final Function(String) Onchanged  ;
-  final Function(String) validator  ;
+  final String validator  ;
   final String inputkey;
 
   const FormTextConPassword({Key? key, required this.inputkey, required this.Onchanged,required this.errortext, required this.controller, required this.validator, }) : super(key: key);
@@ -106,10 +111,20 @@ final TextEditingController controller ;
         return BlocBuilder<ToggleBooleanBloc, ToggleBooleanState>(
   builder: (context, state) {
     return TextFormField(
-          style: PoppinsRegular(18, textColorBlack,),
+          style: PoppinsRegular(16, textColorBlack,),
       textInputAction: TextInputAction.done,
 controller: controller,
-validator: (value) {validator(value!);},
+validator:
+
+    (value) {
+  if (value!.isEmpty) {
+    return 'Please enter the  password';
+  }
+  if (value != validator) {
+    return 'Passwords do not match';
+  }
+  return null;
+},
           key: Key(inputkey),
           onChanged: (password) {
 
@@ -121,7 +136,7 @@ validator: (value) {validator(value!);},
             focusedBorder: border(PrimaryColor),
             focusedErrorBorder: border(Colors.red),
             errorBorder: border(Colors.red),
-            errorStyle: ErrorStyle(15, Colors.red),
+            errorStyle: ErrorStyle(18, Colors.red),
             suffixIcon: IconButton(  onPressed: () {
                 context.read<ToggleBooleanBloc>().add(ToggleBoolean());
             },

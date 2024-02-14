@@ -12,7 +12,7 @@ import 'package:jci_app/features/auth/domain/repositories/SignUpRepo.dart';
 import 'package:jci_app/features/auth/domain/usecases/SIgnIn.dart';
 import 'package:jci_app/features/auth/domain/usecases/SignUp.dart';
 import 'package:jci_app/features/auth/presentation/bloc/login/login_bloc.dart';
-import 'package:jci_app/features/auth/presentation/bloc/sign_up_bloc.dart';
+import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 

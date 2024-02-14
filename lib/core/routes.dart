@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:go_router/go_router.dart';
+import 'package:path_to_regexp/path_to_regexp.dart';
 import 'package:jci_app/features/Home/presentation/pages/Home_page.dart';
 import 'package:jci_app/features/auth/presentation/pages/Forget_password_page.dart';
+import 'package:jci_app/features/auth/presentation/pages/ResetPasswordPage.dart';
 import 'package:jci_app/features/auth/presentation/pages/login_pages.dart';
+import 'package:jci_app/features/auth/presentation/pages/pinPage.dart';
 import 'package:jci_app/features/changelanguages/presentation/pages/screen.dart';
+import 'package:jci_app/features/intro/presentation/bloc/index_bloc.dart';
 
 
-import '../features/auth/presentation/bloc/auth/auth_bloc.dart';
+
 import '../features/auth/presentation/pages/SignUPPage.dart';
 import '../features/intro/presentation/pages/Introduction.dart';
 import '../features/intro/presentation/pages/Splash_screen.dart';
 
 
-GoRouter router(navigatorKey) => GoRouter(
-  initialLocation: '/',
+GoRouter router(navigatorKey,text)  => GoRouter(
+  initialLocation: text ??'/',
 
   routes: [
     GoRoute(
@@ -30,8 +34,23 @@ return ForgetPasswordPage();
 },
 
 
-),
+),GoRoute(
+path: '/pin/:email',
+builder: (BuildContext context, GoRouterState state) {
+  final  email = state.pathParameters['email']! ;
 
+  return Pincode(email: email,);
+},
+
+
+),
+GoRoute(
+path: '/reset/:email',
+builder: (BuildContext context,  state) {
+  final  email = state.pathParameters['email']! ;
+return ResetPassword(email: email,);
+},
+),
 
 GoRoute(
       path: '/Intro',

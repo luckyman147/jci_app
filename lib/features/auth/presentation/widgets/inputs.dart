@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/sign_up_bloc.dart';
+import '../bloc/SignUp/sign_up_bloc.dart';
 import 'formText.dart';
 
 class PasswordInput extends StatelessWidget {
@@ -19,7 +19,7 @@ class PasswordInput extends StatelessWidget {
           Onchanged: (password) {
             context.read<SignUpBloc>().add(SignUpPasswordChanged(password));
           } ,
-          errortext:  state.passwordValidationErrorText?.text, controller: controller, validator: (String ) {
+          errortext:  null, controller: controller, validator: (String ) {
             if(String.isEmpty)
               return 'Empty';
             if(String.length < 6)
@@ -49,13 +49,7 @@ class confirmpassword extends StatelessWidget {
           errortext: null,
 
 
-          controller: controller, validator: (val){
-            if(val.isEmpty)
-              return 'Empty';
-            if(val != PasswordContro.text)
-              return 'Not Match';
-            return null;
-          },
+          controller: controller, validator: PasswordContro.text,
 
 
         );

@@ -5,7 +5,7 @@ import 'package:formz/formz.dart';
 import 'package:jci_app/core/app_theme.dart';
 
 import '../../domain/entities/Member.dart';
-import '../bloc/sign_up_bloc.dart';
+import '../bloc/SignUp/sign_up_bloc.dart';
 
 class authButton extends StatelessWidget {
   const authButton({Key? key, required this.onPressed, required this.text, required this.string})

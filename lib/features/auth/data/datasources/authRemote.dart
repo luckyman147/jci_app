@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 
 import 'package:jci_app/core/config/services/store.dart';
 import 'package:jci_app/core/error/Exception.dart';
+import 'package:jci_app/features/auth/data/models/MemberModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,7 +14,7 @@ abstract class  AuthRemote {
   Future<bool>  signOut();
   Future<Either<Failure, MemberSignUp>> sendPasswordResetEmail(String email);
   Future<Either<Failure, MemberSignUp>> verifyEmail();
-  Future<Either<Failure, MemberSignUp>> updatePassword(String password);
+  Future<Unit> updatePassword(MemberModel member);
   Future<bool> refreshToken();
   Future<Either<Failure, MemberSignUp>> deleteAccount();
 
@@ -33,7 +34,7 @@ final http.Client client;
     final tokens=await Store.GetTokens();
     if (tokens[0] == null ) {
       print('famech token');
-      throw EmptyCacheException();
+
 
     }
     // replace with your API endpoint
@@ -137,9 +138,34 @@ if (response['message']=='Already logged out'){
   }
 
   @override
-  Future<Either<Failure, MemberSignUp>> updatePassword(String password) {
-    // TODO: implement updatePassword
-    throw UnimplementedError();
+  Future<Unit> updatePassword(MemberModel member)async {
+  const apiUrl = "http://10.0.2.2:8080/auth/forgetPassword";
+  final body=jsonEncode(member.toJson());
+  print("body");
+  print(body);
+    final Response = await client.patch(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: body,
+    );
+
+    if (Response.statusCode == 200) {
+      final Map<String, dynamic> response = jsonDecode(Response.body);
+      print(response);
+      return Future.value(unit);
+    }
+    else if (Response.statusCode==401){
+        throw WrongCredentialsException();
+    }
+
+    else {
+      // Request failed
+      print('Request failed with status: ${Response.statusCode}');
+      print('Response body: ${Response.body}');
+      throw ServerException();
+    }
   }
 
   @override

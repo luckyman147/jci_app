@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
-import 'package:jci_app/features/auth/presentation/bloc/sign_up_bloc.dart';
+import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
 import 'package:jci_app/features/auth/presentation/widgets/SignUpForm.dart';
 
 import '../../../../core/util/snackbar_message.dart';
@@ -38,9 +38,11 @@ context.go('/login');
           },
           builder: (context, state) {
             if (state is LoadingSignUp) {
-              return LoadingWidget();
+              return const Align(
+                  alignment: Alignment.center,
+                  child: LoadingWidget());
             }
-            return SingleChildScrollView(
+            return const SingleChildScrollView(
                 child: SignUpForm()
             );
           },

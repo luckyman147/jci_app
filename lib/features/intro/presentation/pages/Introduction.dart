@@ -5,6 +5,7 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 
 
+import '../../../../core/config/services/store.dart';
 import '../widgets/button_intro.dart';
 import '../widgets/caroussel.dart';
 
@@ -23,19 +24,19 @@ class IntroductionPage extends StatelessWidget {
           children: [
 //ElevatedButton(onPressed: (){context.go('/screen');}, child: Text('Change Language')),
             const Flexible(child: CarouselWidget()),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Column(
-                children: [
-                  button_intro_widget(text:"Explore".tr(context), onPressed: () {
-                    context.go( '/home');
-                  }),
+            Column(
+              children: [
+                button_intro_widget(text:"Explore".tr(context), onPressed: ()async  {
+                  context.go( '/home');
 
-                  button_intro_widget_filled(text:"Get Started".tr(context), onPressed: () {
-                    context.go( '/login');
-                  }),
-                ],
-              ),
+                }),
+
+                button_intro_widget_filled(text:"Get Started".tr(context), onPressed: ()async {
+                  context.go( '/login');
+
+
+                }),
+              ],
             )
 
           ],

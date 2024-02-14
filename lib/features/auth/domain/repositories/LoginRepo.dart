@@ -7,5 +7,5 @@ abstract class LoginRepo{
   Future<Either<Failure, Map>> LogInWithGoogle();
   Future<Either<Failure, Map>> LogInWithFacebook();
 
-  Future<Either<Failure, Unit>> LogInWithCredentials(LoginMember loginMember);
+  Future<Either<Failure, Unit>> LogInWithCredentials(Member loginMember);
 }

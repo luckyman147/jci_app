@@ -19,6 +19,10 @@ OutlineInputBorder border(Color color)=> OutlineInputBorder(
   borderRadius: BorderRadius.circular(16.0),
   borderSide: BorderSide(color: color,width: 3 ),
 );
+
+
+
+
 final decoration=BoxDecoration(
   color: PrimaryColor,
 

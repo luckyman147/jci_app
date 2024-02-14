@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 abstract class LoginRemoteDataSource {
-  Future<Unit> Login(MemberModelLogin memberModelLogin);
+  Future<Unit> Login(MemberModel memberModelLogin);
 }
 
 const BASE_URL = "http://10.0.2.2:8080/auth/login/";
@@ -20,7 +20,7 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
 
   LoginRemoteDataSourceImpl({required this.client});
   @override
-  Future<Unit> Login(MemberModelLogin modelLogin) async {
+  Future<Unit> Login(MemberModel modelLogin) async {
 
 
 

@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:formz/formz.dart';
-//import 'package:formz/formz.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 
-import 'package:jci_app/features/auth/data/models/login/lastname.dart';
-import 'package:jci_app/features/auth/presentation/bloc/sign_up_bloc.dart';
-import 'package:jci_app/features/auth/presentation/widgets/Text.dart';
-import 'package:jci_app/features/auth/presentation/widgets/button_auth.dart';
-import 'package:jci_app/features/auth/presentation/widgets/formText.dart';
 
-//import '../../../../core/util/snackbar_message.dart';
-import '../../../../core/strings/app_strings.dart';
-import '../../data/models/login/Email.dart';
-import '../../data/models/login/firstname.dart';
+import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
+
+import 'package:jci_app/features/auth/presentation/widgets/Text.dart';
+
+import '../../../../core/widgets/backbutton.dart';
+
 import '../../domain/entities/Member.dart';
 import 'inputs.dart';
 
@@ -56,17 +53,7 @@ void _resetform(){
       mainAxisAlignment: MainAxisAlignment.center,
 
       children: [
-        Align(
-            alignment: Alignment.topLeft,
-            child:Padding(
-              padding: const EdgeInsets.symmetric(vertical: 7.0),
-              child: InkWell(
-                  onTap: (){
-                    context.go('/login');
-                  },
-
-                  child: SvgPicture.string(pic,width: 60,)),
-            )),
+      Backbutton(mediaquery, context, '/login'),
         Align(
           alignment: Alignment.center,
           child: Padding(

@@ -3,11 +3,16 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:formz/formz.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
 import '../../../../../core/usescases/usecase.dart';
+import '../../../data/models/login/Email.dart';
+import '../../../data/models/login/cPassword.dart';
+import '../../../data/models/login/cPassword.dart';
+import '../../../data/models/login/password.dart';
 import '../../../domain/usecases/authusecase.dart';
 
 part 'auth_event.dart';

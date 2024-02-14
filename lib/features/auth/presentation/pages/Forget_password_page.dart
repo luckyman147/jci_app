@@ -4,9 +4,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
+import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/strings/app_strings.dart';
+import '../../../../core/widgets/backbutton.dart';
 import '../bloc/login/login_bloc.dart';
 import '../widgets/Text.dart';
 import '../widgets/formText.dart';
@@ -26,42 +29,42 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
     final MediaQueryData mediaquery = MediaQuery.of(context);
     return  Scaffold(
       body :
-        Form(
-          key: _key,
-          child: Column(
-            children: [
-              Align(
-                  alignment: Alignment.topLeft,
-                  child:Padding(
-                    padding: EdgeInsets.symmetric(vertical:mediaquery.size.height/11),
-                    child: InkWell(
-                        onTap: (){
-                          context.go('/login');
-                        },
-
-                        child: SvgPicture.string(pic,width: 60,)),
-                  )),
-              Padding(
-                padding: EdgeInsets.only(bottom: mediaquery.size.width/10),
-                child: TextWidget(text: "reset your password".tr(context), size:mediaquery.size.width/14 ),
-              ),
-
-
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: mediaquery.size.width/10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Align(
-                        alignment:    Alignment.topLeft,
-                        child: Label(text: "Email", size: 22)),
-                    _EmailInput(controller: _emailController,),
-                  ],
+        SingleChildScrollView(
+          child: Form(
+            key: _key,
+            child: Column(
+              children: [
+                Backbutton(mediaquery, context, '/login'),
+                Padding(
+                  padding: EdgeInsets.only(bottom: mediaquery.size.height/20,top: mediaquery.size.height/5,right: mediaquery.size.width/10,left: mediaquery.size.width/10),
+                  child: Column(
+                    children: [
+                      TextWidget(text: "reset  password".tr(context), size:mediaquery.size.width/11 ),
+                   SizedBox(
+                       width: mediaquery.size.width/1.32,
+                       child: Text("send email".tr(context),style: PoppinsLight(mediaquery.size.width/23, ThirdColor )))
+          
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: 30,),
-              _CheckButton(_key),
-            ],
+          
+          
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: mediaquery.size.width/10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Align(
+                          alignment:    Alignment.topLeft,
+                          child: Label(text: "Email", size: 22)),
+                      _EmailInput(controller: _emailController,),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 30,),
+                _CheckButton(_key),
+              ],
+            ),
           ),
         )
     );
@@ -71,27 +74,22 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
       GlobalKey<FormState> keyConr,
       ) {
     final MediaQueryData mediaquery = MediaQuery.of(context);
-    return BlocBuilder<LoginBloc, LoginState>(
+    return BlocBuilder<ResetBloc, ResetPasswordState>(
       builder: (context, state) {
-        return state.status.isInProgress
-            ? const CircularProgressIndicator()
-            : Padding(
+        return
+
+            Padding(
           padding: EdgeInsets.symmetric(horizontal: mediaquery.size.width/10),
               child: Container(
 
                         height: 66,
-                        decoration: BoxDecoration(
-              color: PrimaryColor,
-
-              borderRadius: BorderRadius.circular(16.0),
-              border: Border.all(color: textColorBlack, width: 2.0),
-                        ),
+                        decoration: decoration,
                         child: InkWell(
 
-              key: const Key('loginForm_continue_raisedButton'),
               onTap: () {
-                context.go('/login');
-
+                if (keyConr.currentState!.validate()) {
+                  context.go('/pin/${state.email.value}');
+                }
               //  if (keyConr.currentState!.validate()) {
                 //  final member = LoginMember(email: state.email.value,
                   //  password: state.password.value,
@@ -121,14 +119,15 @@ class _EmailInput extends StatelessWidget {
   const _EmailInput({super.key, required this.controller});
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
-      buildWhen: (previous, current) => previous.email != current.email,
-      builder: (context, state) {
-        return FormText(inputkey: "ForgetForm_EmailInput_textField",
-          Onchanged:(email){},
-          //    (email) => context.read<LoginBloc>().add(LoginEmailnameChanged(email)),
+    return BlocBuilder<ResetBloc, ResetPasswordState>(
 
-          errorText:  state.  email.displayError!=null?"Invalid Email":null, controller: controller,);
+      builder: (context, state) {
+        print("${controller.text}");
+        return FormText(inputkey: "ForgetForm_EmailInput_textField",
+          Onchanged:
+              (email) => context.read<ResetBloc>().add(EmailnameChanged(email)),
+
+          errorText:  null, controller: controller,);
       },
     );
   }

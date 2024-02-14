@@ -15,6 +15,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_localization:
+  path_to_regexp:
   jwt_decoder:
     # Bloc for state management
   flutter_bloc: ^8.1.2

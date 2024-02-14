@@ -43,10 +43,10 @@ class LoginRepoImpl implements LoginRepo {
   }
 
   @override
-  Future<Either<Failure, Unit>> LogInWithCredentials(LoginMember loginMember) async {
+  Future<Either<Failure, Unit>> LogInWithCredentials(Member loginMember) async {
 
 
-        final MemberModelLogin memberModelLogin=MemberModelLogin(email: loginMember.email, password: loginMember.password);
+        final MemberModel memberModelLogin=MemberModel(email: loginMember.email, password: loginMember.password);
         print("heelo from login repo");
         final message= loginRemoteDataSource.Login(memberModelLogin );
         print(message);

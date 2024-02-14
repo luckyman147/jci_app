@@ -20,13 +20,3 @@ class Email extends FormzInput<String, EmailValidationError> {
 
   bool get isValidEmail => _emailRegExp.hasMatch(value);
 }
-extension on EmailValidationError {
-  String text() {
-    switch (this) {
-      case EmailValidationError.invalid:
-        return 'Please ensure the email entered is valid';
-      case EmailValidationError.empty:
-        return 'Please enter an email';
-    }
-  }
-}

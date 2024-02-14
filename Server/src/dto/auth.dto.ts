@@ -14,9 +14,9 @@ refreshToken:string
 
 }
 export class forgetPasswordInputs{
-    @IsNotEmpty()@IsEmail()
+    @IsNotEmpty()
+    @IsEmail()
     email:string
     @Length(8,13)
-    @IsStrongPassword()
-    Newpassword:string
+    password:string
 }

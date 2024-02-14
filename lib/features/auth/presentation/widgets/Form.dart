@@ -7,12 +7,14 @@ import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 import 'package:jci_app/features/auth/domain/entities/LoginMember.dart';
+
 import 'package:jci_app/features/auth/presentation/widgets/Text.dart';
 import 'package:jci_app/features/auth/presentation/widgets/button_auth.dart';
 import 'package:jci_app/features/auth/presentation/widgets/formText.dart';
 
 import '../../../../core/strings/app_strings.dart';
 import '../../../../core/util/snackbar_message.dart';
+import '../../../../core/widgets/backbutton.dart';
 import '../bloc/login/login_bloc.dart';
 
 class LoginForm extends StatefulWidget {
@@ -50,17 +52,7 @@ final mediaquery = MediaQuery.of(context);
            mainAxisAlignment: MainAxisAlignment.start,
 
           children: [
-            Align(
-                alignment: Alignment.topLeft,
-                child:Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 11.0),
-                  child: InkWell(
-                      onTap: (){
-                        context.go('/Intro');
-                      },
-
-                      child: SvgPicture.string(pic,width: 60,)),
-                )),
+            Backbutton(mediaquery, context, "/Intro"),
             TextWidget(text: "Sign In".tr(context), size: 43),
 
 
@@ -159,7 +151,7 @@ final mediaquery = MediaQuery.of(context);
             onTap: () {
 
               if (keyConr.currentState!.validate()) {
-                final member = LoginMember(email: state.email.value,
+                final member = Member(email: state.email.value,
                   password: state.password.value,
                 );
 

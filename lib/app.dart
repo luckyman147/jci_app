@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
+
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
 import 'core/config/locale/app__localizations.dart';
@@ -16,13 +17,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'features/auth/presentation/bloc/bool/toggle_bool_bloc.dart';
 import 'features/auth/presentation/bloc/login/login_bloc.dart';
-import 'features/auth/presentation/bloc/sign_up_bloc.dart';
+import 'features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
 import 'features/intro/presentation/bloc/index_bloc.dart';
 
 class MyApp extends StatefulWidget {
-
+  final String? text;
   const MyApp({
-    super.key,
+    super.key, this.text,
   });
 
   @override
@@ -33,7 +34,7 @@ class _MyAppState extends State<MyApp> {
   int initialIndex = 0;
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
 
     // TODO: implement initState
@@ -53,6 +54,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (_)=>di.sl<ResetBloc>()),
         BlocProvider(create: (_)=>di.sl<AuthBloc>()..add(RefreshTokenEvent())),
         BlocProvider(create: (_) => di.sl<SignUpBloc>()),
         BlocProvider(create: (_) => di.sl<LoginBloc>()),
@@ -71,9 +73,9 @@ class _MyAppState extends State<MyApp> {
         builder: (context, state) {
 
 if (state is ChangeLocalState) {
-          return MaterialApp.router(
+          return MaterialApp.router (
             theme: themeData,
-            routerConfig: router(_navigatorKey),
+            routerConfig:  router(_navigatorKey,widget.text),
             debugShowCheckedModeBanner: false,
             title: 'JCI App',
             supportedLocales: const [

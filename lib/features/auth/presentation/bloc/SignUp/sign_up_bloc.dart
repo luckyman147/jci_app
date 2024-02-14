@@ -11,13 +11,13 @@ import 'package:jci_app/features/auth/domain/entities/Member.dart';
 import 'package:jci_app/features/auth/domain/usecases/SignUp.dart';
 
 
-import '../../../../core/error/Failure.dart';
-import '../../../../core/strings/failures.dart';
-import '../../data/models/login/Email.dart';
-import '../../data/models/login/cPassword.dart';
-import '../../data/models/login/firstname.dart';
-import '../../data/models/login/lastname.dart';
-import '../../data/models/login/password.dart';
+import '../../../../../core/error/Failure.dart';
+import '../../../../../core/strings/failures.dart';
+import '../../../data/models/login/Email.dart';
+import '../../../data/models/login/cPassword.dart';
+import '../../../data/models/login/firstname.dart';
+import '../../../data/models/login/lastname.dart';
+import '../../../data/models/login/password.dart';
 
 
 part 'sign_up_event.dart';

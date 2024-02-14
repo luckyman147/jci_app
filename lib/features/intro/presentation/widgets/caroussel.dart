@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/core/config/locale/app_localizations_delegate.dart';
+
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../bloc/index_bloc.dart';
@@ -57,14 +57,15 @@ class _CarouselWidgetState extends State<CarouselWidget> {
 carouselController:controller ,
                       options: CarouselOptions(
                        height: 500,
-                        enlargeFactor: 1,
 
+                        enlargeFactor: 1,
+autoPlayInterval: const Duration(seconds: 5),
                         viewportFraction: 1,
 initialPage: state.props[0] as int,
 
 
                         enableInfiniteScroll: false,
-                        autoPlay: false,
+                        autoPlay: true,
                         enlargeStrategy: CenterPageEnlargeStrategy.height,
 
                         onPageChanged: (index, reason) {

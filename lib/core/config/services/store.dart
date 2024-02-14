@@ -1,3 +1,4 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Store{
@@ -17,6 +18,21 @@ class Store{
     final access=await pref.getString(_AccessTokenKey);
     print([access,refresh]);
     return [refresh,access];
+  }
+  static Future<String?> getPathInitial() async{
+    final pref =const FlutterSecureStorage();
+
+    final path=pref.read(key: '/path');
+    if (path!=null) {
+      return path;
+    }
+    else{
+      return "/";
+    }
+  }
+  static Future<void> setPath(String path)async{
+    final pref =const FlutterSecureStorage();
+ pref.write(key: "/path", value: path);
   }
  static Future<void> clear() async{
    final pref =await SharedPreferences.getInstance();

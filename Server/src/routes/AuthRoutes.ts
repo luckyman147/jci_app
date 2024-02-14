@@ -13,6 +13,7 @@ router.post('/signup',MemberSignUp)
 router.patch('/forgetPassword',forgetPassword)
 //*login
 router.post('/login',MemberLogin)
+
 // router.post('/loginWithFacebook',MemberLogin)
 // router.post('/loginWithGoogle',MemberLogin)
 router .post('/logout',  Authenticate,logout)

@@ -4,9 +4,10 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:jci_app/features/auth/data/datasources/authRemote.dart';
 import 'package:jci_app/features/auth/data/repositories/auth.dart';
 import 'package:jci_app/features/auth/domain/repositories/AuthRepo.dart';
+import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/login/login_bloc.dart';
-import 'package:jci_app/features/auth/presentation/bloc/sign_up_bloc.dart';
+import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
 
 
 import '../../core/network/network_info.dart';
@@ -25,6 +26,8 @@ import 'domain/usecases/authusecase.dart';
 final sl = GetIt.instance;
 
 Future <void > initAuth()async{
+  sl.registerFactory(() => ResetBloc(sl()));
+
 sl.registerFactory(() => AuthBloc(
      refreshTokenUseCase: sl(), signoutUseCase: sl(),
   ));
@@ -45,6 +48,7 @@ sl.registerLazySingleton<AuthRemote>(() => AuthRemoteImpl(client: sl()));
 
 
 //use cases
+  sl.registerLazySingleton(() => UpdatePasswordUseCase(authRepository: sl()));
   sl.registerLazySingleton(() => SignOutUseCase(authRepository: sl()));
   sl.registerLazySingleton(() => RefreshTokenUseCase( authRepository: sl()));
   sl.registerLazySingleton(() => SignUpUseCase(authRepo: sl()));
