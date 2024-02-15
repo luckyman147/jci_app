@@ -13,7 +13,7 @@ export const  VerifyrefreshToken =async(refrecshToken:string)=>{
        const payload = jwt.verify(refrecshToken, process.env.APP_SECRET as string) as MemberPayload;
    
    if (payload){
-     if ( !await isRefreshTokenValid(payload._id, refrecshToken)) {
+     if ( !await isRefreshTokenValid(payload.email, refrecshToken)) {
        return { message: 'refresh revoked', accessToken: '' };
      }
    
@@ -40,9 +40,9 @@ export const  VerifyrefreshToken =async(refrecshToken:string)=>{
    return {message:'something wrong',accessToken:''}
     }
 
-    export const isRefreshTokenValid = async (userId:string, refreshToken:string) => {
+    export const isRefreshTokenValid = async (email:string, refreshToken:string) => {
      try {
-       const user = await Member.findById(userId);
+       const user = await Member.findOne({email:email});
    if(user)
        // Check if the refresh token is not in the list of revoked tokens
        return !user.refreshTokenRevoked.includes(refreshToken);
@@ -65,12 +65,12 @@ export const  VerifyrefreshToken =async(refrecshToken:string)=>{
        return false;
      }
    };
-   export const revokeRefreshToken = async (userId:string, refreshToken:string,accesstoken:string) => {
+   export const revokeRefreshToken = async (email:string,userId:string, refreshToken:string,accesstoken:string) => {
      try {
-       const user = await Member.findById(userId);
+       const user = await Member.findById(email);
    
        if (user) {
-   const check=await isRefreshTokenValid(userId,refreshToken) && await isAccessTokenValid(userId,accesstoken)
+   const check=await isRefreshTokenValid(email,refreshToken) && await isAccessTokenValid(userId,accesstoken)
    console.log
    ("hey  there",check)      
    

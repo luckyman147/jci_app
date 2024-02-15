@@ -4,30 +4,33 @@ import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:meta/meta.dart';
 
-part 'internet_event.dart';
 part 'internet_state.dart';
 
-class InternetBloc extends Bloc<InternetEvent, InternetState> {
+class InternetCubit extends Cubit<InternetState> {
   StreamSubscription? _subscription;
-  InternetBloc() : super(InternetInitial()) {
-    on<InternetEvent>((event, emit) {
-      if (event is ConnectedEvent) {
-        emit(ConnectedState("Connected"));
-      } else if (event is NotConnectedEvent) {
-        emit(NotConnectedState("Not Connected"));
-      }
-    });
+
+  InternetCubit() : super(InternetInitial());
+  void Connected() {
+    emit(ConnectedState("Connected"));
+  }
+
+  void NotConnected() {
+    emit(NotConnectedState("Not Connected"));
+  }
+
+  void CheckConnection() {
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
       if (result == ConnectivityResult.wifi ||
           result == ConnectivityResult.mobile) {
-        add(ConnectedEvent());
+        Connected();
       } else {
-        add(NotConnectedEvent());
+        NotConnected();
       }
     });
   }
+
   @override
   Future<void> close() {
     _subscription!.cancel();

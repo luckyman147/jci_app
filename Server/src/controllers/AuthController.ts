@@ -51,12 +51,12 @@ console.log(role)
 
         }
         console.log(result)
-        return res.status(201).json({message:"sign up completed ",_id:result.id,is_validated:result.is_validated,email:result.email})
+        return res.status(201).json({message:"sign up completed " })
 
         
-}
+}console.log('something')
 return res.status(400).json({message:'something went wrong'})
-console.log('something')
+
 }
 
 
@@ -83,8 +83,9 @@ export const MemberLogin= async(req:Request,res:Response,next:NextFunction)=>{
           }) 
           const {refreshToken}=
           await generateRefreshToken({
-            _id :MemberInfo._id,
-            role:MemberInfo.role._id,
+            _id:MemberInfo._id,
+          
+         
                
                 email:MemberInfo.email,
              
@@ -114,7 +115,7 @@ export const logout = async (req: Request, res: Response, next: NextFunction) =>
   
   if (member && signature){
 
-   const respnse=   await revokeRefreshToken(member?._id, refreshToken,signature);
+   const respnse=   await revokeRefreshToken(member?.email,member?._id, refreshToken,signature);
 
       res.status(200).json(respnse);
   }

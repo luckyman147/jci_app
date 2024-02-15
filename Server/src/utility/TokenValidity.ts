@@ -4,10 +4,11 @@ import jwt from 'jsonwebtoken';
 
 import { ADminPayload } from '../dto/admin.dto';
 import { AuthPayload } from '../dto/auth.dto';
-import { MemberPayload, } from '../dto/member.dto';
+import { EmailPayload, MemberPayload, } from '../dto/member.dto';
 import { SuperAdminPayload } from '../dto/superAdmin.dto';
 import { Role } from '../models/role';
 import { isAccessTokenValid, isRefreshTokenValid } from './verification';
+import { Member } from '../models/Member';
 
 require('dotenv').config();
 
@@ -31,7 +32,7 @@ export const generateAccessToken =async (payload: MemberPayload) => {
       
     };
   };
-  export const generateRefreshToken = async (payload: AuthPayload) => {
+  export const generateRefreshToken = async (payload: EmailPayload) => {
     // Ensure APP_SECRET is defined
     if (!process.env.APP_SECRET) {
       throw new Error('APP_SECRET environment variable is not defined');
@@ -41,15 +42,25 @@ export const generateAccessToken =async (payload: MemberPayload) => {
     const refreshToken = jwt.sign(payload, process.env.APP_SECRET , {
       expiresIn: '1d',
     });
-    if (!await isRefreshTokenValid(payload._id,refreshToken)){
-await generateAccessToken(payload)
-    }
+    if (!await isRefreshTokenValid(payload.email,refreshToken)){
+const member=await Member.findOne({email:payload.email})
+if (member){
+await generateAccessToken({
+  _id:member._id,
+  email:member.email,
+  role:member.role
+})
+}
+}
+
+
+    
   
     return {
       refreshToken
       
-    };
-  };
+    };}
+
   
   
   export const validateSignature = async (req: Request) => {   

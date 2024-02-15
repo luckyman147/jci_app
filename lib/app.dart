@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:jci_app/features/intro/presentation/bloc/internet/internet_bloc.dart';
 
 import 'core/config/locale/app__localizations.dart';
 
@@ -54,6 +55,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (_)=> InternetCubit()..CheckConnection()),
         BlocProvider(create: (_)=>di.sl<ResetBloc>()),
         BlocProvider(create: (_)=>di.sl<AuthBloc>()..add(RefreshTokenEvent())),
         BlocProvider(create: (_) => di.sl<SignUpBloc>()),

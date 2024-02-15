@@ -28,6 +28,34 @@ if (admin){
 }
 
 }
+export const ChangeToMember=async(req:Request, res:Response,next:NextFunction)=>{
+    const Admin=req.user
+    if (Admin){
+        const id=req.params.id
+        const member = await Member.findById(id);
+
+
+        if (!member) {
+          return res.status(404).json({ error: 'Member not found' });
+        }
+        const role=await findrole('member')
+        member.role=role
+        //Save
+        role?.Members.push(member.id)
+        const saved=await member.save()
+        if (saved) {
+            return res.status(201).json(saved);
+            
+            
+        }
+      
+
+    
+
+    }
+
+
+}
 
 //* get members
 

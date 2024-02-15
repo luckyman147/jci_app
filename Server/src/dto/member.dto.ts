@@ -50,3 +50,7 @@ export interface MemberPayload{
     role:string
 
 }
+export interface EmailPayload{
+    email:string,
+    _id:string
+}
