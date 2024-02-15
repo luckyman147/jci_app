@@ -16,19 +16,19 @@
 "Next": "Next",
   "Pincode": "Pincode",
 "send email": "Enter the email associated with your account and we'll send you an email with instructions to reset your password.",
-  "We have  sent the code verification": "We have  sent the code verification",
+  "We have sent the verification code. Please check your inbox.": "We have  sent the code verification",
   "Verification Code":"Verification Code",
   "Already have an account?": "Already have an account?",
-    "Confirm Password": "Password Confirmation",
+    "Confirm Password": "Confirm Password",
     "Last Name": "Last Name",
   "First Name": "First Name",
-
-
+"New Password": "New  Password ",
+"Password Empty": "Password Empty",
   "Contact": "Contact",
   "Privacy Policy": "Privacy Policy",
 "Don't have an account?": "Don't have an account?",
-
-
+"Passwords do not match": "Passwords do not match",
+"Please enter some text": "Please enter some text",
       "titre_0": "Our Mission",
       "description_0": "To offer young leaders opportunities for leadership development by enhancing their ability to create positive change.",
 

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/services/store.dart';
 
 import 'package:jci_app/core/widgets/loading_widget.dart';
 
@@ -21,6 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+
     _navigateAfterDelay();
   }
 
@@ -30,7 +32,11 @@ class _SplashScreenState extends State<SplashScreen> {
     // Check if the widget is still mounted before accessing the context
     if (mounted) {
       final authState = BlocProvider.of<AuthBloc>(context).state;
-      if (authState is AuthFailureState) {
+      final language=await Store.getLocaleLanguage();
+      if (language==null){
+        context.go('/screen');
+      }
+else      if (authState is AuthFailureState) {
         context.go('/Intro');
       } else if (authState is AuthSuccessState) {
         context.go('/home');

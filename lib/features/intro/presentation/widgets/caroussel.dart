@@ -145,7 +145,7 @@ initialPage: state.props[0] as int,
           children: [
             Text("titre_$index".tr(context), style: PoppinsSemiBold(44,Colors.black,TextDecoration.none),),
             Padding(padding: EdgeInsets.only(left: 65,right: 30),
-                child: Text("description_$index". tr(context), style: PoppinsNorml(16,Colors.black),textAlign: TextAlign.start,)),
+                child: Text("description_$index". tr(context), style: PoppinsNorml(17,Colors.black),textAlign: TextAlign.start,)),
           ],
         )
 
@@ -171,7 +171,7 @@ Future<List< dynamic>> _loadJsonData(BuildContext context) async {
 Widget _buildIndicator(int index,int len){
   MediaQueryData mediaQuery=MediaQueryData();
   return Padding(
-    padding:  EdgeInsets.only(bottom: 20,top:30 ),
+    padding:  EdgeInsets.only(bottom:11,top:30 ),
     child:   Align(
       alignment: Alignment.bottomCenter,
       child: AnimatedSmoothIndicator(activeIndex: index, count: len, effect:const  WormEffect(

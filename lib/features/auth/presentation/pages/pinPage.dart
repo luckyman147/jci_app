@@ -20,9 +20,7 @@ class _PincodeState extends State<Pincode> {
 
   final formKey = GlobalKey<FormState>();
   final _controller1 = TextEditingController();
-  final _controller2 = TextEditingController();
-  final _controller3 = TextEditingController();
-  final _controller4 = TextEditingController();
+
   @override
   Widget build(BuildContext context) {  print("email from pin ${widget.email}");
     final MediaQueryData mediaquery = MediaQuery.of(context);
@@ -39,7 +37,7 @@ SizedBox(
 SizedBox(
     width: mediaquery.size.width/1.32,
 
-    child: Text ('We have  sent the code verification'.tr(context), style: PoppinsLight(mediaquery.size.width/22, ThirdColor),)),
+    child: Text ('We have sent the verification code. Please check your inbox.'.tr(context), style: PoppinsLight(mediaquery.size.width/22, ThirdColor),)),
 
           SizedBox(
             width: mediaquery.size.width/1.32,
@@ -49,10 +47,10 @@ SizedBox(
                 Padding(
                   padding: EdgeInsets.only(top: mediaquery.size.height /22 ),
                   child: Align(
-                      alignment:    Alignment.topLeft,
-                      child: Label(text: "Pincode".tr(context), size: 20)),
+                      alignment:    Alignment.topCenter,
+                      child: Label(text: "Pincode".tr(context), size: 21)),
                 ),
-                PinForm(controller1: _controller1, formKey: formKey, controller2: _controller2, controller3: _controller3, controller4: _controller4),
+                PinForm(controller1: _controller1,size:mediaquery.size.width/1.32, formKey:formKey,),
               ],
             ),
           ),
@@ -68,9 +66,7 @@ SizedBox(
                       // Do something with the entered numbers
                       final numbers = [
                       _controller1.text,
-                      _controller2.text,
-                      _controller3.text,
-                      _controller4.text,
+
                       ];
                       print('Entered Numbers: $numbers');
                       context.go('/reset/${widget.email}');

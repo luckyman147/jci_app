@@ -1,15 +1,15 @@
 
+import 'package:jci_app/core/config/services/store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LanguageCacheHelper {
   Future<void> CacheLanguageCode(String languageCode) async {
-    final sharedPreference = await SharedPreferences.getInstance();
-    sharedPreference.setString('LOCALE', languageCode);
+   Store.setLocaleLanguage(languageCode);
   }
 
   Future<String> getCachedLanguageCode() async {
-    final sharedPreference = await SharedPreferences.getInstance();
-    final cachedLanguageCode = sharedPreference.getString("LOCALE");
+
+    final cachedLanguageCode =await  Store.getLocaleLanguage();
     if (cachedLanguageCode != null) {
       return cachedLanguageCode;
     }

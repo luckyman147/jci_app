@@ -1,13 +1,20 @@
 import express from "express";
 import { MemberLogin, MemberSignUp, RefreshTokenAccess, forgetPassword, logout } from "../controllers";
 import { Authenticate, AuthenticateSuperAdmin } from "../middleware/CommonAuth";
+import passport from "passport";
 
 
 const router =express.Router()
 
 //!Signup
 router.post('/signup',MemberSignUp)
-// router.post('/signupWithGoogle',MemberSignUp)
+router.get('/google', passport.authenticate("google", {
+    scope: ["email", "profile"],
+  }))
+  router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
+    res.send("This is the callback route");
+  });
+  
 // router.post('/signupWithFacebook',MemberSignUp)
 
 router.patch('/forgetPassword',forgetPassword)

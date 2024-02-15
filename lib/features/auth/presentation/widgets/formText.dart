@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/auth/presentation/bloc/bool/toggle_bool_bloc.dart';
 
 
@@ -20,7 +21,7 @@ class FormText extends StatelessWidget {
         return TextFormField(
           validator: (value) {
             if (value!.isEmpty) {
-              return 'Please enter some text';
+              return 'Please enter some text'.tr(context);
             }
             return null;
           },
@@ -63,14 +64,17 @@ final TextEditingController controller ;
           style: PoppinsRegular(16, textColorBlack,),
       textInputAction: TextInputAction.done,
 controller: controller,
-
+enableSuggestions: false,
  validator: (value) {
   if (value!.isEmpty) {
-    return 'Please enter some text';
+    return 'Password Empty'.tr (context);
+    
   }
   return null;
 },
+
           key: Key(inputkey),
+
           onChanged: (password) {
 
             Onchanged(password);},
@@ -111,6 +115,7 @@ final TextEditingController controller ;
         return BlocBuilder<ToggleBooleanBloc, ToggleBooleanState>(
   builder: (context, state) {
     return TextFormField(
+      enableSuggestions: false,
           style: PoppinsRegular(16, textColorBlack,),
       textInputAction: TextInputAction.done,
 controller: controller,
@@ -118,7 +123,7 @@ validator:
 
     (value) {
   if (value!.isEmpty) {
-    return 'Please enter the  password';
+    return 'Password Empty'.tr(context);
   }
   if (value != validator) {
     return 'Passwords do not match';

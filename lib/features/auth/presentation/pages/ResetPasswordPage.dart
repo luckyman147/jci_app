@@ -61,7 +61,7 @@ else if(state is MessageReset){
               child: SizedBox(
                   width: mediaquery.size.width/1.32,
 
-                  child: TextWidget(text: "Reset Password", size: 43)),
+                  child: TextWidget(text: "reset password".tr(context), size: 43)),
             ),
             Padding(
 
@@ -70,13 +70,13 @@ else if(state is MessageReset){
                         children: [
               Align(
                 alignment: Alignment.topLeft,
-                child: Label(text: 'New Password', size: 20,),
+                child: Label(text: 'New Password'.tr(context), size: 20,),
               ),
               PasswordInput(controller: Passwordcontroller),
                         SizedBox(height: 20,),
               Align(
                 alignment: Alignment.topLeft,
-                child: Label(text: 'Confirm Password', size: 20,),
+                child: Label(text: 'Confirm Password'.tr(context), size: 20,),
               ),
               confirmpassword(controller: ConPasswordcontroller, PasswordContro: Passwordcontroller,),
                     Padding(

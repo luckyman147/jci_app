@@ -38,4 +38,17 @@ class Store{
    final pref =await SharedPreferences.getInstance();
 await pref .clear();
  }
+ static Future<String?> getLocaleLanguage ()async {
+   final pref =await SharedPreferences.getInstance();
+   return  pref.getString('LOCALE');
+
+
+
+ } static Future<void> setLocaleLanguage (String locale)async {
+   final pref =await SharedPreferences.getInstance();
+   pref.setString('LOCALE',locale);
+
+
+
+ }
 }

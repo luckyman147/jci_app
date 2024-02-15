@@ -6,3 +6,10 @@ export const findrole=async (name:string)=>{
         return role
     }
 }
+
+export const findroleByid=async (id:string)=>{
+const role = await Role.findById(id);
+if (role){
+    return role.name;
+}
+}
