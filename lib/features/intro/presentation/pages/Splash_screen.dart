@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/services/store.dart';
@@ -27,21 +27,23 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _navigateAfterDelay() async {
-    await Future.delayed(Duration(seconds: 3));
-
-    // Check if the widget is still mounted before accessing the context
+    await Future.delayed(const Duration(seconds: 3));
     if (mounted) {
-      final authState = BlocProvider.of<AuthBloc>(context).state;
-      final language=await Store.getLocaleLanguage();
-      if (language==null){
-        context.go('/screen');
+      final authBloc = BlocProvider.of<AuthBloc>(context);
+
+      if (bool.fromEnvironment("dart.vm.product")) {
+        authBloc.add(RefreshTokenEvent());
       }
-else      if (authState is AuthFailureState) {
-        context.go('/Intro');
+
+      final authState = authBloc.state;
+      final language = await Store.getLocaleLanguage();
+
+      if (language == null) {
+        context.go('/screen');
       } else if (authState is AuthSuccessState) {
         context.go('/home');
       } else {
-        context.go('/login');
+        context.go('/Intro');
       }
     }
   }

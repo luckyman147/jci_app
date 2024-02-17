@@ -75,7 +75,7 @@ void _resetform(){
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      header("First Name".tr(context)),
+                      header("First Name".tr(context),mediaquery),
                       firstname(controller: _firstnameController, ),
 
                     ]),
@@ -86,7 +86,7 @@ void _resetform(){
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    header("Last Name".tr(context)),
+                    header("Last Name".tr(context),mediaquery),
                     lastname(controller: _lastnameController,),
                   ],
                 ),
@@ -98,7 +98,7 @@ void _resetform(){
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    header("Email".tr(context)),
+                    header("Email".tr(context),mediaquery),
                     UsernameInput(controller: _emailController,),
                   ],
                 ),
@@ -108,7 +108,7 @@ void _resetform(){
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Column(
                   children: [
-                    header("Password".tr(context)),
+                    header("Password".tr(context),mediaquery),
                     PasswordInput(controller: _passwordController,),
 
                   ],
@@ -118,7 +118,7 @@ void _resetform(){
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Column(
                   children: [
-                    header("Confirm Password".tr(context)),
+                    header("Confirm Password".tr(context),mediaquery),
                     confirmpassword(controller: _confirmPasswordController,PasswordContro: _passwordController,)
 
                   ],
@@ -140,13 +140,13 @@ void _resetform(){
           children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: mediaquery.size.width/60.5),
-              child: Text("Already have an account?".tr(context),style:PoppinsLight(17, textColorBlack),),
+              child: Text("Already have an account?".tr(context),style:PoppinsLight( mediaquery.size.width/30.5, textColorBlack),),
             ),
             InkWell(
               onTap: (){
                 context.go('/login');
               },
-              child: LinkedText(text: "Sign In".tr(context), size: 17,
+              child: LinkedText(text: "Sign In".tr(context), size:  mediaquery.size.width/30.5,
               ),
             )
           ],

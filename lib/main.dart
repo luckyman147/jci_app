@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:secure_shared_preferences/secure_shared_pref.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,6 +15,7 @@ void main() async {
   await di.init();
 
   final pref= await SharedPreferences.getInstance();
+  final secure=await SecureSharedPref.getInstance();
 
 
   Bloc.observer = AppObserver();

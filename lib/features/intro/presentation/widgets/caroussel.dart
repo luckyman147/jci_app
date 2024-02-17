@@ -100,6 +100,7 @@ initialPage: state.props[0] as int,
   }
 
   Widget _buildDescription(String image, String titre, String description, int index,double size) {
+    final mediaQuery=MediaQuery.of(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -145,7 +146,7 @@ initialPage: state.props[0] as int,
           children: [
             Text("titre_$index".tr(context), style: PoppinsSemiBold(44,Colors.black,TextDecoration.none),),
             Padding(padding: EdgeInsets.only(left: 65,right: 30),
-                child: Text("description_$index". tr(context), style: PoppinsNorml(17,Colors.black),textAlign: TextAlign.start,)),
+                child: Text("description_$index". tr(context), style: PoppinsNorml( mediaQuery.size.width/27.5,Colors.black),textAlign: TextAlign.start,)),
           ],
         )
 

@@ -1,4 +1,4 @@
-const BaseUrl="http://10.0.2.2:8080";
+const BaseUrl="http://192.168.1.9:8080";
 const LoginUrl="$BaseUrl/auth/login";
 const SignUpUrl="$BaseUrl/auth/signup";
 const ForgetPasswordUrl="$BaseUrl/auth/forgetPassword";

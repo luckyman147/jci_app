@@ -43,10 +43,10 @@ class  LinkedText extends StatelessWidget {
     return Text(text,style:PoppinsSemiBold(size, PrimaryColor,TextDecoration.underline) ,);
   }
 }
-Widget header(String text ){
+Widget header(String text,MediaQueryData mediaquery){
   return Align(
       alignment:    Alignment.topLeft,
-      child: Label(text: text, size: 18));
+      child: Label(text: text, size: mediaquery.size.width/22.5));
 }
 Widget divider(MediaQueryData mediaquery) {
   return       Padding(

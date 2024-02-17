@@ -63,7 +63,7 @@ final mediaquery = MediaQuery.of(context);
                 children: [
                   Align(
                       alignment:    Alignment.topLeft,
-                      child: Label(text: "Email", size: 22)),
+                      child: Label(text: "Email", size: mediaquery.size.width/22.5)),
                   _UsernameInput(controller: _emailController,),
                 ],
               ),
@@ -75,7 +75,7 @@ final mediaquery = MediaQuery.of(context);
                 children: [
                   Align(
                       alignment:    Alignment.topLeft,
-                      child: Label(text: "Password".tr(context), size: 22)),
+                      child: Label(text: "Password".tr(context), size: mediaquery.size.width/22.5)),
                   _PasswordInput(controller: _passwordController,),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -85,7 +85,7 @@ final mediaquery = MediaQuery.of(context);
                             onTap: (){
                               context.go('/forget');
                             },
-                            child: LinkedText(text: "Forgot Password?".tr(context), size: 17))),
+                            child: LinkedText(text: "Forgot Password?".tr(context), size:  mediaquery.size.width/27.5))),
                   ),
                 ],
               ),
@@ -113,13 +113,13 @@ final mediaquery = MediaQuery.of(context);
        children: [
       Padding(
         padding: EdgeInsets.symmetric(horizontal: mediaquery.size.width/60.5),
-        child: Text("Don't have an account?".tr(context),style:PoppinsLight(17, textColorBlack),),
+        child: Text("Don't have an account?".tr(context),style:PoppinsLight( mediaquery.size.width/30.5, textColorBlack),),
       ),
       InkWell(
         onTap: (){
           context.go('/SignUp');
         },
-        child: LinkedText(text: "SignUp".tr(context), size: 17,
+        child: LinkedText(text: "SignUp".tr(context), size: mediaquery.size.width/30.5
         ),
       )
        ],

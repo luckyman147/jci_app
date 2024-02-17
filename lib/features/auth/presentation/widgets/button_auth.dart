@@ -40,7 +40,7 @@ Padding(
   padding: EdgeInsets.symmetric(horizontal: mediaQuery.size.width/20),
   child:   SvgPicture.string(string),
 ),
-              Text(text,style: PoppinsRegular(mediaQuery.size.width/24, textColorBlack),),
+              Text(text,style: PoppinsRegular(mediaQuery.size.width/30, textColorBlack),),
             ],
           ),
         ),
