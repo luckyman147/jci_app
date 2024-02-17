@@ -4,11 +4,12 @@ import 'package:jci_app/core/error/Exception.dart';
 import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/core/network/network_info.dart';
 import 'package:jci_app/features/auth/data/datasources/signUpRemote.dart';
-import 'package:jci_app/features/auth/data/models/MemberModel.dart';
+import 'package:jci_app/features/auth/data/models/login/MemberModel.dart';
 
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
 import '../../domain/repositories/SignUpRepo.dart';
+import '../models/signup/membersignup.dart';
 typedef Future<Unit> SignUP();
 class SignUpRepoImpl implements SignUpRepo {
   final SignUpRemoteDataSource signUpRemoteDataSource;

@@ -13,11 +13,12 @@ import 'package:jci_app/features/auth/domain/usecases/SignUp.dart';
 
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
-import '../../../data/models/login/Email.dart';
-import '../../../data/models/login/cPassword.dart';
-import '../../../data/models/login/firstname.dart';
-import '../../../data/models/login/lastname.dart';
-import '../../../data/models/login/password.dart';
+import '../../../data/models/formz/Email.dart';
+import '../../../data/models/formz/cPassword.dart';
+import '../../../data/models/formz/firstname.dart';
+import '../../../data/models/formz/lastname.dart';
+import '../../../data/models/formz/password.dart';
+
 
 
 part 'sign_up_event.dart';
@@ -143,7 +144,7 @@ void _reset_form(
       Emitter<SignUpState> emit,
       ) async {
 
-      if (event is SignUpSubmitted) {
+
    //     print("sqtatet ${state}");
      //   print("sqtatet ${state.isValid}");
         if (state.isValid) {
@@ -183,7 +184,7 @@ void _reset_form(
           emit(const SignUpState(status: FormzSubmissionStatus.canceled));
         }
 
-    }
+
   }
   SignUpState _eitherDoneMessageOrErrorState(
       Either<Failure,  Unit> either, String message) {

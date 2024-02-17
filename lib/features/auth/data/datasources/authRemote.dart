@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
+import 'package:jci_app/core/config/env/urls.dart';
 
 import 'package:jci_app/core/config/services/store.dart';
 import 'package:jci_app/core/error/Exception.dart';
-import 'package:jci_app/features/auth/data/models/MemberModel.dart';
+import 'package:jci_app/features/auth/data/models/login/MemberModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -30,7 +31,7 @@ final http.Client client;
 
 
   Future<bool> refreshToken() async {
-    const String apiUrl = 'http://10.0.2.2:8080/auth/RefreshToken';
+
     final tokens=await Store.GetTokens();
     if (tokens[0] == null ) {
       print('famech token');
@@ -42,7 +43,7 @@ final http.Client client;
 
     try {
       final Response = await client.post(
-        Uri.parse(apiUrl),
+        Uri.parse(RefreshTokenUrl),
         headers: {
           'Content-Type': 'application/json',
 
@@ -86,7 +87,7 @@ print(Response.statusCode);
 
   @override
   Future<bool> signOut()async {
-    const String apiUrl = 'http://10.0.2.2:8080/auth/logout';
+
     final tokens=await Store.GetTokens();
     if (tokens[0] == null ) {
       print('famech token');
@@ -99,7 +100,7 @@ print(Response.statusCode);
 
     try {
       final Response = await client.post(
-        Uri.parse(apiUrl),
+        Uri.parse(LogoutUrl),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $accessToken',
@@ -139,12 +140,12 @@ if (response['message']=='Already logged out'){
 
   @override
   Future<Unit> updatePassword(MemberModel member)async {
-  const apiUrl = "http://10.0.2.2:8080/auth/forgetPassword";
+
   final body=jsonEncode(member.toJson());
   print("body");
   print(body);
     final Response = await client.patch(
-      Uri.parse(apiUrl),
+      Uri.parse(ForgetPasswordUrl),
       headers: {
         'Content-Type': 'application/json',
       },

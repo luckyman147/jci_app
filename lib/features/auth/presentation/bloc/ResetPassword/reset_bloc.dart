@@ -11,9 +11,10 @@ import 'package:jci_app/features/auth/domain/usecases/authusecase.dart';
 
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
-import '../../../data/models/login/Email.dart';
-import '../../../data/models/login/cPassword.dart';
-import '../../../data/models/login/password.dart';
+import '../../../data/models/formz/Email.dart';
+import '../../../data/models/formz/cPassword.dart';
+import '../../../data/models/formz/password.dart';
+
 
 part 'reset_event.dart';
 part 'reset_state.dart';
@@ -122,7 +123,7 @@ final UpdatePasswordUseCase updatePasswordUseCase;
           (failure) => ErrorReset(
         message: mapFailureToMessage(failure),
       ),
-          (_) => ErrorReset(message: message),
+          (_) => MessageReset(message: message),
     );
   }
 

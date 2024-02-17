@@ -24,6 +24,8 @@ dependencies:
   dartz: ^0.10.1
   # Value equality
   equatable: ^2.0.5
+  json_serializable:
+
   # Service locator
   get_it: ^7.6.0
   # Remote API
@@ -43,11 +45,12 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   flutter_secure_storage: ^5.1.2
   dio: ^5.4.0
-
+  json_annotation: ^4.8.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  build_runner:
   flutter_lints: ^2.0.0
 
 # For information on the generic Dart part of this file, see the

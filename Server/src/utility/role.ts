@@ -12,4 +12,5 @@ const role = await Role.findById(id);
 if (role){
     return role.name;
 }
+throw new Error("Role not found");
 }

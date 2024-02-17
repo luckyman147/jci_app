@@ -4,14 +4,16 @@ import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
-import 'package:jci_app/features/auth/data/models/login/Email.dart';
+
 import 'package:jci_app/features/auth/domain/entities/LoginMember.dart';
-import 'package:meta/meta.dart';
+
 
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
-import '../../../data/models/login/password.dart';
 
+
+import '../../../data/models/formz/Email.dart';
+import '../../../data/models/formz/password.dart';
 import '../../../domain/usecases/SIgnIn.dart';
 
 part 'login_event.dart';

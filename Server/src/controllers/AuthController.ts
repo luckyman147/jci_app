@@ -93,7 +93,7 @@ export const MemberLogin= async(req:Request,res:Response,next:NextFunction)=>{
 
           })
         console.log("login")
-          return res.status(200).json({message:'Login success',refreshToken:refreshToken,accessToken:accessToken,email:MemberInfo.email,role:findroleByid(MemberInfo.role._id)})
+          return res.status(200).json({refreshToken:refreshToken,accessToken:accessToken,email:MemberInfo.email,role:await findroleByid(MemberInfo.role._id)})
          }
          else{
                 return res.status(400).json({message:'Invalid credentials'})

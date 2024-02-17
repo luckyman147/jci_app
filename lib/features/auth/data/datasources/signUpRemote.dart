@@ -1,12 +1,15 @@
 import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
+import 'package:jci_app/core/config/env/urls.dart';
 import 'package:jci_app/core/error/Exception.dart';
-import 'package:jci_app/features/auth/data/models/MemberModel.dart';
+
+import '../models/signup/membersignup.dart';
+
 
 abstract class SignUpRemoteDataSource {
   Future<Unit> signUp(MemberModelSignUp memberModelSignUp);
-}const BASE_URL = "http://10.0.2.2:8080/auth/signup/";
+}
 class SignUpRemoteDataSourceImpl implements SignUpRemoteDataSource {
   final http.Client client;
 
@@ -16,7 +19,7 @@ class SignUpRemoteDataSourceImpl implements SignUpRemoteDataSource {
 
     final body = jsonEncode(memberModelSignUp.toJson());
     final Response=await client.post(
-      Uri.parse(BASE_URL),
+      Uri.parse(SignUpUrl),
 
       headers: {"Content-Type": "application/json"},
 

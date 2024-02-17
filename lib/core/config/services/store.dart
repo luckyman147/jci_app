@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jci_app/features/auth/data/models/AuthModel/AuthModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Store{
   const Store._();
   static const String _RefreshTokenKey="refreshToken";
   static const String _AccessTokenKey="accessToken";
+
+  static const String  _UserInfo = 'UserInfo';
   static Future<void> setTokens(String RefreshToke,String AccessToken)async{
     final pref =await SharedPreferences.getInstance();
     await pref.setString(_RefreshTokenKey, RefreshToke);
@@ -36,7 +41,9 @@ class Store{
   }
  static Future<void> clear() async{
    final pref =await SharedPreferences.getInstance();
-await pref .clear();
+await pref .remove(_RefreshTokenKey);
+await pref .remove(_AccessTokenKey);
+await pref .remove(_UserInfo);
  }
  static Future<String?> getLocaleLanguage ()async {
    final pref =await SharedPreferences.getInstance();
@@ -51,4 +58,22 @@ await pref .clear();
 
 
  }
+ static Future<void> saveModel(modelAuth auth) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'UserInfo';
+    final value = auth.toJson();
+
+    prefs.setString(key, jsonEncode(value));
+  }
+  static Future<modelAuth?> getModel() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final value = prefs.getString(_UserInfo);
+
+    if (value == null) {
+      return null;
+    }
+
+    return modelAuth.fromJson(jsonDecode(value));
+  }
 }

@@ -39,7 +39,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                   padding: EdgeInsets.only(bottom: mediaquery.size.height/20,top: mediaquery.size.height/5,right: mediaquery.size.width/10,left: mediaquery.size.width/10),
                   child: Column(
                     children: [
-                      TextWidget(text: "reset  password".tr(context), size:mediaquery.size.width/11 ),
+                      TextWidget(text: "reset password".tr(context), size:mediaquery.size.width/11 ),
                    SizedBox(
                        width: mediaquery.size.width/1.32,
                        child: Text("send email".tr(context),style: PoppinsLight(mediaquery.size.width/23, ThirdColor )))

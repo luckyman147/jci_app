@@ -1,5 +1,5 @@
 import 'package:formz/formz.dart';
-import 'package:jci_app/features/auth/data/models/login/password.dart';
+
 
 enum ConfirmPasswordValidationError { empty, notEqual }
 

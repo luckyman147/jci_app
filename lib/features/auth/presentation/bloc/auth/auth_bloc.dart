@@ -9,10 +9,7 @@ import 'package:meta/meta.dart';
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
 import '../../../../../core/usescases/usecase.dart';
-import '../../../data/models/login/Email.dart';
-import '../../../data/models/login/cPassword.dart';
-import '../../../data/models/login/cPassword.dart';
-import '../../../data/models/login/password.dart';
+
 import '../../../domain/usecases/authusecase.dart';
 
 part 'auth_event.dart';

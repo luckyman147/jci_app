@@ -6,7 +6,7 @@ import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/core/network/network_info.dart';
 import 'package:jci_app/features/auth/data/datasources/LoginRemote.dart';
 
-import 'package:jci_app/features/auth/data/models/MemberModel.dart';
+import 'package:jci_app/features/auth/data/models/login/MemberModel.dart';
 import 'package:jci_app/features/auth/domain/entities/LoginMember.dart';
 
 
