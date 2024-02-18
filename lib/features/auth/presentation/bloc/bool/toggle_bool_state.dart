@@ -7,3 +7,8 @@ class ToggleBooleanState {
 
   ToggleBooleanState copyWith({bool? value}) => ToggleBooleanState(value: value ?? this.value);
 }
+
+// reset state
+class ResetBooleanState extends ToggleBooleanState {
+  ResetBooleanState() : super(value: true);
+}

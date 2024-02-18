@@ -16,35 +16,25 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      body: BlocBuilder<AuthBloc, AuthState>(
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {
+
+          // TODO: implement listener
+        },
         builder: (context, state) {
-          return BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              return BlocConsumer<AuthBloc, AuthState>(
-                listener: (context, state) {
-                  if (state is AuthLogoutState){
-                    context.go('/login');
-                  }
-                  // TODO: implement listener
-                },
-                builder: (context, state) {
-                  return Align(
-                    alignment: Alignment.center,
+          return Align(
+            alignment: Alignment.center,
 
 
-                    child: Column(
-                      children: [
-                        ElevatedButton(
-                            onPressed: () {
-                              context.read<AuthBloc>().add(SignoutEvent());
-                            }, child: Text('Signout')),
-                        Text('B Page'),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
+            child: Column(
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      context.read<AuthBloc>().add(SignoutEvent());
+                    }, child: Text('Signout')),
+                Text('B Page'),
+              ],
+            ),
           );
         },
       ),);

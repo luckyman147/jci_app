@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:jwt_decode/jwt_decode.dart';
 
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/core/config/env/urls.dart';
@@ -33,13 +34,16 @@ final http.Client client;
   Future<bool> refreshToken() async {
 
     final tokens=await Store.GetTokens();
-    if (tokens[0] == null ) {
+    if (tokens[0] == null || tokens[0].toString().isEmpty ) {
       print('famech token');
-
+throw EmptyCacheException();
 
     }
-    // replace with your API endpoint
-    final  accessToken =  tokens[1]; // replace with your actual access token
+    final  refreshToken =  tokens[0]??""; // replace with your actual access token
+    if (isTokenExpired(refreshToken)){
+
+
+
 
     try {
       final Response = await client.post(
@@ -71,8 +75,11 @@ print(Response.statusCode);
       // Exception occurred during the request
       print('Exception during request: $e');
     throw ServerException();
-    }
-  }
+    }}
+    else {
+      print('token not exopired');
+return true;
+  }}
   @override
   Future<Either<Failure, MemberSignUp>> deleteAccount() {
     // TODO: implement deleteAccount
@@ -89,11 +96,15 @@ print(Response.statusCode);
   Future<bool> signOut()async {
 
     final tokens=await Store.GetTokens();
-    if (tokens[0] == null ) {
+    if (tokens[0] == null  || tokens[0].toString().isEmpty) {
       print('famech token');
       throw EmptyCacheException();
 
     }
+
+
+
+
 
     // replace with your API endpoint
     final  accessToken =  tokens[1]; // replace with your actual access token
@@ -135,7 +146,7 @@ if (response['message']=='Already logged out'){
       print('Exception during request: $e');
       throw ServerException();
     }
-    // ;
+
   }
 
   @override
@@ -174,4 +185,29 @@ if (response['message']=='Already logged out'){
     // TODO: implement verifyEmail
     throw UnimplementedError();
   }
+bool isTokenExpired(String token) {
+  try {
+    Map<String, dynamic> decodedToken = Jwt.parseJwt(token);
+print("decodedToken");
+    if (decodedToken.containsKey('exp')) {
+      // 'exp' claim is present in the token
+      int expirationTimestamp = decodedToken['exp'];
+      print(expirationTimestamp);
+
+      // Get the current timestamp
+      int currentTimestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+print('token checking');
+      // Check if the token has expired
+      return expirationTimestamp < currentTimestamp;
+    } else {
+      print('token checking');
+      // If 'exp' claim is not present, consider the token as expired
+      return true;
+    }
+  } catch (e) {
+    // Handle decoding errors
+    print('Error decoding token: $e');
+    return true; // Consider the token as expired in case of errors
+  }
+}
 }

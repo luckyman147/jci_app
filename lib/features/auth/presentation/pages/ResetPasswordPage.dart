@@ -10,6 +10,7 @@ import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc
 import '../../../../core/app_theme.dart';
 import '../../../../core/util/snackbar_message.dart';
 import '../bloc/SignUp/sign_up_bloc.dart';
+import '../bloc/bool/toggle_bool_bloc.dart';
 import '../widgets/Text.dart';
 import '../widgets/formText.dart';
 
@@ -23,6 +24,13 @@ final String email;
 }
 
 class _ResetPasswordState extends State<ResetPassword> {
+  @override
+  void initState() {
+    ToggleBooleanBloc toggleBooleanBloc = BlocProvider.of<ToggleBooleanBloc>(context);
+    toggleBooleanBloc.add(ResetBoolean());
+    // TODO: implement initState
+    super.initState();
+  }
   final _key = GlobalKey<FormState>();
 final Passwordcontroller=TextEditingController();
 

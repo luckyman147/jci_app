@@ -59,7 +59,7 @@ Widget divider(MediaQueryData mediaquery) {
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text("Or",style: PoppinsNorml(20, ThirdColor),),
+          child: Text("Or",style: PoppinsNorml(mediaquery.size.width/24, ThirdColor),),
         ),
         line(mediaquery.size.width/3)
         //   Divider(),

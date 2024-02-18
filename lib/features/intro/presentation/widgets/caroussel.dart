@@ -124,7 +124,8 @@ initialPage: state.props[0] as int,
             else
 
             if (state is IndexLoaded) {
-              print((state.currentIndex));
+
+
               return _buildIndicator(state.currentIndex, 3);
 
             }
@@ -144,7 +145,7 @@ initialPage: state.props[0] as int,
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("titre_$index".tr(context), style: PoppinsSemiBold(44,Colors.black,TextDecoration.none),),
+            Text("titre_$index".tr(context), style: PoppinsSemiBold(mediaQuery.size.width/11,Colors.black,TextDecoration.none),),
             Padding(padding: EdgeInsets.only(left: 65,right: 30),
                 child: Text("description_$index". tr(context), style: PoppinsNorml( mediaQuery.size.width/27.5,Colors.black),textAlign: TextAlign.start,)),
           ],

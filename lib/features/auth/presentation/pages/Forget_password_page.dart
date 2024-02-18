@@ -36,7 +36,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
               children: [
                 Backbutton(mediaquery, context, '/login'),
                 Padding(
-                  padding: EdgeInsets.only(bottom: mediaquery.size.height/20,top: mediaquery.size.height/5,right: mediaquery.size.width/10,left: mediaquery.size.width/10),
+                  padding: EdgeInsets.only(bottom: mediaquery.size.height/20,top: mediaquery.size.height/14,right: mediaquery.size.width/10,left: mediaquery.size.width/10),
                   child: Column(
                     children: [
                       TextWidget(text: "reset password".tr(context), size:mediaquery.size.width/11 ),

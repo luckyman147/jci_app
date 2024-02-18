@@ -143,6 +143,8 @@ void _resetform(){
               child: Text("Already have an account?".tr(context),style:PoppinsLight( mediaquery.size.width/30.5, textColorBlack),),
             ),
             InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
               onTap: (){
                 context.go('/login');
               },

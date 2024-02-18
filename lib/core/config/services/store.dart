@@ -29,7 +29,8 @@ class Store{
 
  static Future<void> clear() async{
    final pref =await SecureSharedPref.getInstance();
-await pref .clearAll();
+await pref.putString(_RefreshTokenKey, "");
+await pref.putString(_AccessTokenKey, "");
 
  }
  static Future<String?> getLocaleLanguage ()async {

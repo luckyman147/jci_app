@@ -43,6 +43,10 @@ final String text;
     return Padding(
       padding:  EdgeInsets.only(top: mediaQuery.size.width * 0.2),
       child: InkWell(
+        splashColor: Colors.transparent,
+highlightColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
       onTap: () {
           onPressed();
         },

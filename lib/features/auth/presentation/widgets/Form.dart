@@ -82,6 +82,8 @@ final mediaquery = MediaQuery.of(context);
                     child: Align(
                     alignment:  Alignment.centerRight,
                         child: InkWell(
+                          splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
                             onTap: (){
                               context.go('/forget');
                             },
@@ -116,6 +118,10 @@ final mediaquery = MediaQuery.of(context);
         child: Text("Don't have an account?".tr(context),style:PoppinsLight( mediaquery.size.width/30.5, textColorBlack),),
       ),
       InkWell(
+        highlightColor: Colors.transparent,
+        splashColor: Colors.transparent,
+        radius: 10.0,
+        borderRadius: BorderRadius.circular(10.0),
         onTap: (){
           context.go('/SignUp');
         },

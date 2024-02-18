@@ -38,7 +38,8 @@ class PinForm extends StatelessWidget {
 
 
   SizedBox NumberInput(BuildContext context,Function(String) onChanged,TextEditingController controller,double size) {
-    return SizedBox(height: 60,
+    final MediaQueryData mediaquery = MediaQuery.of(context);
+    return SizedBox(height: mediaquery.size.height/15,
     width: size,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 5),
@@ -63,14 +64,14 @@ class PinForm extends StatelessWidget {
             FilteringTextInputFormatter.digitsOnly,
             CustomNumberFormatter()
           ],
-        textAlignVertical: TextAlignVertical.center,
-          textAlign: TextAlign.center,
+
           //const Key('SignUpForm_EmailInput_textField'),
-
+textDirection: TextDirection.ltr,
+          textAlign: TextAlign.center,
           decoration: InputDecoration(
-        hintText: "Enter 5 digits",
+        hintText: "X-X-X-X-X",
 
-        hintStyle: PoppinsLight(27, ThirdColor),
+        hintStyle: PoppinsLight(mediaquery.size.width/16, ThirdColor),
               enabledBorder: border(PrimaryColor) ,
               focusedBorder: border(PrimaryColor),
               errorBorder: border(Colors.red),

@@ -9,13 +9,26 @@ import '../../../../core/util/snackbar_message.dart';
 import '../../../../core/widgets/loading_widget.dart';
 
 import '../../domain/usecases/SignUp.dart';
+import '../bloc/bool/toggle_bool_bloc.dart';
 import '../bloc/login/login_bloc.dart';
 import '../widgets/Form.dart';
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends StatefulWidget {
+
   const SignUpPage({super.key});
 
+  @override
+  State<SignUpPage> createState() => _SignUpPageState();
+}
 
+class _SignUpPageState extends State<SignUpPage> {
+  @override
+  void initState() {
+    ToggleBooleanBloc toggleBooleanBloc = BlocProvider.of<ToggleBooleanBloc>(context);
+    toggleBooleanBloc.add(ResetBoolean());
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final SignUpUseCase signUpUseCase;

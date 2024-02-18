@@ -12,5 +12,12 @@ class ToggleBooleanBloc extends Bloc<ToggleBooleanEvent, ToggleBooleanState> {
     on<ToggleBoolean>((event, emit) {
       emit(state.copyWith(value: !state.value));
     });
+    on<ResetBoolean>(reset);
+  }
+
+ void reset(
+     ResetBoolean event , Emitter<ToggleBooleanState> emit,
+     ) {
+emit (state.copyWith(value: true));
   }
 }

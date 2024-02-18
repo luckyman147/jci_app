@@ -18,28 +18,31 @@ class authButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    return InkWell(
-      onTap: onPressed,
-      child: Padding(
-        padding:  EdgeInsets.symmetric(vertical:mediaQuery.size.height/70 ),
-        child: Container(
-          height: mediaQuery.size.height / 15,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: textColorBlack
-                  ,
-              width: 2
-          )),
+    return Padding(
+      padding:  EdgeInsets.symmetric(vertical:mediaQuery.size.height/70 ),
+      child: Container(
+        height: mediaQuery.size.height / 15,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: textColorBlack
+                ,
+            width: 2
+        )),
+        child: InkWell(
+   borderRadius: BorderRadius.circular(14),
+
+          highlightColor: PrimaryColor.withOpacity(0.3),
+          onTap: onPressed,
           child: Flex(
-direction: Axis.horizontal,
+          direction: Axis.horizontal,
             mainAxisAlignment: MainAxisAlignment.start,
 
             children: [
-Padding(
-  padding: EdgeInsets.symmetric(horizontal: mediaQuery.size.width/20),
-  child:   SvgPicture.string(string),
-),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: mediaQuery.size.width/20),
+            child:   SvgPicture.string(string),
+          ),
               Text(text,style: PoppinsRegular(mediaQuery.size.width/30, textColorBlack),),
             ],
           ),

@@ -44,11 +44,15 @@ SizedBox(
 
             child: Column(
               children: [
-                Padding(
-                  padding: EdgeInsets.only(top: mediaquery.size.height /22 ),
-                  child: Align(
-                      alignment:    Alignment.topCenter,
-                      child: Label(text: "Pincode".tr(context), size: 21)),
+                SizedBox(
+                  width: mediaquery.size.width/1.32,
+
+                  child: Padding(
+                    padding: EdgeInsets.only(top: mediaquery.size.height /22,left: 8 ),
+                    child: Align(
+                        alignment:    Alignment.topLeft,
+                        child: Label(text: "Pincode".tr(context), size: 21)),
+                  ),
                 ),
                 PinForm(controller1: _controller1,size:mediaquery.size.width/1.32, formKey:formKey,),
               ],

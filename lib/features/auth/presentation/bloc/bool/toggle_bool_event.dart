@@ -8,3 +8,4 @@ sealed class ToggleBooleanEvent extends Equatable {
 }
 
 class ToggleBoolean extends ToggleBooleanEvent {}
+class ResetBoolean extends ToggleBooleanEvent {}

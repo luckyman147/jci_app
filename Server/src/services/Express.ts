@@ -2,14 +2,7 @@
 import express, { Application } from 'express';
 import { AuthRouter, MemberRoute, SuperAdmineRouter } from '../routes';
 import { AdminRoute } from '../routes/adminRoute';
-import nodemailer from 'nodemailer';
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'your-email@gmail.com',
-      pass: 'your-email-password',
-    },
-  });
+
 
 const appli= async (app:Application)=>{
 

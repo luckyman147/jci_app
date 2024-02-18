@@ -42,7 +42,11 @@ class _SplashScreenState extends State<SplashScreen> {
         context.go('/screen');
       } else if (authState is AuthSuccessState) {
         context.go('/home');
-      } else {
+      }
+      else if (authState is AuthLogoutState) {
+        context.go('/login');
+      }
+      else {
         context.go('/Intro');
       }
     }
