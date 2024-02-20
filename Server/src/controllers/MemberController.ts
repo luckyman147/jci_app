@@ -3,14 +3,14 @@ import { validate } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
 
 
-import { CreateMemberInputs, EditMemberProfileInputs, MemberLoginInputs } from '../dto/member.dto';
+import { EditMemberProfileInputs } from '../dto/member.dto';
 import { Member } from '../models/Member';
 
 
 //& Verify email
 export const MemberVerifyEmail= async(req:Request,res:Response,next:NextFunction)=>{
     const {email}=req.body
-    const member=req.user
+    const member=req.member
     if(member){
         const profile=await Member.findById(member?._id)
         // if(profile){
@@ -37,7 +37,7 @@ export const MemberVerifyEmail= async(req:Request,res:Response,next:NextFunction
 
 export const GetmemberProfile= async(req:Request,res:Response,next:NextFunction)=>{
 
-    const member=req.user
+    const member=req.member
     if(member){
         const profile=await Member.findById(member?._id)
         if(profile){
@@ -48,7 +48,7 @@ export const GetmemberProfile= async(req:Request,res:Response,next:NextFunction)
   
 }
 export const EditmemberProfile= async(req:Request,res:Response,next:NextFunction)=>{
-    const member=req.user
+    const member=req.member
     const profileinputs=plainToClass (EditMemberProfileInputs,req.body)
     const errors=await validate(profileinputs,{validationError:{target:false}})
     if(errors.length>0){

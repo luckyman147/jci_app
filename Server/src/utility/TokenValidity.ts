@@ -3,12 +3,11 @@ import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 
 import { ADminPayload } from '../dto/admin.dto';
-import { AuthPayload } from '../dto/auth.dto';
 import { EmailPayload, MemberPayload, } from '../dto/member.dto';
 import { SuperAdminPayload } from '../dto/superAdmin.dto';
+import { Member } from '../models/Member';
 import { Role } from '../models/role';
 import { isAccessTokenValid, isRefreshTokenValid } from './verification';
-import { Member } from '../models/Member';
 
 require('dotenv').config();
 
@@ -76,7 +75,7 @@ await generateAccessToken({
           const check=await isAccessTokenValid(payload._id,signature)
           console.log("check",check)
       if (check){
-        req.user = payload;
+        req.member = payload;
           return true;
       }return false 
     }

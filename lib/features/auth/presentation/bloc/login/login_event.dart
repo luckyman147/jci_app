@@ -37,3 +37,6 @@ final class LoginSubmitted extends LoginEvent {
 class ResetForm extends LoginEvent {
   const ResetForm();
 }
+class GetUserEvent extends LoginEvent {
+  const GetUserEvent();
+}

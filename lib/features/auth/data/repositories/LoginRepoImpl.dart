@@ -67,6 +67,11 @@ class LoginRepoImpl implements LoginRepo {
     // TODO: implement LogInWithGoogle
     throw UnimplementedError();
   }
+
+  @override
+  Future<Either<Failure, Unit>> GetUserProfile() {
+    return _getMessage(loginRemoteDataSource.getUserProfile());
+  }
   }
 
 

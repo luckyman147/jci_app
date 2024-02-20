@@ -35,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: BlocListener<InternetCubit, InternetState>(
+
             listener: (context, state) {
               if (state is NotConnectedState) {
               SnackBarMessage.showErrorSnackBar(
@@ -46,12 +47,14 @@ class _LoginPageState extends State<LoginPage> {
             },
             child: BlocConsumer<LoginBloc, LoginState>(
               listener: (context, state) {
+
                 if (state is MessageLogin) {
                   print('success' + state.message.toString());
                   SnackBarMessage.showSuccessSnackBar(
                       message: state.message, context: context);
 
-                  context.go('/home');
+
+                  context.go('/home');  context.read<LoginBloc>().add(GetUserEvent());
                 }
                 else if (state is ErrorLogin) {
                   print('success' + state.message.toString());

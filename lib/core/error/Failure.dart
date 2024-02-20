@@ -16,6 +16,10 @@ class EmptyCacheFailure extends Failure {
   @override
   List<Object?> get props => [];
 }
+class EmptyDataFailure extends Failure {
+  @override
+  List<Object?> get props => [];
+}
 
 class EmailExistedFailure extends Failure {
   @override

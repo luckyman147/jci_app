@@ -1,8 +1,8 @@
 
-import { IsEmail, IsNotEmpty, IsStrongPassword, Length, length } from "class-validator";
+import { IsEmail, IsNotEmpty, Length } from "class-validator";
+import { SuperAdminPayload } from "./superAdmin.dto";
 import { ADminPayload } from "./admin.dto";
 import { EmailPayload, MemberPayload } from "./member.dto";
-import { SuperAdminPayload } from "./superAdmin.dto";
 
 export type AuthPayload=  ADminPayload |SuperAdminPayload | MemberPayload | EmailPayload
 

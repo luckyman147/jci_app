@@ -1,5 +1,5 @@
-import express, { NextFunction, Request, Response } from "express";
-import {  ChangeToMember, GetMemberById, GetMembers, SearchByName, createRole } from "../controllers";
+import express from "express";
+import { ChangeToMember, GetMemberById, GetMembers, SearchByName, createRole } from "../controllers";
 import { AuthenticateAdmin } from "../middleware/CommonAuth";
 
 

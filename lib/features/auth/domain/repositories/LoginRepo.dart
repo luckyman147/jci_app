@@ -6,6 +6,6 @@ import '../../../../core/error/Failure.dart';
 abstract class LoginRepo{
   Future<Either<Failure, Map>> LogInWithGoogle();
   Future<Either<Failure, Map>> LogInWithFacebook();
-
+Future<Either<Failure, Unit>> GetUserProfile();
   Future<Either<Failure, Unit>> LogInWithCredentials(Member loginMember);
 }

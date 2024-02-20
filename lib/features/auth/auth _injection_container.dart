@@ -35,7 +35,7 @@ sl.registerFactory(() => AuthBloc(
     signUpUseCase: sl(),
   ));
   sl.registerFactory(
-          () => LoginBloc(loginUseCase: sl()));
+          () => LoginBloc(loginUseCase: sl(), getUserProfile: sl()));
 
 
   sl.registerLazySingleton<LoginRemoteDataSource>(
@@ -48,6 +48,7 @@ sl.registerLazySingleton<AuthRemote>(() => AuthRemoteImpl(client: sl()));
 
 
 //use cases
+  sl.registerLazySingleton(() => GetUserProfile(authRepository: sl()));
   sl.registerLazySingleton(() => UpdatePasswordUseCase(authRepository: sl()));
   sl.registerLazySingleton(() => SignOutUseCase(authRepository: sl()));
   sl.registerLazySingleton(() => RefreshTokenUseCase( authRepository: sl()));

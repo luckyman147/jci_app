@@ -32,6 +32,7 @@ dependencies:
   internet_connection_checker: ^1.0.0+1
   http:
   flutter_svg:
+  dropdown_button2: ^2.3.8
   formz:
   # Local cache
   shared_preferences: ^2.1.1
@@ -47,6 +48,7 @@ dependencies:
   dio: ^5.4.0
   json_annotation: ^4.8.1
   jwt_decode:
+  google_nav_bar: ^5.0.6
 dev_dependencies:
   flutter_test:
     sdk: flutter

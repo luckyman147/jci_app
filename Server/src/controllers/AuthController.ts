@@ -105,8 +105,8 @@ export const MemberLogin= async(req:Request,res:Response,next:NextFunction)=>{
 //& logout 
 
 export const logout = async (req: Request, res: Response, next: NextFunction) => {
-    const signature = req.get('Authorization');
-    const member=req.user
+    const signature = req.get('Authorization')?.split(' ')[1];
+    const member=req.member
 
     try {
       const {refreshToken} = req.body;
@@ -134,15 +134,10 @@ export const logout = async (req: Request, res: Response, next: NextFunction) =>
 //* refreh token
 export const RefreshTokenAccess=async(req:Request,res:Response,next:NextFunction)=>{
  
-    const refreshTokenInput=plainToClass(TokenInput,req.body)
-    const errors=await validate(refreshTokenInput,{validationError:{target:false}})
-    if(errors.length>0){
-        return res.status(400).json(errors)
-    }
-    
-    if (refreshTokenInput.refreshToken == null) return res.sendStatus(401).json('no token found')
+    const refreshTokenInput=req.get('Authorization')?.split(' ')[1];
+    if (refreshTokenInput == null) return res.sendStatus(401).json('no token found')
   
-    const accessTokenOrError= await VerifyrefreshToken(refreshTokenInput.refreshToken);
+    const accessTokenOrError= await VerifyrefreshToken(refreshTokenInput);
   console.log(accessTokenOrError)
   if (accessTokenOrError?.accessToken.toString().length>0){
     return res.status(200).json(accessTokenOrError)

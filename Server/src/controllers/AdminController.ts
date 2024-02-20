@@ -21,7 +21,7 @@ export  const FindMember=async(id:string |undefined ,email?:string)=>{
 
 //TODO change role
 export const changeRole=async( req:Request,res:Response,nex:NextFunction)=>{
-const admin=req.user
+const admin=req.member
 if (admin){
  const   roleChanged=req.body
  const role=findrole(roleChanged)
@@ -29,7 +29,7 @@ if (admin){
 
 }
 export const ChangeToMember=async(req:Request, res:Response,next:NextFunction)=>{
-    const Admin=req.user
+    const Admin=req.member
     if (Admin){
         const id=req.params.id
         const member = await Member.findById(id);
@@ -60,7 +60,7 @@ export const ChangeToMember=async(req:Request, res:Response,next:NextFunction)=>
 //* get members
 
 export const GetMembers=async( req:Request,res:Response,nex:NextFunction)=>{
-    const admin=req.user
+    const admin=req.member
     if  (admin){
 
         const members=await Member.find().select(['email','firstName'])
@@ -73,7 +73,9 @@ export const GetMembers=async( req:Request,res:Response,nex:NextFunction)=>{
     }
     }
     export const GetMemberById=async( req:Request,res:Response,nex:NextFunction)=>{
-    const admin=req.user
+    const admin=req.member
+    if (admin){
+
 
         const id=req.params.id
         const memberById=await FindMember(id)
@@ -81,11 +83,11 @@ export const GetMembers=async( req:Request,res:Response,nex:NextFunction)=>{
             return res.json(memberById)
         }
         return res.json({"message":"data not available"})
-    }
+    }}
 
 //? create role
     export const createRole=async (req:Request,res:Response,next:NextFunction) => {
-        const admin=req.user
+        const admin=req.member
         const {name,description}=<CreateRoleInput>req.body
         if  (admin){
         const newRole = await Role.create({ name: name,description:description});
@@ -98,7 +100,7 @@ export const GetMembers=async( req:Request,res:Response,nex:NextFunction)=>{
     }
 //find members by name
 export const SearchByName = async (req: Request, res: Response)=>{
-    const admin=req.user
+    const admin=req.member
     if  (admin){
     const name = req.params.name
     const result = await Member.find({name: name})

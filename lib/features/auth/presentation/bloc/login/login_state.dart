@@ -63,3 +63,4 @@ class MessageLogin extends LoginState{
 
 
 }
+class GetUserProfileState extends LoginState{}

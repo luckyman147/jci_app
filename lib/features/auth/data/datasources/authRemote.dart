@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:jci_app/features/auth/data/models/AuthModel/AuthModel.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 
 import 'package:dartz/dartz.dart';
@@ -10,6 +11,7 @@ import 'package:jci_app/features/auth/data/models/login/MemberModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../../core/config/services/verification.dart';
 import '../../../../core/error/Failure.dart';
 import '../../domain/entities/Member.dart';
 abstract class  AuthRemote {
@@ -18,6 +20,7 @@ abstract class  AuthRemote {
   Future<Either<Failure, MemberSignUp>> verifyEmail();
   Future<Unit> updatePassword(MemberModel member);
   Future<bool> refreshToken();
+
   Future<Either<Failure, MemberSignUp>> deleteAccount();
 
 }
@@ -50,11 +53,10 @@ throw EmptyCacheException();
         Uri.parse(RefreshTokenUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${tokens[0]}'
 
         },
-        body: jsonEncode({
-          'refreshToken': '${tokens[0]}', // replace with your actual refresh token
-        }),
+
       );
 print(Response.statusCode);
       if (Response.statusCode == 200) {
@@ -185,29 +187,7 @@ if (response['message']=='Already logged out'){
     // TODO: implement verifyEmail
     throw UnimplementedError();
   }
-bool isTokenExpired(String token) {
-  try {
-    Map<String, dynamic> decodedToken = Jwt.parseJwt(token);
-print("decodedToken");
-    if (decodedToken.containsKey('exp')) {
-      // 'exp' claim is present in the token
-      int expirationTimestamp = decodedToken['exp'];
-      print(expirationTimestamp);
 
-      // Get the current timestamp
-      int currentTimestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-print('token checking');
-      // Check if the token has expired
-      return expirationTimestamp < currentTimestamp;
-    } else {
-      print('token checking');
-      // If 'exp' claim is not present, consider the token as expired
-      return true;
-    }
-  } catch (e) {
-    // Handle decoding errors
-    print('Error decoding token: $e');
-    return true; // Consider the token as expired in case of errors
-  }
-}
+
+
 }

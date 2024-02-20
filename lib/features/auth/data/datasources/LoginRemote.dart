@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:dartz/dartz.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:jci_app/core/config/env/urls.dart';
 import 'package:jci_app/core/config/services/store.dart';
@@ -13,6 +13,7 @@ import 'package:jci_app/features/auth/data/models/login/MemberModel.dart';
 
 abstract class LoginRemoteDataSource {
   Future<Unit> Login(MemberModel memberModelLogin);
+  Future<Unit> getUserProfile();
 }
 
 
@@ -41,8 +42,8 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
     if (Response.statusCode == 200) {
 
 
-        final ModelAuth = modelAuth.fromJson(response);
-        await Store.saveModel(ModelAuth);
+
+
         await Store.setTokens(response['refreshToken'],response['accessToken'] );
         return Future.value(unit);
 
@@ -59,5 +60,54 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
     } else {
       throw ServerException();
     }
+  }
+  @override
+  Future<Unit> getUserProfile() async {
+
+    final tokens=await Store.GetTokens();
+    if (tokens[1] == null  || tokens[1].toString().isEmpty) {
+      print('famech token');
+      throw EmptyCacheException();
+
+    }
+
+    // replace with your API endpoint
+    final  AccessToken =  tokens[1]; // replace with your actual access token
+print("Access token");
+print(AccessToken);
+    try {
+      final Response = await client.get(
+        Uri.parse(getUserProfileUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $AccessToken',
+        },
+
+      );
+      print(" ya get ${Response.statusCode}");
+      if (Response.statusCode == 200) {
+        final Map<String, dynamic> response = jsonDecode(Response.body);
+        print("response ${response}");
+        final  modelAuth member=modelAuth.fromJson(response);
+       await  Store.saveModel(member);
+       print('member ${member.email}');
+
+        return Future.value(unit);
+      }
+
+
+      else {
+        // Request failed
+        print('Request failed with status: ${Response.statusCode}');
+        print('Response body: ${Response.body}');
+        throw ServerException();
+      }
+    } catch (e) {
+      // Exception occurred during the request
+      print('Exception during request: $e');
+      throw ServerException();
+    }
+
+
   }
 }

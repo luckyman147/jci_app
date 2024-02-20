@@ -1,7 +1,7 @@
 import express from "express";
+import passport from "passport";
 import { MemberLogin, MemberSignUp, RefreshTokenAccess, forgetPassword, logout } from "../controllers";
 import { Authenticate, AuthenticateSuperAdmin } from "../middleware/CommonAuth";
-import passport from "passport";
 
 
 const router =express.Router()

@@ -95,4 +95,5 @@ final MemberModel memberModel=MemberModel(email: member.email, password: member.
     // TODO: implement verifyEmail
     throw UnimplementedError();
   }
+
 }

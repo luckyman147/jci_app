@@ -9,6 +9,7 @@ const backgroundColored = Color.fromRGBO(244, 252, 255, 1);
 const dotscolor= Color.fromRGBO(210, 210, 210, 1);
 const ThirdColor= Color.fromRGBO(125, 125, 125, 1);
 const textColorBlack = Color.fromRGBO(0, 0, 0, 1);
+const BackWidgetColor = Color.fromRGBO(243, 243, 243, 1);
 const textColorWhite = Color.fromRGBO(255, 255, 255, 1);
 TextStyle PoppinsLight(double size,Color color)=> GoogleFonts.poppins(fontWeight: FontWeight.w400,fontSize: size,color: color);
 TextStyle PoppinsNorml(double size,Color color) => GoogleFonts.poppins(fontWeight: FontWeight.normal,fontSize: size,color: color);

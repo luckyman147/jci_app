@@ -7,7 +7,7 @@ import { validateAdminSignature, validateSignature, validateSuperAdminSignature 
 declare global{
     namespace Express {
         interface Request {
-            user?: AuthPayload;
+            member?: AuthPayload;
         }
     }
 }

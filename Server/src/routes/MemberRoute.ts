@@ -1,5 +1,5 @@
 import express from 'express'
-import { EditmemberProfile, GetmemberProfile, MemberLogin, MemberSignUp, MemberVerifyEmail } from '../controllers'
+import { EditmemberProfile, GetmemberProfile, MemberVerifyEmail } from '../controllers'
 import { Authenticate } from '../middleware/CommonAuth'
 
     
@@ -17,4 +17,4 @@ router.get('/profile',GetmemberProfile)
 router.patch('/profile',EditmemberProfile)
 
 
-export {router as MemberRoute}
+export { router as MemberRoute }
