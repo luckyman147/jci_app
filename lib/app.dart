@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Event/EventsOfTheweekend/evebnts_of_thewwekend_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Event/events_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
@@ -58,7 +59,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_)=> di.sl<EventsBloc>()..add(RefreshEvents())),
+        BlocProvider(create: (_)=> di.sl<EventsBloc>()..add(GetEventsOfmonth())),
+        BlocProvider(create: (_)=> di.sl<EvebntsOfThewwekendBloc>()..add(GetEventsOfweek())),
         BlocProvider(create: (_)=> InternetCubit()..CheckConnection()),
         BlocProvider(create: (_)=>di.sl<ResetBloc>()),
         BlocProvider(create: (_)=>di.sl<AuthBloc>()..add(RefreshTokenEvent())),

@@ -36,7 +36,40 @@ if (events.length>0) {
 
   }
 };
+export const GetEventsOfWeekend = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const currentDate = new Date();
+    const currentDay = currentDate.getDay();
+    const firstDayOfWeekend = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + (5 - currentDay));
+    const lastDayOfWeekend = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + (7 - currentDay));
+console.log(firstDayOfWeekend)
+console.log(lastDayOfWeekend)
+console.log(currentDate)
+    const eventsOfWeekend = await Event.find({
+      ActivityBeginDate: { $gte: firstDayOfWeekend, $lte: lastDayOfWeekend },
+    }).sort({ ActivityBeginDate: -1 });
 
+    if (eventsOfWeekend.length > 0) {
+      const formattedEvents = eventsOfWeekend.map<EventOftheMonthField>((event) => ({
+        _id: event._id,
+        name: event.name,
+        LeaderName: event.LeaderName,
+        ActivityBegindate: event.ActivityBeginDate,
+        ActivityEnddate: event.ActivityEndDate,
+        ActivityAdress: event.ActivityAdress,
+        participants: event.Participants,
+  CoverImages: event.CoverImages,
+
+      }));
+      res.status(200).json({ events: formattedEvents });
+    } else {
+      res.status(400).json({ message: "No events found for this weekend" });
+    }
+  } catch (error) {
+    console.error('Error retrieving events of the weekend:', error);
+    next(error);
+  }
+};
 export const GetEventsOfMonth= async (req:Request,res:Response,next:NextFunction)=> {
 
     try {
@@ -47,7 +80,7 @@ export const GetEventsOfMonth= async (req:Request,res:Response,next:NextFunction
         const eventsOfMonth = await Event.find({
           ActivityBeginDate: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
         
-        });
+        }).sort({ ActivityBeginDate: -1 });
      
     if (eventsOfMonth) {   
         const formattedEvents = eventsOfMonth.map<EventOftheMonthField>((event) => ({
@@ -65,6 +98,7 @@ export const GetEventsOfMonth= async (req:Request,res:Response,next:NextFunction
                                
 
           }));
+          console.log(formattedEvents);
         res.status(200).json({ events: formattedEvents });
     
     }
@@ -190,38 +224,7 @@ export const getEventByDate = async (req: Request, res: Response, next: NextFunc
       next(error);
     }
   }
-  export const GetEventsOfWeekend = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const currentDate = new Date();
-      const currentDay = currentDate.getDay();
-      const firstDayOfWeekend = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + (5 - currentDay));
-      const lastDayOfWeekend = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + (7 - currentDay));
-  
-      const eventsOfWeekend = await Event.find({
-        ActivityBeginDate: { $gte: firstDayOfWeekend, $lte: lastDayOfWeekend },
-      });
-  
-      if (eventsOfWeekend.length > 0) {
-        const formattedEvents = eventsOfWeekend.map<EventOftheMonthField>((event) => ({
-          _id: event._id,
-          name: event.name,
-          LeaderName: event.LeaderName,
-          ActivityBegindate: event.ActivityBeginDate,
-          ActivityEnddate: event.ActivityEndDate,
-          ActivityAdress: event.ActivityAdress,
-          participants: event.Participants,
-    CoverImages: event.CoverImages,
-
-        }));
-        res.json({ events: formattedEvents });
-      } else {
-        res.json({ message: "No events found for this weekend" });
-      }
-    } catch (error) {
-      console.error('Error retrieving events of the weekend:', error);
-      next(error);
-    }
-  };
+ 
   export const AddParticipantToEvent = async (req: Request, res: Response, next: NextFunction) => {
     const member=req.member
     if (member){

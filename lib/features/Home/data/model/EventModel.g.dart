@@ -8,10 +8,10 @@ part of 'EventModel.dart';
 
 EventModel _$EventModelFromJson(Map<String, dynamic> json) => EventModel(
       name: json['name'] as String,
-      ActivityBeginDate: DateTime.parse(json['ActivityBeginDate'] as String),
-      ActivityEndDate: DateTime.parse(json['ActivityEndDate'] as String),
+      ActivityBeginDate: DateTime.parse(json['ActivityBegindate'] as String),
+      ActivityEndDate: DateTime.parse(json['ActivityEnddate'] as String),
       ActivityAdress: json['ActivityAdress'] as String,
-      Participants: json['Participants'] as List<dynamic>,
+      Participants: json['participants'] as List<dynamic>,
       CoverImages: (json['CoverImages'] as List<dynamic>)
           .map((e) => e as String?)
           .toList(),

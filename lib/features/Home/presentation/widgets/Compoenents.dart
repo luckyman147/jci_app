@@ -6,10 +6,18 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/strings/app_strings.dart';
+import 'package:jci_app/features/Home/domain/usercases/EventUseCases.dart';
 import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Event/EventsOfTheweekend/evebnts_of_thewwekend_bloc.dart';
+import 'package:jci_app/features/Home/presentation/widgets/EventListWidget.dart';
+import 'package:jci_app/features/Home/presentation/widgets/EventOfweek.dart';
 import 'package:jci_app/features/auth/presentation/bloc/bool/toggle_bool_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/bool/toggle_bool_bloc.dart';
+
+import '../../../../core/widgets/loading_widget.dart';
+import '../bloc/Event/events_bloc.dart';
+import 'ErrorDisplayMessage.dart';
 
 class SearchButton extends StatelessWidget {
   const SearchButton({super.key});
@@ -142,4 +150,63 @@ iconStyleData:  IconStyleData(iconSize: 30,icon:SvgPicture.string(state.value?Ar
       },
     );
   }
+}
+Widget buildBody(BuildContext context){
+  return BlocBuilder<EventsBloc, EventsState>(
+    builder: (context, state) {
+      if (state is EventsOfMonthLoadingState) {
+        return LoadingWidget();
+      } else if (state is EventsOfMonthLoadedState) {
+        return RefreshIndicator(
+            onRefresh: () {
+              print(state.eventsOfMonth.length);
+              return
+
+                onRefresh(context);},
+            child:
+
+
+
+            EventsOfMonthListWidget (Events: state.eventsOfMonth,)
+
+        );
+      }
+       else if (state is EventsErrorState) {
+        return MessageDisplayWidget(message: state.message);
+      }
+      return LoadingWidget();
+    },
+  );}
+Widget buildWeekBody(BuildContext context){
+  return BlocBuilder<EvebntsOfThewwekendBloc, EvebntsOfThewwekendState>(
+    builder: (context, state) {
+      if (state is EventsOfWeekLoadingState) {
+        return LoadingWidget();
+      } else if (state is EventsOfWeekLoadedState) {
+        return RefreshIndicator(
+            onRefresh: () {
+              print(state.eventsOfWeek.length);
+              return
+
+                onRefresh(context);},
+            child:
+
+            EventsOfWeekListWidget (Events: state.eventsOfWeek,)
+        );
+      } else if (state is EventsErrorOfTheweekenState) {
+        return MessageDisplayWidget(message: state.message);
+      }
+      return Text("eee");
+    },
+  );}
+
+Future<void> onRefresh(BuildContext context) async {
+
+
+    BlocProvider.of<EventsBloc>(context).add(GetEventsOfmonth());
+
+
+    BlocProvider.of<EvebntsOfThewwekendBloc>(context).add(GetEventsOfweek());
+
+
 }

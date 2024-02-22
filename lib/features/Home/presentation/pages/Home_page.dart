@@ -28,11 +28,6 @@ class _HomePageState extends State<HomePage> {
   ];
 
   @override
-  initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     return BlocBuilder<PageIndexBloc, PageIndexState>(

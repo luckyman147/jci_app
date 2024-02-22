@@ -17,3 +17,5 @@ class EventModel extends Event{
 
   Map<String, dynamic> toJson() => _$EventModelToJson(this);
 }
+
+

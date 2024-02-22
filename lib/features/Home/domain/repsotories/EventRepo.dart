@@ -6,8 +6,8 @@ import '../entities/Event.dart';
 abstract class EventRepo{
   Future<Either<Failure, List<Event>>> getAllEvents();
   Future<Either<Failure, Event>> getEventById(String id);
-  Future<Either<Failure, List<Event>>> getEventsOfTheWeek();
-  Future<Either<Failure, List<Event>>> getEventsOfTheMonth();
+  Future<Either<Failure, List<EventOfTheWeek>>> getEventsOfTheWeek();
+  Future<Either<Failure, List<EventOfTheMonth>>> getEventsOfTheMonth();
 
   Future<Either<Failure, Unit>> createEvent(Event event);
   Future<Either<Failure, Event>> updateEvent(Event event);

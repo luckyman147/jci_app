@@ -9,10 +9,7 @@ abstract class EventsEvent  extends Equatable   {
 class GetEventsEvent extends EventsEvent {
   const GetEventsEvent();
 }
-class GetEventsOfweek extends EventsEvent {
 
-
-}
 class GetEventsOfmonth extends EventsEvent {
 
 }

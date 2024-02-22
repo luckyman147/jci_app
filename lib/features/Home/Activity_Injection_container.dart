@@ -6,6 +6,7 @@ import 'package:jci_app/features/Home/data/datasources/events/event_remote_datas
 import 'package:jci_app/features/Home/data/repositories/EventRepoImpl.dart';
 import 'package:jci_app/features/Home/domain/repsotories/EventRepo.dart';
 import 'package:jci_app/features/Home/domain/usercases/EventUseCases.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Event/EventsOfTheweekend/evebnts_of_thewwekend_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Event/events_bloc.dart';
 
 
@@ -19,10 +20,10 @@ import 'package:http/http.dart' as http;
 final sl = GetIt.instance;
 
 Future <void > initActivities()async{
-  sl.registerFactory(() => EventsBloc( getALlEventsUseCase: sl(), getEventsOfTheWeekUseCase: sl(), getEventsOfTheMonthUseCase: sl()));
+  sl.registerFactory(() => EventsBloc( getALlEventsUseCase: sl(),  getEventsOfTheMonthUseCase: sl()));
 
 
-
+sl.registerFactory(() => EvebntsOfThewwekendBloc( getEventsOfTheWeekUseCase: sl()));
 
   sl.registerLazySingleton<EventRemoteDataSource>(
           () => EventRemoteDataSourceImpl(
@@ -49,9 +50,7 @@ Future <void > initActivities()async{
 
 
 
-  // Register other dependencies
-  sl.registerLazySingleton(() => InternetConnectionChecker());
-  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
+
 
   // Register SignUpRemoteDataSource with http.Client as a parameter
 

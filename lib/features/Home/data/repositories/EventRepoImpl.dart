@@ -5,6 +5,7 @@ import 'package:jci_app/core/network/network_info.dart';
 import 'package:jci_app/features/Home/data/datasources/events/Event_local_datasources.dart';
 import 'package:jci_app/features/Home/data/datasources/events/event_remote_datasources.dart';
 
+
 import 'package:jci_app/features/Home/domain/entities/Event.dart';
 
 import '../../../../core/error/Exception.dart';
@@ -53,8 +54,8 @@ if (await networkInfo.isConnected) {
       }
     }
   }
-
-  Future<Either<Failure, List<Event>>> getEventsOfTheMonth() async {
+@override
+  Future<Either<Failure, List<EventOfTheMonth>>> getEventsOfTheMonth() async {
 if (await networkInfo.isConnected) {
       try {
         final remoteEvents = await eventRemoteDataSource.getEventsOfTheMonth();
@@ -75,9 +76,24 @@ if (await networkInfo.isConnected) {
   }
 
   @override
-  Future<Either<Failure,List< Event>>> getEventsOfTheWeek() {
-    // TODO: implement getEventsOfTheWeek
-    throw UnimplementedError();
+  Future<Either<Failure,List< EventOfTheWeek>>> getEventsOfTheWeek() async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteEvents = await eventRemoteDataSource.getEventsOfTheWeek();
+        eventLocalDataSource.cacheEventsOfTheWeek(remoteEvents);
+        return Right(remoteEvents);
+      } on EmptyDataException {
+        return Left(EmptyDataFailure());
+      }
+    } else {
+    try {
+    final localEvents = await eventLocalDataSource.getCachedEventsOfTheWeek();
+    return Right(localEvents);
+    } on EmptyCacheException {
+    return Left(EmptyCacheFailure());
+    }
+    }
+
   }
   @override
   Future<Either<Failure, Event>> getEventById(String id) {
