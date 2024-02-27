@@ -125,7 +125,6 @@ return true;
       print(" ya bonay ${Response.statusCode}");
       if (Response.statusCode == 200) {
         final Map<String, dynamic> response = jsonDecode(Response.body);
-
         Store.clear();
         return true;
       } else  if (Response.statusCode == 400 ){
@@ -133,9 +132,14 @@ return true;
 if (response['message']=='Already logged out'){
         throw AlreadyLogoutException();
       }
-      else{
+      else if ( Response.statusCode==401){
       throw UnauthorizedException()  ;
       }
+      else {
+        // Request failed
+        print('Request failed with status: ${Response.statusCode}');
+        print('Response body: ${Response.body}');
+        throw ServerException();}
       }
       else {
         // Request failed

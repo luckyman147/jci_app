@@ -1,11 +1,11 @@
 import { plainToClass } from 'class-transformer';
 import { NextFunction, Request, Response } from 'express';
 
-import {  MeetingField, MeetingInputs } from '../../dto/activity.dto';
+import { MeetingField, MeetingInputs } from '../../dto/activity.dto';
 import { Member } from '../../models/Member';
 
-import {  Meeting, } from '../../models/activities/meetingModel';
 import { validate } from 'class-validator';
+import { Meeting, } from '../../models/activities/meetingModel';
 
 //&Public
 
@@ -13,7 +13,7 @@ import { validate } from 'class-validator';
 export const getAllmeetings = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Fetch all meetings and sort them by ActivityBeginDate in ascending order
-    const meetings = await Meeting.find().sort({ ActivityBeginDate: 1 });
+    const meetings = await Meeting.find().sort({ ActivityBeginDate: -1 });
 
     // Format and send the meetings in the response
     const formattedmeetings = meetings.map<MeetingField>((meeting) => ({
@@ -21,11 +21,17 @@ export const getAllmeetings = async (req: Request, res: Response, next: NextFunc
       name: meeting.name,
       Director: meeting.Director,
       Duration:meeting.Duration,
-      type:meeting.type,
+   
      
-      Begindate: meeting.ActivityBeginDate,
-      Enddate: meeting.ActivityEndDate,
-      place: meeting.ActivityAdress,
+      ActivityBegindate: meeting.ActivityBeginDate,
+      ActivityEnddate: meeting.ActivityEndDate,
+      description: meeting.description,
+
+      ActivityPoints: meeting.ActivityPoints,
+      categorie: meeting.categorie,
+      IsPaid: meeting.IsPaid,
+      price: meeting.price,
+      ActivityAdress: meeting.ActivityAdress,
       participants: meeting.Participants,
       CoverImages: meeting.CoverImages,
     }));
@@ -42,55 +48,71 @@ export const getAllmeetings = async (req: Request, res: Response, next: NextFunc
 
 export const addmeeting = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // Extract data from the request body
-    const meetingInputs=plainToClass(MeetingInputs,req.body)
-    // Validate the inputs
-    const errors = await validate(meetingInputs, { validationError: { target: false } });
-    if (errors.length > 0) {
-      return res.status(400).json(errors);
+      // Extract data from the request body
+      const meetingInputs = plainToClass(MeetingInputs, req.body);
+    
+      const beginDate = new Date(meetingInputs.ActivityBeginDate);
+      const endDate = new Date(meetingInputs.ActivityEndDate);
+      console.log(beginDate, endDate)
+      const durationInMillis = endDate.getTime() - beginDate.getTime();
+    // Check if ActivityEndDate is greater than ActivityBeginDate
+    if (endDate.getTime() <= beginDate.getTime()) {
+        return res.status(400).json({ message: 'ActivityEndDate must be greater than ActivityBeginDate' });
     }
 
-    
-    // Create an meeting document
-    const newMeeting = new Meeting({
-      
-      name: meetingInputs.name,
-      description: meetingInputs.description,
-      ActivityBeginDate: meetingInputs.ActivityBeginDate,
-      ActivityEndDate: meetingInputs.ActivityEndDate,
-      ActivityAdress: meetingInputs.ActivityAdress,
-     
-      categorie: meetingInputs.categorie,
-     
-      ActivityPoints:0, 
-     
-      
-        Director: meetingInputs.Director,
-        Duration:meetingInputs.Duration,
-        type:meetingInputs.type,
+      // Validate the inputs
+      const errors = await validate(meetingInputs, { validationError: { target: false } });
 
-      
-      
-      
-      CoverImages: [], // Convert images to base64
-    });
 
-    // Add the meeting to the database
-    const savedmeeting = await newMeeting.save();
+      // Create a meeting document
+      const newMeeting = new Meeting({
+          name: meetingInputs.name,
+          description: meetingInputs.description,
+          ActivityBeginDate: meetingInputs.ActivityBeginDate,
+          ActivityEndDate: meetingInputs.ActivityEndDate,
+          ActivityAdress: meetingInputs.ActivityAdress,
+          categorie: meetingInputs.categorie,
 
-    res.json(savedmeeting);
+          IsPaid: meetingInputs.isPaid,
+          Director: meetingInputs.Director,
+   
+          CoverImages: [], // Convert images to base64
+      });
+
+      // Add the meeting to the database
+      const savedMeeting = await newMeeting.save();
+
+      res.json(savedMeeting);
   } catch (error) {
-    console.error('Error adding meeting:', error);
-    next(error);
-  }}
-
+      console.error('Error adding meeting:', error);
+      next(error);
+  }
+};
 
 export const getmeetingById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
     const meeting = await Meeting.findById(id);
     if (meeting) {
-      res.json(meeting);
+      res.json({
+        _id: meeting._id,
+        name: meeting.name,
+        Director: await findParticipentById(meeting.Director),
+        Duration:meeting.Duration,
+     
+       
+        ActivityBegindate: meeting.ActivityBeginDate,
+        ActivityEnddate: meeting.ActivityEndDate,
+        description: meeting.description,
+  
+        ActivityPoints: meeting.ActivityPoints,
+        categorie: meeting.categorie,
+        IsPaid: meeting.IsPaid,
+        price: meeting.price,
+        ActivityAdress: meeting.ActivityAdress,
+        participants: meeting.Participants,
+        CoverImages: meeting.CoverImages,
+      });
     } else {
       res.status(404).json({ message: "No meeting found with this id" });
     }
@@ -99,6 +121,13 @@ export const getmeetingById = async (req: Request, res: Response, next: NextFunc
     next(error);
   }
   
+}
+const findParticipentById=async (id:string)=>{
+  const member=await Member.findById(id)
+  if (member){
+    return member.firstName
+  }
+  return null
 }
 export const getmeetingByName = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -160,36 +189,43 @@ export const getmeetingByDate = async (req: Request, res: Response, next: NextFu
     try {
       const currentDate = new Date();
       const currentDay = currentDate.getDay();
-      const firstDayOfWeekend = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + (5 - currentDay));
-      const lastDayOfWeekend = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + (7 - currentDay));
-  
-      const meetingsOfWeekend = await Meeting.find({
-        ActivityBeginDate: { $gte: firstDayOfWeekend, $lte: lastDayOfWeekend },
-      });
-  
-      if (meetingsOfWeekend.length > 0) {
-        const formattedmeetings = meetingsOfWeekend.map<MeetingField>((meeting) => ({
-          _id: meeting._id,
-          name: meeting.name,
-            Director: meeting.Director,
-            Duration:meeting.Duration,
-            type:meeting.type,
-          
-          Begindate: meeting.ActivityBeginDate,
-          Enddate: meeting.ActivityEndDate,
-          place: meeting.ActivityAdress,
-          participants: meeting.Participants,
-    CoverImages: meeting.CoverImages,
 
-        }));
-        res.json({ meetings: formattedmeetings });
+      // Calculate the first day of the week (Monday)
+      const firstDayOfWeek = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDay + (currentDay === 0 ? -6 : 1));
+
+      // Calculate the last day of the week (Sunday)
+      const lastDayOfWeek = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDay + 7);
+
+      const meetingsOfWeek = await Meeting.find({
+          ActivityBeginDate: { $gte: firstDayOfWeek, $lte: lastDayOfWeek },
+      });
+
+      if (meetingsOfWeek.length > 0) {
+          const formattedMeetings = meetingsOfWeek.map<MeetingField>((meeting) => ({
+              _id: meeting._id,
+              name: meeting.name,
+              Director: meeting.Director,
+              Duration: meeting.Duration,
+              ActivityBegindate: meeting.ActivityBeginDate,
+              ActivityEnddate: meeting.ActivityEndDate,
+              description: meeting.description,
+              ActivityPoints: meeting.ActivityPoints,
+              categorie: meeting.categorie,
+              IsPaid: meeting.IsPaid,
+              price: meeting.price,
+              ActivityAdress: meeting.ActivityAdress,
+              participants: meeting.Participants,
+              CoverImages: meeting.CoverImages,
+          }));
+
+          res.json({ meetings: formattedMeetings });
       } else {
-        res.json({ message: "No meetings found for this weekend" });
+          res.json({ message: "No meetings found for this week" });
       }
-    } catch (error) {
-      console.error('Error retrieving meetings of the weekend:', error);
+  } catch (error) {
+      console.error('Error retrieving meetings of the week:', error);
       next(error);
-    }
+  }
   };
   export const AddParticipantTomeeting = async (req: Request, res: Response, next: NextFunction) => {
     const member=req.member

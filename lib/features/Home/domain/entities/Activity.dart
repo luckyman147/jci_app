@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:jci_app/features/auth/domain/entities/LoginMember.dart';
 
 class Activity extends Equatable{
-
+final String id;
 final   String name;
 
   final String description;
@@ -16,6 +16,7 @@ final String  categorie;
   final List<dynamic>Participants;
    final List <String?>CoverImages;
     Activity({required this.name,
+      required this.id,
      required this.description,
      required this.ActivityBeginDate,
      required this.ActivityEndDate,

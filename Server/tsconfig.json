@@ -10,6 +10,6 @@
       "strictPropertyInitialization": false,      
 
     },
-    "include": ["src/**/*.ts"],
+    "include": ["src/**/*.ts", "src/routes/activity/TrainingRoute"],
     "exclude": ["node_modules"]
   }

@@ -8,8 +8,8 @@ import 'package:jci_app/features/Home/data/datasources/events/event_remote_datas
 
 import 'package:jci_app/features/Home/domain/entities/Event.dart';
 
-import '../../../../core/error/Exception.dart';
-import '../../domain/repsotories/EventRepo.dart';
+import '../../../../../core/error/Exception.dart';
+import '../../../domain/repsotories/EventRepo.dart';
 
 class EventRepoImpl implements EventRepo{
   final EventRemoteDataSource eventRemoteDataSource;
@@ -55,7 +55,7 @@ if (await networkInfo.isConnected) {
     }
   }
 @override
-  Future<Either<Failure, List<EventOfTheMonth>>> getEventsOfTheMonth() async {
+  Future<Either<Failure, List<Event>>> getEventsOfTheMonth() async {
 if (await networkInfo.isConnected) {
       try {
         final remoteEvents = await eventRemoteDataSource.getEventsOfTheMonth();
@@ -76,11 +76,12 @@ if (await networkInfo.isConnected) {
   }
 
   @override
-  Future<Either<Failure,List< EventOfTheWeek>>> getEventsOfTheWeek() async {
+  Future<Either<Failure,List< Event>>> getEventsOfTheWeek() async {
     if (await networkInfo.isConnected) {
       try {
         final remoteEvents = await eventRemoteDataSource.getEventsOfTheWeek();
         eventLocalDataSource.cacheEventsOfTheWeek(remoteEvents);
+        print("here is the remote events $remoteEvents");
         return Right(remoteEvents);
       } on EmptyDataException {
         return Left(EmptyDataFailure());
@@ -96,9 +97,13 @@ if (await networkInfo.isConnected) {
 
   }
   @override
-  Future<Either<Failure, Event>> getEventById(String id) {
-    // TODO: implement getEventById
-    throw UnimplementedError();
+  Future<Either<Failure, Event>> getEventById(String id)async  {
+    try {
+      final event =await eventRemoteDataSource.getEventById(id);
+      return Right(event);
+    } on EmptyDataException {
+      return Left(EmptyDataFailure());
+    }
   }
 
 

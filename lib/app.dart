@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ACtivityOfweek/activity_ofweek_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/acivity_f_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
-import 'package:jci_app/features/Home/presentation/bloc/Event/EventsOfTheweekend/evebnts_of_thewwekend_bloc.dart';
-import 'package:jci_app/features/Home/presentation/bloc/Event/events_bloc.dart';
+
+
+
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
+
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:jci_app/features/intro/presentation/bloc/bools/bools_bloc.dart';
 import 'package:jci_app/features/intro/presentation/bloc/internet/internet_bloc.dart';
 
 import 'core/config/locale/app__localizations.dart';
 
 
+import 'features/Home/presentation/bloc/DescriptionBoolean/description_bool_bloc.dart';
 import 'features/changelanguages/presentation/bloc/locale_cubit.dart';
 import 'injection_container.dart' as di;
 import 'core/app_theme.dart';
 import 'core/routes.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 
@@ -59,19 +66,23 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_)=> di.sl<EventsBloc>()..add(GetEventsOfmonth())),
-        BlocProvider(create: (_)=> di.sl<EvebntsOfThewwekendBloc>()..add(GetEventsOfweek())),
+
+        BlocProvider(create: (_)=> di.sl<AcivityFBloc>()..add(const GetActivitiesOfMonthEvent(act: activity.Events))),
+        BlocProvider(create: (_)=> di.sl<ActivityOfweekBloc>()..add(const GetOfWeekActivitiesEvent(act: activity.Events))),
+
         BlocProvider(create: (_)=> InternetCubit()..CheckConnection()),
         BlocProvider(create: (_)=>di.sl<ResetBloc>()),
-        BlocProvider(create: (_)=>di.sl<AuthBloc>()..add(RefreshTokenEvent())),
+        BlocProvider(create: (_)=>di.sl<AuthBloc>()..add(const RefreshTokenEvent())),
         BlocProvider(create: (_) => di.sl<SignUpBloc>()),
         BlocProvider(create: (_) => di.sl<LoginBloc>()),
         BlocProvider(create: (_) => localeCubit()..getSavedLanguage()),
+        BlocProvider(create: (_)=>ActivityCubit()),
 
         BlocProvider(create: (_) => ToggleBooleanBloc(initialValue: true)),
+        BlocProvider(create: (_) => DescriptionBoolBloc()),
         BlocProvider(create: (_) => ChangeStringBloc("Events")),
         BlocProvider(create: (_) => PageIndexBloc(0)),
-        // BlocProvider(create: (context) => AuthBloc(authRepository: AuthRepository())),
+       BlocProvider(create: (_)=> BoolBloc()..add(resetEvent())),
         BlocProvider(create: (_) => IndexBloc(initialIndex)),
       ],
       child: BlocBuilder<AuthBloc, AuthState>(
@@ -109,7 +120,7 @@ if (state is ChangeLocalState) {
             },
             locale: state.locale,
           );}
-return SizedBox();
+return const SizedBox();
         },
       );
   },

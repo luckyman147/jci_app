@@ -2,17 +2,27 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jci_app/features/Home/presentation/bloc/Event/events_bloc.dart';
+import 'package:jci_app/core/config/services/store.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/acivity_f_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
+
+import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
+
+import 'package:jci_app/features/auth/data/models/AuthModel/AuthModel.dart';
 import 'package:jci_app/features/auth/presentation/widgets/Text.dart';
+
 
 import '../../../../core/app_theme.dart';
 import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
-import '../bloc/Event/EventsOfTheweekend/evebnts_of_thewwekend_bloc.dart';
+
+import '../bloc/Activity/BLOC/ACtivityOfweek/activity_ofweek_bloc.dart';
+
+
 import 'Compoenents.dart';
 
 class HomeWidget extends StatefulWidget {
-
-  const HomeWidget({Key? key}) : super(key: key);
+final activity Activity;
+  const HomeWidget({Key? key, required this.Activity}) : super(key: key);
 
   @override
   State<HomeWidget> createState() => _HomeWidgetState();
@@ -21,68 +31,113 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> {
   @override
   void initState() {
-    context.read<EventsBloc>().add(GetEventsOfmonth());
-    context.read<EvebntsOfThewwekendBloc>().add(GetEventsOfweek());
+    context.read<AcivityFBloc>().add(GetActivitiesOfMonthEvent(act: widget.Activity));
+
+
+
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    return RefreshIndicator(
-      onRefresh: () {
-
-        context.read<EventsBloc>().add(GetEventsOfmonth());
-        context.read<EvebntsOfThewwekendBloc>().add(GetEventsOfweek());
-
-        return Future.value(true);
-      },
-      child: BlocConsumer<AuthBloc, AuthState>(
+    return  BlocConsumer<ActivityCubit, ActivityState>(
         listener: (context, state) {
-          // TODO: implement listener
         },
         builder: (context, state) {
-          return SingleChildScrollView(
+          return
+
+            RefreshIndicator(
+              onRefresh: () {
+
+  context.read<AcivityFBloc>().add(GetActivitiesOfMonthEvent(act: state.selectedActivity));
+  context.read<ActivityOfweekBloc>().add(GetOfWeekActivitiesEvent(act: state.selectedActivity));
+
+  return Future.value(true);
+
+
+
+
+
+          },
+          child:
+            SingleChildScrollView(
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
+                padding: EdgeInsets.symmetric(vertical:mediaQuery.size.height / 33, horizontal: mediaQuery.size.width / 20),
+              child: BlocBuilder<AuthBloc, AuthState>(
+  builder: (context, ste) {
+    return Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text("Hello ", style: PoppinsRegular(
-                                  mediaQuery.size.width / 15, Colors.black),),
-                              Text("There ", style: PoppinsSemiBold(
-                                  mediaQuery.size.width / 14, Colors.black,
-                                  TextDecoration.none),),
+                          FutureBuilder<modelAuth?>(
+                            future:Store.getModel(),
+                            builder: (context,snap) {
+                              if (snap.connectionState == ConnectionState.waiting) {
+                                return CircularProgressIndicator();
+                              }
+                               if (snap.hasData && snap.data!.firstName.isNotEmpty){ return  Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text("Hello, ", style: PoppinsRegular(
+                                      mediaQuery.devicePixelRatio*10, Colors.black),),
+                                  Text(snap.data!.firstName, style: PoppinsSemiBold(
+                                      mediaQuery.devicePixelRatio*11, Colors.black,
+                                      TextDecoration.none),),
 
-                            ],
+                                ],
 
 
+                              );}
+                               return Row(
+                                 mainAxisAlignment: MainAxisAlignment.start,
+                                 children: [
+                                   Text("Hello, ", style: PoppinsRegular(
+                                       mediaQuery.devicePixelRatio*10, Colors.black),),
+                                   Text("There", style: PoppinsSemiBold(
+                                       mediaQuery.devicePixelRatio*11, Colors.black,
+                                       TextDecoration.none),),
+
+                                 ],
+
+
+                               );
+                            }
                           ),
-                          const SearchButton(),
+                          Row(
+                            children: [
+                              CalendarButton(color: BackWidgetColor, IconColor: textColorBlack,),
+                              const SearchButton(color: BackWidgetColor, IconColor: textColorBlack,),
+                            ],
+                          ),
 
                         ],
                       ),
                       Padding(
                         padding:  EdgeInsets.symmetric(vertical: mediaQuery.size.height / 33),
-                        child: MyDropdownButton(),
+                        child: MyActivityButtons(),
                       ),
                       Align(
                         alignment: AlignmentDirectional.topStart,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Upcoming Events", style: PoppinBold(
-                                mediaQuery.size.width / 19, Colors.black,
+                            Text("Upcoming ${state.selectedActivity.name}", style: PoppinBold(
+                                mediaQuery.size.width / 17, Colors.black,
                                 TextDecoration.none),),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: LinkedText(text: "See more", size: mediaQuery.size.width/23),
+                            InkWell(
+                              onTap: (){
+                                context.read<PageIndexBloc>().add (SetIndexEvent(index: 1));
+
+
+
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: LinkedText(text: "See more", size: mediaQuery.size.width/23),
+                              ),
                             )
                           ],
                         ),
@@ -95,14 +150,18 @@ class _HomeWidgetState extends State<HomeWidget> {
                             padding:  EdgeInsets.symmetric(vertical: mediaQuery.size.height / 33 , horizontal: 6),
                             child: SizedBox(
                               height: mediaQuery.size.height * 0.4, // adjust the height as needed
-                              child: buildBody(context),
+                              child:
+
+                                   buildBody(context,state.selectedActivity)
+
+
                             ),
                           ),
                           SizedBox(height: 10,),
                           Align(
                             alignment: AlignmentDirectional.topStart,
                             child: Text(" This Weekend", style: PoppinBold(
-                                mediaQuery.size.width / 19, Colors.black,
+                                mediaQuery.size.width / 15, Colors.black,
                                 TextDecoration.none),),
                           ),
                           Padding(
@@ -110,7 +169,7 @@ class _HomeWidgetState extends State<HomeWidget> {
 
                             child: SizedBox(
                               height: mediaQuery.size.height * 0.4, // adjust the height as needed
-                              child: buildWeekBody(context),
+                              child: buildWeekBody(context,state.selectedActivity),
                             ),
                           ),
                         ],
@@ -120,12 +179,14 @@ class _HomeWidgetState extends State<HomeWidget> {
 
                     ]
 
-                ),
+                );
+  },
+),
               ),
             ),
-          );
+          ));
         },
-      ),
-    );
+      );
+
   }
 }

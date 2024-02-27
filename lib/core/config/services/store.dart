@@ -31,7 +31,7 @@ class Store{
    final pref =await SecureSharedPref.getInstance();
 await pref.putString(_RefreshTokenKey, "");
 await pref.putString(_AccessTokenKey, "");
-
+await pref.putString(_UserInfo, "");
  }
  static Future<String?> getLocaleLanguage ()async {
    final pref =await SharedPreferences.getInstance();
@@ -59,6 +59,9 @@ await pref.putString(_AccessTokenKey, "");
     final value = await  prefs.getString(_UserInfo);
 
     if (value == null) {
+      return null;
+    }
+    if (value.isEmpty) {
       return null;
     }
 

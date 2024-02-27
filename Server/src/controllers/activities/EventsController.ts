@@ -3,6 +3,8 @@ import { NextFunction, Request, Response } from 'express';
 
 import { EventInputs, EventOftheMonthField } from '../../dto/activity.dto';
 import { Member } from '../../models/Member';
+
+
 import { Event } from '../../models/activities/eventModel';
 
 //&Public
@@ -11,13 +13,20 @@ import { Event } from '../../models/activities/eventModel';
 export const getAllEvents = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Fetch all events and sort them by ActivityBeginDate in ascending order
-    const events = await Event.find().sort({ ActivityBeginDate: 1 });
+    const events = await Event.find().sort({ ActivityBeginDate: -1 });
 if (events.length>0) {
     // Format and send the events in the response
     const formattedEvents = events.map<EventOftheMonthField>((event) => ({
       _id: event._id,
       name: event.name,
       LeaderName: event.LeaderName,
+
+      ActivityPoints: event.ActivityPoints,
+      description: event.description,
+      categorie: event.categorie,
+      IsPaid: event.IsPaid,
+      price: event.price,
+      registrationDeadline: event.registrationDeadline,
       
       ActivityBegindate: event.ActivityBeginDate,
       ActivityEnddate: event.ActivityEndDate,
@@ -54,19 +63,27 @@ console.log(currentDate)
         _id: event._id,
         name: event.name,
         LeaderName: event.LeaderName,
+  
+        ActivityPoints: event.ActivityPoints,
+        description: event.description,
+        categorie: event.categorie,
+        IsPaid: event.IsPaid,
+        price: event.price,
+        registrationDeadline: event.registrationDeadline,
+        
         ActivityBegindate: event.ActivityBeginDate,
         ActivityEnddate: event.ActivityEndDate,
         ActivityAdress: event.ActivityAdress,
+   
         participants: event.Participants,
-  CoverImages: event.CoverImages,
-
+        CoverImages: event.CoverImages,
       }));
       res.status(200).json({ events: formattedEvents });
     } else {
       res.status(400).json({ message: "No events found for this weekend" });
     }
   } catch (error) {
-    console.error('Error retrieving events of the weekend:', error);
+    console.log('Error retrieving events of the weekend:', error);
     next(error);
   }
 };
@@ -78,24 +95,29 @@ export const GetEventsOfMonth= async (req:Request,res:Response,next:NextFunction
         const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
     
         const eventsOfMonth = await Event.find({
-          ActivityBeginDate: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
+          ActivityBeginDate: { $gte: currentDate },
         
-        }).sort({ ActivityBeginDate: -1 });
+        }).sort({ ActivityBeginDate: 1 }).limit(3);
      
     if (eventsOfMonth) {   
         const formattedEvents = eventsOfMonth.map<EventOftheMonthField>((event) => ({
-  _id: event._id,
-
-  name:event.name,
-
-  LeaderName:event.LeaderName,
-    ActivityBegindate: event.ActivityBeginDate,
-    ActivityEnddate: event.ActivityEndDate,
-    ActivityAdress: event.ActivityAdress,
-  
-    participants: event.Participants,
-    CoverImages: event.CoverImages,
-                               
+          _id: event._id,
+          name: event.name,
+          LeaderName: event.LeaderName,
+    
+          ActivityPoints: event.ActivityPoints,
+          description: event.description,
+          categorie: event.categorie,
+          IsPaid: event.IsPaid,
+          price: event.price,
+          registrationDeadline: event.registrationDeadline,
+          
+          ActivityBegindate: event.ActivityBeginDate,
+          ActivityEnddate: event.ActivityEndDate,
+          ActivityAdress: event.ActivityAdress,
+     
+          participants: event.Participants,
+          CoverImages: event.CoverImages,
 
           }));
           console.log(formattedEvents);
@@ -158,7 +180,38 @@ export const getEventById = async (req: Request, res: Response, next: NextFuncti
     const id = req.params.id;
     const event = await Event.findById(id);
     if (event) {
-      res.json(event);
+      res.json({
+
+        _id: event._id,
+        name: event.name,
+        LeaderName: event.LeaderName,
+  
+        ActivityPoints: event.ActivityPoints,
+        description: event.description,
+        categorie: event.categorie,
+        IsPaid: event.IsPaid,
+        price: event.price,
+        registrationDeadline: event.registrationDeadline,
+        
+        ActivityBegindate: event.ActivityBeginDate,
+        ActivityEnddate: event.ActivityEndDate,
+        ActivityAdress: event.ActivityAdress,
+   
+        participants: event.Participants,
+        CoverImages: event.CoverImages,
+
+        
+
+
+
+
+
+
+
+
+
+
+      });
     } else {
       res.status(404).json({ message: "No event found with this id" });
     }
@@ -168,6 +221,11 @@ export const getEventById = async (req: Request, res: Response, next: NextFuncti
   }
   
 }
+
+
+
+
+
 export const getEventByName = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const name = req.params.name;

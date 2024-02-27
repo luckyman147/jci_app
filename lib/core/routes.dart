@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:jci_app/features/Home/presentation/pages/CreateUpdateActivityPage.dart';
+import 'package:jci_app/features/Home/presentation/pages/detailsPage.dart';
+import 'package:jci_app/features/Home/presentation/widgets/SearchWidget.dart';
 import 'package:path_to_regexp/path_to_regexp.dart';
 import 'package:jci_app/features/Home/presentation/pages/Home_page.dart';
 import 'package:jci_app/features/auth/presentation/pages/Forget_password_page.dart';
@@ -35,6 +38,21 @@ return ForgetPasswordPage();
 
 
 ),GoRoute(
+path: '/search',
+builder: (BuildContext context, GoRouterState state) {
+return SearchPage();
+},
+
+
+),
+
+
+
+
+
+
+
+    GoRoute(
 path: '/pin/:email',
 builder: (BuildContext context, GoRouterState state) {
   final  email = state.pathParameters['email']! ;
@@ -44,6 +62,14 @@ builder: (BuildContext context, GoRouterState state) {
 
 
 ),
+GoRoute(path: "/activity/:id/:activity",
+  builder: (BuildContext context,  state) {
+    final  id = state.pathParameters['id']! ;
+    final  activity = state.pathParameters['activity']! ;
+    return ActivityDetailsPage( Activity: activity, id: id,);
+  },
+),
+
 GoRoute(
 path: '/reset/:email',
 builder: (BuildContext context,  state) {
@@ -70,6 +96,12 @@ GoRoute(
 
 
     ),
+
+    GoRoute(path: '/create',
+      builder: (BuildContext context, GoRouterState state)=>CreateUpdateActivityPage(),
+    ),
+
+
     GoRoute(path: '/login',
       builder: (BuildContext context, GoRouterState state)=>LoginPage(),
     ),GoRoute(path: '/SignUp',

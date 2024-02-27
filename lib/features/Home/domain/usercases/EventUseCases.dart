@@ -26,21 +26,21 @@ class GetEventByIdUseCase {
     return await eventRepository.getEventById(id);
   }
 }
-class GetEventsOfTheWeekUseCase extends UseCase<List<EventOfTheWeek>,NoParams>{
+class GetEventsOfTheWeekUseCase extends UseCase<List<Event>,NoParams>{
   final EventRepo eventRepository;
 
   GetEventsOfTheWeekUseCase({required this.eventRepository});
 @override
-  Future<Either<Failure,List<EventOfTheWeek>>> call(NoParams params) async {
+  Future<Either<Failure,List<Event>>> call(NoParams params) async {
     return await eventRepository.getEventsOfTheWeek();
   }
 }
-class GetEventsOfTheMonthUseCase extends UseCase<List<EventOfTheMonth>,NoParams>{
+class GetEventsOfTheMonthUseCase extends UseCase<List<Event>,NoParams>{
   final EventRepo eventRepository;
 
   GetEventsOfTheMonthUseCase({ required this.eventRepository});
 @override
-  Future<Either<Failure,List<EventOfTheMonth>>> call(NoParams params ) async {
+  Future<Either<Failure,List<Event>>> call(NoParams params ) async {
     return await eventRepository.getEventsOfTheMonth();
   }
 }

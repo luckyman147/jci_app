@@ -1,49 +1,24 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+
 
 import 'package:jci_app/core/app_theme.dart';
-import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/core/strings/app_strings.dart';
-import 'package:jci_app/features/Home/domain/usercases/EventUseCases.dart';
-import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
-import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
-import 'package:jci_app/features/Home/presentation/bloc/Event/EventsOfTheweekend/evebnts_of_thewwekend_bloc.dart';
-import 'package:jci_app/features/Home/presentation/widgets/EventListWidget.dart';
-import 'package:jci_app/features/Home/presentation/widgets/EventOfweek.dart';
-import 'package:jci_app/features/auth/presentation/bloc/bool/toggle_bool_bloc.dart';
-import 'package:jci_app/features/auth/presentation/bloc/bool/toggle_bool_bloc.dart';
-
-import '../../../../core/widgets/loading_widget.dart';
-import '../bloc/Event/events_bloc.dart';
-import 'ErrorDisplayMessage.dart';
-
-class SearchButton extends StatelessWidget {
-  const SearchButton({super.key});
 
 
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 40,
-      width: 49,
-      child: IconButton(
-        style: IconButton.styleFrom(
-            backgroundColor: BackWidgetColor,
-            shape: CircleBorder(
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ACtivityOfweek/activity_ofweek_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/acivity_f_bloc.dart';
+import '../../../../core/strings/app_strings.dart';
 
-            )
+import '../../../auth/presentation/bloc/bool/toggle_bool_bloc.dart';
+import '../bloc/Activity/activity_cubit.dart';
 
-        ),
-        onPressed: () {
-          // Navigator.pushNamed(context, Routes.search);
-        },
-        icon: Icon(Icons.search),
-      ),
-    );
-  }
-}
+
+import 'ActivityImplWidgets.dart';
+
 
 class MyDropdownButton extends StatefulWidget {
   @override
@@ -56,157 +31,330 @@ class _MyDropdownButtonState extends State<MyDropdownButton> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ChangeStringBloc, ChangeStringState>(
-      builder: (context, Chastate) {
-        return BlocBuilder<ToggleBooleanBloc, ToggleBooleanState>(
-          builder: (context, state) {
-            return Align(
-              alignment: AlignmentDirectional.topStart,
-              child: Container(
-                width: 200,
-                height: 65,
-
-                padding: EdgeInsets.all(12.0),
-                decoration: BoxDecoration(
-
-                  border: Border.all(color: Colors.black, width: 2.0),
-                  borderRadius: BorderRadius.circular(16.0),
-                  color: Colors.white,
-                ),
-                child: DropdownButtonHideUnderline(
-
-
-                  child: DropdownButton2(
+    return BlocBuilder<ActivityCubit, ActivityState>(
+  builder: (context, ste) {
+    return BlocBuilder<ToggleBooleanBloc, ToggleBooleanState>(
+      builder: (context, state) {
+        return Align(
+          alignment: AlignmentDirectional.topStart,
+          child: Container(
+              width: 200,
+              height: 65,
+    
+              padding: EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+    
+    
+                borderRadius: BorderRadius.circular(16.0),
+    
+              ),
+              child: DropdownButtonHideUnderline(
+    
+    
+                child: DropdownButton2<activity>(
 
                   style: PoppinsSemiBold(21, textColorBlack, TextDecoration.none),
+    
+                  dropdownStyleData:const  DropdownStyleData(
 
-                    dropdownStyleData:const  DropdownStyleData(
-
-                      maxHeight: 200,
-                      elevation: 1,
-                      width: 200,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(16),bottomRight: Radius.circular(16)),
-                        border: Border(
-top: BorderSide(color: Colors.black, width: 2.0),
-                          left: BorderSide(color: Colors.black, width: 2.0),
-                          right: BorderSide(color: Colors.black, width: 2.0),
-                          bottom: BorderSide(color: Colors.black, width: 2.0),
-                        ),
-
-                      ),
-                      offset: const Offset(-14, 0),
-                      scrollbarTheme: ScrollbarThemeData(
-
-                        radius: const Radius.circular(14),
-
-                      ),
+                    maxHeight: 200,
+    
+                    width: 200,
+                    decoration: BoxDecoration(
+                      color: backgroundColored,
+                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(16),bottomRight: Radius.circular(16)),
+    
+    
                     ),
-                    menuItemStyleData: const MenuItemStyleData(
-                      height: 40,
-                      padding: EdgeInsets.only(left: 14, right: 14),
+                    offset: const Offset(-14, 0),
+                    scrollbarTheme: ScrollbarThemeData(
+    
+                      radius: const Radius.circular(14),
+    
                     ),
-                    onMenuStateChange: (bool isMenuOpen) {
-
-                        context.read<ToggleBooleanBloc>().add(ToggleBoolean());
-
-                    },
-iconStyleData:  IconStyleData(iconSize: 30,icon:SvgPicture.string(state.value?Arrow_UP:Arrow_Down)),
-                  
-                    isDense: true,
-                    value: Chastate.value,
-
-
-                  
-             
-                    underline: Container(
-                      height: 20,
-                      color: Colors.transparent,
-                    ),
-                    onChanged: (newValue) {
-
-                      context.read<ToggleBooleanBloc>().add(ToggleBoolean());
-
-                      context.read<ChangeStringBloc>().add(SetStringEvent(value: newValue??"Events"));
-                  
-                    },
-                    items: <String>["Events", "Meetings", "Trainings", ]
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        alignment: AlignmentDirectional.centerStart,
-                        value: value,
-                        child: Text(value),
-
-                      );
-                    }).toList(),
-
                   ),
-                )
-              ),
-            );
+                  menuItemStyleData: const MenuItemStyleData(
+                    height: 40,
+                    padding: EdgeInsets.only(left: 14, right: 14),
+                  ),
+                  onMenuStateChange: (bool isMenuOpen) {
+    
+                    context.read<ToggleBooleanBloc>().add(ToggleBoolean());
+    
+                  },
+                  iconStyleData:  IconStyleData(iconSize: 30,icon:SvgPicture.string(state.value?Arrow_UP:Arrow_Down)),
+    
+                  isDense: true,
+                  value:ste.selectedActivity,
+    
+    
+    
+    
+                  underline: Container(
+                    height: 20,
+                    color: Colors.transparent,
+                  ),
+                  onChanged: (newValue) {
+    
+
+    
+
+                    context.read<ActivityCubit>().selectActivity(newValue!);
+                    context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: newValue));
+
+
+                  },
+                  items: <activity>[activity.Events, activity.Meetings, activity.Trainings ]
+                      .map<DropdownMenuItem<activity>>((activity value) {
+                    return DropdownMenuItem<activity>(
+                      alignment: AlignmentDirectional.centerStart,
+                      value: value,
+                      child: Text(value.name),
+    
+                    );
+                  }).toList(),
+    
+                ),
+              )
+          ),
+        );
+      },
+    );
+  },
+);
+  }
+}
+class SearchButton extends StatelessWidget {
+  final Color color;
+  final Color IconColor ;
+  const SearchButton({super.key, required this.color, required this.IconColor});
+
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 39,
+      width: 49,
+      child: IconButton(
+
+        onPressed: () {
+          context.go('/search');
+          // Navigator.pushNamed(context, Routes.search);
+        },
+        icon: Icon(Icons.search,color: IconColor,),
+      ),
+    );
+  }
+}class AddButton extends StatelessWidget {
+  final Color color;
+  final Color IconColor ;
+  final IconData icon;
+  final Function()? onPressed;
+  const AddButton({super.key, required this.color, required this.IconColor,
+    required this.icon, required this.onPressed});
+
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 46,
+      width: 49,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 4.0),
+        child: IconButton(
+
+          onPressed: () {
+        onPressed!();
+            // Navigator.pushNamed(context, Routes.search);
           },
+          icon: Icon(icon,color: IconColor,size: 33),
+        ),
+      ),
+    );
+  }
+}
+class CalendarButton extends StatelessWidget {
+  final Color color;
+  final Color IconColor ;
+  const CalendarButton({super.key, required this.color, required this.IconColor});
+
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 40,
+      width: 49,
+      child: IconButton(
+
+        onPressed: () {
+          context.go('/search');
+          // Navigator.pushNamed(context, Routes.search);
+        },
+        icon: Icon(Icons.calendar_month_rounded,color: IconColor,),
+      ),
+    );
+  }
+}
+
+class MyActivityButtons extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildActivityButton(context, activity.Events, mediaQuery),
+          _buildActivityButton(context, activity.Meetings, mediaQuery),
+          _buildActivityButton(context, activity.Trainings, mediaQuery),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActivityButton(
+      BuildContext context, activity act, mediaQuery) {
+    return BlocBuilder<ActivityCubit, ActivityState>(
+      builder: (context, state) {
+        return Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: mediaQuery.size.width / 50),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: state.selectedActivity == act
+                  ? PrimaryColor
+                  : Colors.white,
+              foregroundColor: state.selectedActivity == act
+                  ? textColorWhite
+                  : Colors.black,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.black, width: 1.0),
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+            ),
+            onPressed: () {
+              // Handle button press for the specific activity
+              _handleActivityButtonClick(context, act);
+            },
+            child: Text(
+              act.toString().split('.').last,
+              style: PoppinBold(
+                  mediaQuery.size.width / 30,
+                  state.selectedActivity == act
+                      ? textColorWhite
+                      : textColorBlack,
+                  TextDecoration.none),
+            ),
+          ),
         );
       },
     );
   }
+
+  void _handleActivityButtonClick(
+      BuildContext context, activity act) {
+    context.read<ActivityCubit>().selectActivity(act);
+    context.read<AcivityFBloc>().add(GetActivitiesOfMonthEvent( act: act));
+    context.read<ActivityOfweekBloc>().add(GetOfWeekActivitiesEvent(act: act));
+    // Add logic to handle the button press for the specific activity
+    // You can dispatch events to other blocs or perform any other actions here.
+  }
 }
-Widget buildBody(BuildContext context){
-  return BlocBuilder<EventsBloc, EventsState>(
-    builder: (context, state) {
-      if (state is EventsOfMonthLoadingState) {
-        return LoadingWidget();
-      } else if (state is EventsOfMonthLoadedState) {
-        return RefreshIndicator(
-            onRefresh: () {
-              print(state.eventsOfMonth.length);
-              return
+class MyCategoryButtons extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
 
-                onRefresh(context);},
-            child:
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Row(
+            children: [
+              _buildCategoryButton(context, activity.Events, mediaQuery),
+              _buildCategoryButton(context, activity.Meetings, mediaQuery),
+              _buildCategoryButton(context, activity.Trainings, mediaQuery),
+            ],
+          ),
+          Row(
+            children: [
+              _buildCategoryButton(context, activity.Trainings, mediaQuery),
+              _buildCategoryButton(context, activity.Trainings, mediaQuery),
+              _buildCategoryButton(context, activity.Trainings, mediaQuery),
+            ],
+          ),
+          _buildCategoryButton(context, activity.Trainings, mediaQuery),
+        ],
+      ),
+    );
+  }
 
-
-
-            EventsOfMonthListWidget (Events: state.eventsOfMonth,)
-
+  Widget _buildCategoryButton(
+      BuildContext context, activity act, mediaQuery) {
+    return BlocBuilder<ActivityCubit, ActivityState>(
+      builder: (context, state) {
+        return Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: mediaQuery.size.width / 50),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: state.selectedActivity == act
+                  ? PrimaryColor
+                  : Colors.white,
+              foregroundColor: state.selectedActivity == act
+                  ? textColorWhite
+                  : Colors.black,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.black, width: 1.0),
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+            ),
+            onPressed: () {
+              // Handle button press for the specific activity
+              _handleActivityButtonClick(context, act);
+            },
+            child: Text(
+              act.toString().split('.').last,
+              style: PoppinBold(
+                  mediaQuery.size.width / 30,
+                  state.selectedActivity == act
+                      ? textColorWhite
+                      : textColorBlack,
+                  TextDecoration.none),
+            ),
+          ),
         );
-      }
-       else if (state is EventsErrorState) {
-        return MessageDisplayWidget(message: state.message);
-      }
-      return LoadingWidget();
-    },
-  );}
-Widget buildWeekBody(BuildContext context){
-  return BlocBuilder<EvebntsOfThewwekendBloc, EvebntsOfThewwekendState>(
-    builder: (context, state) {
-      if (state is EventsOfWeekLoadingState) {
-        return LoadingWidget();
-      } else if (state is EventsOfWeekLoadedState) {
-        return RefreshIndicator(
-            onRefresh: () {
-              print(state.eventsOfWeek.length);
-              return
+      },
+    );
+  }
 
-                onRefresh(context);},
-            child:
-
-            EventsOfWeekListWidget (Events: state.eventsOfWeek,)
-        );
-      } else if (state is EventsErrorOfTheweekenState) {
-        return MessageDisplayWidget(message: state.message);
-      }
-      return Text("eee");
-    },
-  );}
-
-Future<void> onRefresh(BuildContext context) async {
-
-
-    BlocProvider.of<EventsBloc>(context).add(GetEventsOfmonth());
-
-
-    BlocProvider.of<EvebntsOfThewwekendBloc>(context).add(GetEventsOfweek());
-
-
+  void _handleActivityButtonClick(
+      BuildContext context, activity act) {
+    context.read<ActivityCubit>().selectActivity(act);
+    context.read<AcivityFBloc>().add(GetActivitiesOfMonthEvent( act: act));
+    context.read<ActivityOfweekBloc>().add(GetOfWeekActivitiesEvent(act: act));
+    // Add logic to handle the button press for the specific activity
+    // You can dispatch events to other blocs or perform any other actions here.
+  }
 }
+
+
+Widget buildBody(BuildContext context,activity act) {
+
+return BlocMonthlyActivity(act);
+}
+Widget buildActivityDetailsBody(BuildContext context,activity act,String id) {
+return ActivityDetails(act,id);
+}
+
+Widget buildWeekBody(BuildContext context,activity act) {
+return BlocWeekActivity(act);
+}
+Widget buildAllBody(BuildContext context,activity act) {
+return ALLActivities(act);
+}
+

@@ -2,18 +2,20 @@ import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/core/config/env/urls.dart';
-import 'package:jci_app/features/Home/data/model/EvenetOfTheWeekModel.dart';
 
-import 'package:jci_app/features/Home/data/model/EventModel.dart';
+
+
 import 'package:http/http.dart' as http;
-import 'package:jci_app/features/Home/data/model/EventOtheMonthModel.dart';
+
 
 import '../../../../../core/error/Exception.dart';
+import '../../model/events/EventModel.dart';
+
 abstract class EventRemoteDataSource {
   Future<List<EventModel>> getAllEvents();
   Future<EventModel> getEventById(String id);
-  Future<List<EventOftheWeekModel>> getEventsOfTheWeek();
-  Future<List<EventOftheMonthModel>> getEventsOfTheMonth();
+  Future<List<EventModel>> getEventsOfTheWeek();
+  Future<List<EventModel>> getEventsOfTheMonth();
 
   Future<Unit> createEvent(EventModel event);
   Future<Unit> updateEvent(EventModel event);
@@ -68,13 +70,27 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource{
   }
 
   @override
-  Future<EventModel> getEventById(String id) {
-    // TODO: implement getEventById
-    throw UnimplementedError();
+  Future<EventModel> getEventById(String id)async {
+ final response =  await client.get(
+      Uri.parse(getEventsUrl + '$id'),
+      headers: {"Content-Type": "application/json"},
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> decodedJson = json.decode(response.body) ;
+
+        final EventModel eventModel = EventModel.fromJson(decodedJson);
+        return eventModel;
+
+    } else if (response.statusCode == 400) {
+      throw EmptyDataException();
+    }else{
+      throw ServerException();
+    }
   }
 
   @override
-  Future<List<EventOftheMonthModel>> getEventsOfTheMonth() async{
+  Future<List<EventModel>> getEventsOfTheMonth() async{
     final response =  await client.get(
       Uri.parse(getEventByMonth),
       headers: {"Content-Type": "application/json"},
@@ -83,9 +99,9 @@ print(response.statusCode);
     if (response.statusCode == 200) {
       final Map<String, dynamic> decodedJson = json.decode(response.body) ;
       if (decodedJson.containsKey('events')) {
-        final List<EventOftheMonthModel> eventModels = (decodedJson['events'] as List)
-            .map<EventOftheMonthModel>((jsonEventModel) =>
-            EventOftheMonthModel.fromJson(jsonEventModel))
+        final List<EventModel> eventModels = (decodedJson['events'] as List)
+            .map<EventModel>((jsonEventModel) =>
+            EventModel.fromJson(jsonEventModel))
             .toList();
 
         return eventModels;
@@ -101,20 +117,21 @@ throw EmptyDataException();
   }
 
   @override
-  Future<List<EventOftheWeekModel>> getEventsOfTheWeek()async  {
+  Future<List<EventModel>> getEventsOfTheWeek()async  {
     final response = await client.get(
       Uri.parse(getEventByWeek),
       headers: {"Content-Type": "application/json"},
     );
-
+print(response.statusCode);
+print("object");
     if (response.statusCode == 200) {
       final Map<String, dynamic> decodedJson = json.decode(response.body) ;
       if (decodedJson.containsKey('events')) {
-        final List<EventOftheWeekModel> eventModels = (decodedJson['events'] as List)
-            .map<EventOftheWeekModel>((jsonEventModel) =>
-            EventOftheWeekModel.fromJson(jsonEventModel))
+        final List<EventModel> eventModels = (decodedJson['events'] as List)
+            .map<EventModel>((jsonEventModel) =>
+            EventModel.fromJson(jsonEventModel))
             .toList();
-
+print(eventModels.first.name);
         return eventModels;
       } else {
         throw EmptyDataException();

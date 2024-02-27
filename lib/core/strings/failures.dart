@@ -5,7 +5,7 @@ import '../error/Failure.dart';
 
 const String SERVER_FAILURE_MESSAGE = 'Please try again later .';
 const String EMPTY_CACHE_FAILURE_MESSAGE = 'Cache failure';
-const String EMPTY_DATA_FAILURE_MESSAGE = 'No Data Found';
+const String EMPTY_DATA_FAILURE_MESSAGE = 'No Activity Found  ';
 const String OFFLINE_FAILURE_MESSAGE = 'Please Check your Internet Connection';
 const String SIGNUP_FAILURE_MESSAGE = "Sign up failed Please try again";
 const String EMAIL_EXISTED_FAILURE_MESSAGE = "Email already existed";

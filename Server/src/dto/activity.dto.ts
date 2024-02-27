@@ -6,6 +6,14 @@ export interface EventOftheMonthField {
     LeaderName:string
     ActivityBegindate: Date
     ActivityEnddate: Date
+registrationDeadline: Date
+
+    description:string
+
+    ActivityPoints:number
+    categorie:string
+        IsPaid:boolean
+        price:number
     ActivityAdress:string
     participants:any []
     CoverImages:[string]
@@ -15,15 +23,22 @@ export interface EventOftheMonthField {
     name: string
     Director:any
 Duration:number
-type:string
 
 
 
-    Begindate: Date
-    Enddate: Date
-    place:string
-    participants:any []
-    CoverImages:[string]
+ActivityBegindate: Date
+ActivityEnddate: Date
+
+
+description:string
+
+ActivityPoints:number
+categorie:string
+    IsPaid:boolean
+    price:number
+ActivityAdress:string
+participants:any []
+CoverImages:[string]
 
 }
 export class EventInputs{
@@ -56,7 +71,8 @@ LeaderName:String
     name:string
     @IsNotEmpty()
 description:string
-
+@IsNotEmpty()
+isPaid:boolean
 @IsNotEmpty()
 ActivityBeginDate:Date
 @IsNotEmpty()
@@ -75,6 +91,52 @@ categorie:string
 Duration:number
 @IsNotEmpty()
 Director:any
+
+}
+export interface TrainingField {
+    _id:string
+    name: string
+    
+    ActivityBegindate: Date
+    ActivityEnddate: Date
+
+    ProfesseurName:string
+    Duration:number
+
+    description:string
+
+    ActivityPoints:number
+    categorie:string
+        IsPaid:boolean
+        price:number
+    ActivityAdress:string
+    participants:any []
+    CoverImages:[string]
+
+}
+export class TrainingInputs{
+    @IsNotEmpty()
+    name:string
+    @IsNotEmpty()
+description:string
 @IsNotEmpty()
-type:string
+IsPaid:boolean
+@IsNotEmpty()
+ActivityBeginDate:Date
+@IsNotEmpty()
+ActivityEndDate:Date
+
+@IsNotEmpty()
+ActivityAdress:string
+
+
+
+@IsNotEmpty()
+categorie:string
+@IsNotEmpty()
+ProfesseurName:string
+
+
+
+
 }

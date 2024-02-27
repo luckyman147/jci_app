@@ -8,7 +8,7 @@ const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 
 router.get('/',getAllmeetings)
-router.get('/LatestOfweekend',GetmeetingsOfWeekend)
+router.get('/LatestOfweek',GetmeetingsOfWeekend)
 router.get('/:id',getmeetingById)
 router.get('/:name',getmeetingByName)
 router.get('/:date',getmeetingByDate)
