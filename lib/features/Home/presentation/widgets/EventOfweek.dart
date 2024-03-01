@@ -77,7 +77,11 @@ Positioned cardPos(MediaQueryData mediaQuery,List<Activity> activity,int index){
      activity[index].CoverImages.isNotEmpty ?
      ClipRRect(
          borderRadius: ActivityRaduis,
-         child: Image.memory(base64Decode(activity[index].CoverImages[0]!),fit: BoxFit.contain,)):
+         child: Container(
+           color: textColor,
+           child: Image.memory(base64Decode(activity[index].CoverImages[0]!),fit: BoxFit.contain, height: mediaQuery.size.height / 4.2,
+             width: mediaQuery.size.width / 1,),
+         )):
      ClipRRect(
        borderRadius: ActivityRaduis,
        child: Container(

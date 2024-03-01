@@ -10,10 +10,12 @@ import 'package:jci_app/core/app_theme.dart';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ACtivityOfweek/activity_ofweek_bloc.dart';
-import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/acivity_f_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
+
 import '../../../../core/strings/app_strings.dart';
 
 import '../../../auth/presentation/bloc/bool/toggle_bool_bloc.dart';
+import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../bloc/Activity/activity_cubit.dart';
 
 
@@ -269,77 +271,82 @@ class MyCategoryButtons extends StatelessWidget {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Row(
-            children: [
-              _buildCategoryButton(context, activity.Events, mediaQuery),
-              _buildCategoryButton(context, activity.Meetings, mediaQuery),
-              _buildCategoryButton(context, activity.Trainings, mediaQuery),
-            ],
-          ),
-          Row(
-            children: [
-              _buildCategoryButton(context, activity.Trainings, mediaQuery),
-              _buildCategoryButton(context, activity.Trainings, mediaQuery),
-              _buildCategoryButton(context, activity.Trainings, mediaQuery),
-            ],
-          ),
-          _buildCategoryButton(context, activity.Trainings, mediaQuery),
-        ],
-      ),
+      child: buildCategories(Category.values, context, mediaQuery)
     );
   }
 
   Widget _buildCategoryButton(
-      BuildContext context, activity act, mediaQuery) {
-    return BlocBuilder<ActivityCubit, ActivityState>(
+      BuildContext context, Category cat, mediaQuery) {
+    return BlocBuilder<FormzBloc, FormzState>(
       builder: (context, state) {
         return Padding(
           padding: EdgeInsets.symmetric(
               horizontal: mediaQuery.size.width / 50),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: state.selectedActivity == act
-                  ? PrimaryColor
-                  : Colors.white,
-              foregroundColor: state.selectedActivity == act
-                  ? textColorWhite
-                  : Colors.black,
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: Colors.black, width: 1.0),
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-            ),
-            onPressed: () {
-              // Handle button press for the specific activity
-              _handleActivityButtonClick(context, act);
-            },
-            child: Text(
-              act.toString().split('.').last,
+          child: Chip(
+          shape:    RoundedRectangleBorder(
+          side: BorderSide(color: Colors.black, width: 1.0),
+          borderRadius: BorderRadius.circular(16.0),
+                  ),
+            backgroundColor:state.category == cat
+                ? PrimaryColor
+                : Colors.white,
+
+            label: GestureDetector(
+
+              onTap: (){
+                _handleCAtegoryButtonClick(context, cat);
+              },
+              child: Text(
+              cat.toString().split('.').last,
               style: PoppinBold(
                   mediaQuery.size.width / 30,
-                  state.selectedActivity == act
+                  state.category == cat
                       ? textColorWhite
                       : textColorBlack,
                   TextDecoration.none),
-            ),
-          ),
+                        ),
+            ),)
         );
       },
     );
   }
 
-  void _handleActivityButtonClick(
-      BuildContext context, activity act) {
-    context.read<ActivityCubit>().selectActivity(act);
-    context.read<AcivityFBloc>().add(GetActivitiesOfMonthEvent( act: act));
-    context.read<ActivityOfweekBloc>().add(GetOfWeekActivitiesEvent(act: act));
+  void _handleCAtegoryButtonClick(
+      BuildContext context, Category cat) {
+    context.read<FormzBloc>().add(CategoryChanged(category: cat));
+
     // Add logic to handle the button press for the specific activity
     // You can dispatch events to other blocs or perform any other actions here.
   }
+  Widget buildCategories(List<Category> categories, BuildContext context, MediaQueryData mediaQuery) {
+    List<Widget> rows = [];
+
+    for (int i = 0; i < categories.length; i +=3) {
+      List<Widget> rowChildren = [];
+
+      // Build buttons for the current row
+      for (int j = i; j < i + 3 && j < categories.length; j++) {
+        rowChildren.add(_buildCategoryButton(context, categories[j], mediaQuery));
+      }
+
+      rows.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Row(
+            children: rowChildren,
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: rows,
+    );
+  }
+
+
 }
 
 
@@ -357,4 +364,6 @@ return BlocWeekActivity(act);
 Widget buildAllBody(BuildContext context,activity act) {
 return ALLActivities(act);
 }
+
+
 

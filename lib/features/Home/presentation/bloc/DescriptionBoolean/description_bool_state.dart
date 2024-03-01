@@ -1,7 +1,8 @@
 part of 'description_bool_bloc.dart';
 
 abstract class DescriptionBoolState extends Equatable {
-  final bool isFullDescription; const DescriptionBoolState(this.isFullDescription);
+  final bool isFullDescription;
+  const DescriptionBoolState(this.isFullDescription);
 }
 
 class DescriptionBoolInitial extends DescriptionBoolState {
@@ -11,13 +12,8 @@ class DescriptionBoolInitial extends DescriptionBoolState {
   List<Object> get props => [];
 }
 
-
 class DescriptionToggleState extends DescriptionBoolState {
   DescriptionToggleState(super.isFullDescription);
-
-
-
-
 
   @override
   // TODO: implement props

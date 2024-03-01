@@ -20,7 +20,7 @@ export const getAllmeetings = async (req: Request, res: Response, next: NextFunc
       _id: meeting._id,
       name: meeting.name,
       Director: meeting.Director,
-      Duration:meeting.Duration,
+Agenda:meeting.Agenda,
    
      
       ActivityBegindate: meeting.ActivityBeginDate,
@@ -29,11 +29,10 @@ export const getAllmeetings = async (req: Request, res: Response, next: NextFunc
 
       ActivityPoints: meeting.ActivityPoints,
       categorie: meeting.categorie,
-      IsPaid: meeting.IsPaid,
-      price: meeting.price,
-      ActivityAdress: meeting.ActivityAdress,
+  
+ 
       participants: meeting.Participants,
-      CoverImages: meeting.CoverImages,
+      
     }));
 
     res.json({ meetings: formattedmeetings });
@@ -51,32 +50,24 @@ export const addmeeting = async (req: Request, res: Response, next: NextFunction
       // Extract data from the request body
       const meetingInputs = plainToClass(MeetingInputs, req.body);
     
-      const beginDate = new Date(meetingInputs.ActivityBeginDate);
-      const endDate = new Date(meetingInputs.ActivityEndDate);
-      console.log(beginDate, endDate)
-      const durationInMillis = endDate.getTime() - beginDate.getTime();
-    // Check if ActivityEndDate is greater than ActivityBeginDate
-    if (endDate.getTime() <= beginDate.getTime()) {
-        return res.status(400).json({ message: 'ActivityEndDate must be greater than ActivityBeginDate' });
-    }
+      
 
       // Validate the inputs
       const errors = await validate(meetingInputs, { validationError: { target: false } });
-
+if (errors.length > 0) {
+  return res.status(400).json({ message: 'Input validation failed', errors });
+}
 
       // Create a meeting document
       const newMeeting = new Meeting({
           name: meetingInputs.name,
           description: meetingInputs.description,
           ActivityBeginDate: meetingInputs.ActivityBeginDate,
-          ActivityEndDate: meetingInputs.ActivityEndDate,
-          ActivityAdress: meetingInputs.ActivityAdress,
+        Agenda:meetingInputs.agenda,
+        Director:meetingInputs.Director,
           categorie: meetingInputs.categorie,
-
-          IsPaid: meetingInputs.isPaid,
-          Director: meetingInputs.Director,
-   
-          CoverImages: [], // Convert images to base64
+ActivityPoints: meetingInputs.ActivityPoints,
+       Participants:[]
       });
 
       // Add the meeting to the database
@@ -98,20 +89,19 @@ export const getmeetingById = async (req: Request, res: Response, next: NextFunc
         _id: meeting._id,
         name: meeting.name,
         Director: await findParticipentById(meeting.Director),
-        Duration:meeting.Duration,
+       Agenda:meeting.Agenda,
      
        
         ActivityBegindate: meeting.ActivityBeginDate,
-        ActivityEnddate: meeting.ActivityEndDate,
+       
         description: meeting.description,
   
         ActivityPoints: meeting.ActivityPoints,
         categorie: meeting.categorie,
-        IsPaid: meeting.IsPaid,
-        price: meeting.price,
-        ActivityAdress: meeting.ActivityAdress,
+       
+      
         participants: meeting.Participants,
-        CoverImages: meeting.CoverImages,
+        
       });
     } else {
       res.status(404).json({ message: "No meeting found with this id" });
@@ -205,17 +195,16 @@ export const getmeetingByDate = async (req: Request, res: Response, next: NextFu
               _id: meeting._id,
               name: meeting.name,
               Director: meeting.Director,
-              Duration: meeting.Duration,
+           Agenda:meeting.Agenda,
               ActivityBegindate: meeting.ActivityBeginDate,
-              ActivityEnddate: meeting.ActivityEndDate,
+         
               description: meeting.description,
               ActivityPoints: meeting.ActivityPoints,
               categorie: meeting.categorie,
-              IsPaid: meeting.IsPaid,
-              price: meeting.price,
-              ActivityAdress: meeting.ActivityAdress,
+          
+              
               participants: meeting.Participants,
-              CoverImages: meeting.CoverImages,
+            
           }));
 
           res.json({ meetings: formattedMeetings });

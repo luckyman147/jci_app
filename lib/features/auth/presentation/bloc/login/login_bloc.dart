@@ -7,10 +7,8 @@ import 'package:formz/formz.dart';
 
 import 'package:jci_app/features/auth/domain/entities/LoginMember.dart';
 
-
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
-
 
 import '../../../../../core/usescases/usecase.dart';
 import '../../../data/models/formz/Email.dart';
@@ -21,28 +19,27 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc({ required this.loginUseCase, required this.getUserProfile})  :super(const LoginState()) {
+  LoginBloc({required this.loginUseCase, required this.getUserProfile})
+      : super(const LoginState()) {
     on<LoginEmailnameChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
     on<LoginSubmitted>(_onSubmitted);
     on<GetUserEvent>(_GetUserProfile);
-  on<ResetForm>(_reset_form);
-
+    on<ResetForm>(_reset_form);
   }
-final GetUserProfile getUserProfile;
+  final GetUserProfile getUserProfile;
   final LoginUseCase loginUseCase;
   void _reset_form(
-      ResetForm  event,
-      Emitter<LoginState> emit,
-      ) {
-    emit(
-        LoginState.initial()
-    );
+    ResetForm event,
+    Emitter<LoginState> emit,
+  ) {
+    emit(LoginState.initial());
   }
+
   void _onEmailChanged(
-      LoginEmailnameChanged event,
-      Emitter<LoginState> emit,
-      ) {
+    LoginEmailnameChanged event,
+    Emitter<LoginState> emit,
+  ) {
     final email = Email.dirty(event.email);
     emit(
       state.copyWith(
@@ -53,9 +50,9 @@ final GetUserProfile getUserProfile;
   }
 
   void _onPasswordChanged(
-      LoginPasswordChanged event,
-      Emitter<LoginState> emit,
-      ) {
+    LoginPasswordChanged event,
+    Emitter<LoginState> emit,
+  ) {
     final password = Password.dirty(event.password);
     emit(
       state.copyWith(
@@ -66,68 +63,56 @@ final GetUserProfile getUserProfile;
   }
 
   Future<void> _onSubmitted(
-      LoginSubmitted event,
-      Emitter<LoginState> emit,
-      ) async {
+    LoginSubmitted event,
+    Emitter<LoginState> emit,
+  ) async {
     if (state.isValid) {
-        print('event' + event.toString());
+      print('event' + event.toString());
 
-        if (event is LoginSubmitted) {
-          try {
+      try {
+        print(' ya said im here');
+        final failureOrDoneMessage =
+            await loginUseCase.LoginCredentials(event.loginMember);
 
-          print(' ya said im here');
-          final failureOrDoneMessage = await loginUseCase.LoginCredentials(
-              event.loginMember);
+        print("login" + failureOrDoneMessage.toString());
 
+        emit(_eitherDoneMessageOrErrorState(
+            failureOrDoneMessage, 'Login Successful'));
+        await Future.delayed(const Duration(seconds: 1));
 
-          print("login" + failureOrDoneMessage.toString());
-
-          emit(_eitherDoneMessageOrErrorState(
-              failureOrDoneMessage, 'Login Successful'));
-          await Future.delayed(const Duration(seconds: 1));
-
-
-          emit(state.copyWith(status: FormzSubmissionStatus.success));
-        }
-        catch (e) {
-          emit(ErrorLogin(message: "Something went wrong ${e.toString()}"));
-
-        }
-      } else {
+        emit(state.copyWith(status: FormzSubmissionStatus.success));
+      } catch (e) {
+        emit(ErrorLogin(message: "Something went wrong ${e.toString()}"));
+      }
+    } else {
       if (!state.email.isValid) {
         emit(ErrorLogin(message: "Email is invalid"));
-      }
-      else if (!state.password.isValid) {
+      } else if (!state.password.isValid) {
         emit(ErrorLogin(message: "Password is invalid"));
-      }
-      else {
+      } else {
         emit(ErrorLogin(message: "Something invalid"));
       }
       emit(const LoginState(status: FormzSubmissionStatus.canceled));
     }
-    }
   }
 
-void _GetUserProfile(
+  void _GetUserProfile(
     GetUserEvent event,
     Emitter<LoginState> emit,
-    ) async{
-    emit (LoadingLogin());
-    final tgetUserProfile= await getUserProfile.call(NoParams());
-    _eitherDoneMessageOrErrorState(tgetUserProfile, "") ;
-    emit (GetUserProfileState());
-
-}
-
-}
-  LoginState _eitherDoneMessageOrErrorState(
-      Either<Failure, Unit> either, String message) {
-    return either.fold(
-          (failure) => ErrorLogin(
-        message: mapFailureToMessage(failure),
-      ),
-          (_) => MessageLogin(message: message),
-    );
+  ) async {
+    emit(LoadingLogin());
+    final tgetUserProfile = await getUserProfile.call(NoParams());
+    _eitherDoneMessageOrErrorState(tgetUserProfile, "");
+    emit(GetUserProfileState());
   }
+}
 
-
+LoginState _eitherDoneMessageOrErrorState(
+    Either<Failure, Unit> either, String message) {
+  return either.fold(
+    (failure) => ErrorLogin(
+      message: mapFailureToMessage(failure),
+    ),
+    (_) => MessageLogin(message: message),
+  );
+}

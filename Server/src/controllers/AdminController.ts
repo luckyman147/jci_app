@@ -63,7 +63,7 @@ export const GetMembers=async( req:Request,res:Response,nex:NextFunction)=>{
     const admin=req.member
     if  (admin){
 
-        const members=await Member.find().select(['email','firstName'])
+        const members=await Member.find().select(['email','firstName',"Images"])
         
         if(members){
             

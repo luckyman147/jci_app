@@ -10,6 +10,7 @@ import 'package:jci_app/features/Home/domain/entities/Event.dart';
 
 import '../../../../../core/error/Exception.dart';
 import '../../../domain/repsotories/EventRepo.dart';
+import '../../model/events/EventModel.dart';
 
 class EventRepoImpl implements EventRepo{
   final EventRemoteDataSource eventRemoteDataSource;
@@ -19,9 +20,41 @@ class EventRepoImpl implements EventRepo{
   EventRepoImpl({required this.eventRemoteDataSource, required this.eventLocalDataSource, required this.networkInfo});
 
   @override
-  Future<Either<Failure, Unit>> createEvent(Event event) {
-    // TODO: implement createEvent
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> createEvent(Event event)async  {
+    final eventMode= EventModel(
+    id: event.id,
+    LeaderName: event.LeaderName,
+    name: event.name,
+    description: event.description,
+    ActivityBeginDate: event.ActivityBeginDate,
+    ActivityEndDate: event.ActivityEndDate,
+    ActivityAdress: event.ActivityAdress,
+    ActivityPoints:0,
+    categorie: event.categorie,
+    IsPaid: event.IsPaid,
+    price: event.price,
+    Participants: [],
+    CoverImages: event.CoverImages,
+    registrationDeadline: event.registrationDeadline,
+  );
+    if (await networkInfo.isConnected) {
+      try {
+        await eventRemoteDataSource.createEvent(eventMode);
+        return Right(unit);
+      } on WrongCredentialsException {
+        return Left(WrongCredentialsFailure());
+      }
+
+      on ServerException {
+        return Left(ServerFailure());
+      }
+      on EmptyDataException{
+        return Left(EmptyDataFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+
   }
 
   @override

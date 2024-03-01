@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ACtivityOfweek/activity_ofweek_bloc.dart';
 
 import '../../../../core/widgets/loading_widget.dart';
-import '../bloc/Activity/BLOC/acivity_f_bloc.dart';
+import '../bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import '../bloc/Activity/activity_cubit.dart';
 
 import 'ActivityDetailsWidget.dart';

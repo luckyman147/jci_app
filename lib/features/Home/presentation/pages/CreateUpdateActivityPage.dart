@@ -1,329 +1,310 @@
+
+
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/widgets/loading_widget.dart';
+import 'package:jci_app/features/Home/domain/entities/Event.dart';
+import 'package:jci_app/features/Home/domain/entities/training.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
+import 'package:jci_app/features/Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/textfield/textfield_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/textfield/textfield_bloc.dart';
+
+
+import 'package:jci_app/features/Home/presentation/widgets/AddActivityWidgets.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Compoenents.dart';
+import 'package:jci_app/features/auth/domain/entities/LoginMember.dart';
+
+import '../../../../core/util/snackbar_message.dart';
+import '../../domain/entities/Meeting.dart';
+import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
+import '../widgets/Formz.dart';
 
 class CreateUpdateActivityPage extends StatefulWidget {
   const CreateUpdateActivityPage({Key? key}) : super(key: key);
 
   @override
-  State<CreateUpdateActivityPage> createState() => _CreateUpdateActivityPageState();
+  State<CreateUpdateActivityPage> createState() =>
+      _CreateUpdateActivityPageState();
 }
 
 class _CreateUpdateActivityPageState extends State<CreateUpdateActivityPage> {
-  final TextEditingController _namecontroller=TextEditingController();
 
+  final TextEditingController _namecontroller = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _LeaderController = TextEditingController();
+  final TextEditingController _ProfesseurName = TextEditingController();
+  final TextEditingController _LocationController = TextEditingController();
+  final TextEditingController _Points = TextEditingController();
+
+
+
+
+  //Form key
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-
     final mediaQuery = MediaQuery.of(context);
-    final todayDate=getTodayDateTime();
-    final TextEditingController _BeginDateController=TextEditingController(text: DateFormat("MMM,dd,yyyy h:mm a").format(todayDate));
+
+
     return Scaffold(
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: InkWell(
+          onTap: () {},
+          child: BlocBuilder<FormzBloc, FormzState>(
+  builder: (context, ste) {
+    return BlocBuilder<TextFieldBloc ,TextFieldState>(
+  builder: (context, statef) {
+    return BlocBuilder<VisibleBloc, VisibleState>(
+  builder: (context, vis) {
+    return BlocConsumer<AddDeleteUpdateBloc, AddDeleteUpdateState>(
+      listener: (ctx,ste){
+        if (ste is ErrorAddDeleteUpdateState){
+    SnackBarMessage.showErrorSnackBar(
+    message: ste.message, context: context);
+    }
+               if (ste is MessageAddDeleteUpdateState){
+    SnackBarMessage.showSuccessSnackBar(
+    message: ste.message, context: context);
+    }
+                  if (ste is LoadingAddDeleteUpdateState){
+  LoadingWidget();}
+
+
+      },
+            builder: (context, state) {
+              return BlocBuilder<ActivityCubit, ActivityState>(
+  builder: (context, acti) {
+    return GestureDetector(
+                onTap: (){
+                  final dur=DateTime.now().add(Duration(hours: 2));
+
+
+                  if (acti.selectedActivity==activity.Events){if (_formKey.currentState!.validate()){
+                  final act=Event(registrationDeadline: ste.registrationTimeInput.value??dur, LeaderName: _LeaderController.text,
+                      name: _namecontroller.text, description: _descriptionController.text, ActivityBeginDate: ste.beginTimeInput.value??DateTime.now(),
+                      ActivityEndDate: ste.endTimeInput.value??dur,
+                      ActivityAdress: _LocationController.text, ActivityPoints: int.parse(_Points.text), categorie: ste.category.name, IsPaid: vis.isPaid,
+                      price: 0, Participants: [], CoverImages: [ste.imageInput.value!.path. toString()], id: "id");
+                  context.read<AddDeleteUpdateBloc>().add(AddACtivityEvent(act: act, type: activity.Events));}}
+                  else if (acti.selectedActivity==activity.Trainings){
+                    if (_formKey.currentState!.validate()){
+                    final act =Training(id: "id", ProfesseurName: _ProfesseurName.text, Duration: 0, name: _namecontroller.text,
+                        description: _descriptionController.text, ActivityBeginDate: ste.beginTimeInput.value??DateTime.now(), ActivityEndDate: ste.endTimeInput.value??dur,
+                        ActivityAdress: _LocationController.text, ActivityPoints: int.parse(_Points.text) , categorie:ste.category.name , IsPaid: vis.isPaid,
+                        price: 0, Participants: [], CoverImages: [ste.imageInput.value!.path. toString()]);
+    context.read<AddDeleteUpdateBloc>().add(AddACtivityEvent(act: act, type: activity.Trainings));
+
+    }}
+                  else {
+                    if (_formKey.currentState!.validate()) {
+                      debugPrint("agenda: ${combineTextFields(statef.textFieldControllers)}");
+                      final act = Meeting(
+                          name: _namecontroller.text,
+                          description: _descriptionController.text,
+                          ActivityBeginDate: ste.beginTimeInput.value ??
+                              DateTime.now(),
+                          ActivityEndDate: ste.endTimeInput.value ?? dur,
+                          ActivityAdress: _LocationController.text,
+                          ActivityPoints: int.parse(_Points.text),
+                          categorie: ste.category.name,
+                          IsPaid: false,
+                          price: 0,
+                          Participants: [],
+                          CoverImages: [],
+                          id: "id",
+                          Director: [],
+                          agenda: combineTextFields(statef.textFieldControllers));
+                    }
+                  }
+                  context.go("/home");
+
+
+                },
+                child: Container(
+                  height: mediaQuery.size.height / 15,
+                  decoration: BoxDecoration(
+                      color: PrimaryColor,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                        child: Text(
+                          "Save",
+                          style: PoppinsRegular(
+                              mediaQuery.devicePixelRatio * 7, textColorWhite),
+                        )),
+                  ),
+                ),
+              );
+  },
+);
+            },
+          );
+  },
+);
+  },
+);
+  },
+),
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Form(
-            child: Column(
+            key: _formKey,
+            child: BlocBuilder<ActivityCubit, ActivityState>(
+  builder: (context, vis) {
+    return BlocBuilder<FormzBloc, FormzState>(
+  builder: (context, state) {
+    return Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
               children: <Widget>[
+                firstLine(),
+              showImagePicker(vis.selectedActivity, mediaQuery),
+              TextfieldNormal(
+                    "${vis.selectedActivity.name} Name", "Name of ${vis.selectedActivity.name} here", _namecontroller,
 
-                    firstLine(),
-                    Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 8.0),
-            child:ImagePicker(mediaQuery),
-                    ),
-TextfieldNormal("Leader Name", "Leader name here ", _namecontroller),
-                TextfieldNormal("Event Name", "Name of event here", _namecontroller),
-              Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 8),
-          child: SizedBox(
-            width: mediaQuery.size.width,
-            child:
-DateField(LabelText: "Begin Date", SheetTitle: "DAte and Hour of begin", hintTextDate: "Begin Date", hintTexttime: "Begin Time", date: todayDate))),
-
-
-                Visibility(
-                    visible: true,
-                    child:Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 8),
-
-
-                      child: InkWell(
-                        child: Container(
-                          decoration:
-                          BoxDecoration(
-                            color: PrimaryColor.withOpacity(.1),
-                            borderRadius: BorderRadius.circular(10)
-                          ),
-                          child:  Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: Icon(Icons.calendar_today,color: SecondaryColor,),
-                                ),
-                                Text("Show End Date",style:PoppinsRegular(mediaQuery.devicePixelRatio*5, textColorBlack)),
-                              ],
-                            ),
-                          ),
-
-                        ),
-
-
-                                      ),
-                    ) ),
-
-                Visibility(
-                    visible :false,child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 8),
-
-                  child: DateField(LabelText: "End Date", SheetTitle: "DAte and Hour of End", hintTextDate: "End Date", hintTexttime: "End Time", date: todayDate),
-                    )
+                        (value){
+                      context.read<FormzBloc>().add(ActivityNameChanged(activityName: value));
+                    }
                 ),
+               showLeader(vis.selectedActivity),
 
-Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 8),
-
-  child: DateField(LabelText: "Registration Deadline", SheetTitle: "Registration Date ", hintTextDate: "End Date", hintTexttime: "End Time", date: DateTime.now()),
-)
-
-
-
-
-                ,TextfieldNormal("Location", "Location Here", _namecontroller),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 23.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Is Paid",style: PoppinsRegular(mediaQuery.devicePixelRatio*6, textColorBlack),),
-                          Checkbox(value: true, onChanged: (bool? value) {  },activeColor: PrimaryColor,checkColor: textColorWhite,splashRadius: 13,
-                            shape:  RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 18.0, vertical: 8),
+                    child: SizedBox(
+                        width: mediaQuery.size.width,
+                        child: BeginTimeWidget()
 
-                            ,),
-                        ],
+                    )),
+              showDetails(mediaQuery, vis.selectedActivity, state.registrationTimeInput.value??DateTime.now().add(Duration(days: 1))),
+               TextfieldNormal("Points", "Points Here", _Points, (p0) => null),
+               
+                TextfieldDescription(
+                    "Description", "Description Here", _descriptionController,
+
+                        (value){
+                      context.read<FormzBloc>().add(DescriptionChanged(description: value));
+                    }
+                ),
+                
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Category",
+                        style: PoppinsRegular(18, textColorBlack),
                       ),
-                      Visibility(
-                          visible: true,
-                          child: TextFormField(
-                        style: PoppinsNorml(18, textColorBlack),
-                 keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                            focusedBorder: border(PrimaryColor),
-                            enabledBorder: border(ThirdColor),
-                            hintStyle: PoppinsNorml(18, ThirdColor),
-                            hintText: "Price"
-                        ),
-                      ))
+                      SizedBox(
+                          width: mediaQuery.size.width * 1.2,
+                          child: MyCategoryButtons()),
                     ],
                   ),
-                ),
-                TextfieldDescription("Description", "Description Here", _namecontroller),
-Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 18.0),
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text("Category",style:   PoppinsRegular(18, textColorBlack),),
-      SizedBox(
-          width: mediaQuery.size.width*1.2,
-
-          child: MyCategoryButtons()),
-    ],
-  ),
-)
+                )
               ],
-            ),
+            );
+  },
+);
+  },
+),
           ),
         ),
       ),
     );
   }
-
-  Widget firstLine()=>    Row(
-    children: [
-      BackButton(),
-      Text("Create",style:PoppinsSemiBold(21, textColorBlack,TextDecoration.none)),
-MyDropdownButton()
-
-
-    ],
-  );
-  Widget ImagePicker(mediaQuery)=>Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text("Upload Image",style: PoppinsRegular(19, textColorBlack),),
-      InkWell(
-        child: Container(
-          height: 100,
-          width:  mediaQuery.size.width*0.88,
-          color: PrimaryColor.withOpacity(.1),
-          child: Center(
-            child: Column(
-
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.add_a_photo,size: 40,color: PrimaryColor,),
-                Text("Add Image",style: PoppinsRegular(19, PrimaryColor),)
-              ],
-
-
-            ),
-          ),
-        ),
-      ),
-    ],
-  );
-  Widget TextfieldNormal(String name,String HintText,TextEditingController controller)=>Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 8),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(name,style: PoppinsRegular(18, textColorBlack),)
-        ,TextFormField(
-          style: PoppinsNorml(18, textColorBlack),
-
-          controller: controller,
-          decoration: InputDecoration(
-            focusedBorder: border(PrimaryColor),
-            enabledBorder: border(ThirdColor),
-              hintStyle: PoppinsNorml(18, ThirdColor),
-              hintText: HintText
-          ),
-        ),
-      ],
-    ),
-  ); Widget TextfieldDescription(String name,String HintText,TextEditingController controller)=>Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 8),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(name,style: PoppinsRegular(18, textColorBlack),)
-        ,TextFormField(
-          style: PoppinsNorml(18, textColorBlack),
-maxLines: null,
-keyboardType: TextInputType.multiline,
-          controller: controller,
-
-          decoration: InputDecoration(
-          focusedBorder: border(PrimaryColor),
-          enabledBorder: border(ThirdColor),
-              hintStyle: PoppinsNorml(18, ThirdColor),
-              hintText: HintText
-          ),
-        ),
-      ],
-    ),
-  );
-  DateTime getTodayDateTime() {
-    final today = DateTime.now();
-    final dateOnly = DateTime(today.year, today.month, today.day,today.hour,today.minute);
-    return dateOnly;
-  }
-
-
-
-
-
-
-
-
+Widget showLeader(activity act){
+    return
+    act==activity.Trainings
+      ?
+      TextfieldNormal(
+        "Professeur Name", "Professeur name here ", _ProfesseurName,
+    (value){
+      context.read<FormzBloc>().add(ProfesseurNameChanged(profName: value));
+    }):
+    act==activity.Events?
+    TextfieldNormal(
+        "Leader Name", "Leader name here ", _LeaderController,
+    (value){
+      context.read<FormzBloc>().add(LeaderNameChanged(leaderName: value));
+    }):SizedBox();
 }
-Widget chooseDate(DateTime todayDate,MediaQueryData mediaQuery
-    , String Format
+Widget showRegistration(activity act,DateTime time){
+    return act==activity.Events?
+    Padding(
+        padding:
+        const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
+        child:RegistrationTime(Registration: time,)
+    ):SizedBox();
+}
+Widget showImagePicker(activity act ,mediaQuery)=>
+    act==activity.Meetings?
+        SizedBox():
+    Padding(
 
-    ,Function() onTap,String text)=>InkWell(
-  onTap: ()async {
-    onTap();
-  },
-  child: Container(
-    width: mediaQuery.size.width,
+  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+  child: imagePicker(
+  mediaQuery,
+  ),
+  );
 
 
-    decoration:BoxDecoration(
-        border: Border.all(color: textColorBlack)
-        ,borderRadius: BorderRadius.circular(15)
-    ),
-    child:Padding(
-      padding: const EdgeInsets.all(18.0),
-      child: Column(
+  Widget showDetails(mediaQuery,activity act,DateTime time)=>
+      act==activity.Meetings?
+      Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
+
         children: [
-          Text(text,style: PoppinsLight(18, textColorBlack,),),
-          Text( DateFormat(Format).format(todayDate),style: PoppinsSemiBold(mediaQuery.devicePixelRatio*5, textColorBlack, TextDecoration.none),),
-        ],
-      ),
-    ),
-
-
-  ),
-);
-class DateField extends StatelessWidget {
-  final String  LabelText ;
-  final String SheetTitle;
-  final String hintTextDate;
-  final String hintTexttime;
-  final DateTime date ;
-
-  const DateField({Key? key, required this.LabelText, required this.SheetTitle, required this.hintTextDate, required this.hintTexttime, required this.date}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final  mediaQuery = MediaQuery.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-
-      crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-          Text(LabelText,style: PoppinsRegular(18, textColorBlack),),
-          InkWell(
-            onTap: (){
-              showModalBottomSheet(context: context, builder: (ctx)=>
-                  SingleChildScrollView(
-                    child: SizedBox(height: mediaQuery.size.height / 3,width: double.infinity,
-
-
-
-                      child:Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(SheetTitle,style: PoppinsSemiBold(mediaQuery.devicePixelRatio*6, PrimaryColor, TextDecoration.none),),
-                            chooseDate(date, mediaQuery,"MMM,dd,yyyy", () => null, hintTextDate),
-                            chooseDate(date, mediaQuery,"hh:mm a", () => null, hintTexttime),
-                          ],
-
-                        ),
-                      ) ,),
-                  )
-
-              );
-            },
-            child: Container(
-              width: mediaQuery.size.width ,
-
-              decoration: BoxDecoration(
-                  border: Border.all(width: 3,color:  ThirdColor),
-                  borderRadius: BorderRadius.circular(15)
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Text("${date}",style:PoppinsRegular(19, textColorBlack, ) ,),
-              ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+            child: Text(
+              "Agenda",
+              style: PoppinsRegular(18, textColorBlack),
             ),
           ),
-        ],
+          TextFieldGenerator()]
+      ) :
+
+
+      Column(
+
+    children: [
+      AddEndDateButton(mediaQuery),
+      const   EndDateWidget(
       ),
-    );
+
+      showRegistration(act, time,),
+      TextfieldNormal("Location", "Location Here", _LocationController,
+              (value){
+            context.read<FormzBloc>().add(LocationChanged(location: value));
+          }
+      ),
+      PriceWidget(mediaQuery),
+
+    ],
+  );
+  List<String> combineTextFields(List<TextEditingController> controllers) {
+    List<String> combinedControllers = [];
+
+    for (int i = 0; i < controllers.length; i += 2) {
+      if (i + 1 < controllers.length) {
+        String combinedController =
+            '${controllers[i].text} (${controllers[i + 1].text} min ) ';
+        combinedControllers.add(combinedController);
+      }
+    }
+
+    return combinedControllers;
   }
 }
-

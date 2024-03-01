@@ -33,7 +33,7 @@ class ActivityWidget extends StatelessWidget {
             context.go('/activity/${ Activities[index].id}/${state.selectedActivity.name}');
           },
             child: Container(
-          height: mediaQuery.size.height / 6,
+          height: mediaQuery.size.height / 5,
             
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -76,7 +76,11 @@ class ActivityWidget extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Text(Activities[index].name,style: PoppinsSemiBold(19,textColorBlack,TextDecoration.none),),
+                      SizedBox(
+                          width: mediaQuery.size.width/2,
+                          child: Text(Activities[index].name,style: PoppinsSemiBold(Activities[index].name.length<20?mediaQuery.devicePixelRatio*6:mediaQuery.devicePixelRatio*5
+
+                              ,textColorBlack,TextDecoration.none),)),
                       Text(Activities[index].ActivityAdress,style:PoppinsSemiBold(17, PrimaryColor, TextDecoration.none),
             
                       ),
@@ -188,13 +192,17 @@ ClipRRect images(mediaQuery,List<Activity> activity,int index,double height,doub
      activity[index].CoverImages.isNotEmpty ?
     ClipRRect(
         borderRadius: ActivityRaduis,
-        child: Image.memory(base64Decode(activity[index].CoverImages[0]!),fit: BoxFit.contain,)):
+        child: Container(
+            height: height,
+            width: width,
+            color: Colors.grey,
+            child: Image.memory(base64Decode(activity[index].CoverImages[0]!),fit: BoxFit.contain,height: height,width: width,))):
     ClipRRect(
       borderRadius: ActivityRaduis,
       child: Container(
         height: height,
         width: width,
-        color: Colors.grey,
+        color: Colors.grey.withOpacity(.1),
       ),
     );
 
@@ -210,8 +218,21 @@ Positioned details(MediaQueryData mediaQuery, List<Activity> activity,int index)
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
 
-          Text(activity[index].name,style: PoppinsSemiBold(mediaQuery.devicePixelRatio*6, textColorBlack, TextDecoration.none),),
-          Text(activity[index].ActivityAdress,style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColor,),),
+          SizedBox(
+              width: mediaQuery.size.width/2,
+              child: Text(activity[index].name,style: PoppinsSemiBold(
+                  activity[index].name.length<20?mediaQuery.devicePixelRatio*6:mediaQuery.devicePixelRatio*5
+
+              , textColorBlack, TextDecoration.none),)),
+          Row(
+            children: [
+              SvgPicture.string(PlaceSvg,color: textColor,),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(activity[index].ActivityAdress,style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColor,),),
+              ),
+            ],
+          ),
           Text("Start At ${DateFormat('h:mm a').format(activity[index].ActivityBeginDate)}",
             style: PoppinsRegular(mediaQuery.devicePixelRatio*4.5, textColor,),),
         ],
@@ -221,13 +242,13 @@ Positioned details(MediaQueryData mediaQuery, List<Activity> activity,int index)
 );
 
 Positioned PosCard(mediaQuery,List<Activity> activity, int index)=>Positioned(
-  top: mediaQuery.size.height / 5.6,
+  top: mediaQuery.size.height / 20.6,
   left: 20,
   child: Container(
     decoration: shadowDecoration,
 
-    height: 60,
-    width: 70,
+    height: 50,
+    width: 50,
     child: Center(
       child: Stack(
 
@@ -235,11 +256,11 @@ Positioned PosCard(mediaQuery,List<Activity> activity, int index)=>Positioned(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 5.0),
-            child: Text(activity[index].ActivityBeginDate.day.toString().padLeft(2, '0'),style: PoppinsSemiBold(23, PrimaryColor, TextDecoration.none),),
+            child: Text(activity[index].ActivityBeginDate.day.toString().padLeft(2, '0'),style: PoppinsSemiBold(18, PrimaryColor, TextDecoration.none),),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 29.0),
-            child: Text(DateFormat('MMM').format(activity[index].ActivityBeginDate),style: PoppinsNorml(20, textColorBlack),),
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Text(DateFormat('MMM').format(activity[index].ActivityBeginDate),style: PoppinsNorml(15, textColorBlack),),
           ),
 
         ],

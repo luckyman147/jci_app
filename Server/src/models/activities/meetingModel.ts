@@ -3,7 +3,7 @@ import { Activity } from "./activitieModel";
 
 export interface Meeting extends Activity {
   Director:any
-Duration:number
+Agenda:[string]
 
 
 
@@ -14,7 +14,11 @@ Duration:number
       ref: 'Member',
       required: true
     },
-    Duration: { type: Number, required: true },
+
+    Agenda: {
+      type: [String],
+      required: true
+    }
    
    
   });

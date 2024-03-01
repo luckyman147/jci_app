@@ -17,7 +17,6 @@ TrainingModel _$TrainingModelFromJson(Map<String, dynamic> json) =>
       ActivityPoints: json['ActivityPoints'] as int,
       categorie: json['categorie'] as String,
       IsPaid: json['IsPaid'] as bool,
-
       price: 0,
       Participants: json['participants'] as List<dynamic>,
       CoverImages: (json['CoverImages'] as List<dynamic>)
@@ -25,24 +24,22 @@ TrainingModel _$TrainingModelFromJson(Map<String, dynamic> json) =>
           .toList(),
       Duration: json['Duration'] as int,
       ProfesseurName: json['ProfesseurName'] as String,
-
     );
 
 Map<String, dynamic> _$TrainingModelToJson(TrainingModel instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'name': instance.name,
       'description': instance.description,
-      'ActivityBegindate': instance.ActivityBeginDate.toIso8601String(),
-      'ActivityEnddate': instance.ActivityEndDate.toIso8601String(),
+      'ActivityBeginDate': instance.ActivityBeginDate.toIso8601String(),
+      'ActivityEndDate': instance.ActivityEndDate.toIso8601String(),
       'ActivityAdress': instance.ActivityAdress,
       'ActivityPoints': instance.ActivityPoints,
       'categorie': instance.categorie,
       'IsPaid': instance.IsPaid,
       'price': instance.price,
-      'participants': instance.Participants,
+      'Participants': instance.Participants,
       'CoverImages': instance.CoverImages,
-      '_id': instance.id,
       'ProfesseurName': instance.ProfesseurName,
       'Duration': instance.Duration,
-
     };

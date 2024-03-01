@@ -50,7 +50,7 @@ export const GetEventsOfWeekend = async (req: Request, res: Response, next: Next
     const currentDate = new Date();
     const currentDay = currentDate.getDay();
     const firstDayOfWeekend = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + (5 - currentDay));
-    const lastDayOfWeekend = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + (7 - currentDay));
+    const lastDayOfWeekend = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + (8 - currentDay));
 console.log(firstDayOfWeekend)
 console.log(lastDayOfWeekend)
 console.log(currentDate)
@@ -212,7 +212,9 @@ export const getEventById = async (req: Request, res: Response, next: NextFuncti
 
 
       });
+      console.log(event)
     } else {
+
       res.status(404).json({ message: "No event found with this id" });
     }
   } catch (error) {
@@ -259,30 +261,40 @@ export const getEventByDate = async (req: Request, res: Response, next: NextFunc
 
 
   export const uploadImage= async (req: Request, res: Response, next: NextFunction) => {
+
     try {
-    const   id=req.params.id
+    const file=req.files
+    console.log("file",file)
+
+      const   id=req.params.id
       // Find the event
       const event = await Event.findById(id);
 
       if (!event) return res.status(401).send("No such event")
-      const images: Express.Multer.File[] = req.files as Express.Multer.File[];
+      const images: Express.Multer.File[] = req.files as Express.Multer.File[]||[];
+
+      if (!images || images.length === 0){
+            console.log(images)
+
+        return res.status(400).send("Invalid or missing image files");
+      }
   console.log(images)
       // Convert images to base64
       const base64Images = images.map((image) => image.buffer.toString('base64'));
-  
+
       // Add the images to the event
       event.CoverImages.push(...base64Images);
-  
+
       // Save the event
       const savedEvent = await event.save();
-  
+
       res.json(savedEvent);
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.log('Error uploading image:', error);
       next(error);
     }
   }
- 
+
   export const AddParticipantToEvent = async (req: Request, res: Response, next: NextFunction) => {
     const member=req.member
     if (member){
@@ -359,3 +371,22 @@ export const RemoveParticipantFromEvent = async (req: Request, res: Response, ne
     next(error);
    } }
 };
+export const deleteEvent= async (req:Request, res:Response, next:NextFunction) => {
+                           try {
+                             const eventId = req.params.id;
+
+                             // Check if the event exists
+                             const event = await Event.findById(eventId);
+                             if (!event) {
+                               return res.status(404).json({ error: 'Event not found' });
+                             }
+
+                             // Delete the event
+                             await event.deleteOne();
+
+                             res.status(204).json({message:"deleted successully"}); // 204 No Content indicates a successful deletion
+                           } catch (error) {
+                             console.error('Error deleting event:', error);
+                             next(error);
+                           }
+                         };

@@ -32,14 +32,43 @@ class MeetingRemoteDataSourceImpl implements MeetingRemoteDataSource{
   MeetingRemoteDataSourceImpl({required this.client});
   @override
   Future<Unit> createMeeting(MeetingModel Meeting) {
-    // TODO: implement createMeeting
-    throw UnimplementedError();
+final body = Meeting.toJson();
+    return client.post(
+      Uri.parse(createEventUrl),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(body),
+    ).then((response) async {
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> decodedJson = json.decode(response.body) ;
+
+          return Future.value(unit);
+
+
+
+      }
+      else if (response.statusCode == 400) {
+        throw WrongCredentialsException();
+      }
+      else {
+        throw ServerException();
+      }
+    });
+
   }
 
   @override
-  Future<Unit> deleteMeeting(String id) {
-    // TODO: implement deleteMeeting
-    throw UnimplementedError();
+  Future<Unit> deleteMeeting(String id)async {
+    final response = await client.delete(
+
+      Uri.parse(getMeetingsUrl+"$id"),
+      headers: {"Content-Type": "application/json"},
+    );
+    if (response.statusCode==204){
+      return Future.value(unit);
+    }
+    else{
+      throw EmptyDataException();
+    }
   }
 
   @override

@@ -21,7 +21,9 @@ export const ActivitySchema=new Schema({
     description:{type:String,required:true},
     ActivityBeginDate:{type:Date,required:true},
     ActivityEndDate:{type:Date},
-    ActivityAdress:{type:String,required:true},
+    ActivityAdress:{type:String,
+    default:"Local Menchia"
+    },
     ActivityPoints:{type:Number},
  
     categorie:{type:String,required:true},

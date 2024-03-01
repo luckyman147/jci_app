@@ -37,7 +37,7 @@ color: Colors.white,
 );
 final shadowDecoration=BoxDecoration(
     color: textColorWhite,
-    borderRadius: BorderRadius.circular(12),
+    borderRadius: BorderRadius.circular(5),
     boxShadow:[
       BoxShadow(
         color: Colors.grey.withOpacity(0.5),

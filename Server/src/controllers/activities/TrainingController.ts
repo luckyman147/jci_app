@@ -171,7 +171,7 @@ if (endDate.getTime() <= beginDate.getTime()) {
       ActivityAdress: trainingInputs.ActivityAdress,
       
       categorie: trainingInputs.categorie,
-      IsPaid: trainingInputs.IsPaid,
+      IsPaid: trainingInputs.IsPaid,price: trainingInputs.price,
       ActivityPoints:0,
      
       Participants: [],
@@ -273,7 +273,11 @@ export const getTrainingByDate = async (req: Request, res: Response, next: NextF
 
       if (!training) return res.status(401).send("No such Training")
       const images: Express.Multer.File[] = req.files as Express.Multer.File[];
-  console.log(images)
+    if (!images || images.length === 0){
+            console.log(images)
+
+        return res.status(400).send("Invalid or missing image files");
+      }
       // Convert images to base64
       const base64Images = images.map((image) => image.buffer.toString('base64'));
   
@@ -366,3 +370,22 @@ export const RemoveParticipantFromTraining = async (req: Request, res: Response,
     next(error);
    } }
 };
+export const deleteTrain= async (req:Request, res:Response, next:NextFunction) => {
+                           try {
+                             const TrainingId = req.params.id;
+
+                             // Check if the event exists
+                             const train = await Training.findById(TrainingId);
+                             if (!train) {
+                               return res.status(404).json({ error: 'Training not found' });
+                             }
+
+                             // Delete the event
+                             await train.deleteOne();
+
+                             res.status(204).json({message:"deleted successully"}); // 204 No Content indicates a successful deletion
+                           } catch (error) {
+                             console.error('Error deleting event:', error);
+                             next(error);
+                           }
+                         };

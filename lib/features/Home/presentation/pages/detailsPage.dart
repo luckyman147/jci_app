@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
-import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/acivity_f_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Compoenents.dart';
 
 import '../bloc/Activity/activity_cubit.dart';
@@ -47,14 +47,14 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
       bottomNavigationBar: Container(
 
         decoration: BoxDecoration(
-          color: BackWidgetColor,
+          color: textColorWhite,
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20), topRight: Radius.circular(20)),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 5,
-              blurRadius: 7,
+              blurRadius: 8,
               offset: Offset(0, 3), // changes position of shadow
             ),
           ],

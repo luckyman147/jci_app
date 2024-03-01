@@ -22,23 +22,21 @@ registrationDeadline: Date
     _id:string
     name: string
     Director:any
-Duration:number
+
 
 
 
 ActivityBegindate: Date
-ActivityEnddate: Date
 
+Agenda:[string]
 
 description:string
 
 ActivityPoints:number
 categorie:string
-    IsPaid:boolean
-    price:number
-ActivityAdress:string
+ 
 participants:any []
-CoverImages:[string]
+
 
 }
 export class EventInputs{
@@ -72,14 +70,12 @@ LeaderName:String
     @IsNotEmpty()
 description:string
 @IsNotEmpty()
-isPaid:boolean
+agenda:[string]
 @IsNotEmpty()
 ActivityBeginDate:Date
-@IsNotEmpty()
-ActivityEndDate:Date
 
-@IsNotEmpty()
-ActivityAdress:string
+ActivityPoints:number
+
 
 
 
@@ -87,8 +83,6 @@ ActivityAdress:string
 categorie:string
 
 
-@IsNotEmpty()
-Duration:number
 @IsNotEmpty()
 Director:any
 
@@ -125,8 +119,9 @@ IsPaid:boolean
 ActivityBeginDate:Date
 @IsNotEmpty()
 ActivityEndDate:Date
-
 @IsNotEmpty()
+price:number
+ActivityPoints:number
 ActivityAdress:string
 
 

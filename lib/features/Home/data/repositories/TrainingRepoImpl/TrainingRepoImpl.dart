@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/core/network/network_info.dart';
+import 'package:jci_app/features/Home/data/model/TrainingModel/TrainingModel.dart';
 
 
 
@@ -24,9 +25,41 @@ class TrainingRepoImpl implements TrainingRepo{
 
   
   @override
-  Future<Either<Failure, Unit>> createTraining(Training training) {
-    // TODO: implement createTraining
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> createTraining(Training training) async{
+    final trainingMode= TrainingModel(
+      id: training.id,
+
+      name: training.name,
+      description: training.description,
+      ActivityBeginDate: training.ActivityBeginDate,
+      ActivityEndDate: training.ActivityEndDate,
+      ActivityAdress: training.ActivityAdress,
+      ActivityPoints:0,
+      categorie: training.categorie,
+      IsPaid: training.IsPaid,
+      price: training.price,
+      Participants: [],
+      CoverImages: training.CoverImages, Duration: 0, ProfesseurName: training.ProfesseurName,
+
+    );
+    if (await networkInfo.isConnected) {
+      try {
+        await trainingRemoteDataSource.createTraining(trainingMode);
+        return Right(unit);
+      } on WrongCredentialsException {
+        return Left(WrongCredentialsFailure());
+      }
+
+      on ServerException {
+        return Left(ServerFailure());
+      }
+      on EmptyDataException{
+        return Left(EmptyDataFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+
   }
 
   @override

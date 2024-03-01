@@ -1,6 +1,8 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/cupertino.dart';
+
 import 'package:jci_app/core/config/env/urls.dart';
 
 
@@ -8,6 +10,7 @@ import 'package:jci_app/core/config/env/urls.dart';
 import 'package:http/http.dart' as http;
 
 
+import '../../../../../core/config/services/uploadImage.dart';
 import '../../../../../core/error/Exception.dart';
 import '../../model/events/EventModel.dart';
 
@@ -16,7 +19,6 @@ abstract class EventRemoteDataSource {
   Future<EventModel> getEventById(String id);
   Future<List<EventModel>> getEventsOfTheWeek();
   Future<List<EventModel>> getEventsOfTheMonth();
-
   Future<Unit> createEvent(EventModel event);
   Future<Unit> updateEvent(EventModel event);
   Future<Unit> deleteEvent(String id);
@@ -31,15 +33,54 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource{
 
   EventRemoteDataSourceImpl({required this.client});
   @override
-  Future<Unit> createEvent(EventModel event) {
-    // TODO: implement createEvent
-    throw UnimplementedError();
+  Future<Unit> createEvent(EventModel event)async  {    debugPrint("coverimagze from  ");
+    debugPrint(event.CoverImages.first);
+final body =event.toJson();
+    return client.post(
+      Uri.parse(createEventUrl),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(body),
+    ).then((response) async {
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> decodedJson = json.decode(response.body) ;
+
+
+        final upload_response=await uploadImages(decodedJson['_id'], event.CoverImages.first,getEventsUrl);
+        if (upload_response.statusCode==200){
+          return Future.value(unit);
+        }
+        else if (upload_response.statusCode==400){
+          debugPrint(upload_response.reasonPhrase.toString());
+          deleteEvent(decodedJson["_id"]);
+          throw EmptyDataException();
+
+        }else {
+          throw ServerException();
+        }
+
+      }
+      else if (response.statusCode == 400) {
+        throw WrongCredentialsException();
+      }
+      else {
+        throw ServerException();
+      }
+    });
   }
 
   @override
-  Future<Unit> deleteEvent(String id) {
-    // TODO: implement deleteEvent
-    throw UnimplementedError();
+  Future<Unit> deleteEvent(String id)async {
+    final response = await client.delete(
+
+      Uri.parse(getEventsUrl+"$id"),
+      headers: {"Content-Type": "application/json"},
+    );
+    if (response.statusCode==204){
+      return Future.value(unit);
+    }
+    else{
+      throw EmptyDataException();
+    }
   }
 
   @override
@@ -160,4 +201,5 @@ print(eventModels.first.name);
     // TODO: implement updateEvent
     throw UnimplementedError();
   }
+
 }

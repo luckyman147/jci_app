@@ -7,13 +7,16 @@ import 'package:jci_app/features/Home/domain/entities/Activity.dart';
 import 'package:jci_app/features/Home/domain/usercases/MeetingsUseCase.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 
-import '../../../../../../core/error/Failure.dart';
-import '../../../../../../core/strings/failures.dart';
-import '../../../../../../core/usescases/usecase.dart';
-import '../../../../domain/usercases/EventUseCases.dart';
-import '../../../../domain/usercases/TrainingUseCase.dart';
-
+import '../../../../../../../core/error/Failure.dart';
+import '../../../../../../../core/strings/failures.dart';
+import '../../../../../../../core/usescases/usecase.dart';
+import '../../../../../domain/usercases/EventUseCases.dart';
+import '../../../../../domain/usercases/TrainingUseCase.dart';
 part 'acivity_f_event.dart';
+
+
+
+
 part 'acivity_f_state.dart';
 
 class AcivityFBloc extends Bloc<AcivityFEvent, AcivityFState> {

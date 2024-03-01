@@ -13,7 +13,7 @@
 .svn/
 node_modules/
 migrate_working_dir/
-config/
+lib/config/env
 # IntelliJ related
 *.iml
 *.ipr
