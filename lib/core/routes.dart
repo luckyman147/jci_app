@@ -97,8 +97,12 @@ GoRoute(
 
     ),
 
-    GoRoute(path: '/create',
-      builder: (BuildContext context, GoRouterState state)=>CreateUpdateActivityPage(),
+    GoRoute(path: '/create/:id/:activity/:action',
+      builder: (BuildContext context, GoRouterState state){
+        final  id = state.pathParameters['id']! ;
+        final  activity = state.pathParameters['activity']! ;
+        final  action = state.pathParameters['action']! ;
+        return CreateUpdateActivityPage(id: id, activity: activity, work: action,);},
     ),
 
 

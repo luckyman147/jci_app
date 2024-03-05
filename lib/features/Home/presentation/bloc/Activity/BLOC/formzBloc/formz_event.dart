@@ -100,6 +100,13 @@ class DescriptionChanged extends FormzEvent {
 
   @override
   List<Object> get props => [description];
+}class MembernameChanged extends FormzEvent {
+  final String name;
+
+  const MembernameChanged({required this.name});
+
+  @override
+  List<Object> get props => [name];
 }
 
 class ImageInputChanged extends FormzEvent {
@@ -109,4 +116,12 @@ class ImageInputChanged extends FormzEvent {
 
   @override
   List<Object> get props => [imageInput];
+}
+class MemberFormzChanged extends FormzEvent {
+  final Member memberFormz;
+
+  const MemberFormzChanged({required this.memberFormz});
+
+  @override
+  List<Object> get props => [memberFormz];
 }

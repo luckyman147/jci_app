@@ -6,7 +6,7 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 import 'package:jci_app/core/strings/messages.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
+
 
 import 'package:jci_app/features/auth/domain/usecases/SignUp.dart';
 
@@ -18,6 +18,7 @@ import '../../../data/models/formz/cPassword.dart';
 import '../../../data/models/formz/firstname.dart';
 import '../../../data/models/formz/lastname.dart';
 import '../../../data/models/formz/password.dart';
+import '../../../domain/entities/Member.dart';
 
 
 

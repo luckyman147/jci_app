@@ -5,9 +5,10 @@ import 'package:jci_app/core/error/Exception.dart';
 import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/core/network/network_info.dart';
 import 'package:jci_app/features/auth/data/datasources/LoginRemote.dart';
+import 'package:jci_app/features/auth/data/models/MemberLogin/MerberLogin.dart';
 
-import 'package:jci_app/features/auth/data/models/login/MemberModel.dart';
-import 'package:jci_app/features/auth/domain/entities/LoginMember.dart';
+
+import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
 
 import 'package:jci_app/features/auth/domain/repositories/LoginRepo.dart';
@@ -46,7 +47,12 @@ class LoginRepoImpl implements LoginRepo {
   Future<Either<Failure, Unit>> LogInWithCredentials(Member loginMember) async {
 
 
-        final MemberModel memberModelLogin=MemberModel(email: loginMember.email, password: loginMember.password);
+        final   MemberLogin memberModelLogin=MemberLogin(email: loginMember.email, password: loginMember.password, id: loginMember.id, role: loginMember.role, is_validated: loginMember.is_validated,
+
+          cotisation: loginMember.cotisation, Images: loginMember.Images, firstName: loginMember.firstName, lastName: loginMember.lastName, phone: loginMember.phone, IsSelected: false,
+
+
+        );
         print("heelo from login repo");
         final message= loginRemoteDataSource.Login(memberModelLogin );
         print(message);
@@ -68,10 +74,7 @@ class LoginRepoImpl implements LoginRepo {
     throw UnimplementedError();
   }
 
-  @override
-  Future<Either<Failure, Unit>> GetUserProfile() {
-    return _getMessage(loginRemoteDataSource.getUserProfile());
-  }
+
   }
 
 

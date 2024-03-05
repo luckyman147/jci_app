@@ -1,20 +1,42 @@
 import 'package:equatable/equatable.dart';
+import 'package:jci_app/features/auth/presentation/widgets/inputs.dart';
 
-class MemberSignUp extends Equatable {
+class Member extends Equatable {
+  final String id;
+
   final String email;
+  final String firstName;
+  final String lastName;
+  final String phone;
   final String password;
-  final String FirstName;
-  final String LastName;
-  final String confirmPassword;
+  final bool is_validated;
+  final List<bool> cotisation;
+  final List<String> Images;
+ final bool IsSelected;
 
- const MemberSignUp(
-      {required this.email,
-      required this.password,
-      required this.FirstName,
-      required this.LastName,required this.confirmPassword});
+  final String role;
 
-  static const  empty = MemberSignUp(email: '', password: '', FirstName: '', LastName: '', confirmPassword: '');
+  const Member(
+
+      {
+        required this.IsSelected,
+        required this.id,
+        required this.role,
+        required this.is_validated,
+        required this.cotisation,
+        required this.Images,
+        required this.firstName,
+        required this.lastName,
+         required this.phone,
+        required this.email,
+        required this.password,
+       });
+
 
   @override
   // TODO: implement props
-  List<Object?> get props => [email, password, FirstName, LastName];}
+  List<Object?> get props => [email, password,
+    id, role, is_validated, cotisation, Images, firstName, lastName, phone,
+    IsSelected
+
+  ];}

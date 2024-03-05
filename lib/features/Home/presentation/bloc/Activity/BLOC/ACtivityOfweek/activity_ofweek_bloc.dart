@@ -67,4 +67,5 @@ class ActivityOfweekBloc extends Bloc<ActivityOfweekEvent, ActivityOfweekState> 
       ),
     );
   }
+
 }

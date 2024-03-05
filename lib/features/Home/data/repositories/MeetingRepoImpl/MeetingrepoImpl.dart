@@ -9,7 +9,7 @@ import '../../datasources/Meetings/MeetingLocaldatasources.dart';
 import '../../datasources/Meetings/Meeting_remote_datasources.dart';
 import '../../model/meetingModel/MeetingModel.dart';
 
-
+typedef Future<Unit> meetingAction();
 class MeetingRepoImpl implements MeetingRepo {
   final MeetingRemoteDataSource meetingRemoteDataSource;
   final MeetingLocalDataSource meetingLocalDataSource;
@@ -60,9 +60,8 @@ id: meeting.id,
   }
 
   @override
-  Future<Either<Failure, Meeting>> deleteMeeting(String id) {
-    // TODO: implement deleteMeeting
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> deleteMeeting(String id)async {
+  return await (getMessage(meetingRemoteDataSource.deleteMeeting(id)));
   }
 
 
@@ -154,8 +153,47 @@ id: meeting.id,
   }
 
   @override
-  Future<Either<Failure, Meeting>> updateMeeting(Meeting Meeting) {
-    // TODO: implement updateMeeting
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> updateMeeting(Meeting meeting) async{
+    final eventMode= MeetingModel(
+      id: meeting.id,
+
+      name: meeting.name,
+      description: meeting.description,
+      ActivityBeginDate: meeting.ActivityBeginDate,
+      ActivityEndDate: meeting.ActivityEndDate,
+      ActivityAdress: meeting.ActivityAdress,
+      ActivityPoints: meeting.ActivityPoints,
+      categorie: meeting.categorie,
+      IsPaid: meeting.IsPaid,
+      price: meeting.price,
+      Participants: [],
+      CoverImages: meeting.CoverImages, Director: meeting.Director, agenda: meeting.agenda,
+
+
+    );
+    return await (getMessage(meetingRemoteDataSource.updateMeeting(eventMode)));
+  }
+  Future<Either<Failure, Unit>> getMessage(
+      Future<Unit> meeting) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await meeting;
+        return Right(unit);
+      }
+
+      on EmptyDataException {
+        return Left(EmptyDataFailure());
+      } on WrongCredentialsException {
+        return Left(WrongCredentialsFailure());
+      }
+      on ServerException {
+        return Left(ServerFailure());
+      }
+    }
+
+
+    else {
+      return Left(OfflineFailure());
+    }
   }
 }

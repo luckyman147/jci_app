@@ -1,7 +1,17 @@
+import 'dart:convert';
+
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
 
+import '../../../../core/widgets/loading_widget.dart';
+import '../../../auth/domain/entities/Member.dart';
+import '../../../auth/presentation/bloc/Members/members_bloc.dart';
+import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
+import 'ErrorDisplayMessage.dart';
+enum SearchType { All,Name }
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
 
@@ -53,3 +63,6 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 }
+
+
+

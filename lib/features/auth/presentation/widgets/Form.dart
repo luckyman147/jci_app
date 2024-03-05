@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 
-import 'package:jci_app/features/auth/domain/entities/LoginMember.dart';
+import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
 import 'package:jci_app/features/auth/presentation/widgets/Text.dart';
 import 'package:jci_app/features/auth/presentation/widgets/button_auth.dart';
@@ -158,7 +158,7 @@ final mediaquery = MediaQuery.of(context);
 
               if (keyConr.currentState!.validate()) {
                 final member = Member(email: state.email.value,
-                  password: state.password.value,
+                  password: state.password.value, id: '', role: '', is_validated: false, cotisation: [], firstName: '', Images: [], lastName: '', phone: '', IsSelected: false,
                 );
 
 

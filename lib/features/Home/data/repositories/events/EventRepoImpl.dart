@@ -11,7 +11,7 @@ import 'package:jci_app/features/Home/domain/entities/Event.dart';
 import '../../../../../core/error/Exception.dart';
 import '../../../domain/repsotories/EventRepo.dart';
 import '../../model/events/EventModel.dart';
-
+typedef Future<Unit> eventAction();
 class EventRepoImpl implements EventRepo{
   final EventRemoteDataSource eventRemoteDataSource;
   final EventLocalDataSource eventLocalDataSource;
@@ -58,9 +58,10 @@ class EventRepoImpl implements EventRepo{
   }
 
   @override
-  Future<Either<Failure, Event>> deleteEvent(String id) {
-    // TODO: implement deleteEvent
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> deleteEvent(String id)async {
+
+    return await _getMessage(eventRemoteDataSource.deleteEvent(id));
+
   }
 
 
@@ -162,7 +163,6 @@ if (await networkInfo.isConnected) {
     throw UnimplementedError();
   }
 
-  @override
 
 
 
@@ -179,9 +179,47 @@ if (await networkInfo.isConnected) {
   }
 
   @override
-  Future<Either<Failure, Event>> updateEvent(Event event) {
-    // TODO: implement updateEvent
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> updateEvent(Event event)async {
+    final eventMode= EventModel(
+      id: event.id,
+      LeaderName: event.LeaderName,
+      name: event.name,
+      description: event.description,
+      ActivityBeginDate: event.ActivityBeginDate,
+      ActivityEndDate: event.ActivityEndDate,
+      ActivityAdress: event.ActivityAdress,
+      ActivityPoints:0,
+      categorie: event.categorie,
+      IsPaid: event.IsPaid,
+      price: event.price,
+      Participants: [],
+      CoverImages: event.CoverImages,
+      registrationDeadline: event.registrationDeadline,
+    );
+    return await _getMessage(eventRemoteDataSource.updateEvent(eventMode));
   }
-  
+  Future<Either<Failure, Unit>> _getMessage(
+      Future<Unit> event) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await event;
+        return Right(unit);
+      }
+
+on EmptyDataException {
+      return Left(EmptyDataFailure());
+    } on WrongCredentialsException {
+      return Left(WrongCredentialsFailure());
+    }
+    on ServerException {
+      return Left(ServerFailure());
+    }
+    }
+
+
+    else {
+      return Left(OfflineFailure());
+    }
+  }
+
 }

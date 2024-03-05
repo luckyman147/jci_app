@@ -44,6 +44,44 @@ Agenda:meeting.Agenda,
 
 
 //&Private
+export const updateMeeting = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // Extract data from the request body
+    const meetingInputs = plainToClass(MeetingInputs, req.body);
+
+    // Validate the inputs
+    const errors = await validate(meetingInputs, { validationError: { target: false } });
+    if (errors.length > 0) {
+      return res.status(400).json({ message: 'Input validation failed', errors });
+    }
+
+    const meetingId = req.params.id;
+
+    // Find the existing meeting by ID
+    const existingMeeting = await Meeting.findById(meetingId);
+
+    if (!existingMeeting) {
+      return res.status(404).json({ message: 'Meeting not found' });
+    }
+
+    // Update the existing meeting properties
+    existingMeeting.name = meetingInputs.name;
+    existingMeeting.description = meetingInputs.description;
+    existingMeeting.ActivityBeginDate = meetingInputs.ActivityBeginDate;
+    existingMeeting.Agenda = meetingInputs.agenda;
+    existingMeeting.Director = meetingInputs.Director;
+    existingMeeting.categorie = meetingInputs.categorie;
+    existingMeeting.ActivityPoints = meetingInputs.ActivityPoints;
+
+    // Save the updated meeting
+    const updatedMeeting = await existingMeeting.save();
+
+    res.json(updatedMeeting);
+  } catch (error) {
+    console.error('Error updating meeting:', error);
+    next(error);
+  }
+};
 
 export const addmeeting = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -292,3 +330,22 @@ export const RemoveParticipantFrommeeting = async (req: Request, res: Response, 
     next(error);
    } }
 };
+export const deleteMeeting= async (req:Request, res:Response, next:NextFunction) => {
+                           try {
+                             const meetingId = req.params.id;
+
+                             // Check if the event exists
+                             const meeting = await Meeting.findById(meetingId);
+                             if (!meeting) {
+                               return res.status(404).json({ error: 'Meeting not found' });
+                             }
+
+                             // Delete the event
+                             await meeting.deleteOne();
+
+                             res.status(204).json({message:"deleted successully"}); // 204 No Content indicates a successful deletion
+                           } catch (error) {
+                             console.error('Error deleting meeting:', error);
+                             next(error);
+                           }
+                         };

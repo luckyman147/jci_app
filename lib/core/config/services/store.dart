@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:jci_app/features/auth/data/models/AuthModel/AuthModel.dart';
+import 'package:flutter/foundation.dart';
+import 'package:jci_app/features/auth/data/models/Member/AuthModel.dart';
 import 'package:secure_shared_preferences/secure_shared_pref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -46,18 +46,19 @@ await pref.putString(_UserInfo, "");
 
 
  }
- static Future<void> saveModel(modelAuth auth) async {
+ static Future<void> saveModel(MemberModel auth) async {
     final prefs = await SecureSharedPref.getInstance();
     final key = 'UserInfo';
     final value = auth.toJson();
+    debugPrint('saveModel: $value');
 
-    prefs.putString(key, jsonEncode(value));
+    prefs.putString(_UserInfo, jsonEncode(value));
   }
-  static Future<modelAuth?> getModel() async {
+  static Future<MemberModel?> getModel() async {
     final prefs = await SecureSharedPref.getInstance();
 
     final value = await  prefs.getString(_UserInfo);
-
+debugPrint('getModel: $value');
     if (value == null) {
       return null;
     }
@@ -65,6 +66,6 @@ await pref.putString(_UserInfo, "");
       return null;
     }
 
-    return modelAuth.fromJson(jsonDecode(value));
+    return MemberModel.fromJson(jsonDecode(value));
   }
 }

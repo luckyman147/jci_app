@@ -4,12 +4,12 @@ import 'package:jci_app/core/error/Exception.dart';
 import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/core/network/network_info.dart';
 import 'package:jci_app/features/auth/data/datasources/signUpRemote.dart';
-import 'package:jci_app/features/auth/data/models/login/MemberModel.dart';
-
+import 'package:jci_app/features/auth/data/models/MemberSIgnUP/MerberSignUp.dart';
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
+
 import '../../domain/repositories/SignUpRepo.dart';
-import '../models/signup/membersignup.dart';
+
 typedef Future<Unit> SignUP();
 class SignUpRepoImpl implements SignUpRepo {
   final SignUpRemoteDataSource signUpRemoteDataSource;
@@ -18,10 +18,16 @@ class SignUpRepoImpl implements SignUpRepo {
   SignUpRepoImpl(this.signUpRemoteDataSource, this.networkInfo);
   @override
 
-  Future<Either<Failure, Unit>> signUpWithCredentials(MemberSignUp member)async  {
+  Future<Either<Failure, Unit>> signUpWithCredentials(Member member)async  {
 
 
-        final MemberModelSignUp memberModelSignUp=MemberModelSignUp(email: member.email, password: member.password, FirstName: member.FirstName, LastName: member.LastName, confirmPassword: member.confirmPassword);
+        final MemberSignup memberModelSignUp=MemberSignup(
+          email: member.email,
+          password: member.password,
+          firstName: member.firstName,
+          phone: member.phone,
+          role: "user",
+          lastName: member.lastName, id: "", is_validated: false, cotisation: [false], Images: [], IsSelected: false,);
   return    await  getMessage   (signUpRemoteDataSource.signUp(memberModelSignUp ) );
 
 

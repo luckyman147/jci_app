@@ -87,7 +87,10 @@ Positioned cardPos(MediaQueryData mediaQuery,List<Activity> activity,int index){
        child: Container(
          height: mediaQuery.size.height / 4.2,
          width: mediaQuery.size.width / 1,
-         color: Colors.grey,
+         color: ThirdColor,
+          child: Center(
+            child: Text(activity[index].runtimeType.toString().split('Model').first,style: PoppinsSemiBold(20, textColorWhite, TextDecoration.none),),
+          ),
        ),
      );
 Positioned Details(MediaQueryData mediaQuery,List<Activity> activity ,int index)=>

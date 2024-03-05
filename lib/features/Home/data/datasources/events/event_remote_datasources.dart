@@ -198,8 +198,36 @@ print(eventModels.first.name);
 
   @override
   Future<Unit> updateEvent(EventModel event) {
-    // TODO: implement updateEvent
-    throw UnimplementedError();
+    final body =event.toJson();
+    return client.patch(
+      Uri.parse(getEventsUrl+event.id+"/edit"),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(body),
+    ).then((response) async {
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> decodedJson = json.decode(response.body) ;
+
+
+        final update_response=await UpdateImage(decodedJson['_id'], event.CoverImages.first,getEventsUrl);
+        if (update_response.statusCode==200){
+          return Future.value(unit);
+        }
+        else if (update_response.statusCode==400){
+
+          throw EmptyDataException();
+
+        }else {
+          throw ServerException();
+        }
+
+      }
+      else if (response.statusCode == 400) {
+        throw WrongCredentialsException();
+      }
+      else {
+        throw ServerException();
+      }
+    });
   }
 
 }

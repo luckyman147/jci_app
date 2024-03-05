@@ -99,19 +99,17 @@ export const GetMembers=async( req:Request,res:Response,nex:NextFunction)=>{
 
     }
 //find members by name
-export const SearchByName = async (req: Request, res: Response)=>{
+export const searchByName = async (req: Request, res: Response,next:NextFunction)=>{
     const admin=req.member
     if  (admin){
-    const name = req.params.name
-    const result = await Member.find({name: name})
+    const firstName = req.params.name
+    const result = await Member.find({ firstName: { $regex: new RegExp(firstName, 'i') } })
+  .select(['email', 'firstName', 'Images']).sort({firstName:1});
+
     if(result.length >0){
-        let membersResult:any=[]
-        result.map(item=>{
-         
-            membersResult.push(...item.firstName)
-        })
+       
      
-          return res.status(200).json(membersResult)
+          return res.status(200).json(result)
      }
      return res.status(400).json({"message":" notfound"})
     }

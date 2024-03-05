@@ -195,7 +195,58 @@ if (endDate.getTime() <= beginDate.getTime()) {
     next(error);
   }}
 
-
+  export const updateTraining = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const trainingId = req.params.id;
+  
+      // Find the existing training by ID
+      const existingTraining = await Training.findById(trainingId);
+  
+      if (!existingTraining) {
+        return res.status(404).json({ message: 'Training not found' });
+      }
+  
+      // Extract data from the request body
+      const trainingInputs = plainToClass(TrainingInputs, req.body);
+  
+      const errors = await validate(trainingInputs, { validationError: { target: true } });
+      if (errors.length > 0) {
+        return res.status(400).json({ message: 'Validation error', errors: errors[0].constraints });
+      }
+  
+      const beginDate = new Date(trainingInputs.ActivityBeginDate);
+      const endDate = new Date(trainingInputs.ActivityEndDate);
+  
+      // Check if ActivityEndDate is greater than ActivityBeginDate
+      if (endDate.getTime() <= beginDate.getTime()) {
+        return res.status(400).json({ message: 'ActivityEndDate must be greater than ActivityBeginDate' });
+      }
+  
+      // Update the existing training properties
+      existingTraining.name = trainingInputs.name;
+      existingTraining.description = trainingInputs.description;
+      existingTraining.ActivityBeginDate = trainingInputs.ActivityBeginDate;
+      existingTraining.ActivityEndDate = trainingInputs.ActivityEndDate;
+      existingTraining.ActivityAdress = trainingInputs.ActivityAdress;
+      existingTraining.categorie = trainingInputs.categorie;
+      existingTraining.IsPaid = trainingInputs.IsPaid;
+      existingTraining.price = trainingInputs.price;
+      existingTraining.ProfesseurName = trainingInputs.ProfesseurName;
+      
+      // Calculate and update the Duration
+      const durationInMillis = endDate.getTime() - beginDate.getTime();
+      existingTraining.Duration = durationInMillis;
+  
+      // Save the updated training
+      const updatedTraining = await existingTraining.save();
+  
+      res.json(updatedTraining);
+    } catch (error) {
+      console.error('Error updating Training:', error);
+      next(error);
+    }
+  };
+  
 export const getTrainingById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
@@ -293,7 +344,37 @@ export const getTrainingByDate = async (req: Request, res: Response, next: NextF
       next(error);
     }
   }
- 
+  export const updateImage = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const trainingId = req.params.id;
+      const training = await Training.findById(trainingId);
+  
+      if (!training) {
+        return res.status(404).send("No such training");
+      }
+  
+      const images: Express.Multer.File[] = req.files as Express.Multer.File[] || [];
+  
+      if (!images || images.length === 0) {
+        return res.status(400).send("Invalid or missing image files");
+      }
+  
+      // Convert images to base64
+      const base64Images = images.map((image) => image.buffer.toString('base64'));
+  
+      // Update the existing images in the training
+      training.CoverImages = base64Images;
+  
+      // Save the training
+      const updatedTraining = await training.save();
+  
+      res.json(updatedTraining);
+    } catch (error) {
+      console.error('Error updating image:', error);
+      next(error);
+    }
+  }
+  
   export const AddParticipantToTraining = async (req: Request, res: Response, next: NextFunction) => {
     const member=req.member
     if (member){

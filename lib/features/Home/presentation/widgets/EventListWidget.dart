@@ -8,14 +8,14 @@ import 'package:intl/intl.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/strings/app_strings.dart';
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
-import 'package:jci_app/features/Home/domain/entities/Event.dart';
+
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 
 
 
 
 
-
+enum action { edit, Add }
 class ActivityWidget extends StatelessWidget {
   final List<Activity> Activities;
   const ActivityWidget({Key? key, required this.Activities}) : super(key: key);
@@ -54,7 +54,8 @@ class ActivityWidget extends StatelessWidget {
               child: Container(
               height: 99,
               width: 130,
-              color: Colors.grey,
+              color: ThirdColor,
+                child:Center(child:Text(Activities[index].runtimeType.toString().split('Model').first,style: PoppinsSemiBold(20, textColorWhite, TextDecoration.none),))
             ),
           ),
                 Padding(
@@ -78,11 +79,15 @@ class ActivityWidget extends StatelessWidget {
                       ),
                       SizedBox(
                           width: mediaQuery.size.width/2,
-                          child: Text(Activities[index].name,style: PoppinsSemiBold(Activities[index].name.length<20?mediaQuery.devicePixelRatio*6:mediaQuery.devicePixelRatio*5
+                          child: Text(Activities[index].name,
+                            style: PoppinsSemiBold(Activities[index].name.length<20?mediaQuery.devicePixelRatio*6:mediaQuery.devicePixelRatio*5
 
                               ,textColorBlack,TextDecoration.none),)),
-                      Text(Activities[index].ActivityAdress,style:PoppinsSemiBold(17, PrimaryColor, TextDecoration.none),
-            
+                      SizedBox(
+                        width: mediaQuery.size.width/2,
+                        child: Text(Activities[index].ActivityAdress,style:PoppinsSemiBold(Activities[index].ActivityAdress.length<20?mediaQuery.devicePixelRatio*6:mediaQuery.devicePixelRatio*5, PrimaryColor, TextDecoration.none),
+
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -196,13 +201,16 @@ ClipRRect images(mediaQuery,List<Activity> activity,int index,double height,doub
             height: height,
             width: width,
             color: Colors.grey,
-            child: Image.memory(base64Decode(activity[index].CoverImages[0]!),fit: BoxFit.contain,height: height,width: width,))):
+            child: Image.memory(base64Decode(activity[index].CoverImages[0]!),fit: BoxFit.cover,scale:.1,height: height,width: width,))):
     ClipRRect(
       borderRadius: ActivityRaduis,
       child: Container(
         height: height,
         width: width,
-        color: Colors.grey.withOpacity(.1),
+        color: ThirdColor,
+        child: Center(
+          child: Text(activity[index].runtimeType.toString().split('Model').first,style: PoppinsSemiBold(20, textColorWhite, TextDecoration.none),),
+        ),
       ),
     );
 
@@ -229,7 +237,12 @@ Positioned details(MediaQueryData mediaQuery, List<Activity> activity,int index)
               SvgPicture.string(PlaceSvg,color: textColor,),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(activity[index].ActivityAdress,style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColor,),),
+                child: SizedBox(
+  width: mediaQuery.size.width/2,
+                    child: Text(activity[index].ActivityAdress,style: PoppinsRegular(
+                        activity[index].ActivityAdress.length<20?mediaQuery.devicePixelRatio*5:
+
+                mediaQuery.devicePixelRatio*4, textColor,),)),
               ),
             ],
           ),

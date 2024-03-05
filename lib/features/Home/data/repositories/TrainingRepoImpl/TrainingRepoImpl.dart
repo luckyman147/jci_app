@@ -63,10 +63,10 @@ class TrainingRepoImpl implements TrainingRepo{
   }
 
   @override
-  Future<Either<Failure, Training>> deleteTraining(String id) {
-    // TODO: implement deleteTraining
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> deleteTraining(String id)async  {
+return await _getMessage(trainingRemoteDataSource.deleteTraining(id));
   }
+
 
   @override
   Future<Either<Failure, List<Training>>> getAllTrainings() async{
@@ -170,9 +170,47 @@ class TrainingRepoImpl implements TrainingRepo{
   }
 
   @override
-  Future<Either<Failure, Training>> updateTraining(Training Training) {
-    // TODO: implement updateTraining
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> updateTraining(Training training)async  {
+    final trainingMode= TrainingModel(
+      id: training.id,
+
+      name: training.name,
+      description: training.description,
+      ActivityBeginDate: training.ActivityBeginDate,
+      ActivityEndDate: training.ActivityEndDate,
+      ActivityAdress: training.ActivityAdress,
+      ActivityPoints:0,
+      categorie: training.categorie,
+      IsPaid: training.IsPaid,
+      price: training.price,
+      Participants: [],
+      CoverImages: training.CoverImages, Duration: 0, ProfesseurName: training.ProfesseurName,
+
+    );
+    return await _getMessage(trainingRemoteDataSource.updateTraining(trainingMode));
+
   }
- 
+  Future<Either<Failure, Unit>> _getMessage(
+      Future<Unit> training) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await training;
+        return Right(unit);
+      }
+
+      on EmptyDataException {
+        return Left(EmptyDataFailure());
+      } on WrongCredentialsException {
+        return Left(WrongCredentialsFailure());
+      }
+      on ServerException {
+        return Left(ServerFailure());
+      }
+    }
+
+
+    else {
+      return Left(OfflineFailure());
+    }
+  }
 }

@@ -46,21 +46,21 @@ class CreateMeetingUseCase extends UseCase<Unit,Meeting> {
     return await MeetingRepository.createMeeting(Meeting);
   }
 }
-class UpdateMeetingUseCase {
+class UpdateMeetingUseCase extends UseCase<Unit,Meeting>{
   final MeetingRepo MeetingRepository;
 
   UpdateMeetingUseCase(this.MeetingRepository);
 
-  Future<Either<Failure,Meeting>> call(Meeting Meeting) async {
+  Future<Either<Failure,Unit>> call(Meeting Meeting) async {
     return await MeetingRepository.updateMeeting(Meeting);
   }
 }
-class DeleteMeetingUseCase {
+class DeleteMeetingUseCase  extends UseCase<Unit,String>{
   final MeetingRepo MeetingRepository;
 
   DeleteMeetingUseCase(this.MeetingRepository);
 
-  Future<Either<Failure,Meeting>> call(String id) async {
+  Future<Either<Failure,Unit>> call(String id) async {
     return await MeetingRepository.deleteMeeting(id);
   }
 }

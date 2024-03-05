@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { AddParticipantToEvent, GetEventsOfMonth, GetEventsOfWeekend, RemoveParticipantFromEvent, addEvent, deleteEvent, getAllEvents, getEventByDate, getEventById, getEventByName, uploadImage } from "../../controllers/activities/EventsController";
+import { AddParticipantToEvent, GetEventsOfMonth, GetEventsOfWeekend, RemoveParticipantFromEvent, addEvent, deleteEvent, getAllEvents, getEventByDate, getEventById, getEventByName, updateEvent, updateImage, uploadImage } from "../../controllers/activities/EventsController";
 import { Authenticate } from "../../middleware/CommonAuth";
 
 const router=express.Router()
@@ -19,7 +19,9 @@ router.get('/EventParticipants')
 //*post
 router.post('/add',addEvent)
 router.post('/:idEvent/addParticipant',Authenticate ,AddParticipantToEvent)
-router.patch('/:id/edit',)//?should be authenticated
+router.patch('/:id/edit',updateEvent)
+router.patch('/:id/UpdateImage',upload.array("CoverImages"),updateImage)
+//?should be authenticated
 router.post('/:id/uploadImage',upload.array("CoverImages"),uploadImage)
 router.delete("/:id",deleteEvent)  //?should be authenticated
 router.delete('/Event/:id/deleteParticipant',Authenticate,RemoveParticipantFromEvent  )

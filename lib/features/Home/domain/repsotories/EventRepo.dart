@@ -9,8 +9,8 @@ abstract class EventRepo{
   Future<Either<Failure, List<Event>>> getEventsOfTheWeek();
   Future<Either<Failure, List<Event>>> getEventsOfTheMonth();
   Future<Either<Failure, Unit>> createEvent(Event event);
-  Future<Either<Failure, Event>> updateEvent(Event event);
-  Future<Either<Failure, Event>> deleteEvent(String id);
+  Future<Either<Failure, Unit>> updateEvent(Event event);
+  Future<Either<Failure, Unit>> deleteEvent(String id);
   Future<Either<Failure, bool>> leaveEvent(String id);
   Future<Either<Failure, bool>> participateEvent(String id);
   Future<Either<Failure, Event>> getEventLikes(String id);

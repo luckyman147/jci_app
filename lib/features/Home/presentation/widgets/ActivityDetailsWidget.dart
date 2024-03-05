@@ -5,21 +5,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:jci_app/core/config/locale/app__localizations.dart';
+
 import 'package:jci_app/features/Home/data/model/TrainingModel/TrainingModel.dart';
 import 'package:jci_app/features/Home/data/model/events/EventModel.dart';
 import 'package:jci_app/features/Home/data/model/meetingModel/MeetingModel.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/DescriptionBoolean/description_bool_bloc.dart';
+import 'package:jci_app/features/Home/presentation/widgets/EventListWidget.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/strings/app_strings.dart';
+import '../../../../core/util/snackbar_message.dart';
 import '../../../auth/presentation/widgets/Text.dart';
 import '../../domain/entities/Activity.dart';
+import '../bloc/Activity/activity_cubit.dart';
+import '../bloc/Activity/activity_cubit.dart';
 
 class ActivityDetail extends StatelessWidget {
-  final Activity activity;
-  const ActivityDetail({Key? key, required this.activity}) : super(key: key);
+  final Activity activitys;
+  const ActivityDetail({Key? key, required this.activitys}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +86,7 @@ class ActivityDetail extends StatelessWidget {
                 textColorBlack, TextDecoration.none),
           ),
           DescriptionToggle(
-            description: activity.description,
+            description: activitys.description,
           ),
         ],
       );
@@ -89,13 +94,13 @@ class ActivityDetail extends StatelessWidget {
   ),
     ),
   );
-  Widget ImageCard(mediaQuery) => activity.CoverImages.isNotEmpty
+  Widget ImageCard(mediaQuery) => activitys.CoverImages.isNotEmpty
       ? ClipRRect(
           borderRadius: ActivityRaduis,
           child: Container(
             color: textColor,
             child: Image.memory(
-              base64Decode(activity.CoverImages[0]!),
+              base64Decode(activitys.CoverImages[0]!),
               fit: BoxFit.cover,
               height: mediaQuery.size.height / 2.5,
               width: double.infinity,
@@ -110,10 +115,25 @@ class ActivityDetail extends StatelessWidget {
           ),
         );
 
-  Widget dots(BuildContext context, MediaQueryData mediaQuery) => Positioned(
+  Widget dots(BuildContext context, MediaQueryData mediaQuery, ) => Positioned(
       top: mediaQuery.size.height / 20,
       right: 10,
-      child: GestureDetector(
+      child: BlocListener<AcivityFBloc, AcivityFState>(
+  listener: (context, state) {
+    if (state is DeletedActivityMessage) {
+      SnackBarMessage.showSuccessSnackBar(
+          message: state.message, context: context);
+      context.go('/home');  }
+
+
+
+      else if (state is ErrorActivityState) {
+      SnackBarMessage.showErrorSnackBar(
+          message: state.message, context: context);
+    }
+    // TODO: implement listener
+  },
+  child: GestureDetector(
         onTap: () {
           showModalBottomSheet(
               context: context,
@@ -124,8 +144,34 @@ class ActivityDetail extends StatelessWidget {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        actionRow(mediaQuery, activity, Icons.edit, "Update"),
-                        actionRow(mediaQuery, activity, Icons.delete, "Delete"),
+                        actionRow(mediaQuery, activitys,
+                          Icons.edit, "Update",
+                            (){
+                              context.go('/create/${activitys.id}/${activitys.runtimeType == EventModel?
+                              activity.Events:
+                              activitys.runtimeType == MeetingModel?
+                              activity.Meetings:
+                              activity.Trainings
+                              }/${action.edit.name}');
+
+
+
+                            }
+                        ),
+                        actionRow(mediaQuery, activitys, Icons.delete, "Delete", () {
+                       context.read<AcivityFBloc>().add(deleteActivityEvent(
+                           act: activitys.runtimeType == EventModel?
+                           activity.Events:
+                            activitys.runtimeType == MeetingModel?
+                            activity.Meetings:
+                         activity.Trainings
+
+
+
+
+                           ,id: activitys.id));
+
+                        }),
                       ]),
                 );
               });
@@ -141,7 +187,8 @@ class ActivityDetail extends StatelessWidget {
             height: 40,
           ),
         ),
-      ));
+      ),
+));
   Widget rowName(mediaQuery) => Align(
         alignment: Alignment.topLeft,
         child: Column(
@@ -149,25 +196,25 @@ class ActivityDetail extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              activity.name,
+              activitys.name,
               style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 7,
                   textColorBlack, TextDecoration.none),
             ),
-            if (activity.runtimeType == EventModel)
+            if (activitys.runtimeType == EventModel)
               Text(
-                "By ${(activity as EventModel).LeaderName}",
+                "By ${(activitys as EventModel).LeaderName}",
                 style: PoppinsNorml(
                     mediaQuery.devicePixelRatio * 5, textColorBlack),
               ),
-            if (activity.runtimeType == MeetingModel)
+            if (activitys.runtimeType == MeetingModel)
               Text(
-                "By ${(activity as MeetingModel).Director}",
+                "By ${(activitys as MeetingModel).Director}",
                 style: PoppinsRegular(
                     mediaQuery.devicePixelRatio * 5, textColorBlack),
               ),
-            if (activity.runtimeType == TrainingModel)
+            if (activitys.runtimeType == TrainingModel)
               Text(
-                "By ${(activity as TrainingModel).ProfesseurName}",
+                "By ${(activitys as TrainingModel).ProfesseurName}",
                 style: PoppinsLight(
                     mediaQuery.devicePixelRatio * 5, textColorBlack),
               )
@@ -246,28 +293,31 @@ class ActivityDetail extends StatelessWidget {
   }
 
   Widget actionRow(
-          mediaQuery, Activity activity, IconData icon, String action) =>
-      Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: mediaQuery.size.width / 30,
-                vertical: mediaQuery.size.height / 40),
-            child: Icon(
-              icon,
-              size: 30,
+          mediaQuery, Activity activity, IconData icon, String action,Function() onTap) =>
+      InkWell(
+        onTap:onTap ,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: mediaQuery.size.width / 30,
+                  vertical: mediaQuery.size.height / 40),
+              child: Icon(
+                icon,
+                size: 30,
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "${action} ${activity.runtimeType.toString().split("Model")[0]}",
-              style: PoppinsRegular(
-                  mediaQuery.devicePixelRatio * 8, textColorBlack),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "${action} ${activity.runtimeType.toString().split("Model")[0]}",
+                style: PoppinsRegular(
+                    mediaQuery.devicePixelRatio * 8, textColorBlack),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
 
   Container ispaid(mediaQuery) => Container(
@@ -277,7 +327,7 @@ class ActivityDetail extends StatelessWidget {
       child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Center(
-              child: Text(activity.IsPaid ? "Paid" : "Free",
+              child: Text(activitys.IsPaid ? "Paid" : "Free",
                   style: PoppinsRegular(
                       mediaQuery.devicePixelRatio * 6, textColorWhite)))));
 
@@ -287,7 +337,7 @@ class ActivityDetail extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "${activity.Participants.length} People have joined ",
+              "${activitys.Participants.length} People have joined ",
               style:
                   PoppinsNorml(mediaQuery.devicePixelRatio * 5, textColorBlack),
             ),
@@ -313,13 +363,13 @@ class ActivityDetail extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      DateFormat('MMM').format(activity.ActivityBeginDate),
+                      DateFormat('MMM').format(activitys.ActivityBeginDate),
                       style: PoppinsRegular(
                           mediaQuery.devicePixelRatio * 6, textColorBlack),
                     ),
                     Center(
                         child: Text(
-                      DateFormat('dd').format(activity.ActivityBeginDate),
+                      DateFormat('dd').format(activitys.ActivityBeginDate),
                       style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 7,
                           SecondaryColor, TextDecoration.none),
                     )),
@@ -343,15 +393,15 @@ class ActivityDetail extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Text(
-                        calculateDurationDays(activity.ActivityBeginDate,
-                            activity.ActivityEndDate),
+                        calculateDurationDays(activitys.ActivityBeginDate,
+                            activitys.ActivityEndDate),
                         style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 5,
                             PrimaryColor, TextDecoration.none),
                       ),
                     ),
                     Text(
                       calculateDurationhour(
-                          activity.ActivityBeginDate, activity.ActivityEndDate),
+                          activitys.ActivityBeginDate, activitys.ActivityEndDate),
                       style: PoppinsRegular(
                           mediaQuery.devicePixelRatio * 4.5, textColorBlack),
                     ),
@@ -371,7 +421,7 @@ class ActivityDetail extends StatelessWidget {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 18.0),
                             child: Text(
-                              activity.ActivityAdress,
+                              activitys.ActivityAdress,
                               style: PoppinsRegular(
                                   mediaQuery.devicePixelRatio * 4.5,
                                   textColorBlack),

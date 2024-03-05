@@ -1,14 +1,19 @@
-import 'dart:ffi';
+
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
+import 'dart:ui' as ui;
+import 'dart:typed_data';
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
-
+import 'package:path_provider/path_provider.dart';
 import '../../../../core/app_theme.dart';
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../bloc/IsVisible/bloc/visible_bloc.dart';
@@ -122,7 +127,7 @@ class _DateFieldWidgetState extends State<DateFieldWidget> {
     );
   }
 }
-Widget firstLine() => BlocBuilder<PageIndexBloc, PageIndexState>(
+Widget firstLine(String work) => BlocBuilder<PageIndexBloc, PageIndexState>(
       builder: (context, state) {
         return Row(
           children: [
@@ -131,10 +136,11 @@ Widget firstLine() => BlocBuilder<PageIndexBloc, PageIndexState>(
                 GoRouter.of(context).go('/home');
               },
             ),
+            work!="edit"?
             Text("Create",
                 style:
-                    PoppinsSemiBold(21, textColorBlack, TextDecoration.none)),
-            MyDropdownButton()
+                    PoppinsSemiBold(21, textColorBlack, TextDecoration.none)):  Text("Edit",style:PoppinsSemiBold(21, textColorBlack, TextDecoration.none)),
+           work!="edit"? MyDropdownButton():SizedBox()
           ],
         );
       },
@@ -143,6 +149,7 @@ Widget imagePicker(mediaQuery) {
   final ImagePicker picker = ImagePicker();
   return BlocBuilder<FormzBloc, FormzState>(
     builder: (context, state) {
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -163,14 +170,16 @@ Widget imagePicker(mediaQuery) {
 
 
               color: PrimaryColor.withOpacity(.1),
-              child: state.imageInput.value != null
+              child: state.imageInput.value != null && state.imageInput.value?.path != null&&state.imageInput.value?.path != ""
                   ? Image.file(
                       File(state.imageInput.value?.path ?? ""),
-                      fit: BoxFit.cover,
-                height: mediaQuery.size.height/5,
+                      fit: BoxFit.scaleDown,
+                height: mediaQuery.size.height/2,
                 width: mediaQuery.size.height/5,
                     )
-                  : Center(
+                  :
+
+              Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -348,7 +357,7 @@ Widget chooseTime(TimeOfDay todaytime, MediaQueryData mediaQuery, String Format,
 ),
     );
 
-Widget PriceWidget(mediaQuery) => BlocBuilder<VisibleBloc, VisibleState>(
+Widget PriceWidget(mediaQuery,TextEditingController controller) => BlocBuilder<VisibleBloc, VisibleState>(
       builder: (context, state) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18.0),
@@ -380,6 +389,7 @@ Widget PriceWidget(mediaQuery) => BlocBuilder<VisibleBloc, VisibleState>(
               Visibility(
                   visible: state.isPaid,
                   child: TextFormField(
+                    controller: controller,
 
                     style: PoppinsNorml(18, textColorBlack),
                     keyboardType: TextInputType.number,
@@ -546,6 +556,9 @@ class _TextFieldGeneratorState extends State<TextFieldGenerator> {
     return BlocBuilder<TextFieldBloc, TextFieldState>(
   builder: (context, state) {
     debugPrint(state.textFieldControllers.length.toString());
+if (state.textFieldControllers.isEmpty){
+  context.read<TextFieldBloc>().add(AddTwoTextFieldEvent());
+}
     return Column(
       children: [
         for (int index = 0; index < state.textFieldControllers.length; index += 2)
@@ -577,7 +590,7 @@ class _TextFieldGeneratorState extends State<TextFieldGenerator> {
                         },
                         iconData: index==state.textFieldControllers.length-2?Icons.add:Icons.remove,
                       ),
-                      hintText: index ==0 ?'Points N°1':index==2?"Points N°2":"Points N°${index *1-2}",
+                      hintText: "Points N°${(index/2+1).toInt()}",
                       focusedBorder: border(PrimaryColor),
                       enabledBorder: border(ThirdColor),
                       errorBorder: border(Colors.red),
@@ -615,4 +628,47 @@ class _TextFieldGeneratorState extends State<TextFieldGenerator> {
   },
 );
   }
+
 }
+
+Future<XFile?> convertBase64ToXFile(String base64String) async {
+  try {
+    // Decode base64 string to bytes
+    Uint8List bytes = base64.decode(base64String);
+
+    // Create a MemoryImage from bytes
+    MemoryImage memoryImage = MemoryImage(Uint8List.fromList(bytes));
+
+    // Create an ImageStreamCompleter from MemoryImage
+    ImageStream stream = memoryImage.resolve(ImageConfiguration.empty);
+    Completer<ImageInfo> completer = Completer<ImageInfo>();
+
+    // Listen for the first frame from the ImageStream
+    stream.addListener(ImageStreamListener((ImageInfo image, bool synchronousCall) {
+      completer.complete(image);
+    }));
+
+    // Wait for the first frame
+    final ImageInfo imageInfo = await completer.future;
+
+    // Convert the image to byte data
+    final ByteData? byteData = await imageInfo.image.toByteData(format: ui.ImageByteFormat.png);
+
+    // Check if byte data is not null
+    if (byteData == null) {
+      return null;
+    }
+
+    // Create a temporary file
+    final tempDir = await getTemporaryDirectory();
+    final tempFile = await File('${tempDir.path}/converted_image.png').create();
+
+    // Save byte data to file
+    await tempFile.writeAsBytes(byteData.buffer.asUint8List());
+
+    // Return XFile with the file path
+    return XFile(tempFile.path);
+  } catch (e) {
+    print('Error converting base64 to XFile: $e');
+    return null;
+  }}

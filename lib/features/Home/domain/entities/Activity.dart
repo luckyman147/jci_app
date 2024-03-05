@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:jci_app/features/auth/domain/entities/LoginMember.dart';
+import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
 class Activity extends Equatable{
 final String id;

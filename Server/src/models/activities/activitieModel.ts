@@ -13,7 +13,7 @@ categorie:string
     IsPaid:boolean
     price:number
     Participants:any[]
-    CoverImages:[string]
+    CoverImages:string[]
     
 }
 export const ActivitySchema=new Schema({
@@ -34,7 +34,7 @@ export const ActivitySchema=new Schema({
         ref: 'Member',
         default:[]
       }],
-    CoverImages:{type:[String],required:true}
+    CoverImages:{type:[{type:String}],required:true}
 },{
     toJSON:{
         transform(doc,ret){

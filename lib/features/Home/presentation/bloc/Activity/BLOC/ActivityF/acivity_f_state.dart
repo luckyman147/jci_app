@@ -35,4 +35,15 @@ class ErrorActivityState extends AcivityFState {
   ErrorActivityState({required this.message});
   @override
   List<Object> get props => [message];
+}class DeletedActivityMessage extends AcivityFState {
+  final String message;
+  DeletedActivityMessage({required this.message});
+  @override
+  List<Object> get props => [message];
+}
+class ActivityUpdatedState extends AcivityFState {
+  final String message;
+  ActivityUpdatedState({required this.message});
+  @override
+  List<Object> get props => [message];
 }

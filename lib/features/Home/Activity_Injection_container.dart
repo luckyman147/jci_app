@@ -35,7 +35,8 @@ Future<void> initActivities() async {
       getALlMeetingsUseCase: sl(),
       getEventByIdUseCase: sl(),
       getTrainingByIdUseCase: sl(),
-      getMeetingByIdUseCase: sl()));
+      getMeetingByIdUseCase: sl(), deleteEventUseCase: sl(), deleteTrainingUseCase: sl(), deleteMeetingUseCase: sl(),
+      updateTrainingUseCase: sl(), updateEventUseCase: sl(), updateMeetingUseCase: sl()));
 
   sl.registerFactory(() => ActivityOfweekBloc(
       getEventsOfTheWeekUseCase: sl(),
@@ -70,7 +71,13 @@ Future<void> initActivities() async {
 
 //use cases
 
+
   sl.registerLazySingleton(() => CreateEventUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateEventUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateMeetingUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateTrainingUseCase(sl()));
+
+
   sl.registerLazySingleton(() => CreateMeetingUseCase(sl()));
   sl.registerLazySingleton(() => CreateTrainingUseCase(sl()));
   sl.registerLazySingleton(
@@ -84,7 +91,9 @@ Future<void> initActivities() async {
       () => GetTrainingsOfTheMonthUseCase(TrainingRepository: sl()));
   sl.registerLazySingleton(
       () => GetALlTrainingsUseCase(TrainingRepository: sl()));
-
+sl.registerLazySingleton(() => DeleteEventUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteMeetingUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteTrainingUseCase(sl()));
   sl.registerLazySingleton(
       () => GetALlMeetingsUseCase(MeetingRepository: sl()));
   sl.registerLazySingleton(

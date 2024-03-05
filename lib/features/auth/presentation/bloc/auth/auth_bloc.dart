@@ -10,6 +10,7 @@ import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
 import '../../../../../core/usescases/usecase.dart';
 
+import '../../../domain/entities/Member.dart';
 import '../../../domain/usecases/authusecase.dart';
 
 part 'auth_event.dart';
@@ -19,7 +20,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RefreshTokenUseCase refreshTokenUseCase;
   final SignOutUseCase signoutUseCase;
 
-  AuthBloc({required this.refreshTokenUseCase,required this.signoutUseCase}) : super(AuthInitial()){
+  AuthBloc({required this.refreshTokenUseCase,required this.signoutUseCase,
+
+
+  }) : super(AuthInitial()){
     on<RefreshTokenEvent>(
 _onRefreshToken,
 
@@ -42,6 +46,9 @@ _onRefreshToken,
 emit(AuthLogoutState());
 
   }
+
+
+
   }
 
 
@@ -69,5 +76,6 @@ emit(AuthLogoutState());
           (_) => AuthSuccessState(),
     );
   }
+
 }
 

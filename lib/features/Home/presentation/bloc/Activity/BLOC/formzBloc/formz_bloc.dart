@@ -5,7 +5,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jci_app/features/Home/domain/entities/Formz/Membername.dart';
 
+import '../../../../../../auth/domain/entities/Member.dart';
 import '../../../../../domain/entities/Formz/A ctivityName.dart';
 import '../../../../../domain/entities/Formz/Date.dart';
 import '../../../../../domain/entities/Formz/Description.dart';
@@ -31,7 +33,11 @@ class FormzBloc extends Bloc<FormzEvent, FormzState> {
     on<EndTimeChanged>(_onEndDateChanged);
     on<RegistraTimeChanged>(_onRegistrationDateChanged);
     on<CategoryChanged>(_onCategoryChanged);
+    on<MembernameChanged>(_onMemberChanged);
     on<jokerChanged>(_JokerChanged);
+    on<MemberFormzChanged>(_onMemberFormChanged);
+
+
 
     on<jokerTimeChanged>(_JokerTimeChanged);
   }
@@ -63,6 +69,15 @@ class FormzBloc extends Bloc<FormzEvent, FormzState> {
           description: description,
           isValid: Formz.validate([state.description, description])),
     );
+  }  void _onMemberChanged(
+      MembernameChanged event, Emitter<FormzState> emit) {
+    final name = MemberName.dirty(event.name);
+    emit(
+      state.copyWith(
+          memberName: name,
+          isValid: Formz.validate([state.memberName, name])),
+    );
+    debugPrint(state.memberName.value.toString());
   }
 
   void _onBeginDateChanged(
@@ -142,10 +157,20 @@ class FormzBloc extends Bloc<FormzEvent, FormzState> {
     );
   }
 
+
   void _onCategoryChanged(
       CategoryChanged event, Emitter<FormzState> emit) {
     emit(state.copyWith(
       category: event.category,
+    ));
+  }
+  void _onMemberFormChanged(
+      MemberFormzChanged event, Emitter<FormzState> emit) {
+    final member = MemberFormz.dirty(event.memberFormz);
+    emit(state.copyWith(
+      memberFormz: member,
+
+
     ));
   }
 }

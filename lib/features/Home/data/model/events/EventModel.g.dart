@@ -7,19 +7,21 @@ part of 'EventModel.dart';
 // **************************************************************************
 
 EventModel _$EventModelFromJson(Map<String, dynamic> json) => EventModel(
-      id: json['_id'] as String,
-      LeaderName: json['LeaderName'] as String,
+      id: json['_id'] == null ? json['id'] as String : json['_id'] as String,
+      LeaderName: json['LeaderName'] == null
+          ? ""
+          : json['LeaderName'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
-      ActivityBeginDate: DateTime.parse(json['ActivityBegindate'] as String),
-      ActivityEndDate: DateTime.parse(json['ActivityEnddate'] as String),
+      ActivityBeginDate:json['ActivityBegindate']!=null? DateTime.parse(json['ActivityBegindate'] as String):DateTime.parse(json['ActivityBeginDate'] as String),
+      ActivityEndDate: json['ActivityEnddate']!=null?DateTime.parse(json['ActivityEnddate'] as String):DateTime.parse(json['ActivityEndDate'] as String),
       ActivityAdress: json['ActivityAdress'] as String,
       ActivityPoints: json['ActivityPoints'] as int,
       categorie: json['categorie'] as String,
       IsPaid: json['IsPaid'] as bool,
       price: 0,
-      Participants: json['participants'] as List<dynamic>,
-      CoverImages: (json['CoverImages'] as List<dynamic>)
+      Participants:json['participants'] !=null?  json['participants'] as List<dynamic>:json['Participants'] as List<dynamic>,
+    CoverImages: (json['CoverImages'] as List<dynamic>)
           .map((e) => e as String?)
           .toList(),
       registrationDeadline:

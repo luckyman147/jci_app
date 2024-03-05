@@ -7,6 +7,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.
 import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/DescriptionBoolean/description_bool_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
+import 'package:jci_app/features/auth/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
@@ -35,6 +36,7 @@ List<SingleChildWidget> providersList = [
   BlocProvider(create: (_) => di.sl<ResetBloc>()),
   BlocProvider(create: (_)=> di.sl<VisibleBloc>()),
   BlocProvider(create: (_)=> di.sl<TextFieldBloc>()),
+  BlocProvider(create: (_)=> di.sl<MembersBloc>()),
   BlocProvider(
       create: (_) => di.sl<AuthBloc>()..add(const RefreshTokenEvent())),
   BlocProvider(create: (_) => di.sl<SignUpBloc>()),

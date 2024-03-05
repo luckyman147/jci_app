@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:formz/formz.dart';
 import 'package:jci_app/core/app_theme.dart';
 
-import '../../domain/entities/Member.dart';
+
 import '../bloc/SignUp/sign_up_bloc.dart';
 
 class authButton extends StatelessWidget {

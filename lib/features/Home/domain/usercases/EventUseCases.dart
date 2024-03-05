@@ -53,22 +53,22 @@ class CreateEventUseCase extends UseCase<Unit,Event> {
     return await eventRepository.createEvent(event);
   }
 }
-class UpdateEventUseCase {
+class UpdateEventUseCase  extends UseCase<Unit,Event>{
   final EventRepo eventRepository;
 
   UpdateEventUseCase(this.eventRepository);
 
-  Future<Either<Failure,Event>> call(Event event) async {
+  Future<Either<Failure,Unit>> call(Event event) async {
     return await eventRepository.updateEvent(event);
   }
 }
-class DeleteEventUseCase {
+class DeleteEventUseCase extends UseCase<Unit,String>{
   final EventRepo eventRepository;
 
   DeleteEventUseCase(this.eventRepository);
 
-  Future<Either<Failure,Event>> call(String id) async {
-    return await eventRepository.deleteEvent(id);
+  Future<Either<Failure,Unit>> call(String params) async {
+    return await eventRepository.deleteEvent(params);
   }
 }
 class LeaveEventUseCase {

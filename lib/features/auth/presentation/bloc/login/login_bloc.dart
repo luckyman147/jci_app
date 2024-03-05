@@ -5,7 +5,7 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 
-import 'package:jci_app/features/auth/domain/entities/LoginMember.dart';
+import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
@@ -19,15 +19,15 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc({required this.loginUseCase, required this.getUserProfile})
+  LoginBloc({required this.loginUseCase,})
       : super(const LoginState()) {
     on<LoginEmailnameChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
     on<LoginSubmitted>(_onSubmitted);
-    on<GetUserEvent>(_GetUserProfile);
+
     on<ResetForm>(_reset_form);
   }
-  final GetUserProfile getUserProfile;
+
   final LoginUseCase loginUseCase;
   void _reset_form(
     ResetForm event,
@@ -96,16 +96,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
   }
 
-  void _GetUserProfile(
-    GetUserEvent event,
-    Emitter<LoginState> emit,
-  ) async {
-    emit(LoadingLogin());
-    final tgetUserProfile = await getUserProfile.call(NoParams());
-    _eitherDoneMessageOrErrorState(tgetUserProfile, "");
-    emit(GetUserProfileState());
-  }
-}
+
 
 LoginState _eitherDoneMessageOrErrorState(
     Either<Failure, Unit> either, String message) {
@@ -115,4 +106,4 @@ LoginState _eitherDoneMessageOrErrorState(
     ),
     (_) => MessageLogin(message: message),
   );
-}
+}}

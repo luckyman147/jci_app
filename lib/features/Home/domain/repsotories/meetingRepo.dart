@@ -12,9 +12,9 @@ abstract class MeetingRepo {
 
   Future<Either<Failure, Unit>> createMeeting(Meeting Meeting);
 
-  Future<Either<Failure, Meeting>> updateMeeting(Meeting Meeting);
+  Future<Either<Failure, Unit>> updateMeeting(Meeting Meeting);
 
-  Future<Either<Failure, Meeting>> deleteMeeting(String id);
+  Future<Either<Failure, Unit>> deleteMeeting(String id);
 
   Future<Either<Failure, bool>> leaveMeeting(String id);
 

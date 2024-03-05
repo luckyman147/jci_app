@@ -15,6 +15,7 @@ import 'package:jci_app/features/auth/presentation/widgets/Text.dart';
 
 import '../../../../core/widgets/backbutton.dart';
 
+
 import '../../domain/entities/Member.dart';
 import 'inputs.dart';
 
@@ -175,10 +176,10 @@ Widget _SignUpButton (  ){
 
 if (_key.currentState!.validate()) {
   final member =
-MemberSignUp(email: state.email.value,
+Member(email: state.email.value,
   password: state.password.value,
-  FirstName: state.firstname.value,
-  LastName: state.lastname.value, confirmPassword: state.confirmPassword.value, );
+  firstName: state.firstname.value,
+  lastName: state.lastname.value, id: '', role: '', is_validated: false, cotisation: [false], Images: [], phone: '', IsSelected: false,  );
 
   context.read<SignUpBloc>().add(SignUpSubmitted(member: member));
 

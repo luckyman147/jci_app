@@ -16,7 +16,7 @@ registrationDeadline: Date
         price:number
     ActivityAdress:string
     participants:any []
-    CoverImages:[string]
+    CoverImages:string[]
 
 }export interface MeetingField {
     _id:string
@@ -63,7 +63,7 @@ categorie:string
 @IsNotEmpty()
 registrationDeadline: Date
 @IsNotEmpty()
-LeaderName:String
+LeaderName:string
 }export class MeetingInputs{
     @IsNotEmpty()
     name:string
@@ -105,7 +105,7 @@ export interface TrainingField {
         price:number
     ActivityAdress:string
     participants:any []
-    CoverImages:[string]
+    CoverImages:string[]
 
 }
 export class TrainingInputs{

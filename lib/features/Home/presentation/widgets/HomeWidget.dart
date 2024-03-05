@@ -7,12 +7,14 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
+import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
-import 'package:jci_app/features/auth/data/models/AuthModel/AuthModel.dart';
+
 import 'package:jci_app/features/auth/presentation/widgets/Text.dart';
 
 
 import '../../../../core/app_theme.dart';
+import '../../../auth/data/models/Member/AuthModel.dart';
 import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
 
 import '../bloc/Activity/BLOC/ACtivityOfweek/activity_ofweek_bloc.dart';
@@ -36,6 +38,12 @@ class _HomeWidgetState extends State<HomeWidget> {
 
 
     super.initState();
+  }
+
+
+
+  Future<MemberModel?> _loadMemberModel() async {
+    return await Store.getModel();
   }
   @override
   Widget build(BuildContext context) {
@@ -72,13 +80,18 @@ class _HomeWidgetState extends State<HomeWidget> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          FutureBuilder<modelAuth?>(
-                            future:Store.getModel(),
-                            builder: (context,snap) {
+                          FutureBuilder <MemberModel?>(
+                            future:  _loadMemberModel(),
+                            builder: (context,snap)  {
+                              print("Data: ${snap.data}");
                               if (snap.connectionState == ConnectionState.waiting) {
                                 return CircularProgressIndicator();
                               }
-                               if (snap.hasData && snap.data!.firstName.isNotEmpty){ return  Row(
+                              if (snap.hasError) {
+                                print("Error: ${snap.error}");
+
+                              }
+                               if (snap.hasData && snap.data!=null && snap.data!.firstName!.isNotEmpty!=null){ return  Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text("Hello, ", style: PoppinsRegular(
@@ -91,6 +104,8 @@ class _HomeWidgetState extends State<HomeWidget> {
 
 
                               );}
+                               else{
+                                 debugPrint("dddddd${snap.hasData}");
                                return Row(
                                  mainAxisAlignment: MainAxisAlignment.start,
                                  children: [
@@ -104,7 +119,7 @@ class _HomeWidgetState extends State<HomeWidget> {
 
 
                                );
-                            }
+                            }}
                           ),
                           Row(
                             children: [

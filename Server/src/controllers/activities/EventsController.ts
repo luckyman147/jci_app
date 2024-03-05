@@ -174,7 +174,40 @@ export const addEvent = async (req: Request, res: Response, next: NextFunction) 
     next(error);
   }}
 
-
+  export const updateEvent = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const eventId = req.params.id;
+  
+      // Find the existing event by ID
+      const existingEvent = await Event.findById(eventId);
+  
+      if (!existingEvent) {
+        return res.status(404).json({ message: 'Event not found' });
+      }
+  
+      // Extract data from the request body
+      const eventInputs = plainToClass(EventInputs, req.body);
+  
+      // Update the existing event properties
+      existingEvent.name = eventInputs.name;
+      existingEvent.description = eventInputs.description;
+      existingEvent.ActivityBeginDate = eventInputs.ActivityBeginDate;
+      existingEvent.ActivityEndDate = eventInputs.ActivityEndDate;
+      existingEvent.ActivityAdress = eventInputs.ActivityAdress;
+      existingEvent.registrationDeadline = eventInputs.registrationDeadline;
+      existingEvent.categorie = eventInputs.categorie;
+      existingEvent.IsPaid = eventInputs.IsPaid;
+      existingEvent.LeaderName = eventInputs.LeaderName  ;
+  
+      // Save the updated event
+      const updatedEvent = await existingEvent.save();
+  
+      res.json(updatedEvent);
+    } catch (error) {
+      console.error('Error updating event:', error);
+      next(error);
+    }
+  }
 export const getEventById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
@@ -294,7 +327,36 @@ export const getEventByDate = async (req: Request, res: Response, next: NextFunc
       next(error);
     }
   }
-
+  export const updateImage = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const eventId = req.params.id;
+      const event = await Event.findById(eventId);
+  
+      if (!event) {
+        return res.status(404).send("No such event");
+      }
+  
+      const images: Express.Multer.File[] = req.files as Express.Multer.File[] || [];
+  
+      if (!images || images.length === 0) {
+        return res.status(400).send("Invalid or missing image files");
+      }
+  
+      // Convert images to base64
+      const base64Images = images.map((image) => image.buffer.toString('base64'));
+  
+      // Update the existing images in the event
+      event.CoverImages = base64Images;
+  
+      // Save the event
+      const updatedEvent = await event.save();
+  
+      res.json(updatedEvent);
+    } catch (error) {
+      console.log('Error updating image:', error);
+      next(error);
+    }
+  }
   export const AddParticipantToEvent = async (req: Request, res: Response, next: NextFunction) => {
     const member=req.member
     if (member){

@@ -14,12 +14,16 @@ part of 'formz_bloc.dart';
     this.registrationTimeInput = const RegistrationTimeInput.pure(),
     this.endTimeInput = const EndTimeInput.pure(),
     this.jokertime = const JokerDateofDayInput.pure(),
+    this.memberName = const MemberName.pure(),
+    this.memberFormz = const MemberFormz.pure(),
 
     this.joker = const JokerTimeInput.pure(),
 
     this.isValid = false,
     this.category = Category.Technology
   } );
+  final MemberName memberName;
+  final MemberFormz memberFormz;
   final bool isValid;
   final Category category;
   final JokerTimeInput joker;
@@ -41,6 +45,8 @@ part of 'formz_bloc.dart';
   FormzState copyWith(
       {FormzSubmissionStatus? status,
         LeaderName? leaderName,
+        MemberName? memberName,
+        MemberFormz? memberFormz,
         ProfesseurName?professeurName,
         ActivityName? activityName,
         Location? location,
@@ -55,6 +61,10 @@ part of 'formz_bloc.dart';
         bool? isValid,
         Category? category}) {
     return FormzState(
+
+
+        memberName: memberName ?? this.memberName,
+        memberFormz: memberFormz ?? this.memberFormz,
         status: status ?? this.status,
         leaderName: leaderName ?? this.leaderName,
         professeurName: professeurName??this.professeurName,
@@ -81,6 +91,7 @@ part of 'formz_bloc.dart';
     leaderName,
     activityName,
     location,
+ memberName,
     description,
     joker,
     imageInput,
@@ -88,7 +99,8 @@ part of 'formz_bloc.dart';
 professeurName,
     beginTimeInput,registrationTimeInput,
     category
-    ,jokertime
+    ,jokertime,
+    memberFormz
   ];
 
 }
@@ -111,6 +123,7 @@ enum Category {
   Fitness,
   Parenting,
   Pets,
+  fun,
   Environment
 }
 

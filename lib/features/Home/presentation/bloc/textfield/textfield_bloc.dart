@@ -13,6 +13,7 @@ class TextFieldBloc extends Bloc<TextFieldEvent, TextFieldState> {
   TextFieldBloc() : super(TextFieldInitial(textFieldControllers: [TextEditingController(),TextEditingController()])) {
 on<AddTwoTextFieldEvent>(_addTwoTextFields);
 on<RemoveTextFieldEvent>(_removeTextFields);
+on<ChangeTextFieldEvent>(_ChangeTextfield);
   }
   void _addTwoTextFields(
       AddTwoTextFieldEvent event,
@@ -39,5 +40,11 @@ void _removeTextFields(
   }
   emit( state.copyWith(textFieldControllers: updatedControllers));
 }
+void _ChangeTextfield(
+  ChangeTextFieldEvent event,
+  Emitter<TextFieldState> emit) {
+    emit(TextFieldInitial(textFieldControllers: event.text));
+  }
+
 
 }

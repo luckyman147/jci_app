@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                       message: state.message, context: context);
 
 
-                  context.go('/home');  context.read<LoginBloc>().add(GetUserEvent());
+                  context.go('/home');
                 }
                 else if (state is ErrorLogin) {
                   print('success' + state.message.toString());

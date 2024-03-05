@@ -49,7 +49,7 @@ final class LastNameChanged extends SignUpEvent {
 
 
 final class SignUpSubmitted extends SignUpEvent{
-final MemberSignUp member;
+final Member member;
   const SignUpSubmitted({required this.member});
   @override
   List<Object> get props => [member];

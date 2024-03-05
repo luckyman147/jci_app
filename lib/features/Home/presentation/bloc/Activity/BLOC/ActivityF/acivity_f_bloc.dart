@@ -6,10 +6,14 @@ import 'package:equatable/equatable.dart';
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
 import 'package:jci_app/features/Home/domain/usercases/MeetingsUseCase.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
+import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
-import '../../../../../../../core/error/Failure.dart';
+import   '../../../../../../../core/error/Failure.dart';
 import '../../../../../../../core/strings/failures.dart';
 import '../../../../../../../core/usescases/usecase.dart';
+import '../../../../../domain/entities/Event.dart';
+import '../../../../../domain/entities/Meeting.dart';
+import '../../../../../domain/entities/training.dart';
 import '../../../../../domain/usercases/EventUseCases.dart';
 import '../../../../../domain/usercases/TrainingUseCase.dart';
 part 'acivity_f_event.dart';
@@ -28,14 +32,26 @@ final GetTrainingByIdUseCase getTrainingByIdUseCase;
   final GetEventsOfTheMonthUseCase getEventsOfTheMonthUseCase;
   final GetTrainingsOfTheMonthUseCase getTrainingsOfTheMonthUseCase;
   final GetALlTrainingsUseCase getALlTrainingsUseCase;
+  final DeleteEventUseCase deleteEventUseCase;
+  final UpdateMeetingUseCase updateMeetingUseCase;
+  final UpdateTrainingUseCase updateTrainingUseCase;
+  final UpdateEventUseCase updateEventUseCase;
+  final DeleteMeetingUseCase deleteMeetingUseCase;
+  final DeleteTrainingUseCase deleteTrainingUseCase;
   AcivityFBloc({required  this.getTrainingsOfTheMonthUseCase,
     required  this.getALlTrainingsUseCase,
+    required  this.deleteTrainingUseCase,
+    required  this.updateTrainingUseCase,
+    required  this.updateEventUseCase,
+    required  this.updateMeetingUseCase,
+    required  this.deleteMeetingUseCase,
     required  this.getTrainingByIdUseCase,
     required  this.getMeetingByIdUseCase,
     required  this.getEventsOfTheMonthUseCase,
     required  this.getALlEventsUseCase,
     required  this.getALlMeetingsUseCase,
     required  this.getEventByIdUseCase,
+    required  this.deleteEventUseCase
 
 
 
@@ -47,6 +63,7 @@ final GetTrainingByIdUseCase getTrainingByIdUseCase;
 on<RefreshActivities>(refresh);
 on<GetActivitiesByid>(_getActivityByid);
 on<GetAllActivitiesEvent>(_getAllActivities);
+on<deleteActivityEvent>(_deleteActivity);
   }
   void refresh(
       RefreshActivities event ,
@@ -100,6 +117,7 @@ on<GetAllActivitiesEvent>(_getAllActivities);
     }
   }
 
+
 void _getActivityOfMonth(
       GetActivitiesOfMonthEvent event,
       Emitter<AcivityFState> emit
@@ -128,14 +146,81 @@ void _getActivityOfMonth(
     }
 }
 
-  AcivityFState _mapFailureOrActivityToState(Either<Failure, List<Activity>> either) {
+  void _deleteActivity(
+      deleteActivityEvent event,
+      Emitter<AcivityFState> emit
+
+      )async {
+
+    if (event.act==activity.Events){
+      final failureOrEvents= await deleteEventUseCase(event.id);
+      emit(_deletedActivityOrFailure(failureOrEvents));
+    }
+    else if (event.act==activity.Trainings){
+      final failureOrEvents= await deleteTrainingUseCase(event.id);
+      emit(_deletedActivityOrFailure(failureOrEvents));
+    }
+    else if (event.act==activity.Meetings){
+      final failureOrEvents= await deleteMeetingUseCase(event.id);
+      emit(_deletedActivityOrFailure(failureOrEvents));
+
+    }
+
+  }
+
+
+
+
+void _UpdateActivity(
+      UpdateActivityEvent event,
+      Emitter<AcivityFState> emit
+
+      )async {
+    if (event.act==activity.Events){
+      final failureOrEvents= await updateEventUseCase((event.active) as Event);
+      emit(_UpdatedActivityOrFailure(failureOrEvents));
+    }
+    else if (event.act==activity.Trainings){
+      final failureOrEvents= await updateTrainingUseCase((event.active) as Training);
+      emit(_UpdatedActivityOrFailure(failureOrEvents));
+
+    }
+    else if (event.act==activity.Meetings){
+      final failureOrEvents= await updateMeetingUseCase((event.active) as Meeting);
+      emit(_UpdatedActivityOrFailure(failureOrEvents));
+    }
+
+      }
+
+
+
+
+
+
+
+
+
+AcivityFState _mapFailureOrActivityToState(Either<Failure, List<Activity>> either) {
     return either.fold(
           (failure) => ErrorActivityState(message: mapFailureToMessage(failure)),
           (act) => ActivityLoadedState(
        activitys: act,
       ),
     );
-  }AcivityFState _mapFailureOrActivityMonthToState(Either<Failure, List<Activity>> either) {
+  }
+  AcivityFState _deletedActivityOrFailure(Either<Failure, Unit> either) {
+    return either.fold(
+          (failure) => ErrorActivityState(message: mapFailureToMessage(failure)),
+          (act) => DeletedActivityMessage(message: 'Deleted With Success'),
+    );
+  } AcivityFState _UpdatedActivityOrFailure(Either<Failure, Unit> either) {
+    return either.fold(
+          (failure) => ErrorActivityState(message: mapFailureToMessage(failure)),
+          (act) => ActivityUpdatedState(message: 'Updated With Success'),
+    );
+  }
+
+  AcivityFState _mapFailureOrActivityMonthToState(Either<Failure, List<Activity>> either) {
     return either.fold(
           (failure) => ErrorActivityState(message: mapFailureToMessage(failure)),
           (act) => ActivityLoadedMonthState(

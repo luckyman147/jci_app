@@ -2,36 +2,64 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+
+import 'package:image_picker/image_picker.dart';
 
 
 import 'package:jci_app/core/app_theme.dart';
-import 'package:jci_app/core/widgets/loading_widget.dart';
-import 'package:jci_app/features/Home/domain/entities/Event.dart';
-import 'package:jci_app/features/Home/domain/entities/training.dart';
-import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
+import 'package:jci_app/core/config/services/EventStore.dart';
+import 'package:jci_app/core/config/services/MeetingStore.dart';
+import 'package:jci_app/core/config/services/TrainingStore.dart';
+
+
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
-import 'package:jci_app/features/Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/textfield/textfield_bloc.dart';
-import 'package:jci_app/features/Home/presentation/bloc/textfield/textfield_bloc.dart';
+
 
 
 import 'package:jci_app/features/Home/presentation/widgets/AddActivityWidgets.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Compoenents.dart';
-import 'package:jci_app/features/auth/domain/entities/LoginMember.dart';
 
-import '../../../../core/util/snackbar_message.dart';
+
+import 'package:jci_app/features/auth/domain/entities/Member.dart';
+import 'package:jci_app/features/auth/presentation/bloc/Members/members_bloc.dart';
+
+
+import '../../../../core/config/services/MemberStore.dart';
+import '../../domain/entities/Activity.dart';
+import '../../domain/entities/Event.dart';
+
+import '../../domain/entities/Formz/Image.dart';
 import '../../domain/entities/Meeting.dart';
+import '../../domain/entities/training.dart';
+import '../bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
+import '../bloc/IsVisible/bloc/visible_bloc.dart';
 import '../widgets/Formz.dart';
+import '../widgets/Functions.dart';
+import '../widgets/MemberSelection.dart';
+
+Activity get ActivityTest=>Activity(name: "", id: "id", description: "description",
+    ActivityBeginDate: DateTime.now(), ActivityEndDate: DateTime.now(),
+    ActivityAdress: "ActivityAdress",
+    ActivityPoints:2, categorie: "", IsPaid: false,
+    price: 1, Participants: [], CoverImages: []);
+Member get memberTest=> const Member(
+
+    IsSelected: false, id: "id", role: "role", is_validated: false,
+    cotisation:[false] , Images: [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password");
 
 class CreateUpdateActivityPage extends StatefulWidget {
-  const CreateUpdateActivityPage({Key? key}) : super(key: key);
+  final String id;
+  final String work;
+  final String activity;
+  const CreateUpdateActivityPage({Key? key, required this.id, required this.activity, required this.work}) : super(key: key);
 
   @override
   State<CreateUpdateActivityPage> createState() =>
       _CreateUpdateActivityPageState();
 }
+
 
 class _CreateUpdateActivityPageState extends State<CreateUpdateActivityPage> {
 
@@ -41,9 +69,42 @@ class _CreateUpdateActivityPageState extends State<CreateUpdateActivityPage> {
   final TextEditingController _ProfesseurName = TextEditingController();
   final TextEditingController _LocationController = TextEditingController();
   final TextEditingController _Points = TextEditingController();
+  final TextEditingController _price = TextEditingController(text: "0");
 
 
+@override
+  void initState() {
+if (widget.work=="edit"){
+  debugPrint("edit");
+  debugPrint("edit"+ widget.activity.split(".").last);
+  if (widget.activity.split(".").last=="Events"){    _loadEventModel(widget.id);
+    context.read<AcivityFBloc>().add(GetActivitiesByid(act: activity.Events, id: widget.id));
+  }
+  else if (widget.activity.split(".").last=="Meetings"){
+_loadMeetingModel(widget.id);
+    context.read<AcivityFBloc>().add(GetActivitiesByid(act: activity.Meetings, id: widget.id));
 
+  }
+  else if (widget.activity.split(".").last=="Trainings"){_loadTrainingModel(widget.id);
+    context.read<AcivityFBloc>().add(GetActivitiesByid(act: activity.Trainings, id: widget.id));
+  }
+}
+else{
+  context.read<FormzBloc>().add(BeginTimeChanged(date: DateTime.now()));
+  context.read<FormzBloc>().add(CategoryChanged(  category:Category.Technology));
+  context.read<FormzBloc>().add(RegistraTimeChanged(date: DateTime.now().add(Duration(days: 1))));
+  context.read<FormzBloc>().add(EndTimeChanged(date: DateTime.now().add(Duration(days: 1))));
+  context.read<FormzBloc>().add(MemberFormzChanged( memberFormz: memberTest));
+  context.read<TextFieldBloc>().add(ChangeTextFieldEvent([TextEditingController(),TextEditingController()]));
+  context.read<FormzBloc>().add(ImageInputChanged(  imageInput: XFile("")));
+  context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent( false));
+
+
+}
+  context.read<MembersBloc>().add(GetAllMembersEvent());
+    // TODO: implement initState
+    super.initState();
+  }
 
   //Form key
   final _formKey = GlobalKey<FormState>();
@@ -56,105 +117,9 @@ class _CreateUpdateActivityPageState extends State<CreateUpdateActivityPage> {
     return Scaffold(
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: InkWell(
-          onTap: () {},
-          child: BlocBuilder<FormzBloc, FormzState>(
-  builder: (context, ste) {
-    return BlocBuilder<TextFieldBloc ,TextFieldState>(
-  builder: (context, statef) {
-    return BlocBuilder<VisibleBloc, VisibleState>(
-  builder: (context, vis) {
-    return BlocConsumer<AddDeleteUpdateBloc, AddDeleteUpdateState>(
-      listener: (ctx,ste){
-        if (ste is ErrorAddDeleteUpdateState){
-    SnackBarMessage.showErrorSnackBar(
-    message: ste.message, context: context);
-    }
-               if (ste is MessageAddDeleteUpdateState){
-    SnackBarMessage.showSuccessSnackBar(
-    message: ste.message, context: context);
-    }
-                  if (ste is LoadingAddDeleteUpdateState){
-  LoadingWidget();}
-
-
-      },
-            builder: (context, state) {
-              return BlocBuilder<ActivityCubit, ActivityState>(
-  builder: (context, acti) {
-    return GestureDetector(
-                onTap: (){
-                  final dur=DateTime.now().add(Duration(hours: 2));
-
-
-                  if (acti.selectedActivity==activity.Events){if (_formKey.currentState!.validate()){
-                  final act=Event(registrationDeadline: ste.registrationTimeInput.value??dur, LeaderName: _LeaderController.text,
-                      name: _namecontroller.text, description: _descriptionController.text, ActivityBeginDate: ste.beginTimeInput.value??DateTime.now(),
-                      ActivityEndDate: ste.endTimeInput.value??dur,
-                      ActivityAdress: _LocationController.text, ActivityPoints: int.parse(_Points.text), categorie: ste.category.name, IsPaid: vis.isPaid,
-                      price: 0, Participants: [], CoverImages: [ste.imageInput.value!.path. toString()], id: "id");
-                  context.read<AddDeleteUpdateBloc>().add(AddACtivityEvent(act: act, type: activity.Events));}}
-                  else if (acti.selectedActivity==activity.Trainings){
-                    if (_formKey.currentState!.validate()){
-                    final act =Training(id: "id", ProfesseurName: _ProfesseurName.text, Duration: 0, name: _namecontroller.text,
-                        description: _descriptionController.text, ActivityBeginDate: ste.beginTimeInput.value??DateTime.now(), ActivityEndDate: ste.endTimeInput.value??dur,
-                        ActivityAdress: _LocationController.text, ActivityPoints: int.parse(_Points.text) , categorie:ste.category.name , IsPaid: vis.isPaid,
-                        price: 0, Participants: [], CoverImages: [ste.imageInput.value!.path. toString()]);
-    context.read<AddDeleteUpdateBloc>().add(AddACtivityEvent(act: act, type: activity.Trainings));
-
-    }}
-                  else {
-                    if (_formKey.currentState!.validate()) {
-                      debugPrint("agenda: ${combineTextFields(statef.textFieldControllers)}");
-                      final act = Meeting(
-                          name: _namecontroller.text,
-                          description: _descriptionController.text,
-                          ActivityBeginDate: ste.beginTimeInput.value ??
-                              DateTime.now(),
-                          ActivityEndDate: ste.endTimeInput.value ?? dur,
-                          ActivityAdress: _LocationController.text,
-                          ActivityPoints: int.parse(_Points.text),
-                          categorie: ste.category.name,
-                          IsPaid: false,
-                          price: 0,
-                          Participants: [],
-                          CoverImages: [],
-                          id: "id",
-                          Director: [],
-                          agenda: combineTextFields(statef.textFieldControllers));
-                    }
-                  }
-                  context.go("/home");
-
-
-                },
-                child: Container(
-                  height: mediaQuery.size.height / 15,
-                  decoration: BoxDecoration(
-                      color: PrimaryColor,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                        child: Text(
-                          "Save",
-                          style: PoppinsRegular(
-                              mediaQuery.devicePixelRatio * 7, textColorWhite),
-                        )),
-                  ),
-                ),
-              );
-  },
-);
-            },
-          );
-  },
-);
-  },
-);
-  },
-),
-        ),
+        child: Add(formKey: _formKey, namecontroller: _namecontroller,
+            descriptionController: _descriptionController, LeaderController: _LeaderController
+            , ProfesseurName: _ProfesseurName, LocationController:_LocationController, Points: _Points, mediaQuery: mediaQuery, Price: _price)
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -167,7 +132,7 @@ class _CreateUpdateActivityPageState extends State<CreateUpdateActivityPage> {
     return Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                firstLine(),
+firstLine(widget.work),
               showImagePicker(vis.selectedActivity, mediaQuery),
               TextfieldNormal(
                     "${vis.selectedActivity.name} Name", "Name of ${vis.selectedActivity.name} here", _namecontroller,
@@ -176,7 +141,7 @@ class _CreateUpdateActivityPageState extends State<CreateUpdateActivityPage> {
                       context.read<FormzBloc>().add(ActivityNameChanged(activityName: value));
                     }
                 ),
-               showLeader(vis.selectedActivity),
+               showLeader(vis.selectedActivity,mediaQuery),
 
                 Padding(
                     padding: const EdgeInsets.symmetric(
@@ -223,7 +188,8 @@ class _CreateUpdateActivityPageState extends State<CreateUpdateActivityPage> {
       ),
     );
   }
-Widget showLeader(activity act){
+Widget showLeader(activity act,mediaQuery){
+
     return
     act==activity.Trainings
       ?
@@ -237,7 +203,28 @@ Widget showLeader(activity act){
         "Leader Name", "Leader name here ", _LeaderController,
     (value){
       context.read<FormzBloc>().add(LeaderNameChanged(leaderName: value));
-    }):SizedBox();
+    }):BlocBuilder<FormzBloc, FormzState>(
+  builder: (context, state) {
+    debugPrint("state: ${state.memberFormz.value}");
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18.0),
+
+          child: Text(
+              "Director Name",
+            style: PoppinsRegular(18, textColorBlack),
+          ),
+        ),
+        bottomMemberSheet(context ,mediaQuery,
+            state.memberFormz.value??memberTest),
+      ],
+    );
+  },
+);
+        
 }
 Widget showRegistration(activity act,DateTime time){
     return act==activity.Events?
@@ -267,13 +254,14 @@ Widget showImagePicker(activity act ,mediaQuery)=>
 
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
+
             child: Text(
               "Agenda",
               style: PoppinsRegular(18, textColorBlack),
             ),
           ),
-          TextFieldGenerator()]
+          SizedBox(child: TextFieldGenerator())]
       ) :
 
 
@@ -290,21 +278,97 @@ Widget showImagePicker(activity act ,mediaQuery)=>
             context.read<FormzBloc>().add(LocationChanged(location: value));
           }
       ),
-      PriceWidget(mediaQuery),
+      PriceWidget(mediaQuery,_price),
 
     ],
   );
-  List<String> combineTextFields(List<TextEditingController> controllers) {
-    List<String> combinedControllers = [];
 
-    for (int i = 0; i < controllers.length; i += 2) {
-      if (i + 1 < controllers.length) {
-        String combinedController =
-            '${controllers[i].text} (${controllers[i + 1].text} min ) ';
-        combinedControllers.add(combinedController);
-      }
+  void EventUpdateInfo(Event event,ha)async{
+   ActivityBasics(event);
+
+    _LeaderController.text=event.LeaderName;
+    context.read<FormzBloc>().add(EndTimeChanged(date: event.ActivityEndDate));
+    context.read<FormzBloc>().add(RegistraTimeChanged(date: event.registrationDeadline));
+    context.read<FormzBloc>().add(ImageInputChanged(  imageInput:ha??XFile("")));
+    context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent(event.IsPaid));
+  }
+
+
+
+  void TrainingUpdateInfo(Training train,ha)async{
+   ActivityBasics(train);
+
+    _ProfesseurName.text=train.ProfesseurName;
+    context.read<FormzBloc>().add(EndTimeChanged(date: train.ActivityEndDate));
+
+    context.read<FormzBloc>().add(ImageInputChanged(  imageInput:ha??XFile("")));
+    context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent(train.IsPaid));
+  }
+  void MeetingUpdateInfo(Meeting meeting)async{
+    debugPrint(meeting.agenda.toString());
+   ActivityBasics(meeting);
+   List<Member> members=await MemberStore.getCachedMembers();
+   Member? member=members.firstWhere((element) => element.id==meeting.Director);
+   context.read<FormzBloc>().add(MemberFormzChanged( memberFormz: member));
+   context.read<TextFieldBloc>().add(ChangeTextFieldEvent(createControllers(meeting.agenda)));
+
+
+
+
+  }
+  void  _loadEventModel(String id) async {
+    // Assuming your list of events is stored in a variable called 'eventsList'
+    List<Event> eventsList = await EventStore.getCachedEvents();
+
+    // Find the event with the matching id
+    Event? event = eventsList.firstWhere(
+          (event) => event.id == id,
+
+    );
+    if (event != null) {
+      final ha=await convertBase64ToXFile( event.CoverImages[0]!);
+      EventUpdateInfo(event,ha);
     }
 
-    return combinedControllers;
+
+  } void  _loadTrainingModel(String id) async {
+    // Assuming your list of events is stored in a variable called 'eventsList'
+    List<Training> trainingList = await TrainingStore.getCachedTrainings();
+
+    // Find the event with the matching id
+    Training? train = trainingList.firstWhere(
+          (event) => event.id == id,
+
+    );
+    if (train != null) {
+      final ha=await convertBase64ToXFile( train.CoverImages[0]!);
+   TrainingUpdateInfo(train, ha);
+    }
+
+
+  }  void  _loadMeetingModel(String id) async {
+
+
+    // Assuming your list of events is stored in a variable called 'eventsList'
+    List<Meeting> meetingList = await MeetingStore.getCachedMeetings();
+
+    // Find the event with the matching id
+    Meeting? meeting = meetingList.firstWhere(
+          (meet) => meet.id == id,
+
+    );
+    if (meeting != null) {
+MeetingUpdateInfo(meeting);
+    }
+
+
+  }
+  void ActivityBasics(Activity act){
+    _LocationController.text=act.ActivityAdress;
+    _Points.text=act.ActivityPoints.toString();
+    _namecontroller.text=act.name;
+    _descriptionController.text=act.description; context.read<FormzBloc>().add(BeginTimeChanged(date: act.ActivityBeginDate));
+    context.read<FormzBloc>().add(CategoryChanged(  category:getCategoryFromString(act.categorie)));
+
   }
 }

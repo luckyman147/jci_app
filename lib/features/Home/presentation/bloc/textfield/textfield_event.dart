@@ -5,7 +5,11 @@ abstract class TextFieldEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+class ChangeTextFieldEvent extends TextFieldEvent {
+ final List<TextEditingController> text;
 
+  ChangeTextFieldEvent(this.text);
+}
 class AddTextFieldEvent extends TextFieldEvent {}
 class AddTwoTextFieldEvent extends TextFieldEvent {}
 class RemoveTextFieldEvent extends TextFieldEvent {

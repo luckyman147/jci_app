@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/features/auth/domain/entities/LoginMember.dart';
+import 'package:jci_app/features/auth/domain/entities/Member.dart';
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 
 
@@ -121,7 +121,7 @@ else if(state is MessageReset){
                   () {
                 if (_key.currentState!.validate()){
 
-                  final  Member member=Member(email: email, password: state.password.value);
+                  final  Member member=Member(email: email, password: state.password.value, id: '', role: '', is_validated: false, cotisation: [], Images: [], firstName: '', lastName: '', phone: '', IsSelected: false);
 
                   context.read<ResetBloc>().add(ResetSubmitted( member: member));
 

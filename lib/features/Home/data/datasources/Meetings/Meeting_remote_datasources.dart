@@ -8,6 +8,7 @@ import 'package:jci_app/core/config/env/urls.dart';
 import 'package:http/http.dart' as http;
 
 
+import '../../../../../core/config/services/uploadImage.dart';
 import '../../../../../core/error/Exception.dart';
 import '../../model/meetingModel/MeetingModel.dart';
 
@@ -18,6 +19,7 @@ abstract class MeetingRemoteDataSource {
 
 
   Future<Unit> createMeeting(MeetingModel Meeting);
+
   Future<Unit> updateMeeting(MeetingModel Meeting);
   Future<Unit> deleteMeeting(String id);
 
@@ -34,12 +36,12 @@ class MeetingRemoteDataSourceImpl implements MeetingRemoteDataSource{
   Future<Unit> createMeeting(MeetingModel Meeting) {
 final body = Meeting.toJson();
     return client.post(
-      Uri.parse(createEventUrl),
+      Uri.parse(createMeetingUrl),
       headers: {"Content-Type": "application/json"},
       body: json.encode(body),
     ).then((response) async {
       if (response.statusCode == 200) {
-        final Map<String, dynamic> decodedJson = json.decode(response.body) ;
+
 
           return Future.value(unit);
 
@@ -159,7 +161,36 @@ final body = Meeting.toJson();
 
   @override
   Future<Unit> updateMeeting(MeetingModel Meeting) {
-    // TODO: implement updateMeeting
-    throw UnimplementedError();
+    final body =Meeting.toJson();
+    return client.patch(
+      Uri.parse(getMeetingsUrl+Meeting.id+"/edit"),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(body),
+    ).then((response) async {
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> decodedJson = json.decode(response.body) ;
+
+
+        final Update_response=await UpdateImage(decodedJson['_id'], Meeting.CoverImages.first,getMeetingsUrl);
+        if (Update_response.statusCode==200){
+          return Future.value(unit);
+        }
+        else if (Update_response.statusCode==400){
+
+          throw EmptyDataException();
+
+        }else {
+          throw ServerException();
+        }
+
+      }
+      else if (response.statusCode == 400) {
+        throw WrongCredentialsException();
+      }
+      else {
+        throw ServerException();
+      }
+    });
   }
+
 }

@@ -13,15 +13,15 @@ bool isTokenExpired(String token) {
     if (decodedToken.containsKey('exp')) {
       // 'exp' claim is present in the token
       int expirationTimestamp = decodedToken['exp'];
-      print(expirationTimestamp);
+
 
       // Get the current timestamp
       int currentTimestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-      print('token checking');
+
       // Check if the token has expired
       return expirationTimestamp < currentTimestamp;
     } else {
-      print('token checking');
+      print('token expired');
       // If 'exp' claim is not present, consider the token as expired
       return true;
     }
