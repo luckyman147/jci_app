@@ -88,7 +88,7 @@ return _getMessage(api.signOut());
   @override
   Future<Either<Failure, Unit>> updatePassword(Member member) {
 final MemberModel memberModel=MemberModel(email: member.email, password: member.password, id: member.id,
-    firstName: member.firstName, phone: member.phone, role: member.role, is_validated: member.is_validated, lastName: member.lastName, cotisation: member.cotisation, Images: member.Images, IsSelected: false,
+    firstName: member.firstName, phone: member.phone, role: member.role, is_validated: member.is_validated, lastName: member.lastName, cotisation: member.cotisation, Images: member.Images, IsSelected: false, Activities: member.Activities,
 
 
 );

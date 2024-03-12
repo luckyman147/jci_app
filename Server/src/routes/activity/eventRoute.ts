@@ -6,25 +6,27 @@ import { Authenticate } from "../../middleware/CommonAuth";
 const router=express.Router()
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
-router.get('/LatestofTheMonth',GetEventsOfMonth)
-router.get('/',getAllEvents)
-router.get('/LatestOfweekend',GetEventsOfWeekend)
-router.get('/:id',getEventById)
-router.get('/:name',getEventByName)
-router.get('/:date',getEventByDate)
+router.post('/LatestofTheMonth',GetEventsOfMonth)
+router.post('/',getAllEvents)
+router.post('/LatestOfweekend',GetEventsOfWeekend)
+router.post('/get/:id',getEventById)
+router.post('/get/:name',getEventByName)
+router.post('/get/:date',getEventByDate)
 
 //!require authentication
 router.get('/EventParticipants')
 
 //*post
-router.post('/add',addEvent)
-router.post('/:idEvent/addParticipant',Authenticate ,AddParticipantToEvent)
+router.post('/add/',addEvent)
+
 router.patch('/:id/edit',updateEvent)
 router.patch('/:id/UpdateImage',upload.array("CoverImages"),updateImage)
-//?should be authenticated
 router.post('/:id/uploadImage',upload.array("CoverImages"),uploadImage)
+router.post('/:idEvent/addParticipant',Authenticate ,AddParticipantToEvent)
+//?should be authenticated
+
 router.delete("/:id",deleteEvent)  //?should be authenticated
-router.delete('/Event/:id/deleteParticipant',Authenticate,RemoveParticipantFromEvent  )
+router.delete('/:id/deleteParticipant',Authenticate,RemoveParticipantFromEvent  )
 export { router as EventRoute };
 
 

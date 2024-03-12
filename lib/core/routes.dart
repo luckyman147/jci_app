@@ -62,11 +62,12 @@ builder: (BuildContext context, GoRouterState state) {
 
 
 ),
-GoRoute(path: "/activity/:id/:activity",
+GoRoute(path: "/activity/:id/:activity/:index",
   builder: (BuildContext context,  state) {
     final  id = state.pathParameters['id']! ;
     final  activity = state.pathParameters['activity']! ;
-    return ActivityDetailsPage( Activity: activity, id: id,);
+    final  index = state.pathParameters['index']! ;
+    return ActivityDetailsPage( Activity: activity, id: id, index: int.parse(index),);
   },
 ),
 
@@ -97,12 +98,14 @@ GoRoute(
 
     ),
 
-    GoRoute(path: '/create/:id/:activity/:action',
+    GoRoute(path: '/create/:id/:activity/:action/:part',
       builder: (BuildContext context, GoRouterState state){
         final  id = state.pathParameters['id']! ;
         final  activity = state.pathParameters['activity']! ;
         final  action = state.pathParameters['action']! ;
-        return CreateUpdateActivityPage(id: id, activity: activity, work: action,);},
+        final  partie = state.pathParameters['part']! ;
+        debugPrint('partie $partie');
+        return CreateUpdateActivityPage(id: id, activity: activity, work: action, part: decodeListFromUrlEncodedString(partie),);},
     ),
 
 
@@ -114,4 +117,11 @@ GoRoute(
 
 
   ],
-);
+);List<String> decodeListFromUrlEncodedString(String input) {
+  if (input =="[]") {
+    return <String>[];
+  }
+  final urlEncodedList = Uri.decodeComponent(input);
+  final list = urlEncodedList.isNotEmpty ? urlEncodedList.split(',') : <String>[];
+  return list;
+}

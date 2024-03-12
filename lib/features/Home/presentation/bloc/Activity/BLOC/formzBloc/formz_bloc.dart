@@ -35,6 +35,7 @@ class FormzBloc extends Bloc<FormzEvent, FormzState> {
     on<CategoryChanged>(_onCategoryChanged);
     on<MembernameChanged>(_onMemberChanged);
     on<jokerChanged>(_JokerChanged);
+
     on<MemberFormzChanged>(_onMemberFormChanged);
 
 

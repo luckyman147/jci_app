@@ -1,9 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
 import 'package:jci_app/features/Home/domain/entities/Event.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
+import 'package:jci_app/features/Home/presentation/widgets/Compoenents.dart';
 
 import '../../../../core/app_theme.dart';
 
@@ -17,30 +22,38 @@ class ActivityOfWeekListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
 
-    return InkWell(
-      onTap: () {},
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
+    return BlocBuilder<ActivityCubit, ActivityState>(
+  builder: (context, state) {
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+    
+      itemCount: activity.length,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: (){
+            context.go('/activity/${ activity[index].id}/${state.selectedActivity.name}/${index} ');
 
-        itemCount: activity.length,
-        itemBuilder: (context, index) {
-          return Container(
+          },
+          child: Container(
             height:mediaQuery.size.height/9,
             width: mediaQuery.size.width*0.87 ,
             decoration: ActivityDecoration,
             child: Stack(
-
+              
                 children:[
                   Images(mediaQuery, activity, index),
                   cardPos(mediaQuery,activity,index),
                   Details(mediaQuery, activity, index),
+                  ButtonComponent(Activities: activity, index: index, top: mediaQuery.size.height / 3.57, left:  mediaQuery.size.width / 2.1, mediaQuery: mediaQuery, act: state.selectedActivity,)
                 ]
             ),
-          );
-        }, separatorBuilder: (BuildContext context, int index) { return const SizedBox(width: 20,);  },
-
-      ),
+          ),
+        );
+      }, separatorBuilder: (BuildContext context, int index) { return const SizedBox(width: 20,);  },
+    
     );
+  },
+);
   }
 }
 
@@ -79,8 +92,9 @@ Positioned cardPos(MediaQueryData mediaQuery,List<Activity> activity,int index){
          borderRadius: ActivityRaduis,
          child: Container(
            color: textColor,
-           child: Image.memory(base64Decode(activity[index].CoverImages[0]!),fit: BoxFit.contain, height: mediaQuery.size.height / 4.2,
-             width: mediaQuery.size.width / 1,),
+           child: Image.memory(base64Decode(activity[index].CoverImages[0]!),fit: BoxFit.cover, height: mediaQuery.size.height / 4.2,
+               width: mediaQuery.size.width*0.87 ,
+               ),
          )):
      ClipRRect(
        borderRadius: ActivityRaduis,

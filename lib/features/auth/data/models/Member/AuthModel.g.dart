@@ -15,6 +15,7 @@ MemberModel _$MemberModelFromJson(Map<String, dynamic> json) => MemberModel(
       json["cotisation"]!=null?(json['cotisation'] as List<dynamic>).map((e) => e as bool).toList():[],
       Images:json["Images"]!=null? (json['Images'] as List<dynamic>).map((e) => e as String).toList():[],
       firstName: json['firstName'] as String,
+    Activities:json["Activities"]!=null? (json['Activities'] as List<dynamic>).map((e) => e as String).toList():[],
       lastName: json['lastName']!=null? json['lastName'] as String:"",
       phone: json['phone']!=null? json['phone'] as String:"",
       email: json['email']!=null? json['email'] as String:"",

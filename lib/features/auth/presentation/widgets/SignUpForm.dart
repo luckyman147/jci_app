@@ -179,7 +179,7 @@ if (_key.currentState!.validate()) {
 Member(email: state.email.value,
   password: state.password.value,
   firstName: state.firstname.value,
-  lastName: state.lastname.value, id: '', role: '', is_validated: false, cotisation: [false], Images: [], phone: '', IsSelected: false,  );
+  lastName: state.lastname.value, id: '', role: '', is_validated: false, cotisation: [false], Images: [], phone: '', IsSelected: false, Activities: [],  );
 
   context.read<SignUpBloc>().add(SignUpSubmitted(member: member));
 

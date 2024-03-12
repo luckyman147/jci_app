@@ -19,7 +19,7 @@ export const generateAccessToken =async (payload: MemberPayload) => {
     }
   
     const accessToken = jwt.sign(payload , process.env.APP_SECRET , {
-      expiresIn: '1h',
+      expiresIn: '20h',
     });
     if (!await isAccessTokenValid(payload._id,accessToken)){
      await generateAccessToken(payload)

@@ -17,6 +17,7 @@ import 'package:jci_app/features/Home/domain/usercases/TrainingUseCase.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ACtivityOfweek/activity_ofweek_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
@@ -28,15 +29,16 @@ final sl = GetIt.instance;
 
 Future<void> initActivities() async {
   sl.registerFactory(() => AcivityFBloc(
-      getTrainingsOfTheMonthUseCase: sl(),
-      getALlTrainingsUseCase: sl(),
-      getEventsOfTheMonthUseCase: sl(),
-      getALlEventsUseCase: sl(),
-      getALlMeetingsUseCase: sl(),
-      getEventByIdUseCase: sl(),
-      getTrainingByIdUseCase: sl(),
-      getMeetingByIdUseCase: sl(), deleteEventUseCase: sl(), deleteTrainingUseCase: sl(), deleteMeetingUseCase: sl(),
-      updateTrainingUseCase: sl(), updateEventUseCase: sl(), updateMeetingUseCase: sl()));
+    getTrainingsOfTheMonthUseCase: sl(),
+    getALlTrainingsUseCase: sl(),
+    getEventsOfTheMonthUseCase: sl(),
+    getALlEventsUseCase: sl(),
+    getALlMeetingsUseCase: sl(),
+    getEventByIdUseCase: sl(),
+    getTrainingByIdUseCase: sl(),
+    getMeetingByIdUseCase: sl(), participantBloc: sl(), ));
+  sl.registerFactory(() => ParticpantsBloc(sl(),sl(),sl(),sl(),sl(),sl()));
+
 
   sl.registerFactory(() => ActivityOfweekBloc(
       getEventsOfTheWeekUseCase: sl(),
@@ -45,7 +47,9 @@ Future<void> initActivities() async {
   sl.registerFactory(() => ActivityCubit());
   sl.registerFactory(() => TextFieldBloc());
 
-  sl.registerFactory(() => AddDeleteUpdateBloc(createEventUseCase: sl(), creatTrainingUseCase: sl(), createMeetingUseCase: sl()));
+  sl.registerFactory(() => AddDeleteUpdateBloc(createEventUseCase: sl(),
+      creatTrainingUseCase: sl(), createMeetingUseCase: sl(), deleteEventUseCase: sl(),
+      updateEventUseCase: sl(), updateMeetingUseCase: sl(), deleteMeetingUseCase: sl(), updateTrainingUseCase: sl(), deleteTrainingUseCase: sl()));
   sl.registerFactory(() => FormzBloc());
 
   sl.registerFactory(() => VisibleBloc());
@@ -71,7 +75,12 @@ Future<void> initActivities() async {
 
 //use cases
 
-
+sl.registerLazySingleton(() => LeaveEventUseCase(sl()));
+sl.registerLazySingleton(() => LeaveMeetingUseCase(sl()));
+sl.registerLazySingleton(() => LeaveTrainingUseCase(sl()));
+sl.registerLazySingleton(() => ParticipateEventUseCase(sl()));
+sl.registerLazySingleton(() => ParticipateMeetingUseCase(sl()));
+sl.registerLazySingleton(() => ParticipateTrainingUseCase(sl()));
   sl.registerLazySingleton(() => CreateEventUseCase(sl()));
   sl.registerLazySingleton(() => UpdateEventUseCase(sl()));
   sl.registerLazySingleton(() => UpdateMeetingUseCase(sl()));

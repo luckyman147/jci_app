@@ -11,6 +11,7 @@ MemberSignup _$MemberSignupFromJson(Map<String, dynamic> json) => MemberSignup(
       role: json['role'],
       is_validated: json['is_validated'],
       cotisation: json['cotisation'],
+      Activities: json['Activities'],
       Images: json['Images'],
       firstName: json['firstName'],
       lastName: json['lastName'],

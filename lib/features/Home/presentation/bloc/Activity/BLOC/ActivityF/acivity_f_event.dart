@@ -35,20 +35,12 @@ final String id;
   @override
   List<Object> get props => [act];
 }
-class deleteActivityEvent extends AcivityFEvent {
-  final activity act;
 
-  final String id;
-  const deleteActivityEvent({required this.act,required this.id});
+class SearchTextChanged extends AcivityFEvent {
+  final String searchText;
 
-  @override
-  List<Object> get props => [act,id];
-}class UpdateActivityEvent extends AcivityFEvent {
-  final activity act;
-
-  final Activity active;
-  const UpdateActivityEvent({required this.act,required this.active});
+  const SearchTextChanged(this.searchText);
 
   @override
-  List<Object> get props => [act,active];
+  List<Object> get props => [searchText];
 }

@@ -29,13 +29,13 @@ class EventRepoImpl implements EventRepo{
     ActivityBeginDate: event.ActivityBeginDate,
     ActivityEndDate: event.ActivityEndDate,
     ActivityAdress: event.ActivityAdress,
-    ActivityPoints:0,
+    ActivityPoints:event.ActivityPoints,
     categorie: event.categorie,
     IsPaid: event.IsPaid,
     price: event.price,
     Participants: [],
     CoverImages: event.CoverImages,
-    registrationDeadline: event.registrationDeadline,
+    registrationDeadline: event.registrationDeadline, IsPart: false,
   );
     if (await networkInfo.isConnected) {
       try {
@@ -167,15 +167,16 @@ if (await networkInfo.isConnected) {
 
 
   @override
-  Future<Either<Failure, bool>> leaveEvent(String id) {
-    // TODO: implement leaveEvent
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> leaveEvent(String id) async {
+    return await  _getMessage(eventRemoteDataSource.leaveEvent(id));
+
+
   }
 
   @override
-  Future<Either<Failure, bool>> participateEvent(String id) {
-    // TODO: implement participateEvent
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> participateEvent(String id)async {
+    return await  _getMessage(eventRemoteDataSource.participateEvent(id));
+
   }
 
   @override
@@ -188,13 +189,13 @@ if (await networkInfo.isConnected) {
       ActivityBeginDate: event.ActivityBeginDate,
       ActivityEndDate: event.ActivityEndDate,
       ActivityAdress: event.ActivityAdress,
-      ActivityPoints:0,
+      ActivityPoints:event.ActivityPoints,
       categorie: event.categorie,
       IsPaid: event.IsPaid,
       price: event.price,
-      Participants: [],
+      Participants: event.Participants==null?[]:event.Participants,
       CoverImages: event.CoverImages,
-      registrationDeadline: event.registrationDeadline,
+      registrationDeadline: event.registrationDeadline, IsPart: event.IsPart,
     );
     return await _getMessage(eventRemoteDataSource.updateEvent(eventMode));
   }
@@ -204,6 +205,29 @@ if (await networkInfo.isConnected) {
       try {
         await event;
         return Right(unit);
+      }
+
+on EmptyDataException {
+      return Left(EmptyDataFailure());
+    } on WrongCredentialsException {
+      return Left(WrongCredentialsFailure());
+    }
+    on ServerException {
+      return Left(ServerFailure());
+    }
+    }
+
+
+    else {
+      return Left(OfflineFailure());
+    }
+  }
+ Future<Either<Failure, bool>> _getMessageBool(
+      Future<bool> event) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await event;
+        return Right(true);
       }
 
 on EmptyDataException {

@@ -24,15 +24,16 @@ OutlineInputBorder border(Color color)=> OutlineInputBorder(
 );
 
 
-final ActivityDecoration=const BoxDecoration(
+final ActivityDecoration=  BoxDecoration(
 
-borderRadius: BorderRadius.only(
+borderRadius:  BorderRadius.only(
 bottomLeft: Radius.circular(43),
 bottomRight: Radius.circular(43),
-topLeft: Radius.circular(43),
+topLeft: Radius.circular(15),
 topRight: Radius.circular(15),
 ),
-color: Colors.white,
+border: Border.all(color: BackWidgetColor, width: 1.0),
+color: textColorWhite,
 
 );
 final shadowDecoration=BoxDecoration(
@@ -49,7 +50,7 @@ final shadowDecoration=BoxDecoration(
 );
 final ActivityRaduis=BorderRadius.only(
 
-  topLeft: Radius.circular(41),
+  topLeft: Radius.circular(15),
   topRight: Radius.circular(15),
 );
 final decoration=BoxDecoration(
@@ -61,7 +62,7 @@ final decoration=BoxDecoration(
 
 ThemeData themeData = ThemeData(
   primaryColor: PrimaryColor,
-scaffoldBackgroundColor:backgroundColored ,
+scaffoldBackgroundColor:textColorWhite ,
 
 
   textTheme: TextTheme(

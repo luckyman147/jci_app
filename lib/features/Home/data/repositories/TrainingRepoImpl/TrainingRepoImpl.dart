@@ -34,12 +34,12 @@ class TrainingRepoImpl implements TrainingRepo{
       ActivityBeginDate: training.ActivityBeginDate,
       ActivityEndDate: training.ActivityEndDate,
       ActivityAdress: training.ActivityAdress,
-      ActivityPoints:0,
+      ActivityPoints: training.ActivityPoints,
       categorie: training.categorie,
       IsPaid: training.IsPaid,
       price: training.price,
       Participants: [],
-      CoverImages: training.CoverImages, Duration: 0, ProfesseurName: training.ProfesseurName,
+      CoverImages: training.CoverImages, Duration: 0, ProfesseurName: training.ProfesseurName, IsPart: false,
 
     );
     if (await networkInfo.isConnected) {
@@ -159,14 +159,13 @@ return await _getMessage(trainingRemoteDataSource.deleteTraining(id));
   }
 
   @override
-  Future<Either<Failure, bool>> leaveTraining(String id)async {
-   throw UnimplementedError();
+  Future<Either<Failure, Unit>> leaveTraining(String id)async {
+    return await _getMessage(trainingRemoteDataSource.leaveTraining(id));
   }
 
   @override
-  Future<Either<Failure, bool>> participateTraining(String id) {
-    // TODO: implement participateTraining
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> participateTraining(String id)async  {
+ return await  _getMessage(trainingRemoteDataSource.participateTraining(id));
   }
 
   @override
@@ -179,12 +178,12 @@ return await _getMessage(trainingRemoteDataSource.deleteTraining(id));
       ActivityBeginDate: training.ActivityBeginDate,
       ActivityEndDate: training.ActivityEndDate,
       ActivityAdress: training.ActivityAdress,
-      ActivityPoints:0,
+      ActivityPoints:training.ActivityPoints,
       categorie: training.categorie,
       IsPaid: training.IsPaid,
       price: training.price,
-      Participants: [],
-      CoverImages: training.CoverImages, Duration: 0, ProfesseurName: training.ProfesseurName,
+      Participants: training.Participants,
+      CoverImages: training.CoverImages, Duration: 0, ProfesseurName: training.ProfesseurName, IsPart: training.IsPart,
 
     );
     return await _getMessage(trainingRemoteDataSource.updateTraining(trainingMode));

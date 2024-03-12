@@ -21,6 +21,8 @@ export const getAllmeetings = async (req: Request, res: Response, next: NextFunc
       name: meeting.name,
       Director: meeting.Director,
 Agenda:meeting.Agenda,
+       IsPart:meeting.Participants.some((member) => member._id.equals(req.body.id)),
+
    
      
       ActivityBegindate: meeting.ActivityBeginDate,
@@ -72,6 +74,7 @@ export const updateMeeting = async (req: Request, res: Response, next: NextFunct
     existingMeeting.Director = meetingInputs.Director;
     existingMeeting.categorie = meetingInputs.categorie;
     existingMeeting.ActivityPoints = meetingInputs.ActivityPoints;
+    existingMeeting.Price = meetingInputs.price;
 
     // Save the updated meeting
     const updatedMeeting = await existingMeeting.save();
@@ -103,6 +106,8 @@ if (errors.length > 0) {
           ActivityBeginDate: meetingInputs.ActivityBeginDate,
         Agenda:meetingInputs.agenda,
         Director:meetingInputs.Director,
+        price:meetingInputs.price,
+        
           categorie: meetingInputs.categorie,
 ActivityPoints: meetingInputs.ActivityPoints,
        Participants:[]
@@ -129,7 +134,8 @@ export const getmeetingById = async (req: Request, res: Response, next: NextFunc
         Director: await findParticipentById(meeting.Director),
        Agenda:meeting.Agenda,
      
-       
+             IsPart:meeting.Participants.some((member) => member._id.equals(req.body.id)),
+
         ActivityBegindate: meeting.ActivityBeginDate,
        
         description: meeting.description,
@@ -239,7 +245,9 @@ export const getmeetingByDate = async (req: Request, res: Response, next: NextFu
               description: meeting.description,
               ActivityPoints: meeting.ActivityPoints,
               categorie: meeting.categorie,
+
           
+       IsPart:meeting.Participants.some((member) => member._id.equals(req.body.id)),
               
               participants: meeting.Participants,
             
@@ -293,7 +301,7 @@ export const RemoveParticipantFrommeeting = async (req: Request, res: Response, 
   const member=req.member
   if (member){
   try {
-    const meetingId = req.params.idmeeting;
+    const meetingId = req.params.id;
     const participantId = member._id;
 
     // Find the meeting by ID

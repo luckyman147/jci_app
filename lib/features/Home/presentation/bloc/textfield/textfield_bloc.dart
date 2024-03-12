@@ -43,7 +43,8 @@ void _removeTextFields(
 void _ChangeTextfield(
   ChangeTextFieldEvent event,
   Emitter<TextFieldState> emit) {
-    emit(TextFieldInitial(textFieldControllers: event.text));
+    emit(TextfieldChanged(event.text,textFieldControllers: event.text));
+    emit(state.copyWith(textFieldControllers: event.text));
   }
 
 

@@ -158,7 +158,7 @@ final mediaquery = MediaQuery.of(context);
 
               if (keyConr.currentState!.validate()) {
                 final member = Member(email: state.email.value,
-                  password: state.password.value, id: '', role: '', is_validated: false, cotisation: [], firstName: '', Images: [], lastName: '', phone: '', IsSelected: false,
+                  password: state.password.value, id: '', role: '', is_validated: false, cotisation: [], firstName: '', Images: [], lastName: '', phone: '', IsSelected: false, Activities: [],
                 );
 
 

@@ -10,11 +10,11 @@ const router=express.Router()
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 
-router.get('/',getAllmeetings)
-router.get('/LatestOfweek',GetmeetingsOfWeekend)
-router.get('/:id',getmeetingById)
-router.get('/:name',getmeetingByName)
-router.get('/:date',getmeetingByDate)
+router.post('/',getAllmeetings)
+router.post('/LatestOfweek',GetmeetingsOfWeekend)
+router.post('/get/:id',getmeetingById)
+router.get('/get/:name',getmeetingByName)
+router.get('/get/:date',getmeetingByDate)
 
 //!require authentication
 router.get('/meetingParticipants')

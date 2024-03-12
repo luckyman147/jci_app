@@ -15,8 +15,11 @@ final String  categorie;
  final  int price;
   final List<dynamic>Participants;
    final List <String?>CoverImages;
+   bool tempPart=false;
+   final bool   IsPart;
     Activity({required this.name,
       required this.id,
+     required this.IsPart,
      required this.description,
      required this.ActivityBeginDate,
      required this.ActivityEndDate,
@@ -29,6 +32,9 @@ final String  categorie;
      required this.CoverImages});
   @override
   // TODO: implement props
-  List<Object?> get props => [name,description,ActivityBeginDate,ActivityEndDate,ActivityAdress,ActivityPoints,categorie,IsPaid,price,Participants,CoverImages];
+  List<Object?> get props => [name,description,ActivityBeginDate,IsPart,ActivityEndDate,ActivityAdress,ActivityPoints,categorie
+   ,IsPaid,price,
+
+   Participants,CoverImages];
 
 }

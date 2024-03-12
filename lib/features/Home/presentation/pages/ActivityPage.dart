@@ -8,7 +8,9 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.
 import 'package:jci_app/features/Home/presentation/widgets/Compoenents.dart';
 import 'package:jci_app/features/Home/presentation/widgets/EventListWidget.dart';
 
+import '../bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import '../bloc/PageIndex/page_index_bloc.dart';
+import '../widgets/Functions.dart';
 
 
 
@@ -24,7 +26,10 @@ class _ActivityPageState extends State<ActivityPage> {
   @override
   void initState() {
     if (widget.Activity == activity.Meetings) {
+
+
       context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: activity.Meetings));
+
     }
     else if (widget.Activity == activity.Events) {
       context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: activity.Events));
@@ -63,7 +68,7 @@ class _ActivityPageState extends State<ActivityPage> {
                     Row(
                       children: [
                         AddButton(color: PrimaryColor, IconColor: textColorBlack, icon: Icons.add_rounded, onPressed: () {
-                          context.go('/create/${"id"}/${widget.Activity.name}/${action.Add.name}');
+                          context.go('/create/${"id"}/${widget.Activity.name}/${action.Add.name}/${[]}');
                         }),
                         const SearchButton(
                           color: PrimaryColor, IconColor: textColorBlack,),

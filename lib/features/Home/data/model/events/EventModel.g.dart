@@ -19,7 +19,8 @@ EventModel _$EventModelFromJson(Map<String, dynamic> json) => EventModel(
       ActivityPoints: json['ActivityPoints'] as int,
       categorie: json['categorie'] as String,
       IsPaid: json['IsPaid'] as bool,
-      price: 0,
+      price: json['price'] !=null ? json['price']as int: json['Price'] !=null ? json ["Price"]as int:0,
+      IsPart: json['IsPart'] as bool,
       Participants:json['participants'] !=null?  json['participants'] as List<dynamic>:json['Participants'] as List<dynamic>,
     CoverImages: (json['CoverImages'] as List<dynamic>)
           .map((e) => e as String?)
@@ -40,6 +41,7 @@ Map<String, dynamic> _$EventModelToJson(EventModel instance) =>
       'categorie': instance.categorie,
       'IsPaid': instance.IsPaid,
       'price': instance.price,
+      'IsPart': instance.IsPart,
       'Participants': instance.Participants,
       'CoverImages': instance.CoverImages,
       'LeaderName': instance.LeaderName,

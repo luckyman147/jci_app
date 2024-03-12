@@ -1,13 +1,17 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
 import 'package:jci_app/features/Home/domain/usercases/MeetingsUseCase.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
+import 'package:jci_app/features/Home/presentation/widgets/Functions.dart';
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
+import '../../../../../../../core/config/services/verification.dart';
 import   '../../../../../../../core/error/Failure.dart';
 import '../../../../../../../core/strings/failures.dart';
 import '../../../../../../../core/usescases/usecase.dart';
@@ -16,6 +20,7 @@ import '../../../../../domain/entities/Meeting.dart';
 import '../../../../../domain/entities/training.dart';
 import '../../../../../domain/usercases/EventUseCases.dart';
 import '../../../../../domain/usercases/TrainingUseCase.dart';
+import '../formzBloc/formz_bloc.dart';
 part 'acivity_f_event.dart';
 
 
@@ -32,26 +37,19 @@ final GetTrainingByIdUseCase getTrainingByIdUseCase;
   final GetEventsOfTheMonthUseCase getEventsOfTheMonthUseCase;
   final GetTrainingsOfTheMonthUseCase getTrainingsOfTheMonthUseCase;
   final GetALlTrainingsUseCase getALlTrainingsUseCase;
-  final DeleteEventUseCase deleteEventUseCase;
-  final UpdateMeetingUseCase updateMeetingUseCase;
-  final UpdateTrainingUseCase updateTrainingUseCase;
-  final UpdateEventUseCase updateEventUseCase;
-  final DeleteMeetingUseCase deleteMeetingUseCase;
-  final DeleteTrainingUseCase deleteTrainingUseCase;
+  final ParticpantsBloc participantBloc;
+
   AcivityFBloc({required  this.getTrainingsOfTheMonthUseCase,
     required  this.getALlTrainingsUseCase,
-    required  this.deleteTrainingUseCase,
-    required  this.updateTrainingUseCase,
-    required  this.updateEventUseCase,
-    required  this.updateMeetingUseCase,
-    required  this.deleteMeetingUseCase,
+    required  this.participantBloc,
+
     required  this.getTrainingByIdUseCase,
     required  this.getMeetingByIdUseCase,
     required  this.getEventsOfTheMonthUseCase,
     required  this.getALlEventsUseCase,
     required  this.getALlMeetingsUseCase,
     required  this.getEventByIdUseCase,
-    required  this.deleteEventUseCase
+
 
 
 
@@ -63,7 +61,7 @@ final GetTrainingByIdUseCase getTrainingByIdUseCase;
 on<RefreshActivities>(refresh);
 on<GetActivitiesByid>(_getActivityByid);
 on<GetAllActivitiesEvent>(_getAllActivities);
-on<deleteActivityEvent>(_deleteActivity);
+on<SearchTextChanged>(SearchCat);
   }
   void refresh(
       RefreshActivities event ,
@@ -105,6 +103,7 @@ on<deleteActivityEvent>(_deleteActivity);
     emit(ActivityLoadingState());
     if (event.act==activity.Events){
       final failureOrEvents= await getALlEventsUseCase(NoParams());
+
       emit(_mapFailureOrActivityToState(failureOrEvents));
     }
     else if (event.act==activity.Trainings){
@@ -146,52 +145,6 @@ void _getActivityOfMonth(
     }
 }
 
-  void _deleteActivity(
-      deleteActivityEvent event,
-      Emitter<AcivityFState> emit
-
-      )async {
-
-    if (event.act==activity.Events){
-      final failureOrEvents= await deleteEventUseCase(event.id);
-      emit(_deletedActivityOrFailure(failureOrEvents));
-    }
-    else if (event.act==activity.Trainings){
-      final failureOrEvents= await deleteTrainingUseCase(event.id);
-      emit(_deletedActivityOrFailure(failureOrEvents));
-    }
-    else if (event.act==activity.Meetings){
-      final failureOrEvents= await deleteMeetingUseCase(event.id);
-      emit(_deletedActivityOrFailure(failureOrEvents));
-
-    }
-
-  }
-
-
-
-
-void _UpdateActivity(
-      UpdateActivityEvent event,
-      Emitter<AcivityFState> emit
-
-      )async {
-    if (event.act==activity.Events){
-      final failureOrEvents= await updateEventUseCase((event.active) as Event);
-      emit(_UpdatedActivityOrFailure(failureOrEvents));
-    }
-    else if (event.act==activity.Trainings){
-      final failureOrEvents= await updateTrainingUseCase((event.active) as Training);
-      emit(_UpdatedActivityOrFailure(failureOrEvents));
-
-    }
-    else if (event.act==activity.Meetings){
-      final failureOrEvents= await updateMeetingUseCase((event.active) as Meeting);
-      emit(_UpdatedActivityOrFailure(failureOrEvents));
-    }
-
-      }
-
 
 
 
@@ -203,20 +156,12 @@ void _UpdateActivity(
 AcivityFState _mapFailureOrActivityToState(Either<Failure, List<Activity>> either) {
     return either.fold(
           (failure) => ErrorActivityState(message: mapFailureToMessage(failure)),
-          (act) => ActivityLoadedState(
+          (act) {
+
+            participantBloc.add(initstateList(act: mapObjects(act))); log("eee"+participantBloc.state.toString());
+            return ActivityLoadedState(
        activitys: act,
-      ),
-    );
-  }
-  AcivityFState _deletedActivityOrFailure(Either<Failure, Unit> either) {
-    return either.fold(
-          (failure) => ErrorActivityState(message: mapFailureToMessage(failure)),
-          (act) => DeletedActivityMessage(message: 'Deleted With Success'),
-    );
-  } AcivityFState _UpdatedActivityOrFailure(Either<Failure, Unit> either) {
-    return either.fold(
-          (failure) => ErrorActivityState(message: mapFailureToMessage(failure)),
-          (act) => ActivityUpdatedState(message: 'Updated With Success'),
+      );}
     );
   }
 
@@ -234,5 +179,22 @@ AcivityFState _mapFailureOrActivityToState(Either<Failure, List<Activity>> eithe
        activity: act,
       ),
     );
+  }
+void SearchCat(SearchTextChanged event,Emitter<AcivityFState>emit ) async {
+
+
+    emit(SearchLoading());
+
+        final categories = _filterCategories(event.searchText);
+       emit( SearchLoaded(categories));
+     if (categories.isEmpty)
+        emit(SearchError("not found"));
+
+
+  }
+
+  List<Category> _filterCategories(String searchText) {
+
+    return Category.values.where((category) => category.name.contains(searchText)).toList();
   }
 }

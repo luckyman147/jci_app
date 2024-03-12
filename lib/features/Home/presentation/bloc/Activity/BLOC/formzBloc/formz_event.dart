@@ -108,7 +108,14 @@ class DescriptionChanged extends FormzEvent {
   @override
   List<Object> get props => [name];
 }
+class SearchCategoryChanged extends FormzEvent {
+  final String searchCategory;
 
+  const SearchCategoryChanged({required this.searchCategory});
+
+  @override
+  List<Object> get props => [searchCategory];
+}
 class ImageInputChanged extends FormzEvent {
   final XFile imageInput;
 

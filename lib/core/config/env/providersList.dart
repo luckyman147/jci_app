@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ACtivityOfweek/activity_ofweek_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
@@ -41,6 +42,7 @@ List<SingleChildWidget> providersList = [
       create: (_) => di.sl<AuthBloc>()..add(const RefreshTokenEvent())),
   BlocProvider(create: (_) => di.sl<SignUpBloc>()),
   BlocProvider(create: (_) => di.sl<LoginBloc>()),
+  BlocProvider(create: (_) => di.sl<ParticpantsBloc>()),
 
   BlocProvider(create: (_) => localeCubit()..getSavedLanguage()),
   BlocProvider(create: (_) => ActivityCubit()),

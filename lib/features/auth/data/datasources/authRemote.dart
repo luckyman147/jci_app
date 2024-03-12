@@ -359,15 +359,7 @@ GetMembers();
 
 
 
-  Future<List<String?>> getTokens() async {
-  final tokens=await Store.GetTokens();
-  if (tokens[1] == null  || tokens[1].toString().isEmpty) {
-    print('famech token');
-    throw EmptyCacheException();
 
-  }
-  return tokens;
-}
 
   @override
   Future<MemberModel> GetmMemberById(String id) {

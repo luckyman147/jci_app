@@ -134,61 +134,8 @@ class _HomeWidgetState extends State<HomeWidget> {
                         padding:  EdgeInsets.symmetric(vertical: mediaQuery.size.height / 33),
                         child: MyActivityButtons(),
                       ),
-                      Align(
-                        alignment: AlignmentDirectional.topStart,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Upcoming ${state.selectedActivity.name}", style: PoppinBold(
-                                mediaQuery.size.width / 17, Colors.black,
-                                TextDecoration.none),),
-                            InkWell(
-                              onTap: (){
-                                context.read<PageIndexBloc>().add (SetIndexEvent(index: 1));
 
-
-
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: LinkedText(text: "See more", size: mediaQuery.size.width/23),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Padding(
-
-                            padding:  EdgeInsets.symmetric(vertical: mediaQuery.size.height / 33 , horizontal: 6),
-                            child: SizedBox(
-                              height: mediaQuery.size.height * 0.4, // adjust the height as needed
-                              child:
-
-                                   buildBody(context,state.selectedActivity)
-
-
-                            ),
-                          ),
-                          SizedBox(height: 10,),
-                          Align(
-                            alignment: AlignmentDirectional.topStart,
-                            child: Text(" This Weekend", style: PoppinBold(
-                                mediaQuery.size.width / 15, Colors.black,
-                                TextDecoration.none),),
-                          ),
-                          Padding(
-                            padding:  EdgeInsets.symmetric(vertical: mediaQuery.size.height / 33, horizontal: 6),
-
-                            child: SizedBox(
-                              height: mediaQuery.size.height * 0.4, // adjust the height as needed
-                              child: buildWeekBody(context,state.selectedActivity),
-                            ),
-                          ),
-                        ],
-                      )
+                      buildBody(context, state.selectedActivity, mediaQuery)
 
 
 

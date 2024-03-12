@@ -1,6 +1,6 @@
 import 'dart:io';
 
-final BaseUrl = "http://192.168.1.8:8080";
+  final BaseUrl = "http://192.168.1.11:8080";
 final LoginUrl = "$BaseUrl/auth/login";
 final SignUpUrl = "$BaseUrl/auth/signup";
 final ForgetPasswordUrl = "$BaseUrl/auth/forgetPassword";

@@ -76,8 +76,17 @@ class LeaveEventUseCase {
 
   LeaveEventUseCase(this.eventRepository);
 
-  Future<Either<Failure,bool>> call(String id) async {
+  Future<Either<Failure,Unit>> call(String id) async {
     return await eventRepository.leaveEvent(id);
   }
 }
 
+class ParticipateEventUseCase  extends UseCase<Unit,String>{
+  final EventRepo eventRepository;
+
+  ParticipateEventUseCase(this.eventRepository);
+
+  Future<Either<Failure,Unit>> call(String params) async {
+    return await eventRepository.participateEvent(params);
+  }
+}

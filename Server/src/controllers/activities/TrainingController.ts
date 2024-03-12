@@ -25,7 +25,8 @@ if (Trainings.length>0) {
       description: Training.description,
       categorie: Training.categorie,
       IsPaid: Training.IsPaid,
-      price: Training.price,
+      price: Training.Price,
+      IsPart:Training.Participants.some((member) => member._id.equals(req.body.id)),
 
       
       ActivityBegindate: Training.ActivityBeginDate,
@@ -71,8 +72,9 @@ console.log(currentDate)
         description: Training.description,
         categorie: Training.categorie,
         IsPaid: Training.IsPaid,
-        price: Training.price,
+        price: Training.Price,
        
+       IsPart:Training.Participants.some((member) => member._id.equals(req.body.id)),
         
         ActivityBegindate: Training.ActivityBeginDate,
         ActivityEnddate: Training.ActivityEndDate,
@@ -115,8 +117,9 @@ export const GetTrainingsOfMonth= async (req:Request,res:Response,next:NextFunct
           description: Training.description,
           categorie: Training.categorie,
           IsPaid: Training.IsPaid,
-          price: Training.price,
+          price: Training.Price,
         
+       IsPart:Training.Participants.some((member) => member._id.equals(req.body.id)),
           
           ActivityBegindate: Training.ActivityBeginDate,
           ActivityEnddate: Training.ActivityEndDate,
@@ -171,9 +174,9 @@ if (endDate.getTime() <= beginDate.getTime()) {
       ActivityAdress: trainingInputs.ActivityAdress,
       
       categorie: trainingInputs.categorie,
-      IsPaid: trainingInputs.IsPaid,price: trainingInputs.price,
-      ActivityPoints:0,
-     
+      IsPaid: trainingInputs.IsPaid,
+      ActivityPoints:trainingInputs.ActivityPoints,
+  Price:trainingInputs.price, 
       Participants: [],
         ProfesseurName:trainingInputs.ProfesseurName,
         Duration:durationInMillis,
@@ -230,7 +233,8 @@ if (endDate.getTime() <= beginDate.getTime()) {
       existingTraining.ActivityAdress = trainingInputs.ActivityAdress;
       existingTraining.categorie = trainingInputs.categorie;
       existingTraining.IsPaid = trainingInputs.IsPaid;
-      existingTraining.price = trainingInputs.price;
+      existingTraining.Price = trainingInputs.price;
+      existingTraining.ActivityPoints = trainingInputs.ActivityPoints;
       existingTraining.ProfesseurName = trainingInputs.ProfesseurName;
       
       // Calculate and update the Duration
@@ -257,14 +261,14 @@ export const getTrainingById = async (req: Request, res: Response, next: NextFun
         name: training.name,
           ProfesseurName:training.ProfesseurName,
           Duration:training.Duration,
-      
+            IsPart:training.Participants.some((member) => member._id.equals(req.body.id)),
 
   
         ActivityPoints: training.ActivityPoints,
         description: training.description,
         categorie: training.categorie,
         IsPaid: training.IsPaid,
-        price: training.price,
+        price: training.Price,
       
         
         ActivityBegindate: training.ActivityBeginDate,
@@ -414,7 +418,7 @@ export const RemoveParticipantFromTraining = async (req: Request, res: Response,
   const member=req.member
   if (member){
   try {
-    const TrainingId = req.params.idTraining;
+    const TrainingId = req.params.id;
     const participantId = member._id;
 
     // Find the Training by ID

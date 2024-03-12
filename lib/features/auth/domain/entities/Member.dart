@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:jci_app/features/auth/presentation/widgets/inputs.dart';
 
+import '../../../Home/domain/entities/Activity.dart';
+
 class Member extends Equatable {
   final String id;
 
@@ -11,7 +13,7 @@ class Member extends Equatable {
   final String password;
   final bool is_validated;
   final List<bool> cotisation;
-  final List<String> Images;
+  final List<String> Images;final List<String> Activities;
  final bool IsSelected;
 
   final String role;
@@ -19,6 +21,7 @@ class Member extends Equatable {
   const Member(
 
       {
+        required this.Activities,
         required this.IsSelected,
         required this.id,
         required this.role,
@@ -37,6 +40,6 @@ class Member extends Equatable {
   // TODO: implement props
   List<Object?> get props => [email, password,
     id, role, is_validated, cotisation, Images, firstName, lastName, phone,
-    IsSelected
+    IsSelected, Activities
 
   ];}

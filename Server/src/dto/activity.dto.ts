@@ -2,8 +2,9 @@ import { IsNotEmpty } from 'class-validator'
 
 export interface EventOftheMonthField {
     _id:string
-    name: string
+    name: string 
     LeaderName:string
+    price:number
     ActivityBegindate: Date
     ActivityEnddate: Date
 registrationDeadline: Date
@@ -13,10 +14,11 @@ registrationDeadline: Date
     ActivityPoints:number
     categorie:string
         IsPaid:boolean
-        price:number
+
     ActivityAdress:string
     participants:any []
     CoverImages:string[]
+    IsPart:boolean
 
 }export interface MeetingField {
     _id:string
@@ -34,6 +36,7 @@ description:string
 
 ActivityPoints:number
 categorie:string
+IsPart:boolean
  
 participants:any []
 
@@ -44,6 +47,8 @@ export class EventInputs{
     name:string
     @IsNotEmpty()
 description:string
+ActivityPoints:number
+price:number
 
 @IsNotEmpty()
 ActivityBeginDate:Date
@@ -78,7 +83,7 @@ ActivityPoints:number
 
 
 
-
+price:number
 @IsNotEmpty()
 categorie:string
 
@@ -98,6 +103,7 @@ export interface TrainingField {
     Duration:number
 
     description:string
+    IsPart:boolean
 
     ActivityPoints:number
     categorie:string
@@ -119,7 +125,7 @@ IsPaid:boolean
 ActivityBeginDate:Date
 @IsNotEmpty()
 ActivityEndDate:Date
-@IsNotEmpty()
+
 price:number
 ActivityPoints:number
 ActivityAdress:string

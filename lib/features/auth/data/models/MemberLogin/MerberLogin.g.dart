@@ -16,7 +16,7 @@ MemberLogin _$MemberLoginFromJson(Map<String, dynamic> json) => MemberLogin(
       lastName: json['lastName'],
       phone: json['phone'],
       email: json['email'],
-      password: json['password'], IsSelected: false,
+      password: json['password'], IsSelected: false, Activities: json['Activities'],
     );
 
 Map<String, dynamic> _$MemberLoginToJson(MemberLogin instance) =>

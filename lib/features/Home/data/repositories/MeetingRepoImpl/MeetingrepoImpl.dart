@@ -35,7 +35,7 @@ id: meeting.id,
       IsPaid: meeting.IsPaid,
       price: meeting.price,
       Participants: [],
-      CoverImages: meeting.CoverImages, Director: meeting.Director, agenda: meeting.agenda,
+      CoverImages: meeting.CoverImages, Director: meeting.Director, agenda: meeting.agenda, IsPart: false,
 
 
     );
@@ -141,15 +141,13 @@ id: meeting.id,
 
   @override
   @override
-  Future<Either<Failure, bool>> leaveMeeting(String id) {
-    // TODO: implement leaveMeeting
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> leaveMeeting(String id) async {
+    return await (getMessage(meetingRemoteDataSource.leaveMeeting(id)));
   }
 
   @override
-  Future<Either<Failure, bool>> participateMeeting(String id) {
-    // TODO: implement participateMeeting
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> participateMeeting(String id) async{
+ return await (getMessage(meetingRemoteDataSource.participateMeeting(id)));
   }
 
   @override
@@ -166,8 +164,8 @@ id: meeting.id,
       categorie: meeting.categorie,
       IsPaid: meeting.IsPaid,
       price: meeting.price,
-      Participants: [],
-      CoverImages: meeting.CoverImages, Director: meeting.Director, agenda: meeting.agenda,
+      Participants: meeting.Participants,
+      CoverImages: meeting.CoverImages, Director: meeting.Director, agenda: meeting.agenda, IsPart: meeting.IsPart
 
 
     );

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:jci_app/core/config/env/urls.dart';
 
 
@@ -8,7 +9,9 @@ import 'package:jci_app/core/config/env/urls.dart';
 import 'package:http/http.dart' as http;
 
 
+import '../../../../../core/config/services/store.dart';
 import '../../../../../core/config/services/uploadImage.dart';
+import '../../../../../core/config/services/verification.dart';
 import '../../../../../core/error/Exception.dart';
 import '../../model/meetingModel/MeetingModel.dart';
 
@@ -23,8 +26,8 @@ abstract class MeetingRemoteDataSource {
   Future<Unit> updateMeeting(MeetingModel Meeting);
   Future<Unit> deleteMeeting(String id);
 
-  Future<bool> leaveMeeting(String id);
-  Future<bool> participateMeeting(String id);
+  Future<Unit> leaveMeeting(String id);
+  Future<Unit> participateMeeting(String id);
 
 }
 
@@ -75,10 +78,13 @@ final body = Meeting.toJson();
 
   @override
   Future<List<MeetingModel>> getAllMeetings()async  {
-    final response = await client.get(
+    final member = await Store.getModel();
+    final memberId = member!.id;
+    final response = await client.post(
 
       Uri.parse(getMeetingsUrl),
       headers: {"Content-Type": "application/json"},
+      body: json.encode({"id": memberId}),
     );
 
     if (response.statusCode == 200) {
@@ -102,9 +108,13 @@ final body = Meeting.toJson();
 
   @override
   Future<MeetingModel> getMeetingById(String id)async {
-    final response =  await client.get(
-      Uri.parse(getMeetingsUrl + '$id'),
+
+    final member = await Store.getModel();
+    final memberId = member!.id;
+    final response =  await client.post(
+      Uri.parse(getMeetingsUrl + 'get/$id'),
       headers: {"Content-Type": "application/json"},
+      body: json.encode({"id": memberId}),
     );
 
     if (response.statusCode == 200) {
@@ -123,9 +133,13 @@ final body = Meeting.toJson();
 
   @override
   Future<List<MeetingModel>> getMeetingsOfTheWeek()async  {
-    final response = await client.get(
+    final member = await Store.getModel();
+    final memberId = member!.id;
+    final response = await client.post(
       Uri.parse(getMeetingByWeek),
       headers: {"Content-Type": "application/json"},
+      body: json.encode({"id": memberId}),
+
     );
 
     if (response.statusCode == 200) {
@@ -148,15 +162,35 @@ final body = Meeting.toJson();
   }
 
   @override
-  Future<bool> leaveMeeting(String id) {
-    // TODO: implement leaveMeeting
-    throw UnimplementedError();
+  Future<Unit> leaveMeeting(String id) async{
+    final tokens=await getTokens();
+    debugPrint(id);
+    try {
+
+      final Response = await client.delete(
+        Uri.parse("$getMeetingsUrl/$id/deleteParticipant"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${tokens[1]}',
+        },
+
+      );
+      print(" ya get ${Response.statusCode}");
+      if (Response.statusCode == 200) {
+        return Future.value(unit);
+      } else if (Response.statusCode == 400) {
+        throw AlreadyParticipateException();
+      } else {
+        throw EmptyDataException();
+      }}catch(e){
+      throw ServerException();
+    }
   }
 
+
   @override
-  Future<bool> participateMeeting(String id) {
-    // TODO: implement participateMeeting
-    throw UnimplementedError();
+  Future<Unit> participateMeeting(String id)async  {
+    return await ParticiActivity(id, client, getMeetingsUrl);
   }
 
   @override
@@ -169,19 +203,7 @@ final body = Meeting.toJson();
     ).then((response) async {
       if (response.statusCode == 200) {
         final Map<String, dynamic> decodedJson = json.decode(response.body) ;
-
-
-        final Update_response=await UpdateImage(decodedJson['_id'], Meeting.CoverImages.first,getMeetingsUrl);
-        if (Update_response.statusCode==200){
-          return Future.value(unit);
-        }
-        else if (Update_response.statusCode==400){
-
-          throw EmptyDataException();
-
-        }else {
-          throw ServerException();
-        }
+         return Future.value(unit);
 
       }
       else if (response.statusCode == 400) {

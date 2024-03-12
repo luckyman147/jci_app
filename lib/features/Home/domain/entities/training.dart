@@ -17,4 +17,4 @@ class Training extends Activity{
 
     required super.description, required super.ActivityBeginDate, required super.ActivityEndDate, required super.ActivityAdress,
     required super.ActivityPoints, required super.categorie, required super.IsPaid, required super.price, required super.Participants,
-    required super.CoverImages,});}
+    required super.CoverImages, required super.IsPart,});}

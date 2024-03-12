@@ -49,7 +49,7 @@ class LoginRepoImpl implements LoginRepo {
 
         final   MemberLogin memberModelLogin=MemberLogin(email: loginMember.email, password: loginMember.password, id: loginMember.id, role: loginMember.role, is_validated: loginMember.is_validated,
 
-          cotisation: loginMember.cotisation, Images: loginMember.Images, firstName: loginMember.firstName, lastName: loginMember.lastName, phone: loginMember.phone, IsSelected: false,
+          cotisation: loginMember.cotisation, Images: loginMember.Images, firstName: loginMember.firstName, lastName: loginMember.lastName, phone: loginMember.phone, IsSelected: false, Activities: loginMember.Activities
 
 
         );

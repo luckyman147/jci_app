@@ -141,6 +141,7 @@ Widget MembersBottomSheet(
                       textColor,
 
                     ),
+
                     focusedBorder: border(PrimaryColor),
                     enabledBorder: border(ThirdColor),
                     errorBorder: border(Colors.red),

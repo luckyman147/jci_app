@@ -121,7 +121,7 @@ else if(state is MessageReset){
                   () {
                 if (_key.currentState!.validate()){
 
-                  final  Member member=Member(email: email, password: state.password.value, id: '', role: '', is_validated: false, cotisation: [], Images: [], firstName: '', lastName: '', phone: '', IsSelected: false);
+                  final  Member member=Member(email: email, password: state.password.value, id: '', role: '', is_validated: false, cotisation: [], Images: [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: []);
 
                   context.read<ResetBloc>().add(ResetSubmitted( member: member));
 

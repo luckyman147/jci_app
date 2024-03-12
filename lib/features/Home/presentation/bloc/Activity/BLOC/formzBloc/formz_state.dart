@@ -13,14 +13,14 @@ part of 'formz_bloc.dart';
     this.beginTimeInput = const BeginTimeInput.pure(),
     this.registrationTimeInput = const RegistrationTimeInput.pure(),
     this.endTimeInput = const EndTimeInput.pure(),
-    this.jokertime = const JokerDateofDayInput.pure(),
+
     this.memberName = const MemberName.pure(),
     this.memberFormz = const MemberFormz.pure(),
-
+    this.jokertime = const JokerDateofDayInput.pure(),
     this.joker = const JokerTimeInput.pure(),
 
     this.isValid = false,
-    this.category = Category.Technology
+    this.category = Category.Comity
   } );
   final MemberName memberName;
   final MemberFormz memberFormz;
@@ -105,6 +105,7 @@ professeurName,
 
 }
 enum Category {
+   Comity,Officiel,
   Technology,
   Science,
   Business,
@@ -124,7 +125,7 @@ enum Category {
   Parenting,
   Pets,
   fun,
-  Environment
+  Environment,Other
 }
 
 
@@ -132,4 +133,5 @@ class FormzInitial extends FormzState {
   @override
   List<Object> get props => [];
 }
+
 

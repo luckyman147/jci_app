@@ -73,13 +73,21 @@ class DeleteTrainingUseCase extends UseCase<Unit,String> {
     return await TrainingRepository.deleteTraining(id);
   }
 }
-class LeaveTrainingUseCase {
+class LeaveTrainingUseCase  extends UseCase<Unit,String>{
   final TrainingRepo TrainingRepository;
 
   LeaveTrainingUseCase(this.TrainingRepository);
 
-  Future<Either<Failure,bool>> call(String id) async {
+  Future<Either<Failure,Unit>> call(String id) async {
     return await TrainingRepository.leaveTraining(id);
+  }
+}class ParticipateTrainingUseCase  extends UseCase<Unit,String>{
+  final TrainingRepo TrainingRepository;
+
+  ParticipateTrainingUseCase(this.TrainingRepository);
+
+  Future<Either<Failure,Unit>> call(String id) async {
+    return await TrainingRepository.participateTraining(id);
   }
 }
 

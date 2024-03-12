@@ -11,8 +11,8 @@ abstract class EventRepo{
   Future<Either<Failure, Unit>> createEvent(Event event);
   Future<Either<Failure, Unit>> updateEvent(Event event);
   Future<Either<Failure, Unit>> deleteEvent(String id);
-  Future<Either<Failure, bool>> leaveEvent(String id);
-  Future<Either<Failure, bool>> participateEvent(String id);
+  Future<Either<Failure, Unit>> leaveEvent(String id);
+  Future<Either<Failure, Unit>> participateEvent(String id);
   Future<Either<Failure, Event>> getEventLikes(String id);
   Future<Either<Failure, Event>> getEventParticipants(String id);
   Future<Either<Failure, Event>> getEventReports(String id);

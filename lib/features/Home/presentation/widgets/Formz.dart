@@ -5,7 +5,7 @@ import '../bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dar
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../bloc/IsVisible/bloc/visible_bloc.dart';
 import 'AddActivityWidgets.dart';
-
+ enum TimeType { begin, end, registration }
 class BeginTimeWidget extends StatefulWidget {
 
   const BeginTimeWidget({Key? key}) : super(key: key);
@@ -23,16 +23,10 @@ class _BeginTimeWidgetState extends State<BeginTimeWidget> {
   builder: (context, state) {
     return DateFieldWidget(
       labelText: "Begin Date",
-      sheetTitle: "DAte and Hour of begin",
+      sheetTitle: "Date and Hour of begin",
       hintTextDate: "Begin Date",
       hintTextTime: "Begin Time",
-      date: state.beginTimeInput.value ?? DateTime.now(), saveMethod: ()   {
-      context
-          .read<FormzBloc>()
-          .add(BeginTimeChanged(date: combineTimeAndDate(state.jokertime.value ?? TimeOfDay.now(), state.joker.value ?? DateTime.now())));
-      Navigator.pop(context);
-        
-    },  mediaQuery: mediaQuery,);
+      date: state.beginTimeInput.value ?? DateTime.now(),   mediaQuery: mediaQuery, timeType: TimeType.begin,);
   },
 );
   }
@@ -69,14 +63,9 @@ class _EndDateWidgetState extends State<EndDateWidget> {
                   hintTextTime: "End Time",
                   date: state.endTimeInput.value ?? DateTime.now(),
                 
-                  saveMethod: () {
-                    context
-                        .read<FormzBloc>()
-                        .add(EndTimeChanged(date: combineTimeAndDate(state.jokertime.value ?? TimeOfDay.now(), state.joker.value ?? DateTime.now())));
-                    Navigator.pop(context);
-                  },
+                
                
-                  mediaQuery: mediaQuery,
+                  mediaQuery: mediaQuery, timeType: TimeType.end  
                 );
               },
             ),
@@ -106,14 +95,7 @@ class _RegistrationTimeState extends State<RegistrationTime> {
       sheetTitle: "Registration Date ",
       hintTextDate: "End Date",
       hintTextTime: "End Time",
-      date: state.registrationTimeInput.value ?? DateTime.now(), saveMethod: () {
-      context
-          .read<FormzBloc>()
-          .add(RegistraTimeChanged(date: combineTimeAndDate(state.jokertime.value ?? TimeOfDay.now(), state.joker.value ?? DateTime.now())));
-      Navigator.pop(context);
-
-
-    }, mediaQuery: mediaQuery,);
+      date: state.registrationTimeInput.value ?? DateTime.now(),  mediaQuery: mediaQuery, timeType: TimeType.registration,);
   },
 );
   }

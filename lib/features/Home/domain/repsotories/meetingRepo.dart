@@ -16,9 +16,9 @@ abstract class MeetingRepo {
 
   Future<Either<Failure, Unit>> deleteMeeting(String id);
 
-  Future<Either<Failure, bool>> leaveMeeting(String id);
+  Future<Either<Failure, Unit>> leaveMeeting(String id);
 
-  Future<Either<Failure, bool>> participateMeeting(String id);
+  Future<Either<Failure, Unit>> participateMeeting(String id);
 
   Future<Either<Failure, Meeting>> getMeetingLikes(String id);
 

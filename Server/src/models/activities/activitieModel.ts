@@ -11,7 +11,7 @@ export interface Activity extends Document{
     ActivityPoints:number
 categorie:string
     IsPaid:boolean
-    price:number
+    Price:number
     Participants:any[]
     CoverImages:string[]
     

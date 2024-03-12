@@ -6,6 +6,7 @@ import { meetingRoute } from '../routes/activity/meetingRoute';
 import { AdminRoute } from '../routes/adminRoute';
 import { trainingRoute } from '../routes/activity/TrainingRoute';
 import { Activityroute } from '../routes/activity/activityRoute';
+import { TeamRoute } from '../routes/team/TeamRoute';
 
 
 const appli= async (app:Application)=>{
@@ -24,6 +25,7 @@ app.use("/Event",EventRoute)
 app.use("/Meeting",meetingRoute)
 app.use("/Activity  ",Activityroute)
 app.use("/Training",trainingRoute)
+app.use('/Team',TeamRoute)
 return app
 }
 export default appli

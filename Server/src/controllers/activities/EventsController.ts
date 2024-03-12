@@ -11,21 +11,22 @@ import { Event } from '../../models/activities/eventModel';
 
 
 export const getAllEvents = async (req: Request, res: Response, next: NextFunction) => {
+  const memberId=req.body
   try {
     // Fetch all events and sort them by ActivityBeginDate in ascending order
-    const events = await Event.find().sort({ ActivityBeginDate: -1 });
+    const events = await Event.find().sort({ ActivityBeginDate: -1 }).limit(3);
 if (events.length>0) {
     // Format and send the events in the response
     const formattedEvents = events.map<EventOftheMonthField>((event) => ({
       _id: event._id,
       name: event.name,
       LeaderName: event.LeaderName,
-
+      IsPart:event.Participants.some((member) => member._id.equals(req.body.id)),
       ActivityPoints: event.ActivityPoints,
       description: event.description,
       categorie: event.categorie,
       IsPaid: event.IsPaid,
-      price: event.price,
+      price: event.Price,
       registrationDeadline: event.registrationDeadline,
       
       ActivityBegindate: event.ActivityBeginDate,
@@ -68,13 +69,13 @@ console.log(currentDate)
         description: event.description,
         categorie: event.categorie,
         IsPaid: event.IsPaid,
-        price: event.price,
+        price: event.Price,
         registrationDeadline: event.registrationDeadline,
         
         ActivityBegindate: event.ActivityBeginDate,
         ActivityEnddate: event.ActivityEndDate,
         ActivityAdress: event.ActivityAdress,
-   
+        IsPart:event.Participants.some((member) => member._id.equals(req.body.id)),
         participants: event.Participants,
         CoverImages: event.CoverImages,
       }));
@@ -91,8 +92,7 @@ export const GetEventsOfMonth= async (req:Request,res:Response,next:NextFunction
 
     try {
         const currentDate = new Date();
-        const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+      
     
         const eventsOfMonth = await Event.find({
           ActivityBeginDate: { $gte: currentDate },
@@ -109,7 +109,7 @@ export const GetEventsOfMonth= async (req:Request,res:Response,next:NextFunction
           description: event.description,
           categorie: event.categorie,
           IsPaid: event.IsPaid,
-          price: event.price,
+          price: event.Price,
           registrationDeadline: event.registrationDeadline,
           
           ActivityBegindate: event.ActivityBeginDate,
@@ -118,6 +118,7 @@ export const GetEventsOfMonth= async (req:Request,res:Response,next:NextFunction
      
           participants: event.Participants,
           CoverImages: event.CoverImages,
+          IsPart:event.Participants.some((member) => member._id.equals(req.body.id))
 
           }));
           console.log(formattedEvents);
@@ -154,8 +155,9 @@ export const addEvent = async (req: Request, res: Response, next: NextFunction) 
       registrationDeadline: eventInputs.registrationDeadline,
       categorie: eventInputs.categorie,
       IsPaid: eventInputs.IsPaid,
-      ActivityPoints:0,
-     
+      ActivityPoints:eventInputs.ActivityPoints,
+   
+     Price:eventInputs.price, 
       Participants: [],
       LeaderName: eventInputs.LeaderName,
 
@@ -170,7 +172,7 @@ export const addEvent = async (req: Request, res: Response, next: NextFunction) 
 
     res.json(savedEvent);
   } catch (error) {
-    console.error('Error adding event:', error);
+    console.log('Error adding event:', error);
     next(error);
   }}
 
@@ -198,6 +200,8 @@ export const addEvent = async (req: Request, res: Response, next: NextFunction) 
       existingEvent.categorie = eventInputs.categorie;
       existingEvent.IsPaid = eventInputs.IsPaid;
       existingEvent.LeaderName = eventInputs.LeaderName  ;
+      existingEvent.Price=eventInputs.price;
+      existingEvent.ActivityPoints=eventInputs.ActivityPoints;
   
       // Save the updated event
       const updatedEvent = await existingEvent.save();
@@ -223,9 +227,10 @@ export const getEventById = async (req: Request, res: Response, next: NextFuncti
         description: event.description,
         categorie: event.categorie,
         IsPaid: event.IsPaid,
-        price: event.price,
+        price: event.Price,
         registrationDeadline: event.registrationDeadline,
-        
+        IsPart:event.Participants.some((member) => member._id.equals(req.body.id)),
+
         ActivityBegindate: event.ActivityBeginDate,
         ActivityEnddate: event.ActivityEndDate,
         ActivityAdress: event.ActivityAdress,
@@ -372,20 +377,21 @@ export const getEventByDate = async (req: Request, res: Response, next: NextFunc
       if (!event) {
         return res.status(404).json({ message: 'Event not found' });
       }
-
+const FoundedMember=await Member.findById(member._id)
       // Check if the participant is already added
       if (event.Participants.includes(member._id)) {
         return res.status(400).json({ message: 'Participant is already added to the event' });
       }
-  
+await FoundedMember?.Activities.push(event)
       // Add the participant to the Participants array
       await event.Participants.push(member);
-  
+
       // Save the updated event
       const updatedEvent = await event.save();
+      const updatedMember = await FoundedMember!.save();
   
       // Respond with the updated event
-      res.status(200).json({ message: 'Participant added to the event', event: updatedEvent });
+      res.status(200).json({ message: 'Participant added to the event', event: updatedEvent,FoundedMember:updatedMember?.Activities });
     } catch (error) {
      res.status(500).json({ message: 'Error adding participant to the event' });
     }}
@@ -396,7 +402,7 @@ export const RemoveParticipantFromEvent = async (req: Request, res: Response, ne
   const member=req.member
   if (member){
   try {
-    const eventId = req.params.idEvent;
+    const eventId = req.params.id;
     const participantId = member._id;
 
     // Find the event by ID
@@ -419,13 +425,13 @@ export const RemoveParticipantFromEvent = async (req: Request, res: Response, ne
     if (!isParticipantAdded) {
       return res.status(400).json({ message: 'Participant is not added to the event' });
     }
-
+participant.Activities=participant.Activities.filter((activity)=>activity._id.equals(eventId))
     // Remove the participant from the Participants array
     event.Participants = event.Participants.filter((member) => !member._id.equals(participantId));
 
     // Save the updated event
     const updatedEvent = await event.save();
-
+await participant.save()
     // Respond with the updated event
     res.json({ message: 'Participant removed from the event', event: updatedEvent });
   } catch (error) {

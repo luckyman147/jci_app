@@ -27,7 +27,7 @@ class SignUpRepoImpl implements SignUpRepo {
           firstName: member.firstName,
           phone: member.phone,
           role: "user",
-          lastName: member.lastName, id: "", is_validated: false, cotisation: [false], Images: [], IsSelected: false,);
+          lastName: member.lastName, id: "", is_validated: false, cotisation: [false], Images: [], IsSelected: false, Activities: [],);
   return    await  getMessage   (signUpRemoteDataSource.signUp(memberModelSignUp ) );
 
 

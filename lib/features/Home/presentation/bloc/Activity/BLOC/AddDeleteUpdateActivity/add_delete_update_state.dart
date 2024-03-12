@@ -30,3 +30,15 @@ class MessageAddDeleteUpdateState extends AddDeleteUpdateState {
   @override
   List<Object> get props => [message];
 }
+class ActivityUpdatedState extends AddDeleteUpdateState {
+  final String message;
+  ActivityUpdatedState({required this.message});
+  @override
+  List<Object> get props => [message];
+}
+class DeletedActivityMessage extends AddDeleteUpdateState {
+  final String message;
+  DeletedActivityMessage({required this.message});
+  @override
+  List<Object> get props => [message];
+}

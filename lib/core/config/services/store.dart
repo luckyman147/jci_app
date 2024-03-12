@@ -58,7 +58,7 @@ await pref.putString(_UserInfo, "");
     final prefs = await SecureSharedPref.getInstance();
 
     final value = await  prefs.getString(_UserInfo);
-debugPrint('getModel: $value');
+
     if (value == null) {
       return null;
     }

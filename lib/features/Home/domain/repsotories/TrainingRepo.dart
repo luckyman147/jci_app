@@ -18,9 +18,9 @@ abstract class TrainingRepo {
 
   Future<Either<Failure, Unit>> deleteTraining(String id);
 
-  Future<Either<Failure, bool>> leaveTraining(String id);
+  Future<Either<Failure,Unit>> leaveTraining(String id);
 
-  Future<Either<Failure, bool>> participateTraining(String id);
+  Future<Either<Failure, Unit>> participateTraining(String id);
 
   Future<Either<Failure, Training>> getTrainingLikes(String id);
 

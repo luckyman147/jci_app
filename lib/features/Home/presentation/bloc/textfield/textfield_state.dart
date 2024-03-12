@@ -17,3 +17,8 @@ class TextFieldState extends Equatable {
 class TextFieldInitial extends TextFieldState{
   TextFieldInitial({required super.textFieldControllers});
 }
+class TextfieldChanged extends TextFieldState{
+  final List<TextEditingController> pp;
+
+  TextfieldChanged(this.pp, {required super.textFieldControllers});
+}

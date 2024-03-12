@@ -10,5 +10,5 @@ class Meeting extends Activity{
   Meeting( {required super.name, required super.description,required  this.Director,required  this.agenda
    ,required super.id,
    required super.ActivityBeginDate, required super.ActivityEndDate, required super.ActivityAdress, required super.ActivityPoints,
-   required super.categorie, required super.IsPaid, required super.price, required super.Participants, required super.CoverImages, });
+   required super.categorie, required super.IsPaid, required super.price, required super.Participants, required super.CoverImages, required super.IsPart, });
 }

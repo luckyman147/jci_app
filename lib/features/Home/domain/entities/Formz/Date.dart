@@ -71,9 +71,7 @@ class JokerDateofDayInput extends FormzInput<TimeOfDay?, JokerDateofDayValidatio
   const JokerDateofDayInput.pure() : super.pure(null);
   const JokerDateofDayInput.dirty([TimeOfDay? value]) : super.dirty(value);
 
-  static DateTime _getDefaultDateTime() {
-    return DateTime.now();
-  }
+
 
   @override
   JokerDateofDayValidationError? validator(TimeOfDay? value) {

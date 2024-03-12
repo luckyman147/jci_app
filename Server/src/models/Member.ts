@@ -11,6 +11,7 @@ export interface MemberDoc extends Document{
     phone:string;
     refreshTokenRevoked:[string];
     accessTokenRevoked:[string]
+    Activities:any[]
     
     
 Images:[string];
@@ -33,6 +34,10 @@ export const MemberSchema=new Schema({
     Images:{type:[String]},
     refreshTokenRevoked:{type:[String],default:[]},
     accessTokenRevoked  :{type:[String],default:[]},
+    Activities:{
+        type:[Schema.Types.ObjectId],
+        ref:"Activity"
+    },
     role: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Role',

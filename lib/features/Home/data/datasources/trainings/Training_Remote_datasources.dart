@@ -7,8 +7,10 @@ import 'package:jci_app/core/config/env/urls.dart';
 
 
 import 'package:http/http.dart' as http;
+import 'package:jci_app/core/config/services/verification.dart';
 
 
+import '../../../../../core/config/services/store.dart';
 import '../../../../../core/config/services/uploadImage.dart';
 import '../../../../../core/error/Exception.dart';
 
@@ -24,8 +26,8 @@ abstract class TrainingRemoteDataSource {
   Future<Unit> updateTraining(TrainingModel Training);
   Future<Unit> deleteTraining(String id);
 
-  Future<bool> leaveTraining(String id);
-  Future<bool> participateTraining(String id);
+  Future<Unit> leaveTraining(String id);
+  Future<Unit> participateTraining(String id);
 
 }
 
@@ -87,10 +89,14 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
 
   @override
   Future<List<TrainingModel>> getAllTraining()async  {
-    final response = await client.get(
+    final member = await Store.getModel();
+    final memberId = member!.id;
+    final response = await client.post(
 
       Uri.parse(getTrainingsUrl),
       headers: {"Content-Type": "application/json"},
+      body: json.encode({"id": memberId}),
+
     );
 
     if (response.statusCode == 200) {
@@ -114,9 +120,12 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
 
   @override
   Future<TrainingModel> getTrainingById(String id) async{
-    final response =  await client.get(
-      Uri.parse(getTrainingsUrl + '$id'),
+    final member = await Store.getModel();
+    final memberId = member!.id;
+    final response =  await client.post(
+      Uri.parse(getTrainingsUrl + 'get/$id'),
       headers: {"Content-Type": "application/json"},
+      body: json.encode({"id": memberId}),
     );
 
     if (response.statusCode == 200) {
@@ -134,9 +143,13 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
 
   @override
   Future<List<TrainingModel>> getTrainingOfTheMonth() async{
-    final response =  await client.get(
+    final member = await Store.getModel();
+    final memberId = member!.id;
+    final response =  await client.post(
       Uri.parse(getTrainingByMonth),
       headers: {"Content-Type": "application/json"},
+      body: json.encode({"id": memberId}),
+
     );
     print(response.statusCode);
     if (response.statusCode == 200) {
@@ -161,9 +174,13 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
 
   @override
   Future<List<TrainingModel>> getTrainingOfTheWeek()async  {
-    final response = await client.get(
+    final member = await Store.getModel();
+    final memberId = member!.id;
+    final response = await client.post(
+
       Uri.parse(getTrainingByWeek),
       headers: {"Content-Type": "application/json"},
+      body: json.encode({"id": memberId}),
     );
     print(response.statusCode);
     print("object");
@@ -187,15 +204,14 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
   }
 
   @override
-  Future<bool> leaveTraining(String id) {
-    // TODO: implement leaveTraining
-    throw UnimplementedError();
+  Future<Unit> leaveTraining(String id) async{
+return leaveActivity(id, client, getTrainingsUrl);
+
   }
 
   @override
-  Future<bool> participateTraining(String id) {
-    // TODO: implement participateTraining
-    throw UnimplementedError();
+  Future<Unit> participateTraining(String id) async {
+return await ParticiActivity(id, client, getTrainingsUrl);
   }
 
   @override

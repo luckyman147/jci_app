@@ -40,3 +40,15 @@ class UnauthorizedFailure extends Failure {
   @override
   List<Object?> get props => [];
 }
+class UnexpectedFailure extends Failure {
+  @override
+  List<Object?> get props => [];
+}
+class NoInternetFailure extends Failure {
+  @override
+  List<Object?> get props => [];
+}
+class AlreadyParticipatedFailure extends Failure {
+  @override
+  List<Object?> get props => [];
+}

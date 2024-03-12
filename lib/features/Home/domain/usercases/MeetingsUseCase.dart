@@ -69,8 +69,16 @@ class LeaveMeetingUseCase {
 
   LeaveMeetingUseCase(this.MeetingRepository);
 
-  Future<Either<Failure,bool>> call(String id) async {
+  Future<Either<Failure,Unit>> call(String id) async {
     return await MeetingRepository.leaveMeeting(id);
+  }
+}class ParticipateMeetingUseCase extends UseCase<Unit,String> {
+  final MeetingRepo MeetingRepository;
+
+  ParticipateMeetingUseCase(this.MeetingRepository);
+
+  Future<Either<Failure,Unit>> call(String id) async {
+    return await MeetingRepository.participateMeeting(id);
   }
 }
 

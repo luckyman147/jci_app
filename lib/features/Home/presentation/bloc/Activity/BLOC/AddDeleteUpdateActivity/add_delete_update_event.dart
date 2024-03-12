@@ -15,22 +15,20 @@ class AddACtivityEvent extends AddDeleteUpdateEvent {
 }
 
 
-
 class UpdateActivityEvent extends AddDeleteUpdateEvent {
-  final Activity act;
-  final activity type;
+  final activity act;
 
-  UpdateActivityEvent(this.type, {required this.act});
+  final Activity active;
+  const UpdateActivityEvent({required this.act,required this.active});
 
   @override
-  List<Object> get props => [act];
+  List<Object> get props => [act,active];
 }
-
 class DeleteActivityEvent extends AddDeleteUpdateEvent {
-  final String actId;
+  final activity act;
 
-  DeleteActivityEvent({required this.actId});
+  final String id;
+  const DeleteActivityEvent({required this.act,required this.id});
 
   @override
-  List<Object> get props => [actId];
-}
+  List<Object> get props => [act,id];}

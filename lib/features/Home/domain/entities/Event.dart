@@ -13,13 +13,12 @@ class Event  extends Activity{
 
       required super.name, required super.description, required super.ActivityBeginDate,
     required super.ActivityEndDate, required super.ActivityAdress, required super.ActivityPoints, required super.categorie,
-    required super.IsPaid, required super.price, required super.Participants, required super.CoverImages, required super.id, });
+    required super.IsPaid, required super.price, required super.Participants, required super.CoverImages, required super.id, required super.IsPart, });
 
    @override
    // TODO: implement props
-   List<Object?> get props => [name,ActivityBeginDate,
-     ActivityEndDate,ActivityAdress,
-
-     Participants,CoverImages,LeaderName];
+   List<Object?> get props => [LeaderName, registrationDeadline, name,
+     description, ActivityBeginDate, ActivityEndDate, ActivityAdress,
+     ActivityPoints, categorie, IsPaid, price, Participants, CoverImages, id, IsPart];
 
 }
