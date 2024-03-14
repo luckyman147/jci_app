@@ -27,4 +27,16 @@ class MemberFormz extends FormzInput<Member?, MemberFormzValidationError> {
 
     return null;
   }
+}enum MembersTeamFormzValidationError { empty }
+
+class MembersTeamFormz extends FormzInput<List<Member>?,MembersTeamFormzValidationError> {
+  const MembersTeamFormz.pure() : super.pure(null);
+  const MembersTeamFormz.dirty(List<Member>? value) : super.dirty(value);
+
+  @override
+  MembersTeamFormzValidationError? validator(List<Member>? value) {
+    if (value == null) return MembersTeamFormzValidationError.empty;
+
+    return null;
+  }
 }

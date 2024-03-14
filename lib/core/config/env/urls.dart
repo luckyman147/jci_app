@@ -1,6 +1,6 @@
 import 'dart:io';
 
-  final BaseUrl = "http://192.168.1.11:8080";
+  final BaseUrl = "http://192.168.21.217:8080";
 final LoginUrl = "$BaseUrl/auth/login";
 final SignUpUrl = "$BaseUrl/auth/signup";
 final ForgetPasswordUrl = "$BaseUrl/auth/forgetPassword";
@@ -14,7 +14,7 @@ final getEventByMonth = "$BaseUrl/Event/LatestofTheMonth";
 final createEventUrl = "$BaseUrl/Event/add";
 final createMeetingUrl = "$BaseUrl/Meeting/add";
 final createTrainingUrl = "$BaseUrl/Training/add";
-
+final TeamUrl = "$BaseUrl/Team/";
 final getMeetingsUrl = "$BaseUrl/Meeting/";
 final getTrainingByWeek = "$BaseUrl/Training/Latestofweekend";
 final getTrainingsUrl = "$BaseUrl/Training/";

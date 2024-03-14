@@ -23,7 +23,13 @@ OutlineInputBorder border(Color color)=> OutlineInputBorder(
   borderSide: BorderSide(color: color,width: 3 ),
 );
 
+final memberdeco= BoxDecoration(
 
+    borderRadius: BorderRadius.circular(16.0),
+    border: Border.all(
+      color: ThirdColor,
+      width: 3,
+    ));
 final ActivityDecoration=  BoxDecoration(
 
 borderRadius:  BorderRadius.only(
@@ -35,6 +41,16 @@ topRight: Radius.circular(15),
 border: Border.all(color: BackWidgetColor, width: 1.0),
 color: textColorWhite,
 
+);
+
+
+
+ButtonStyle bottondec(bool value)=>ElevatedButton.styleFrom(
+
+  primary: value?PrimaryColor:BackWidgetColor,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(10),
+  ),
 );
 final shadowDecoration=BoxDecoration(
     color: textColorWhite,

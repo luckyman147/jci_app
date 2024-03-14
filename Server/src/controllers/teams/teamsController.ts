@@ -3,16 +3,20 @@ import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
 import { TeamInputs } from "../../dto/teams.dto";
 import { Event } from "../../models/activities/eventModel";
-import { team } from "../../models/teams/team";
-import { getMembersInfo, getTeamByEvent } from "../../utility/role";
+import { Team, team } from "../../models/teams/team";
+import { getEventNameById, getMembersInfo, getTasksInfo, getTeamByEvent } from "../../utility/role";
 
-import zlib from "zlib";
+import { Member } from "../../models/Member";
 export const AddTeam = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      // Extract data from the request body
+  const user=req.member
+  console.log("ee"+user)
+  
+  try {
+     console.log(req.body)
       const teamInputs=plainToClass(TeamInputs,req.body)
       const errors = await validate(teamInputs, { validationError: { target: false } });
 if (errors.length > 0) {
+console.log(errors);
   return res.status(400).json({ message: 'Input validation failed', errors });
 }
 
@@ -20,15 +24,16 @@ if (errors.length > 0) {
       const newTeam = new team({
         name: teamInputs.name,
         description: teamInputs.description,
-        Event: teamInputs.Event,
-      Members:teamInputs.Members,
-      tasks:[],CoverImage:""
+        TeamLeader:user!._id,
+        status: teamInputs.status,
+        Event: teamInputs.event,
+Members: Array.isArray(teamInputs.Members) ? [...teamInputs.Members, user!._id] : [user!._id],  tasks:[],CoverImage:""
       })
         
 
       // Add the event to the database
       const savedTeam = await newTeam.save();
-    const event =await Event.findById(teamInputs.Event)
+    const event =await Event.findById(teamInputs.event)
   if (event) {
 event.teams.push(newTeam._id)  
 }
@@ -56,13 +61,19 @@ export const GetTeams= async (req:Request,res:Response,next:NextFunction)=>{
     else{
        const teams= await team.find()
         if ( teams.length>0) {
-          const teamsWithEvent = teams.map((team) => ({
-            id: team._id,
-            event:team.Event.name,
-            name: team.name,
-            tasks:team.tasks,
-            members:getMembersInfo(team.Members),
-          }));
+          const teamsWithEvent = await Promise.all(
+            teams.map(async (team) => ({
+              id: team._id,
+              event: await getEventNameById( team.Event),
+              description:team.description,
+              TeamLeader:await getMembersInfo([team.TeamLeader]),
+              name: team.name,
+              status: team.status,
+              CoverImage: team.CoverImage,
+              tasks: await getTasksInfo( team.tasks),
+              Members: await getMembersInfo(team.Members),
+            }))
+          );
             res.status(200).json(
               
 teamsWithEvent
@@ -82,21 +93,9 @@ export const getTeamById = async (req: Request, res: Response, next: NextFunctio
       const Team = await team.findById(id);
       if (Team) {
 // Convert the base64 string to a Buffer
-const bufferData = Buffer.from(Team.CoverImage, 'base64');
+const show=await  showTeamDetails(Team)
 
-// Compress the Buffer using zlib
-const compressedData = zlib.deflateSync(bufferData);
-        res.json({
-  
-          _id: Team._id,
-          name: Team.name,
-       
-          description: Team.description,
-       
-        members:await  getMembersInfo( Team.Members),
-          tasks: Team.tasks,
-          CoverImage: compressedData,
-        });
+        res.json(show);
        
       } else {
   
@@ -186,9 +185,10 @@ export const uploadTeamImage = async (req: Request, res: Response, next: NextFun
       // Update the existing Team properties
       existingTeam.name = teamInputs.name;
       existingTeam.description = teamInputs.description;
-      existingTeam.Event = teamInputs.Event;
+      existingTeam.Event = teamInputs.event;
       existingTeam.Members = teamInputs.Members;
       existingTeam.tasks = teamInputs.tasks;
+      existingTeam.status = teamInputs.status;
       const updatedTeam = await existingTeam.save();
   
       res.json(updatedTeam);
@@ -217,5 +217,57 @@ export const uploadTeamImage = async (req: Request, res: Response, next: NextFun
       next(error);
     }
   };
+  //TODO add member
 
 
+
+
+
+export const addMember=async (req:Request,res:Response,next:NextFunction)=>{
+  try {
+    const teamId = req.params.id;
+    const memberId=req.params.memberId
+ ;
+
+    // Check if the team exists
+    const Team = await team.findById(teamId);
+    if (!Team) {
+      return res.status(404).json({ error: 'Team not found' });
+    }
+
+  const member=await Member.findById(memberId)
+  if (!member) {
+    return res.status(404).json({ error: 'Member not found' });
+  }
+
+    // Add the member to the team's members array
+    Team.Members.push(member._id);
+
+    // Save the updated team
+    const updatedTeam = await Team.save();
+
+    res.status(201).json({ member: member, team: updatedTeam });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+const showTeamDetails = async (team:Team) => {
+  try {
+    const result = {
+      id: team._id,
+      event: await getEventNameById(team.Event),
+      description: team.description,
+      TeamLeader: await getMembersInfo([team.TeamLeader]),
+      name: team.name,
+      status: team.status,
+      CoverImage: team.CoverImage,
+      tasks: await getTasksInfo(team.tasks),
+      Members: await getMembersInfo(team.Members),
+    };
+    return result;
+  } catch (error) {
+    console.error("Error in showTeamDetails:", error);
+    throw error;
+  }}

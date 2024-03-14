@@ -7,24 +7,27 @@ part of 'AuthModel.dart';
 // **************************************************************************
 
 MemberModel _$MemberModelFromJson(Map<String, dynamic> json) => MemberModel(
-      id: json['_id'] != null ? json['_id'].toString() : json['id'] as String,
-      role: json['role'] != null ? json['role'].toString() : "",
-      is_validated:json['is_validated']!=null? json['is_validated'] as bool:false,
+      id: json['id'] as String,
+      role: json['role'] as String,
+      is_validated: json['is_validated'] as bool,
       cotisation:
-
-      json["cotisation"]!=null?(json['cotisation'] as List<dynamic>).map((e) => e as bool).toList():[],
-      Images:json["Images"]!=null? (json['Images'] as List<dynamic>).map((e) => e as String).toList():[],
+          (json['cotisation'] as List<dynamic>).map((e) => e as bool).toList(),
+      Images:
+          (json['Images'] as List<dynamic>).map((e) => e as String).toList(),
       firstName: json['firstName'] as String,
-    Activities:json["Activities"]!=null? (json['Activities'] as List<dynamic>).map((e) => e as String).toList():[],
-      lastName: json['lastName']!=null? json['lastName'] as String:"",
-      phone: json['phone']!=null? json['phone'] as String:"",
-      email: json['email']!=null? json['email'] as String:"",
-      password:"", IsSelected: false,
+      lastName: json['lastName'] as String,
+      phone: json['phone'] as String,
+      email: json['email'] as String,
+      password: json['password'] as String,
+      IsSelected: json['IsSelected'] as bool,
+      Activities: (json['Activities'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$MemberModelToJson(MemberModel instance) =>
     <String, dynamic>{
-      '_id': instance.id,
+      'id': instance.id,
       'email': instance.email,
       'firstName': instance.firstName,
       'lastName': instance.lastName,
@@ -33,5 +36,7 @@ Map<String, dynamic> _$MemberModelToJson(MemberModel instance) =>
       'is_validated': instance.is_validated,
       'cotisation': instance.cotisation,
       'Images': instance.Images,
+      'Activities': instance.Activities,
+      'IsSelected': instance.IsSelected,
       'role': instance.role,
     };

@@ -16,10 +16,10 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participan
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 
-
-import '../../../../core/config/services/verification.dart';
-import '../../../../core/util/snackbar_message.dart';
 import 'Compoenents.dart';
+
+
+
 
 
 
@@ -311,8 +311,7 @@ Positioned details(MediaQueryData mediaQuery, List<Activity> activity,int index)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: SizedBox(
-  width: mediaQuery.size.width/2.5,
-                    child: Text(activity[index].ActivityAdress,style: PoppinsRegular(
+                      child: Text(activity[index].ActivityAdress,style: PoppinsRegular(
                         activity[index].ActivityAdress.length<20?mediaQuery.devicePixelRatio*5:
 
                 mediaQuery.devicePixelRatio*4, textColor,),)),

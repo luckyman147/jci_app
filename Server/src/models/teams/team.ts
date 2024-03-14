@@ -6,15 +6,24 @@ export interface Team extends Document{
     
     description:string;
   Event:any
-
+TeamLeader:any
     Members:any[]
     CoverImage:any
+    status:boolean
     tasks:any[]
     
 }
 export const TeamSchema=new Schema({
     name:{type:String,required:true},
     description:{type:String,required:true},
+    status:{type:Boolean,default:true},
+    
+    
+    TeamLeader:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Member',
+        required:true
+    },
 Event:{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Event',

@@ -16,15 +16,23 @@ MemberLogin _$MemberLoginFromJson(Map<String, dynamic> json) => MemberLogin(
       lastName: json['lastName'],
       phone: json['phone'],
       email: json['email'],
-      password: json['password'], IsSelected: false, Activities: json['Activities'],
+      password: json['password'],
+      IsSelected: json['IsSelected'],
+      Activities: json['Activities'],
     );
 
 Map<String, dynamic> _$MemberLoginToJson(MemberLogin instance) =>
     <String, dynamic>{
-
+      'id': instance.id,
       'email': instance.email,
-
-
+      'firstName': instance.firstName,
+      'lastName': instance.lastName,
+      'phone': instance.phone,
       'password': instance.password,
-
+      'is_validated': instance.is_validated,
+      'cotisation': instance.cotisation,
+      'Images': instance.Images,
+      'Activities': instance.Activities,
+      'IsSelected': instance.IsSelected,
+      'role': instance.role,
     };

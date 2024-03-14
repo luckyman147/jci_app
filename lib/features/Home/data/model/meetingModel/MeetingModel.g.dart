@@ -7,24 +7,25 @@ part of 'MeetingModel.dart';
 // **************************************************************************
 
 MeetingModel _$MeetingModelFromJson(Map<String, dynamic> json) => MeetingModel(
-      id: json['_id'] !=null? json['_id']  as String: json['id'] as String,
+      id: json['id'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
-      ActivityBeginDate:json['ActivityBegindate']!=null? DateTime.parse(json['ActivityBegindate'] as String):DateTime.parse(json['ActivityBeginDate'] as String),
-
-      ActivityEndDate: json['ActivityBegindate']!=null? DateTime.parse(json['ActivityBegindate'] as String):DateTime.parse(json['ActivityBeginDate'] as String),
-      ActivityAdress: "Local Menchia Hammem sousse",
-      ActivityPoints:json['ActivityPoints'] as int,
+      ActivityBeginDate: DateTime.parse(json['ActivityBeginDate'] as String),
+      ActivityEndDate: DateTime.parse(json['ActivityEndDate'] as String),
+      ActivityAdress: json['ActivityAdress'] as String,
+      ActivityPoints: json['ActivityPoints'] as int,
       categorie: json['categorie'] as String,
-      IsPaid: false,
-      price: 0,
-      IsPart: json['IsPart'] as bool,
-      Participants:json['participants'] !=null?  json['participants'] as List<dynamic>:json['Participants'] as List<dynamic>,
-      CoverImages:[],
+      IsPaid: json['IsPaid'] as bool,
+      price: json['price'] as int,
+      Participants: json['Participants'] as List<dynamic>,
+      CoverImages: (json['CoverImages'] as List<dynamic>)
+          .map((e) => e as String?)
+          .toList(),
       Director: json['Director'],
-      agenda:json['Agenda']!=null?
-          (json['Agenda'] as List<dynamic>).map((e) => e as String).toList(): (json['agenda'] as List<dynamic>).map((e) => e as String).toList()
-    );
+      agenda:
+          (json['agenda'] as List<dynamic>).map((e) => e as String).toList(),
+      IsPart: json['IsPart'] as bool,
+    )..tempPart = json['tempPart'] as bool;
 
 Map<String, dynamic> _$MeetingModelToJson(MeetingModel instance) =>
     <String, dynamic>{
@@ -38,9 +39,10 @@ Map<String, dynamic> _$MeetingModelToJson(MeetingModel instance) =>
       'categorie': instance.categorie,
       'IsPaid': instance.IsPaid,
       'price': instance.price,
-      'IsPart': instance.IsPart,
       'Participants': instance.Participants,
       'CoverImages': instance.CoverImages,
+      'tempPart': instance.tempPart,
+      'IsPart': instance.IsPart,
       'Director': instance.Director,
       'agenda': instance.agenda,
     };

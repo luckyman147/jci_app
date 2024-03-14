@@ -16,7 +16,7 @@ export const TaskSchema=new Schema({
     AssignTo:{type: mongoose.Schema.Types.ObjectId,
         ref: 'Member',
         required:true},
-        isCompleted:[{type:Boolean,default:false}],
+        isCompleted:{type:Boolean,default:false},
     Deadline: { type: Date, default: Date.now },
     attachedFile: { type: String },
     CheckList: [{ type: mongoose.Schema.Types.ObjectId,

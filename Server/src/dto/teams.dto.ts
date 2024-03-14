@@ -17,8 +17,9 @@ export class TeamInputs{
 description:string
 @IsNotEmpty()
 
-Event:string
+event:string
 Members:any[]
+status:boolean
 tasks:any []
 }
 

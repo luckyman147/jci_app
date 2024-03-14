@@ -132,3 +132,28 @@ class MemberFormzChanged extends FormzEvent {
   @override
   List<Object> get props => [memberFormz];
 }
+class EventChanged extends FormzEvent {
+  final Event eventChanged;
+
+  const EventChanged({required this.eventChanged});
+
+  @override
+  List<Object> get props => [eventChanged
+  ];
+}
+class MembersTeamChanged extends FormzEvent {
+  final Member memberTeam;
+
+  const MembersTeamChanged({required this.memberTeam});
+
+  @override
+  List<Object> get props => [memberTeam];
+}
+class RemoveMember extends FormzEvent {
+  final Member member;
+
+  const RemoveMember({required this.member});
+
+  @override
+  List<Object> get props => [member];
+}

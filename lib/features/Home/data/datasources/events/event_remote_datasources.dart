@@ -50,7 +50,7 @@ final body =event.toJson();
         final Map<String, dynamic> decodedJson = json.decode(response.body) ;
 
 
-        final upload_response=await uploadImages(decodedJson['_id'], event.CoverImages.first,getEventsUrl);
+        final upload_response=await uploadImages(decodedJson['_id'], event.CoverImages.first,getEventsUrl,"CoverImages");
         if (upload_response.statusCode==200){
           return Future.value(unit);
         }

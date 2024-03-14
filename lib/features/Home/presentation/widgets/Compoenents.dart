@@ -167,18 +167,15 @@ class SearchButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 46,
+      height: 49,
       width: 49,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 4.0),
-        child: IconButton(
+      child: IconButton(
 
-          onPressed: () {
-        onPressed!();
-            // Navigator.pushNamed(context, Routes.search);
-          },
-          icon: Icon(icon,color: IconColor,size: 33),
-        ),
+        onPressed: () {
+      onPressed!();
+          // Navigator.pushNamed(context, Routes.search);
+        },
+        icon: Icon(icon,color: IconColor,size: 30,),
       ),
     );
   }

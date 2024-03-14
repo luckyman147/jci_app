@@ -12,24 +12,32 @@ import 'ErrorDisplayMessage.dart';
 import 'SearchWidget.dart';
 
 Widget MemberContainer(mediaQuery,Member item)=>BlocBuilder<FormzBloc, FormzState>(
-    builder: (context, state) {
+
+
+    builder: (context, state)
+    {final ff=state.memberFormz.value??memberTest;
       return  Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           imageWidget(item),
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: PrimaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              onPressed: (){
-                context.read<FormzBloc>().add(MemberFormzChanged( memberFormz: item));
+          SizedBox(
+            width: mediaQuery.size.width / 3,
+            child: ElevatedButton(
+                style: ff.id==item.id?bottondec(true):bottondec(false),
 
-                Navigator.pop(context);
+                onPressed: (){
+                  context.read<FormzBloc>().add(MemberFormzChanged( memberFormz: item));
 
-              }, child: Text('Select',style:PoppinsSemiBold(17, textColorWhite, TextDecoration.none) ,))
+                  Navigator.pop(context);
+
+                }, child: Text(ff.id==item.id? "Selected":"Select",
+
+              style:PoppinsSemiBold(17,
+
+                ff.id==item.id?textColorWhite:textColorBlack,
+
+                TextDecoration.none) ,)),
+          )
         ],);
     }
 );
@@ -55,14 +63,8 @@ Widget bottomMemberSheet(BuildContext context, MediaQueryData mediaQuery,
       },
       child:Container(
           width: mediaQuery.size.width,
-          decoration: BoxDecoration(
-
-            borderRadius: BorderRadius.circular(16.0),
-            border: Border.all(
-              color: ThirdColor,
-              width: 3,
-            ),
-          ),
+          decoration:
+          memberdeco,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 18.0,),
             child: Padding(
@@ -269,3 +271,7 @@ Widget MembersDetails(List<Member> members,mediaQuery)=>ListView.separated(
       ),
       const SizedBox(width: 8),
       Text(item.firstName, style: PoppinsSemiBold(23, textColorBlack, TextDecoration.none)),]);}
+Member get memberTest=> const Member(
+
+    IsSelected: false, id: "id", role: "role", is_validated: false,
+    cotisation:[false] , Images: [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password", Activities: []);

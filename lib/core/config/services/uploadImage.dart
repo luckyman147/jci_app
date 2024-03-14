@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-Future<http.StreamedResponse> uploadImages(String id, String? imagePath,String getUrl) async {
+Future<http.StreamedResponse> uploadImages(String id, String? imagePath,String getUrl,String text) async {
   try {
     // Create a MultipartRequest object
     var request = http.MultipartRequest('POST', Uri.parse('$getUrl$id/uploadImage'));
@@ -15,7 +15,7 @@ Future<http.StreamedResponse> uploadImages(String id, String? imagePath,String g
     debugPrint("image $image");
 
     var multiport = http.MultipartFile(
-        'CoverImages',
+        text,
         image.readAsBytes().asStream(),
         image.lengthSync(),
         filename: image.path.split('/').last

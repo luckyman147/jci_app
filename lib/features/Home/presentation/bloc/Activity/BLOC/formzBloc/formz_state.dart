@@ -13,15 +13,19 @@ part of 'formz_bloc.dart';
     this.beginTimeInput = const BeginTimeInput.pure(),
     this.registrationTimeInput = const RegistrationTimeInput.pure(),
     this.endTimeInput = const EndTimeInput.pure(),
+    this.eventFormz = const EventFormz.pure(),
 
     this.memberName = const MemberName.pure(),
     this.memberFormz = const MemberFormz.pure(),
     this.jokertime = const JokerDateofDayInput.pure(),
     this.joker = const JokerTimeInput.pure(),
+    this.membersTeamFormz = const MembersTeamFormz.pure(),
 
     this.isValid = false,
     this.category = Category.Comity
   } );
+  final MembersTeamFormz membersTeamFormz;
+  final EventFormz eventFormz;
   final MemberName memberName;
   final MemberFormz memberFormz;
   final bool isValid;
@@ -44,8 +48,10 @@ part of 'formz_bloc.dart';
   final ImageInput imageInput;
   FormzState copyWith(
       {FormzSubmissionStatus? status,
+        EventFormz? eventFormz,
         LeaderName? leaderName,
         MemberName? memberName,
+        MembersTeamFormz? membersTeamFormz,
         MemberFormz? memberFormz,
         ProfesseurName?professeurName,
         ActivityName? activityName,
@@ -61,6 +67,8 @@ part of 'formz_bloc.dart';
         bool? isValid,
         Category? category}) {
     return FormzState(
+        membersTeamFormz: membersTeamFormz ?? this.membersTeamFormz,
+        eventFormz: eventFormz ?? this.eventFormz,
 
 
         memberName: memberName ?? this.memberName,
@@ -94,13 +102,15 @@ part of 'formz_bloc.dart';
  memberName,
     description,
     joker,
+    membersTeamFormz,
     imageInput,
     endTimeInput,
 professeurName,
     beginTimeInput,registrationTimeInput,
     category
     ,jokertime,
-    memberFormz
+    memberFormz,
+    eventFormz,
   ];
 
 }

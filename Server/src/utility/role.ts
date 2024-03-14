@@ -1,8 +1,9 @@
+import crypto from 'crypto';
 import { Member } from "../models/Member";
 import { Event } from "../models/activities/eventModel";
 import { Role } from "../models/role";
+import { Task } from '../models/teams/TaskModel';
 import { team } from "../models/teams/team";
-import crypto from 'crypto';
 export const findrole=async (name:string)=>{
     const role = await Role.findOne({ name: name });
     if (role){
@@ -18,7 +19,7 @@ if (role){
 throw new Error("Role not found");
 }
   
-export const getEventNameById = async (eventId: string): Promise<string | null> => {
+export const getEventNameById = async (eventId: string): Promise<any | null> => {
     try {
       // Query the database to find the event by its ID
       const event = await Event.findById(eventId);
@@ -26,7 +27,7 @@ export const getEventNameById = async (eventId: string): Promise<string | null> 
       // Check if the event is found
       if (event) {
         // Return the event name
-        return event.name;
+        return {name:event.name,ActivityEndDate:event.ActivityEndDate};
       } else {
         // Event not found
         return null;
@@ -71,16 +72,37 @@ export const getTeamByEvent= async () =>{
     try {
       // Query the database to find members by their IDs
       const members = await Member.find({ _id: { $in: memberIds } });
-  
+
       const membersInfo = members.map((member) => ({
         _id: member._id,
         firstName: member.firstName,
-        coverImage:member.Images
+        Images:member.Images
 
         // Add other fields you want to include
       }));
-  
+  console.log(membersInfo)
+
       return membersInfo;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal server error');
+    }
+  };
+
+  export const getTasksInfo = async (taskIds: string[]): Promise<any> => {
+    try {
+      // Query the database to find tasks by their IDs
+      const tasks = await Task.find({ _id: { $in: taskIds } });
+  
+      const tasksInfo = tasks.map((task) => ({
+       
+       isCompleted:task.isCompleted,
+        // Add other fields you want to include
+      }));
+  
+      console.log(tasksInfo);
+  
+      return tasksInfo;
     } catch (error) {
       console.error(error);
       throw new Error('Internal server error');

@@ -5,9 +5,11 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jci_app/features/Home/domain/entities/Formz/Event.dart';
 import 'package:jci_app/features/Home/domain/entities/Formz/Membername.dart';
 
 import '../../../../../../auth/domain/entities/Member.dart';
+import '../../../../../domain/entities/Event.dart';
 import '../../../../../domain/entities/Formz/A ctivityName.dart';
 import '../../../../../domain/entities/Formz/Date.dart';
 import '../../../../../domain/entities/Formz/Description.dart';
@@ -35,9 +37,11 @@ class FormzBloc extends Bloc<FormzEvent, FormzState> {
     on<CategoryChanged>(_onCategoryChanged);
     on<MembernameChanged>(_onMemberChanged);
     on<jokerChanged>(_JokerChanged);
+    on<RemoveMember>(_removeMemberFromList);
 
     on<MemberFormzChanged>(_onMemberFormChanged);
-
+on<MembersTeamChanged>(_onMembersTeamChanged);
+on<EventChanged>(_onEventChanged);
 
 
     on<jokerTimeChanged>(_JokerTimeChanged);
@@ -172,6 +176,34 @@ class FormzBloc extends Bloc<FormzEvent, FormzState> {
       memberFormz: member,
 
 
+    ));
+  }
+
+  void _onEventChanged(
+      EventChanged event, Emitter<FormzState> emit) {
+    final evented = EventFormz.dirty(event.eventChanged);
+
+    emit(state.copyWith(
+      eventFormz: evented,
+    ));
+  }void _onMembersTeamChanged(
+      MembersTeamChanged event, Emitter<FormzState> emit) {
+    final currentMembers = state.membersTeamFormz.value ?? [];
+    final updatedMembers = [...currentMembers, event.memberTeam];
+    final members = MembersTeamFormz.dirty(updatedMembers);
+    emit(state.copyWith(
+      membersTeamFormz: members,
+    ));
+  }
+  void _removeMemberFromList(
+      RemoveMember event, Emitter<FormzState> emit) {
+    final currentMembers = state.membersTeamFormz.value ?? [];
+    final updatedMembers = List<Member>.from(currentMembers)
+      ..remove(event.member);
+
+    final members = MembersTeamFormz.dirty(updatedMembers);
+    emit(state.copyWith(
+      membersTeamFormz: members,
     ));
   }
 }

@@ -9,6 +9,7 @@ import 'package:jci_app/core/strings/app_strings.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/pages/ActivityPage.dart';
 import 'package:jci_app/features/Home/presentation/widgets/HomeWidget.dart';
+import 'package:jci_app/features/Teams/presentation/screens/AllTeamsScreen.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
 import '../bloc/PageIndex/page_index_bloc.dart';
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
     return BlocBuilder<PageIndexBloc, PageIndexState>(
       builder: (context, state) {
         final widgets=[
-          HomeWidget(Activity: ste.selectedActivity,),ActivityPage(Activity:ste.selectedActivity ,),Text("data"),Center(
+          HomeWidget(Activity: ste.selectedActivity,),ActivityPage(Activity:ste.selectedActivity ,),AllTeamsScreen(),Center(
             child: InkWell(
                 onTap: () {
                   context.read<AuthBloc>().add(SignoutEvent());

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:jci_app/features/Home/presentation/pages/CreateUpdateActivityPage.dart';
 import 'package:jci_app/features/Home/presentation/pages/detailsPage.dart';
 import 'package:jci_app/features/Home/presentation/widgets/SearchWidget.dart';
+import 'package:jci_app/features/Teams/presentation/screens/TeamDeatailsScreen.dart';
 import 'package:path_to_regexp/path_to_regexp.dart';
 import 'package:jci_app/features/Home/presentation/pages/Home_page.dart';
 import 'package:jci_app/features/auth/presentation/pages/Forget_password_page.dart';
@@ -15,6 +16,7 @@ import 'package:jci_app/features/intro/presentation/bloc/index_bloc.dart';
 
 
 
+import '../features/Teams/presentation/screens/CreateTeamScreen.dart';
 import '../features/auth/presentation/pages/SignUPPage.dart';
 import '../features/intro/presentation/pages/Introduction.dart';
 import '../features/intro/presentation/pages/Splash_screen.dart';
@@ -37,10 +39,24 @@ return ForgetPasswordPage();
 },
 
 
-),GoRoute(
+),
+
+    GoRoute(
 path: '/search',
 builder: (BuildContext context, GoRouterState state) {
 return SearchPage();
+},
+
+
+),
+
+
+
+GoRoute(
+  name: 'CreateTeam',
+path: '/CreateTeam',
+builder: (BuildContext context, GoRouterState state) {
+return CreatTeamScreen();
 },
 
 
@@ -71,11 +87,20 @@ GoRoute(path: "/activity/:id/:activity/:index",
   },
 ),
 
+
+
 GoRoute(
 path: '/reset/:email',
 builder: (BuildContext context,  state) {
   final  email = state.pathParameters['email']! ;
 return ResetPassword(email: email,);
+},
+),
+GoRoute(
+path: '/TeamDetails/:id',
+builder: (BuildContext context,  state) {
+  final  id= state.pathParameters['id']! ;
+return TeamDetailsScreen(id: id,);
 },
 ),
 

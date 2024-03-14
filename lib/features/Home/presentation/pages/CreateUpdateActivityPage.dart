@@ -42,6 +42,7 @@ import '../bloc/IsVisible/bloc/visible_bloc.dart';
 import '../bloc/PageIndex/page_index_bloc.dart';
 import '../widgets/Formz.dart';
 import '../widgets/Functions.dart';
+import '../widgets/MemberSelection.dart';
 
 
 Activity get ActivityTest=>Activity(name: "", id: "id", description: "description",
@@ -49,10 +50,7 @@ Activity get ActivityTest=>Activity(name: "", id: "id", description: "descriptio
     ActivityAdress: "ActivityAdress",
     ActivityPoints:2, categorie: "", IsPaid: false,
     price: 1, Participants: [], CoverImages: [], IsPart: false);
-Member get memberTest=> const Member(
 
-    IsSelected: false, id: "id", role: "role", is_validated: false,
-    cotisation:[false] , Images: [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password", Activities: []);
 
 class CreateUpdateActivityPage extends StatefulWidget {
   final String id;
@@ -80,30 +78,8 @@ class _CreateUpdateActivityPageState extends State<CreateUpdateActivityPage> {
 
 @override
   void initState() {
-if (widget.work=="edit"){
-  debugPrint("edit");
-  debugPrint("edit"+ widget.activity.split(".").last);
-  log(widget.activity.split(".").last);
-  if (widget.activity.split(".").last=="Events"){
-    context.read<AcivityFBloc>().add(GetActivitiesByid(act: activity.Events, id: widget.id));
-  _loadEventModel(widget.id);  }
-  else if (widget.activity.split(".").last=="Meetings"){
-    context.read<AcivityFBloc>().add(GetActivitiesByid(act: activity.Meetings, id: widget.id));
-_loadMeetingModel(widget.id);
 
-
-  }
-  else {
-    context.read<AcivityFBloc>().add(GetActivitiesByid(act: activity.Trainings, id: widget.id));
-    _loadTrainingModel(widget.id);
-
-  }
-}
-else{
-reset();
-
-
-}
+check();
   context.read<MembersBloc>().add(GetAllMembersEvent());
     // TODO: implement initState
     super.initState();
@@ -339,4 +315,30 @@ return      LoadingWidget();
       );
     },
   );
+  void check(){
+    if (widget.work=="edit"){
+      debugPrint("edit");
+      debugPrint("edit"+ widget.activity.split(".").last);
+      log(widget.activity.split(".").last);
+      if (widget.activity.split(".").last=="Events"){
+        context.read<AcivityFBloc>().add(GetActivitiesByid(act: activity.Events, id: widget.id));
+        _loadEventModel(widget.id);  }
+      else if (widget.activity.split(".").last=="Meetings"){
+        context.read<AcivityFBloc>().add(GetActivitiesByid(act: activity.Meetings, id: widget.id));
+        _loadMeetingModel(widget.id);
+
+
+      }
+      else {
+        context.read<AcivityFBloc>().add(GetActivitiesByid(act: activity.Trainings, id: widget.id));
+        _loadTrainingModel(widget.id);
+
+      }
+    }
+    else{
+      reset();
+
+
+    }
+  }
 }

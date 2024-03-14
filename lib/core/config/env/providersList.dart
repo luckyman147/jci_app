@@ -8,6 +8,8 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.
 import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/DescriptionBoolean/description_bool_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/TeamActions/team_actions_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
@@ -43,10 +45,12 @@ List<SingleChildWidget> providersList = [
   BlocProvider(create: (_) => di.sl<SignUpBloc>()),
   BlocProvider(create: (_) => di.sl<LoginBloc>()),
   BlocProvider(create: (_) => di.sl<ParticpantsBloc>()),
-
+BlocProvider(create: (_) => di.sl<TeamActionsBloc>()),
   BlocProvider(create: (_) => localeCubit()..getSavedLanguage()),
   BlocProvider(create: (_) => ActivityCubit()),
   BlocProvider(create: (_) => di.sl<FormzBloc>()),
+  BlocProvider(create: (_) => di.sl<GetTeamsBloc>()),
+
   BlocProvider(create: (_) => di.sl<AddDeleteUpdateBloc>()),
   BlocProvider(create: (_) => ToggleBooleanBloc(initialValue: true)),
   BlocProvider(create: (_) => DescriptionBoolBloc()),

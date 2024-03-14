@@ -49,7 +49,7 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
         final Map<String, dynamic> decodedJson = json.decode(response.body) ;
 
 
-        final upload_response=await uploadImages(decodedJson['_id'], Training.CoverImages.first,getTrainingsUrl);
+        final upload_response=await uploadImages(decodedJson['_id'], Training.CoverImages.first,getTrainingsUrl,"CoverImages");
         if (upload_response.statusCode==200){
           return Future.value(unit);
         }

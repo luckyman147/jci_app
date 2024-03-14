@@ -32,13 +32,14 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
 
 
 
-    final body = modelLogin.toJson();
-    print(body);
+
+    print(jsonEncode({"email":modelLogin.email,"password":modelLogin.password}), );
+
 
     final Response = await client.post(
       Uri.parse(LoginUrl),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode(body),
+      body: jsonEncode({"email":modelLogin.email,"password":modelLogin.password}),
     );
     print("haha" + Response.statusCode.toString());
 
