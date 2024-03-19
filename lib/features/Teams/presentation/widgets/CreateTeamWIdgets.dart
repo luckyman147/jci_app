@@ -27,35 +27,8 @@ Widget ActionsWidgets(mediaQuery,GlobalKey<FormState> key,TextEditingController 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Header(context),
-        BlocBuilder<FormzBloc, FormzState>(
-  builder: (context, form) {
-    return BlocBuilder<VisibleBloc, VisibleState>(
-  builder: (context, Visstate) {
-    return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: InkWell(
-            onTap:(){
-if (key.currentState!.validate()&& form.imageInput.value!=null&&form.imageInput.value!.path.isNotEmpty) {
-  final Team team = Team(
-      name: TeamName.text,
-      description: description.text,
-      CoverImage: form.imageInput.value !=null? form.imageInput.value!.path:"",
-      event: form.eventFormz.value==null?"":form.eventFormz.value!.id,
-    id: '', TeamLeader: '', status: Visstate.isVisible, tasks: [], Members:getIds( form.membersTeamFormz.value??[]));
-  context.read<TeamActionsBloc>().add(AddTeam(team));
-}
-
-            },
-            child:  Text(
-              "Done",style: PoppinsSemiBold(21, PrimaryColor, TextDecoration.none)
-            ),
-          )
-        );
-  },
-);
-  },
-)
+        Header(context,"Create Team"),
+        DoneActions(TeamName, description, key),
 
       ],
     );
@@ -63,7 +36,7 @@ if (key.currentState!.validate()&& form.imageInput.value!=null&&form.imageInput.
 );
   }, listener: (BuildContext context, TeamActionsState state) {
     log(state.toString());
-    if (state is ErrorMessage){SnackBarMessage.showErrorSnackBar(message: state.message, context: context);
+    if (state is ErrorMessage)                                                {SnackBarMessage.showErrorSnackBar(message: state.message, context: context);
     }
     if (state is TeamAdded) {
       SnackBarMessage.showSuccessSnackBar(message: state.message, context: context);
@@ -73,8 +46,37 @@ if (key.currentState!.validate()&& form.imageInput.value!=null&&form.imageInput.
 
 },
 );
+Widget DoneActions(TextEditingController TeamName, TextEditingController description,GlobalKey<FormState> key)=>BlocBuilder<FormzBloc, FormzState>(
+  builder: (context, form) {
+    return BlocBuilder<VisibleBloc, VisibleState>(
+      builder: (context, Visstate) {
+        return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: InkWell(
+              onTap:(){
+                if (key.currentState!.validate()&& form.imageInput.value!=null&&form.imageInput.value!.path.isNotEmpty) {
+                  final Team team = Team(
+                      name: TeamName.text,
+                      description: description.text,
+                      CoverImage: form.imageInput.value !=null? form.imageInput.value!.path:"",
+                      event: form.eventFormz.value==null?"":form.eventFormz.value!.id,
+                      id: '', TeamLeader: '', status: Visstate.isVisible, tasks: [], Members:getIds( form.membersTeamFormz.value??[]));
+                  context.read<TeamActionsBloc>().add(AddTeam(team));
+                }
 
-Row Header(BuildContext context) {
+              },
+              child:  Text(
+                  "Done",style: PoppinsSemiBold(21, PrimaryColor, TextDecoration.none)
+              ),
+            )
+        );
+      },
+    );
+  },
+);
+
+
+Row Header(BuildContext context,String text) {
   return Row(
         children: [
           BackButton(
@@ -82,7 +84,7 @@ Row Header(BuildContext context) {
               GoRouter.of(context).go('/home');
             },
           ),
-          Text('Create Team ',style:PoppinsSemiBold(21, textColorBlack, TextDecoration.none)),
+          Text('$text ',style:PoppinsSemiBold(21, textColorBlack, TextDecoration.none)),
         ],
       );
 }
@@ -194,7 +196,7 @@ Widget choosWidget()=>        const Center(
       ],
     ),
   ));
-Widget TextNamefieldNormal(String name, String HintText,
+Widget TextTeamfieldNormal(String name, String HintText,
     TextEditingController controller, Function(String) onchanged) =>
     Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
@@ -235,7 +237,7 @@ Widget TextNamefieldNormal(String name, String HintText,
         ],
       ),
     );
-Widget TextfieldDescription(String name, String HintText,
+Widget TextTeamfieldDescription(String name, String HintText,
     TextEditingController controller, Function(String) onChanged) =>
     Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
@@ -252,7 +254,7 @@ Widget TextfieldDescription(String name, String HintText,
             autocorrect: true,
             autofocus: true,
             minLines: 3,
-            maxLength: 1000,
+            maxLength: 50,
             autofillHints: [HintText],
             textInputAction: TextInputAction.done,
             validator: (value) {
@@ -317,48 +319,52 @@ Widget bottomMembersSheet(BuildContext context, MediaQueryData mediaQuery,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child:
-              members!=null&& members.isNotEmpty?Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-
-                  children: [
-                    for (var i = 0; i < (members.length > 4? 3 : members.length); i++)
-
-                      Align(
-                          widthFactor: .6,
-                          child: Container(
-                              decoration: BoxDecoration(
-                              border: Border.all(
-                                color: textColorWhite,width: 5),
-                                shape: BoxShape.circle,
-                              ),
-                              child: photo(members[i].Images,50))),
-                    if (members.length > 4)
-                      Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: PrimaryColor,
-                         shape: BoxShape.circle,                      ),
-                        // Customize the container as needed
-                        child: Align(
-                          widthFactor: .4,
-                          child: Center(
-                            child: Text(
-                              '+ ${members.length - 4} ',
-                            style: PoppinsLight(18, textColorWhite),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ):
+              members!=null&& members.isNotEmpty?membersImage(context, mediaQuery, members):
               Text("Select  Members",style: PoppinsRegular(18, ThirdColor),),
             ),
           )),
     ),
   );}
+
+
+Widget membersImage(BuildContext context, MediaQueryData mediaQuery,
+    List<Member> members,)=>Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+  child: Row(
+
+    children: [
+      for (var i = 0; i < (members.length > 4? 3 : members.length); i++)
+
+        Align(
+            widthFactor: .6,
+            child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: textColorWhite,width: 5),
+                  shape: BoxShape.circle,
+                ),
+                child: photo(members[i].Images,50,100))),
+      if (members.length > 4)
+        Container(
+          height: 50,
+          width: 50,
+          decoration: BoxDecoration(
+            color: PrimaryColor,
+            shape: BoxShape.circle,                      ),
+          // Customize the container as needed
+          child: Align(
+            widthFactor: .4,
+            child: Center(
+              child: Text(
+                '+ ${members.length - 4} ',
+                style: PoppinsLight(18, textColorWhite),
+              ),
+            ),
+          ),
+        ),
+    ],
+  ),
+);
 Widget bottomEventSheet(BuildContext context, MediaQueryData mediaQuery,
     Event event,
 

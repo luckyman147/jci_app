@@ -35,9 +35,13 @@ class _BeginTimeWidgetState extends State<BeginTimeWidget> {
 
 
 class EndDateWidget extends StatefulWidget {
+final String LabelText;
+final String SheetTitle;
+final String HintTextDate;
+final String HintTextTime;
 
 
-  const EndDateWidget({Key? key}) : super(key: key);
+  const EndDateWidget({Key? key, required this.LabelText, required this.SheetTitle, required this.HintTextDate, required this.HintTextTime}) : super(key: key);
 
   @override
   State<EndDateWidget> createState() => _EndDateWidgetState();
@@ -55,13 +59,14 @@ class _EndDateWidgetState extends State<EndDateWidget> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
             child: BlocBuilder<FormzBloc, FormzState>(
-              builder: (context, state) {
+              builder: (context, ste) {
                 return DateFieldWidget(
-                  labelText: "End Date",
-                  sheetTitle: "Date and Hour of End",
-                  hintTextDate: "End Date",
-                  hintTextTime: "End Time",
-                  date: state.endTimeInput.value ?? DateTime.now(),
+                  labelText: widget.LabelText,
+                  sheetTitle: widget.SheetTitle,
+                  hintTextDate: widget.HintTextDate,
+                  hintTextTime: widget.HintTextTime,
+                  date:  state.isVisible ?ste.endTimeInput.value ?? DateTime.now().add(Duration(days: 1)):
+                  ste.beginTimeInput.value==null ?DateTime.now().add(Duration(days: 1)):ste.beginTimeInput.value!.add(Duration(days: 1)),
                 
                 
                

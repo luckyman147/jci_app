@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 
 import '../../../../core/app_theme.dart';
@@ -13,10 +14,11 @@ import 'MembersTeamSelection.dart';
 
 class TeamWidget extends StatelessWidget {
   final List<Team> teams;
-
+  final ScrollController scrollController;
+final bool hasReachedMax;
   const TeamWidget({
     Key? key,
-    required this.teams,
+    required this.teams, required this.scrollController, required this.hasReachedMax
   }) : super(key: key);
 
   @override
@@ -24,63 +26,68 @@ class TeamWidget extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
 
     return ListView.separated(
+      controller:scrollController ,
         itemBuilder: (ctx, index) {
-          String date = teams[index].event['ActivityEndDate']!;
+
+          String date = index >= teams.length?DateTime.now().toString(): teams[index].event['ActivityEndDate']!;
           final parse = DateTime.parse(date);
-
-          return SingleChildScrollView(
-              child: Padding(
-            padding: EdgeInsetsDirectional.symmetric(
-                horizontal: mediaQuery.size.width / 13),
-            child: InkWell(
-              onTap: () {
-
-                context.go('/TeamDetails/${teams[index].id}');
-
-              },
-              child: Container(
-                height: mediaQuery.size.height / 5,
-                width: mediaQuery.size.width / 1,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: ThirdColor, width: 1),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-  details(teams, index),
-                   Images(teams, index) ,
-                               //pading
-                                deadline(parse),
-                              ]),
-                        ),
-                      ),
-            CircleProgess(teams, index)
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ));
+          return index>= teams.length?
+              LoadingWidget():body(teams, index, mediaQuery, context, parse);
         },
         separatorBuilder: (BuildContext context, int index) {
           return const SizedBox(
             height: 20,
           );
         },
-        itemCount: teams.length);
+        itemCount:hasReachedMax?teams.length:teams.length+1);
   }
 }
+
+Widget body(List<Team> teams, int index,MediaQueryData mediaQuery,BuildContext context,DateTime parse)=> SingleChildScrollView(
+    child: Padding(
+      padding: EdgeInsetsDirectional.symmetric(
+          horizontal: mediaQuery.size.width / 13),
+      child: InkWell(
+        onTap: () {
+
+          context.go('/TeamDetails/${teams[index].id}');
+
+        },
+        child: Container(
+          height: mediaQuery.size.height / 5,
+          width: mediaQuery.size.width / 1,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: BackWidgetColor, width: 2),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          details(teams, index),
+                          Images(teams, index) ,
+                          //pading
+                          deadline(parse),
+                        ]),
+                  ),
+                ),
+                CircleProgess(teams, index)
+              ],
+            ),
+          ),
+        ),
+      ),
+    ))  ;
+
 
 Widget details(List<Team> teams, int index)=>Column(
   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -147,7 +154,7 @@ Widget Images( List<Team >  teams , int index)=>  Row(
               child: photo(
                   teams[index].Members[i]
                   ['Images'] as List<dynamic>,
-                  30))),
+                  30,100))),
     if (teams[index].Members.length > 4)
       Container(
         height: 30,
@@ -215,7 +222,7 @@ Widget CircleProgess(List<Team > teams ,int index)=>           Padding(
       Row(children: [
         Icon(
           Icons.check_circle,
-          color: ThirdColor,
+          color: PrimaryColor,
           size: 20,
         ),
         Text(

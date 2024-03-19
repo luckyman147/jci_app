@@ -22,12 +22,33 @@ Members:any[]
 status:boolean
 tasks:any []
 }
+export interface TasksField{
+    id:string
+    name: string
+    AssignTo:any[]
+    Deadline: Date
+    StartDate: Date
+    description:string
+    attachedFile: String
+    CheckList: any[]
+    isCompleted:boolean
 
+}
+
+export class  firstTaskInput{
+    @IsNotEmpty()
+    name:string
+}
 export class TaskInput{
     @IsNotEmpty()
     name:string
-    AssignTo:any
+    @IsNotEmpty() 
     Deadline: Date 
+    @IsNotEmpty()
+    StartDate:Date
+    description:string
+    AssignTo:any[]
+   
     attachedFile: String
     CheckList: any[]
 }

@@ -41,11 +41,11 @@ class _CreatTeamScreenState extends State<CreatTeamScreen> {
               children: [
                ActionsWidgets( mediaQuery,formKey,teamNameController,teamDescriptionController),
                 imageTeamPicker(mediaQuery),
-                TextNamefieldNormal('Team Name',"Team Name here",teamNameController,(value){}),
+                TextTeamfieldNormal('Team Name',"Team Name here",teamNameController,(value){}),
             Events(mediaQuery),
             Members(mediaQuery),
                 StatusWidget(mediaQuery,),
-                TextfieldDescription("Description", "Description must be less then 2 line",teamDescriptionController , (p0) => null)
+                TextTeamfieldDescription("Description", "Description must be less then 2 line",teamDescriptionController , (p0) => null)
               ],
             
             

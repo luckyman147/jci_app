@@ -42,7 +42,7 @@ Widget MemberContainer(mediaQuery,Member item)=>BlocBuilder<FormzBloc, FormzStat
     }
 );
 Widget bottomMemberSheet(BuildContext context, MediaQueryData mediaQuery,
-    Member member,
+    Member member,String text,String title
 
 
     ) {
@@ -55,7 +55,7 @@ Widget bottomMemberSheet(BuildContext context, MediaQueryData mediaQuery,
           builder: (ctx) {
             return BlocBuilder<FormzBloc, FormzState>(
               builder: (context, state) {
-                return MembersBottomSheet(mediaQuery);
+                return MembersBottomSheet(title,mediaQuery);
               },
             );
           },
@@ -68,10 +68,10 @@ Widget bottomMemberSheet(BuildContext context, MediaQueryData mediaQuery,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 18.0,),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: paddingSemetricHorizontal(),
               child:
               member!=null&& member.firstName.isNotEmpty?imageWidget(member):
-              Text("Select A director",style: PoppinsNorml(18, ThirdColor),),
+              Text("$text",style: PoppinsNorml(18, ThirdColor),),
             ),
           )),
     ),
@@ -83,7 +83,7 @@ Widget bottomMemberSheet(BuildContext context, MediaQueryData mediaQuery,
 
 
 
-Widget MembersBottomSheet(
+Widget MembersBottomSheet(String text,
     mediaQuery
 
 
@@ -102,7 +102,7 @@ Widget MembersBottomSheet(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(
-              "Choose Director",
+              "Choose $text",
               style: PoppinsSemiBold(
                 mediaQuery.devicePixelRatio * 6,
                 PrimaryColor,
@@ -137,7 +137,7 @@ Widget MembersBottomSheet(
                       Icons.search,
                       color: textColor,
                     ),
-                    hintText: "Search for a director",
+                    hintText: "Search for a $text",
                     hintStyle: PoppinsRegular(
                       mediaQuery.devicePixelRatio * 6,
                       textColor,
@@ -271,6 +271,13 @@ Widget MembersDetails(List<Member> members,mediaQuery)=>ListView.separated(
       ),
       const SizedBox(width: 8),
       Text(item.firstName, style: PoppinsSemiBold(23, textColorBlack, TextDecoration.none)),]);}
+
+
+
+
+
+
+
 Member get memberTest=> const Member(
 
     IsSelected: false, id: "id", role: "role", is_validated: false,

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:jci_app/features/Home/presentation/pages/CreateUpdateActivityPage.dart';
 import 'package:jci_app/features/Home/presentation/pages/detailsPage.dart';
 import 'package:jci_app/features/Home/presentation/widgets/SearchWidget.dart';
+import 'package:jci_app/features/Teams/presentation/screens/DetailsTaskScreen.dart';
 import 'package:jci_app/features/Teams/presentation/screens/TeamDeatailsScreen.dart';
 import 'package:path_to_regexp/path_to_regexp.dart';
 import 'package:jci_app/features/Home/presentation/pages/Home_page.dart';
@@ -61,7 +62,18 @@ return CreatTeamScreen();
 
 
 ),
+GoRoute(
+  name: 'Task',
+path: '/TaskDetails/:teamId/:TaskId',
+builder: (BuildContext context, GoRouterState state) {
+  final  teamId = state.pathParameters['teamId']! ;
+  final  TaskId = state.pathParameters['TaskId']! ;
+  return CreateTaskScreen(teamId: teamId, taskId: TaskId,);
+},
 
+
+
+),
 
 
 

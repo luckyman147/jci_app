@@ -1,18 +1,22 @@
 import { plainToClass } from "class-transformer"
 import { validate } from "class-validator"
 import { NextFunction, Request, Response } from "express"
-import { TaskInput } from "../../dto/teams.dto"
+import { TaskInput, firstTaskInput } from "../../dto/teams.dto"
 import { CheckList } from "../../models/teams/CheckListModel"
 import { Task } from "../../models/teams/TaskModel"
 import { team } from "../../models/teams/team"
+import { getCheckListsInfoByIds, getMembersInfo, getTaskById, getTasksInfo } from "../../utility/role"
+import { basename } from "path"
 
-export const GetTaskOFTeam=async(req:Request,res:Response,next:NextFunction)=>{
+export const GetTasksOFTeam=async(req:Request,res:Response,next:NextFunction)=>{
+
     const id=req.params.id
     const Team=await team.findById(id)
     if (Team){
+
         const tasks=Team.tasks
-        if (tasks){
-            res.status(200).json(tasks)
+        if (tasks.length>0){
+            res.status(200).json(await getTasksInfo(tasks))
         }
         else{
             res.status(404).json({error:"No tasks found"})
@@ -22,13 +26,39 @@ export const GetTaskOFTeam=async(req:Request,res:Response,next:NextFunction)=>{
         res.status(404).json({error:"No team found"})
     }
 }
-export const createatask= async(req:Request,res:Response,next:NextFunction)=>{
+export const GetTaskById=async(req:Request,res:Response,next:NextFunction)=>{
     const id=req.params.id
+    const taskId=req.params.taskId
     const Team=await team.findById(id)
-if (Team){
+    if (Team){
+     const task =await getTaskById(taskId)
+      if (task){
+          res.status(200).json({
 
+            id: task._id,
+            name: task.name,
+            AssignTo:await  getMembersInfo(task.AssignTo),
+            Deadline: task.Deadline,
+     attachedFile:task.attachedFile,
+     description: task.description,
+     StartDate:task.StartDate,
+            isCompleted: task.isCompleted,
+            CheckList:await  getCheckListsInfoByIds(task.CheckList),
+        
+
+          })
+      }
+      else{
+          res.status(404).json({error:"No task found"})
+      }
+    }
+    else{
+        res.status(404).json({error:"No team found"})
+    }
+    
 }
-} 
+
+
 export const addTask = async (req: Request, res: Response, next: NextFunction) => {
 const Team=await team.findById(req.params.id)
 if (!Team) {
@@ -37,50 +67,41 @@ if (!Team) {
 
     try {
 
-       let  attachedFile:string=""
-      const taskInput=plainToClass(TaskInput,req.body)
-      const  errors=await validate(taskInput,{ validationError: { target: false } })
+    
+      const fitaskInput=plainToClass(firstTaskInput,req.body)
+      const  errors=await validate(fitaskInput,{ validationError: { target: false } })
         if (errors.length > 0) {
             return res.status(400).json({ message: 'Input validation failed', errors });
         }
-        if (!Team.Members.includes(taskInput.AssignTo)) {
-            return res.status(400).json({error:"Member not found in team"})
-        }
+      
   console.log('heere')
-  console.log(taskInput.CheckList)
-      // Create a new CheckList instance for each checklist item
-      const checkListItems =    taskInput.CheckList
-      .map((item: any) =>
-       new CheckList({
- name: item.name,Deadline:item.Deadline}));
-
-      console.log('heere')
-  
-      // Save the checklist items
-      const savedCheckListItems = await CheckList.insertMany(checkListItems);
-      console.log('heere')
-
-  if (req.file) {
-   attachedFile= req.file.buffer.toString('base64')
-}
 
 
       // Create a new Task instance
       const newTask = new Task({
 
-     name: taskInput.name,
-        AssignTo: taskInput.AssignTo,
-        Deadline: taskInput.Deadline,
-        attachedFile: attachedFile,
-        CheckList: savedCheckListItems.map((item: any) => item._id),
+     name: fitaskInput.name,
+        
     });
-    
+     console.log('saved task')
   
-      // Save the task
+   try{
+        console.log('on save task')
+
       const savedTask = await newTask.save();
-  Team.tasks.push(savedTask)
-   const savedTeam= await Team.save()
-      res.status(201).json({savedTask:savedTask,Team:Team});
+              console.log('on save task')
+
+ await Team.tasks.push(savedTask._id)
+        console.log('on save task')
+
+    await Team.save()
+            console.log('on save task')
+
+ console.log('saved task')
+      res.status(201).json(savedTask);
+}catch(err){
+    console.log("error",err)
+    }
     } catch (error) {
       res.status(500).json({ error: error });
     }
@@ -118,21 +139,26 @@ if (!Team) {
       );
   
       const savedCheckListItems = await CheckList.insertMany(checkListItems);
+      const attachedFile: Express.Multer.File[] = req.files as Express.Multer.File[];
+      if (!attachedFile || attachedFile.length === 0){
+              console.log(attachedFile)
   
-      let attachedFile = '';
-      if (req.file) {
-        attachedFile = req.file.buffer.toString('base64');
-      }
-  
+          return res.status(400).send("Invalid or missing files");
+        }
+        // Convert images to base64
+        const base64files= attachedFile.map((attachedFiles) => attachedFiles.buffer.toString('base64'));
       // Update the existing task with new information
       taskToUpdate.name = taskInput.name;
       taskToUpdate.AssignTo = taskInput.AssignTo;
       taskToUpdate.Deadline = taskInput.Deadline;
-      taskToUpdate.attachedFile = attachedFile;
+      taskToUpdate.attachedFile = base64files;
+      taskToUpdate.description = taskInput.description;
+      taskToUpdate.StartDate = taskInput.StartDate;
       taskToUpdate.CheckList = savedCheckListItems.map((item: any) => item._id);
   
       // Save the updated team
       const savedTeam = await Team.save();
+      await taskToUpdate.save();
   
       res.status(200).json({ updatedTask: taskToUpdate, team: savedTeam });
     } catch (error) {

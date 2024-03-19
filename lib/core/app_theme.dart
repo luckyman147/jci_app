@@ -23,6 +23,30 @@ OutlineInputBorder border(Color color)=> OutlineInputBorder(
   borderSide: BorderSide(color: color,width: 3 ),
 );
 
+
+
+EdgeInsetsGeometry paddingSemetricHorizontal ({double h=8})=> EdgeInsets.symmetric(horizontal:h );
+EdgeInsetsGeometry paddingSemetricVertical ({double v=8})=> EdgeInsets.symmetric(vertical: v);
+EdgeInsetsGeometry paddingSemetricAll ({double a=8})=> EdgeInsets.all(a);
+EdgeInsetsGeometry paddingSemetricVerticalHorizontal ({double h=8,double v=8})=> EdgeInsets.symmetric(vertical: v,horizontal: h);
+
+
+
+
+
+
+
+InputDecoration decorationTextField(String? errorText)=> InputDecoration(
+    enabledBorder: border(textColorBlack) ,
+    focusedBorder: border(PrimaryColor),
+    errorBorder: border(Colors.red),
+    focusedErrorBorder: border(Colors.red),
+    errorStyle: ErrorStyle(18, Colors.red),
+    errorText:errorText
+
+);
+
+
 final memberdeco= BoxDecoration(
 
     borderRadius: BorderRadius.circular(16.0),
@@ -52,6 +76,28 @@ ButtonStyle bottondec(bool value)=>ElevatedButton.styleFrom(
     borderRadius: BorderRadius.circular(10),
   ),
 );
+
+
+
+
+
+final taskDecoration=BoxDecoration(
+    color: textColorWhite,
+    borderRadius: BorderRadius.circular(15),
+    border: Border.all(color: textColorBlack, width: 2),
+    boxShadow: [
+      BoxShadow(
+        color: textColorBlack.withOpacity(.1),
+        spreadRadius: 1,
+        blurRadius: 2,
+        offset: Offset(0, 1), // changes position of shadow
+      ),
+    ]);
+
+
+
+
+
 final shadowDecoration=BoxDecoration(
     color: textColorWhite,
     borderRadius: BorderRadius.circular(5),

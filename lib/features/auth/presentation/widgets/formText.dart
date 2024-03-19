@@ -32,15 +32,7 @@ textInputAction: TextInputAction.next,
           key:Key(inputkey),
           //const Key('SignUpForm_EmailInput_textField'),
           onChanged: (value) => Onchanged(value),
-          decoration: InputDecoration(
-            enabledBorder: border(textColorBlack) ,
-            focusedBorder: border(PrimaryColor),
-            errorBorder: border(Colors.red),
-            focusedErrorBorder: border(Colors.red),
-            errorStyle: ErrorStyle(18, Colors.red),
-          errorText:errorText
-
-          ),
+          decoration:decorationTextField(errorText)
         );
 
   }

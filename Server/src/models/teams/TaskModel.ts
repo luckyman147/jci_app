@@ -3,24 +3,39 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface Task extends Document{
 
     name: string
-    AssignTo:any
+    AssignTo:any[]
+    StartDate: Date
     Deadline: Date
-    attachedFile: String
+    attachedFile: string[]
     CheckList: any[]
     isCompleted:boolean
+    description:string
     
 }
 export const TaskSchema=new Schema({
   
     name: { type: String, required: true },
-    AssignTo:{type: mongoose.Schema.Types.ObjectId,
+    description:{type:String,default:""},
+    AssignTo:[{type: mongoose.Schema.Types.ObjectId,
         ref: 'Member',
-        required:true},
+        default:[]
+
+    
+    }],
         isCompleted:{type:Boolean,default:false},
-    Deadline: { type: Date, default: Date.now },
-    attachedFile: { type: String },
+        StartDate : { type: Date, default: Date.now },
+    Deadline  : { type: Date, default: 
+         () => {
+        const currentDate = new Date();
+        currentDate.setDate(currentDate.getDate() + 1);
+        return currentDate;
+      } },
+    attachedFile: { type: [String], default: []},
     CheckList: [{ type: mongoose.Schema.Types.ObjectId,
-        ref: 'CheckList',}],
+        ref: 'CheckList',default:[]},
+    
+    ],
+
 },{
     toJSON:{
         transform(doc,ret){

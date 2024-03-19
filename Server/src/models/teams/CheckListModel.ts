@@ -4,7 +4,7 @@ export interface CheckList extends Document{
 
     name: string
    
-    Deadline: Date
+
     isCompleted:boolean
 
     
@@ -14,7 +14,6 @@ export const CheckListSchema=new Schema({
     name: { type: String, required: true },
     isCompleted:{type:Boolean,default:false},
 
-    Deadline: { type: Date, default: Date.now },
     
 },{
     toJSON:{

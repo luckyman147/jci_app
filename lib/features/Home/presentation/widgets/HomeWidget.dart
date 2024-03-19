@@ -80,47 +80,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          FutureBuilder <MemberModel?>(
-                            future:  _loadMemberModel(),
-                            builder: (context,snap)  {
-                              print("Data: ${snap.data}");
-                              if (snap.connectionState == ConnectionState.waiting) {
-                                return CircularProgressIndicator();
-                              }
-                              if (snap.hasError) {
-                                print("Error: ${snap.error}");
-
-                              }
-                               if (snap.hasData && snap.data!=null && snap.data!.firstName!.isNotEmpty!=null){ return  Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text("Hello, ", style: PoppinsRegular(
-                                      mediaQuery.devicePixelRatio*10, Colors.black),),
-                                  Text(snap.data!.firstName, style: PoppinsSemiBold(
-                                      mediaQuery.devicePixelRatio*11, Colors.black,
-                                      TextDecoration.none),),
-
-                                ],
-
-
-                              );}
-                               else{
-                                 debugPrint("dddddd${snap.hasData}");
-                               return Row(
-                                 mainAxisAlignment: MainAxisAlignment.start,
-                                 children: [
-                                   Text("Hello, ", style: PoppinsRegular(
-                                       mediaQuery.devicePixelRatio*10, Colors.black),),
-                                   Text("There", style: PoppinsSemiBold(
-                                       mediaQuery.devicePixelRatio*11, Colors.black,
-                                       TextDecoration.none),),
-
-                                 ],
-
-
-                               );
-                            }}
-                          ),
+                          buildFutureBuilder(mediaQuery),
                           Row(
                             children: [
                               CalendarButton(color: BackWidgetColor, IconColor: textColorBlack,),
@@ -150,5 +110,49 @@ class _HomeWidgetState extends State<HomeWidget> {
         },
       );
 
+  }
+
+  FutureBuilder<MemberModel?> buildFutureBuilder(MediaQueryData mediaQuery) {
+    return FutureBuilder <MemberModel?>(
+                          future:  _loadMemberModel(),
+                          builder: (context,snap)  {
+                            print("Data: ${snap.data}");
+                            if (snap.connectionState == ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            }
+                            if (snap.hasError) {
+                              print("Error: ${snap.error}");
+
+                            }
+                             if (snap.hasData && snap.data!=null && snap.data!.firstName!.isNotEmpty!=null){ return  Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text("Hello, ", style: PoppinsRegular(
+                                    mediaQuery.devicePixelRatio*10, Colors.black),),
+                                Text(snap.data!.firstName, style: PoppinsSemiBold(
+                                    mediaQuery.devicePixelRatio*11, Colors.black,
+                                    TextDecoration.none),),
+
+                              ],
+
+
+                            );}
+                             else{
+                               debugPrint("dddddd${snap.hasData}");
+                             return Row(
+                               mainAxisAlignment: MainAxisAlignment.start,
+                               children: [
+                                 Text("Hello, ", style: PoppinsRegular(
+                                     mediaQuery.devicePixelRatio*10, Colors.black),),
+                                 Text("There", style: PoppinsSemiBold(
+                                     mediaQuery.devicePixelRatio*11, Colors.black,
+                                     TextDecoration.none),),
+
+                               ],
+
+
+                             );
+                          }}
+                        );
   }
 }

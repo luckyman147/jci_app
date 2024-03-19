@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { Member } from "../models/Member";
 import { Event } from "../models/activities/eventModel";
 import { Role } from "../models/role";
+import { CheckList } from '../models/teams/CheckListModel';
 import { Task } from '../models/teams/TaskModel';
 import { team } from "../models/teams/team";
 export const findrole=async (name:string)=>{
@@ -89,7 +90,7 @@ export const getTeamByEvent= async () =>{
     }
   };
 
-  export const getTasksInfo = async (taskIds: string[]): Promise<any> => {
+  export const getTasksInfoIsCompleted = async (taskIds: string[]): Promise<any> => {
     try {
       // Query the database to find tasks by their IDs
       const tasks = await Task.find({ _id: { $in: taskIds } });
@@ -99,6 +100,33 @@ export const getTeamByEvent= async () =>{
        isCompleted:task.isCompleted,
         // Add other fields you want to include
       }));
+  
+      console.log(tasksInfo);
+  
+      return tasksInfo;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal server error');
+    }
+  };export const getTasksInfo = async (taskIds: string[]): Promise<any> => {
+    try {
+      // Query the database to find tasks by their IDs
+      const tasks = await Task.find({ _id: { $in: taskIds } });
+  
+      const tasksInfo = await Promise.all(
+      tasks.map(async (task) => ({
+        id: task._id,
+        name: task.name,
+        AssignTo:await  getMembersInfo(task.AssignTo),
+        Deadline: task.Deadline,
+ 
+        isCompleted: task.isCompleted,
+        CheckList: await  getCheckListsInfoByIds(task.CheckList),
+    
+
+  
+        // Add other fields you want to include
+      })));
   
       console.log(tasksInfo);
   
@@ -120,3 +148,33 @@ export   function shortenBase64(base64String:string) {
   
     return shortenedPhrase;
   }
+ export  const getTaskById = async (taskId:string) => {
+    try {
+      const task = await Task.findById(taskId);
+  
+      if (!task) {
+        throw new Error(`Task with ID ${taskId} not found`);
+      }
+  
+      return task;
+    } catch (error) {
+     return null 
+    }
+  };
+  export const getCheckListsInfoByIds = async (checkListIds:string[]) => {
+    try {
+      const checkLists = await CheckList.find({ _id: { $in: checkListIds } });
+  
+      const checkListsInfo = checkLists.map((checkList) => ({
+        id: checkList._id,
+        name: checkList.name,
+        isCompleted: checkList.isCompleted,
+   
+      }));
+  
+      return checkListsInfo;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal server error');
+    }
+  };

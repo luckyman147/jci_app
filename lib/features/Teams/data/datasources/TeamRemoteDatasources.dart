@@ -19,7 +19,7 @@ import '../../../../../core/error/Exception.dart';
 
 
 abstract class TeamRemoteDataSource {
-  Future<List<TeamModel>> getAllTeams();
+  Future<List<TeamModel>> getAllTeams(String page,String limit);
   Future<TeamModel> getTeamById(String id);
 
   Future<Unit> createTeam(TeamModel Team);
@@ -92,22 +92,28 @@ final tokens= await Store.GetTokens();
   }
 
   @override
-  Future<List<TeamModel>> getAllTeams()async  {
+  Future<List<TeamModel>> getAllTeams(String page,String limit)async  {
     final member = await Store.getModel();
     final memberId = member!.id;
     final response = await client.get(
 
-      Uri.parse(TeamUrl+"All"),
+      Uri.parse("${TeamUrl}All?start=$page&limit=$limit "),
       headers: {"Content-Type": "application/json"},
 
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> decodedJson = json.decode(response.body) ;
-
-      final List<TeamModel> teamModel = decodedJson.map((e) => TeamModel.fromJson(e)).toList();
-      return teamModel;
-    } else if (response.statusCode == 400) {
+      final Map<String, dynamic> decodedJson = json.decode(response.body) ;
+      if (decodedJson.containsKey('results')) {
+      final List<TeamModel> TeamModels = (decodedJson['results'] as List)
+          .map<TeamModel>((jsonEventModel) =>
+          TeamModel.fromJson(jsonEventModel))
+          .toList();
+      return TeamModels;}
+      else{
+        throw EmptyDataException();
+      }
+    } else if (response.statusCode == 40) {
       throw EmptyDataException();
     }else{
       throw ServerException();

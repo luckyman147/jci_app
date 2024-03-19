@@ -50,7 +50,7 @@ Widget header(String text,MediaQueryData mediaquery){
 }
 Widget divider(MediaQueryData mediaquery) {
   return       Padding(
-    padding:  EdgeInsets.symmetric(vertical: mediaquery.size.height *.01),
+    padding:  paddingSemetricVertical(v: mediaquery.size.height *.01),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -58,7 +58,7 @@ Widget divider(MediaQueryData mediaquery) {
 
 
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          padding: paddingSemetricHorizontal(),
           child: Text("Or",style: PoppinsNorml(mediaquery.size.width/24, ThirdColor),),
         ),
         line(mediaquery.size.width/3)

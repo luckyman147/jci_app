@@ -19,7 +19,7 @@ class authButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     return Padding(
-      padding:  EdgeInsets.symmetric(vertical:mediaQuery.size.height/70 ),
+      padding:  paddingSemetricVertical(v: mediaQuery.size.height/70),
       child: Container(
         height: mediaQuery.size.height / 15,
         decoration: BoxDecoration(
@@ -40,8 +40,8 @@ class authButton extends StatelessWidget {
 
             children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: mediaQuery.size.width/20),
-            child:   SvgPicture.string(string),
+            padding: paddingSemetricHorizontal(h: mediaQuery.size.width/20)
+,            child:   SvgPicture.string(string),
           ),
               Text(text,style: PoppinsRegular(mediaQuery.size.width/30, textColorBlack),),
             ],

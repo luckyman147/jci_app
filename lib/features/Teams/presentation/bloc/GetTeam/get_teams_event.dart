@@ -5,6 +5,10 @@ abstract class GetTeamsEvent extends Equatable {
 }
 class GetTeams extends GetTeamsEvent {
 
+
+
+
+
   @override
   List<Object> get props => [];
 }

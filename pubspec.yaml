@@ -19,6 +19,9 @@ dependencies:
   freezed:
   image_picker: ^1.0.7
   jwt_decoder:
+  dotted_border:
+  bloc_concurrency: ^0.2.0
+  stream_transform: ^2.0.0
     # Bloc for state management
   flutter_bloc: ^8.1.2
   connectivity_plus:
@@ -54,6 +57,8 @@ dependencies:
   jwt_decode:
   google_nav_bar: ^5.0.6
   shimmer: ^3.0.0
+
+
   flutter_time_picker_spinner: ^2.0.0
 dev_dependencies:
   flutter_test:

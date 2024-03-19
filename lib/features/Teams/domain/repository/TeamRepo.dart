@@ -6,7 +6,7 @@ import '../entities/Team.dart';
 
 abstract class TeamRepo{
 
-  Future<Either<Failure,List<Team>>> getTeams();
+  Future<Either<Failure,List<Team>>> getTeams(String page,String limit);
   Future<Either<Failure,Team>> getTeamById(String id );
   Future<Either<Failure,Unit>> addTeam(Team team);
   Future<Either<Failure,Unit>> updateTeam(Team team);

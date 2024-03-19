@@ -218,7 +218,7 @@ Widget MembersDetails(List<Member> members,mediaQuery)=>ListView.separated(
 
 );Widget imageWidget(Member item){ return Row(
     children: [
-    photo(item.Images,50),
+    photo(item.Images,50,100),
     Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Text(item.firstName,style: PoppinsSemiBold(18, textColorBlack,TextDecoration.none),),
@@ -226,15 +226,22 @@ Widget MembersDetails(List<Member> members,mediaQuery)=>ListView.separated(
 
     ]);}
 
-Widget photo(List<dynamic> item,double height){
+Widget photo(List<dynamic> item,double height,double circle ){
 return
   item.isEmpty
       ?  ClipRRect(
-    borderRadius: BorderRadius.circular(100),
+    borderRadius: BorderRadius.circular(circle),
     child: Container(
       height: height,
       width: height,
       color: textColor,
+      child: Center(
+        child: Icon(
+          Icons.person,
+          color: textColorWhite,
+          size: height/2,
+        ),
+      ),
     ),
 
   )
@@ -242,7 +249,7 @@ return
   ClipRRect(
 
 
-    borderRadius: BorderRadius.circular(100),
+    borderRadius: BorderRadius.circular(circle),
     child: Image.memory(
       base64Decode(item.first),
       width: height,

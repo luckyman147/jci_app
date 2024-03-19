@@ -5,15 +5,15 @@ import '../../../../core/error/Failure.dart';
 import '../../../../core/usescases/usecase.dart';
 import '../entities/Team.dart';
 
-class GetAllTeamsUseCase  extends UseCase<List<Team>, NoParams>{
+class GetAllTeamsUseCase {
   final TeamRepo _teamRepository;
 
   GetAllTeamsUseCase(this._teamRepository);
 
 
-  @override
-  Future<Either<Failure, List<Team>>> call(NoParams params) async {
-    return await _teamRepository.getTeams();
+
+  Future<Either<Failure, List<Team>>> call({String page="0",String limit="5"}) async {
+    return await _teamRepository.getTeams(page, limit);
   }
 }
 class GetTeamByIdUseCase  extends UseCase<Team, String>{

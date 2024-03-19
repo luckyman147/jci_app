@@ -1,7 +1,34 @@
 part of 'get_teams_bloc.dart';
+enum TeamStatus { initial, success, error }
+ class GetTeamsState extends Equatable {
+   final TeamStatus status;
+   final List<Team> teams;
+   final bool hasReachedMax;
+   final String errorMessage;
 
-abstract class GetTeamsState extends Equatable {
-  const GetTeamsState();
+
+  const GetTeamsState({this.status = TeamStatus.initial,
+   this.hasReachedMax = false,
+   this.teams = const [],
+   this.errorMessage = ""}
+      );
+
+   GetTeamsState copyWith({
+     TeamStatus? status,
+     List<Team>? teams,
+     bool? hasReachedMax,
+     String? errorMessage,
+   }) {
+     return GetTeamsState(
+       status: status ?? this.status,
+       teams: teams ?? this.teams,
+       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+       errorMessage: errorMessage ?? this.errorMessage,
+     );
+   }
+
+   @override
+   List<Object?> get props => [status, teams, hasReachedMax, errorMessage];
 }
 
 class GetTeamsInitial extends GetTeamsState {
@@ -13,10 +40,11 @@ class GetTeamsLoading extends GetTeamsState {
   List<Object> get props => [];
 }
 class GetTeamsLoaded extends GetTeamsState {
+
   final List<Team> teams;
   GetTeamsLoaded(this.teams);
   @override
-  List<Object> get props => [teams];
+  List<Object> get props => [teams,];
 }
 class GetTeamsError extends GetTeamsState {
   final String message;

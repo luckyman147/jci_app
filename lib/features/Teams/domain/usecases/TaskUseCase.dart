@@ -27,14 +27,14 @@ class GetTasksByIdUseCase extends UseCase<Tasks, Map<String, String>> {
     return _taskRepository.getTasksById(params['id']!, params['taskid']!);
   }
 }
-class AddTaskUseCase extends UseCase<Unit, Map<String, dynamic>> {
+class AddTaskUseCase extends UseCase<Tasks, Map<String, dynamic>> {
   final TaskRepo _taskRepository;
 
   AddTaskUseCase(this._taskRepository);
 
   @override
-  Future<Either<Failure, Unit>> call(Map<String, dynamic> params) {
-    return _taskRepository.addTask(params['Teamid']!, params['task']! as Tasks);
+  Future<Either<Failure, Tasks>> call(Map<String, dynamic> params) {
+    return _taskRepository.addTask(params['Teamid']!, params['name']! as String);
   }
 }
 class UpdateTaskUseCase extends UseCase<Unit, Map<String, dynamic>> {

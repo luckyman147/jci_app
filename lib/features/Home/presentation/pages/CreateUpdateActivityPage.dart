@@ -242,8 +242,8 @@ return      LoadingWidget();
                           child: BeginTimeWidget()
 
                       )),
-                  AddEndDateButton(mediaQuery),
-                  const   EndDateWidget(
+                  AddEndDateButton(mediaQuery,"Show End date"),
+                  const   EndDateWidget(LabelText: 'End Date', SheetTitle: "Date and Hour of End", HintTextDate: 'End Date', HintTextTime: 'End Time',
                   ),
                   showDetails(mediaQuery, vis.selectedActivity, state.registrationTimeInput.value??DateTime.now().add(Duration(days: 1)),context,_price,_LocationController),
                   TextfieldNormal("Points", "Points Here", _Points, (p0) => null),

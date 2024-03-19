@@ -9,3 +9,6 @@ List<String> getIds(List<Member> objects) {
   }
   return objects.map((obj) => obj.id ).toList();
 }
+List<int> generateNumbers(int num) {
+  return List.generate(num, (index) => num - index + 1).reversed.toList();
+}

@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import { TeamInputs } from "../../dto/teams.dto";
 import { Event } from "../../models/activities/eventModel";
 import { Team, team } from "../../models/teams/team";
-import { getEventNameById, getMembersInfo, getTasksInfo, getTeamByEvent } from "../../utility/role";
+import { getEventNameById, getMembersInfo, getTasksInfo, getTasksInfoIsCompleted } from "../../utility/role";
 
 import { Member } from "../../models/Member";
 export const AddTeam = async (req: Request, res: Response, next: NextFunction) => {
@@ -42,49 +42,52 @@ event.teams.push(newTeam._id)
       console.log('Error adding event:', error);
       next(error);
     }}
-export const GetTeams= async (req:Request,res:Response,next:NextFunction)=>{
-    const grouped=req.query.grouped
-    if (grouped) {
-        try{
-     const teams= await getTeamByEvent()
-     if (teams.length>0) {
-         res.status(200).json(teams)
-     }
-        else{
-            res.status(404).json({error:"No teams found"})
-        }
-    
-    }catch{
-        res.status(500).json({error:"Internal server error"})
-    }
-    }
-    else{
-       const teams= await team.find()
-        if ( teams.length>0) {
-          const teamsWithEvent = await Promise.all(
-            teams.map(async (team) => ({
-              id: team._id,
-              event: await getEventNameById( team.Event),
-              description:team.description,
-              TeamLeader:await getMembersInfo([team.TeamLeader]),
-              name: team.name,
-              status: team.status,
-              CoverImage: team.CoverImage,
-              tasks: await getTasksInfo( team.tasks),
-              Members: await getMembersInfo(team.Members),
-            }))
-          );
-            res.status(200).json(
-              
-teamsWithEvent
-            )
-        }
-        else{
-            res.status(404).json({error:"No teams found"})
-        }
-    }
-}
+export const GetTeams = async (req: Request, res: Response, next: NextFunction) => {
+    const start: number = parseInt(req.query.start as string);
+    const limit: number = parseInt(req.query.limit as string);
 
+    const startIndex: number = start;
+    const endIndex: number = start + limit;
+
+    const results: any = {};
+
+    if (endIndex < await team.countDocuments().exec()) {
+        results.next = {
+            start: endIndex,
+            limit: limit
+        };
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            start: Math.max(start - limit, 0), // Ensure start is not negative
+            limit: limit
+        };
+    }
+
+    const teams = await team.find().limit(limit).skip(startIndex).exec();
+    if (teams.length > 0) {
+        const teamsWithEvent = await Promise.all(
+            teams.map(async (team) => ({
+                id: team._id,
+                event: await getEventNameById(team.Event),
+                description: team.description,
+                TeamLeader: await getMembersInfo([team.TeamLeader]),
+                name: team.name,
+                status: team.status,
+                CoverImage: team.CoverImage,
+                tasks: await getTasksInfoIsCompleted(team.tasks),
+                Members: await getMembersInfo(team.Members),
+            }))
+        );
+
+        console.log(teamsWithEvent);
+        results.results = teamsWithEvent;
+        res.status(200).json(results);
+    } else {
+        res.status(404).json({ error: "No teams found" });
+    }
+};
 
 
 export const getTeamById = async (req: Request, res: Response, next: NextFunction) => {
@@ -136,7 +139,8 @@ export const uploadTeamImage = async (req: Request, res: Response, next: NextFun
     } catch (error) {
       res.status(500).json({ error: error});
     }
-  };  export const updateImage = async (req: Request, res: Response, next: NextFunction) => {
+  };  
+  export const updateImage = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const teamId = req.params.id;
       const Team = await team.findById(teamId);

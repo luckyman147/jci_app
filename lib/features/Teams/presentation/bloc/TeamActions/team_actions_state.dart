@@ -1,6 +1,7 @@
 part of 'team_actions_bloc.dart';
 
 abstract class TeamActionsState extends Equatable {
+
   const TeamActionsState();
 }
 

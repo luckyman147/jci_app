@@ -22,12 +22,13 @@ export const TeamSchema=new Schema({
     TeamLeader:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Member',
-        required:true
+
     },
 Event:{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Event',
-    required:true
+
+
 },
     Members: [{
         type: mongoose.Schema.Types.ObjectId,

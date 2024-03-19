@@ -8,7 +8,11 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.
 import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/DescriptionBoolean/description_bool_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/TaskActions/task_actions_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/TaskFilter/taskfilter_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TeamActions/team_actions_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
@@ -23,6 +27,7 @@ import 'package:jci_app/features/intro/presentation/bloc/internet/internet_bloc.
 
 import '../../../features/Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
 import '../../../features/Home/presentation/bloc/textfield/textfield_bloc.dart';
+import '../../../features/Teams/presentation/bloc/NumPages/num_pages_bloc.dart';
 import '../../../injection_container.dart' as di;
 
 // ignore: depend_on_referenced_packages
@@ -49,7 +54,14 @@ BlocProvider(create: (_) => di.sl<TeamActionsBloc>()),
   BlocProvider(create: (_) => localeCubit()..getSavedLanguage()),
   BlocProvider(create: (_) => ActivityCubit()),
   BlocProvider(create: (_) => di.sl<FormzBloc>()),
-  BlocProvider(create: (_) => di.sl<GetTeamsBloc>()),
+  BlocProvider(create: (_) => di.sl<GetTeamsBloc>()..add(GetTeams())),
+  BlocProvider(create: (_) => di.sl<GetTaskBloc>()),
+  BlocProvider(create: (_) => di.sl<NumPagesBloc>()),
+  BlocProvider(create: (_)=> di.sl<TaskActionsBloc>()),
+  BlocProvider(create: (_)=> di.sl<TaskVisibleBloc>()),
+  BlocProvider(create: (_)=> di.sl<TaskfilterBloc>()),
+
+
 
   BlocProvider(create: (_) => di.sl<AddDeleteUpdateBloc>()),
   BlocProvider(create: (_) => ToggleBooleanBloc(initialValue: true)),

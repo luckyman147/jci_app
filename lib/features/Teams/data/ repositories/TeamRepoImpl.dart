@@ -94,11 +94,11 @@ final teamMosdel=TeamModel.fromEntity(team,true);
   }
 
   @override
-  Future<Either<Failure, List<Team>>> getTeams() async {
+  Future<Either<Failure, List<Team>>> getTeams(String page,String limit) async {
 
     if (await networkInfo.isConnected) {
       try {
-        final remoteTeams = await teamRemoteDataSource.getAllTeams();
+        final remoteTeams = await teamRemoteDataSource.getAllTeams(page,limit);
         teamLocalDataSource.cacheTeams(remoteTeams);
         return Right(remoteTeams);
       } on ServerException {

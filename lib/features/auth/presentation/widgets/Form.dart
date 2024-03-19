@@ -42,9 +42,6 @@ final mediaquery = MediaQuery.of(context);
 
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, state) {
-        //if (state.status.isFailure) {
-        //  SnackBarMessage.showErrorSnackBar(  message: 'Error', context:  context);
-        //}
 
    return  Form(
      key: _key,
@@ -57,7 +54,7 @@ final mediaquery = MediaQuery.of(context);
 
 
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              padding: paddingSemetricHorizontal(h: 25),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -70,7 +67,7 @@ final mediaquery = MediaQuery.of(context);
             ),
             const Padding(padding: EdgeInsets.all(12)),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              padding: paddingSemetricHorizontal(h: 25),
               child: Column(
                 children: [
                   Align(
@@ -78,7 +75,7 @@ final mediaquery = MediaQuery.of(context);
                       child: Label(text: "Password".tr(context), size: mediaquery.size.width/22.5)),
                   _PasswordInput(controller: _passwordController,),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: paddingSemetricAll(),
                     child: Align(
                     alignment:  Alignment.centerRight,
                         child: InkWell(
@@ -94,12 +91,12 @@ final mediaquery = MediaQuery.of(context);
             ),
 
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 18.0,horizontal: 25.0),
+              padding: paddingSemetricVerticalHorizontal(v: 18,h: 25),
               child: _LoginButton( _key,),
             ),
           divider(mediaquery),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0,vertical: 18.0),
+              padding: paddingSemetricVerticalHorizontal(v: 18,h: 25),
               child: Column(
 
                 children: [
@@ -114,7 +111,7 @@ final mediaquery = MediaQuery.of(context);
      mainAxisAlignment: MainAxisAlignment.center,
        children: [
       Padding(
-        padding: EdgeInsets.symmetric(horizontal: mediaquery.size.width/60.5),
+        padding: paddingSemetricHorizontal(h:  mediaquery.size.width/60.5),
         child: Text("Don't have an account?".tr(context),style:PoppinsLight( mediaquery.size.width/30.5, textColorBlack),),
       ),
       InkWell(

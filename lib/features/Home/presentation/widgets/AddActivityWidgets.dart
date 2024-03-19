@@ -15,6 +15,7 @@ import 'package:intl/intl.dart';
 
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Formz.dart';
+import 'package:jci_app/features/Teams/presentation/widgets/CreateTeamWIdgets.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/strings/app_strings.dart';
@@ -28,7 +29,7 @@ import 'Functions.dart';
 import 'MemberSelection.dart';
 
 
-Widget AddEndDateButton(mediaQuery) => BlocBuilder<VisibleBloc, VisibleState>(
+Widget AddEndDateButton(mediaQuery,String text) => BlocBuilder<VisibleBloc, VisibleState>(
       builder: (context, state) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
@@ -55,7 +56,7 @@ Widget AddEndDateButton(mediaQuery) => BlocBuilder<VisibleBloc, VisibleState>(
                         color: SecondaryColor,
                       ),
                     ),
-                    Text("Show End Date",
+                    Text(text,
                         style: PoppinsRegular(
                             mediaQuery.devicePixelRatio * 5, textColorBlack)),
                   ],
@@ -113,73 +114,77 @@ class _DateFieldWidgetState extends State<DateFieldWidget> {
           ),
           BlocBuilder<FormzBloc, FormzState>(
             builder: (context, state) {
-              return bottomSheet(
-                context,
-                widget.mediaQuery,
-                widget.sheetTitle,
-                widget.date,
-                widget.hintTextDate,
-                widget.hintTextTime,
-                ()async {
-                    debugPrint("updated time: ${state.jokertime.value }");
-
-                    final TimeOfDay? selectedTime = await showTimePicker(
-                      context: context,
-                      initialEntryMode: TimePickerEntryMode.dial,
-                      initialTime: selectedDate,
-                    );
-                    if (selectedTime != null) {
-                      if (mounted) {
-                        context.read<FormzBloc>().add(jokerTimeChanged(joketimer: selectedTime));
-                        setState(() {
-                          selectedDate = selectedTime;});
-                      }
-                    }
-                  },
-
-               ()async {
-
-                 final temp = await showDatePicker(
-                   context: context,
-
-                   firstDate:DateTime.now(),
-                   currentDate: time,
-                   lastDate: DateTime.now().add(Duration(days: 365)),
-                   onDatePickerModeChange: (mode) {
-                     print("mode$mode");
-                   },
-                 );
-
-                 if (temp != null) {
-                   if (!mounted) return;
-
-                   context.read<FormzBloc>().add(jokerChanged(joke: temp));
-                    setState(() {
-                      time = temp;
-                    });
-                 }
-               },
-                  (){
-                  if (widget.timeType == TimeType.begin) {
-                    context.read<FormzBloc>().add(BeginTimeChanged(date: combineTimeAndDate(selectedDate, time)));
-                    context.pop();
-                  } else if (widget.timeType == TimeType.end) {
-                    context.read<FormzBloc>().add(EndTimeChanged(date: combineTimeAndDate(selectedDate, time)));
-                    context.pop();
-
-                  }
-                  else{
-                    context.read<FormzBloc>().add(RegistraTimeChanged(date: combineTimeAndDate(selectedDate, time)));
-                    context.pop();
-
-                  }
-                  }
-              );
+              return buildBottomSheet(context, state);
             },
           ),
         ],
       ),
     );
+  }
+
+  InkWell buildBottomSheet(BuildContext context, FormzState state) {
+    return bottomSheet(
+              context,
+              widget.mediaQuery,
+              widget.sheetTitle,
+              widget.date,
+              widget.hintTextDate,
+              widget.hintTextTime,
+              ()async {
+                  debugPrint("updated time: ${state.jokertime.value }");
+
+                  final TimeOfDay? selectedTime = await showTimePicker(
+                    context: context,
+                    initialEntryMode: TimePickerEntryMode.dial,
+                    initialTime: selectedDate,
+                  );
+                  if (selectedTime != null) {
+                    if (mounted) {
+                      context.read<FormzBloc>().add(jokerTimeChanged(joketimer: selectedTime));
+                      setState(() {
+                        selectedDate = selectedTime;});
+                    }
+                  }
+                },
+
+             ()async {
+
+               final temp = await showDatePicker(
+                 context: context,
+
+                 firstDate:DateTime.now(),
+                 currentDate: time,
+                 lastDate: DateTime.now().add(Duration(days: 365)),
+                 onDatePickerModeChange: (mode) {
+                   print("mode$mode");
+                 },
+               );
+
+               if (temp != null) {
+                 if (!mounted) return;
+
+                 context.read<FormzBloc>().add(jokerChanged(joke: temp));
+                  setState(() {
+                    time = temp;
+                  });
+               }
+             },
+                (){
+                if (widget.timeType == TimeType.begin) {
+                  context.read<FormzBloc>().add(BeginTimeChanged(date: combineTimeAndDate(selectedDate, time)));
+                  context.pop();
+                } else if (widget.timeType == TimeType.end) {
+                  context.read<FormzBloc>().add(EndTimeChanged(date: combineTimeAndDate(selectedDate, time)));
+                  context.pop();
+
+                }
+                else{
+                  context.read<FormzBloc>().add(RegistraTimeChanged(date: combineTimeAndDate(selectedDate, time)));
+                  context.pop();
+
+                }
+                }
+            );
   }
 
   Future<void> ChooseTimeOFDay(BuildContext context, TimeOfDay Time, bool mounted) async {
@@ -775,7 +780,7 @@ Widget showLeader(activity act,mediaQuery,BuildContext context,TextEditingContro
               ),
             ),
             bottomMemberSheet(context ,mediaQuery,
-                state.memberFormz.value??memberTest),
+                state.memberFormz.value??memberTest,"Select A Director","Director"),
           ],
         );
       },
@@ -796,9 +801,7 @@ Widget showImagePicker(activity act ,mediaQuery)=>
     Padding(
 
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: imagePicker(
-        mediaQuery,
-      ),
+      child:imageTeamPicker(mediaQuery)
     );
 
 

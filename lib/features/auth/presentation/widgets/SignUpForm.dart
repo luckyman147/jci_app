@@ -60,7 +60,7 @@ void _resetform(){
           child: Padding(
 
 
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              padding: paddingSemetricHorizontal(h: 10),
               child: TextWidget(text: "Create Account".tr(context), size: mediaquery.size.width *0.08)),
         ),
 
@@ -72,7 +72,7 @@ void _resetform(){
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0,vertical: 10.0),
+                padding: paddingSemetricVerticalHorizontal(h: 25,v: 10),
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -81,9 +81,9 @@ void _resetform(){
 
                     ]),
               ),
-              const Padding(padding: EdgeInsets.all(8)),
+               Padding(padding: paddingSemetricAll()),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                padding: paddingSemetricHorizontal(h: 25),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -104,9 +104,9 @@ void _resetform(){
                   ],
                 ),
               ),
-              const Padding(padding: EdgeInsets.all(8)),
+              Padding(padding: paddingSemetricAll()),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                padding:paddingSemetricHorizontal(h: 25),
                 child: Column(
                   children: [
                     header("Password".tr(context),mediaquery),
@@ -114,9 +114,9 @@ void _resetform(){
 
                   ],
                 ),
-              ),const Padding(padding: EdgeInsets.all(8)),
+              ), Padding(padding: paddingSemetricAll()),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                padding: paddingSemetricHorizontal(h: 25),
                 child: Column(
                   children: [
                     header("Confirm Password".tr(context),mediaquery),
@@ -140,7 +140,7 @@ void _resetform(){
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: mediaquery.size.width/60.5),
+              padding: paddingSemetricHorizontal(h:  mediaquery.size.width/60.5),
               child: Text("Already have an account?".tr(context),style:PoppinsLight( mediaquery.size.width/30.5, textColorBlack),),
             ),
             InkWell(
@@ -179,7 +179,9 @@ if (_key.currentState!.validate()) {
 Member(email: state.email.value,
   password: state.password.value,
   firstName: state.firstname.value,
-  lastName: state.lastname.value, id: '', role: '', is_validated: false, cotisation: [false], Images: [], phone: '', IsSelected: false, Activities: [],  );
+  lastName: state.lastname.value, id: '',
+  role: '', is_validated: false,
+  cotisation: [false], Images: [], phone: '', IsSelected: false, Activities: [],  );
 
   context.read<SignUpBloc>().add(SignUpSubmitted(member: member));
 
