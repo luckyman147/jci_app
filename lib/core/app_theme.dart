@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 
 const PrimaryColor = Color.fromRGBO(0, 150, 215, 1);
 const SecondaryColor = Color.fromRGBO(248, 189, 0, 1);
@@ -22,7 +23,15 @@ OutlineInputBorder border(Color color)=> OutlineInputBorder(
   borderRadius: BorderRadius.circular(16.0),
   borderSide: BorderSide(color: color,width: 3 ),
 );
+final   taskdex=BoxDecoration(
+  color: Colors.white,
+  border: Border.all(
+    color: BackWidgetColor,
+    width: 1,
+  ),
 
+
+);
 
 
 EdgeInsetsGeometry paddingSemetricHorizontal ({double h=8})=> EdgeInsets.symmetric(horizontal:h );
@@ -130,4 +139,25 @@ scaffoldBackgroundColor:textColorWhite ,
   textTheme: TextTheme(
 
   ),
+);
+
+InputDecoration inputDecoration (FormzState state,mediaQuery )=> InputDecoration(
+  errorText: state.memberName.displayError!= null?"Empty Field":null,
+  prefixIcon: Icon(
+    Icons.search,
+    color: textColor,
+  ),
+  hintText: "Search for a Member",
+  hintStyle: PoppinsRegular(
+    mediaQuery.devicePixelRatio * 6,
+    textColor,
+
+  ),
+
+  focusedBorder: border(PrimaryColor),
+  enabledBorder: border(ThirdColor),
+  errorBorder: border(Colors.red),
+  focusedErrorBorder: border(Colors.red),
+  errorStyle: ErrorStyle(18, Colors.red),
+
 );

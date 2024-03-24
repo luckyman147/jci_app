@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import { TeamInputs } from "../../dto/teams.dto";
 import { Event } from "../../models/activities/eventModel";
 import { Team, team } from "../../models/teams/team";
-import { getEventNameById, getMembersInfo, getTasksInfo, getTasksInfoIsCompleted } from "../../utility/role";
+import { getEventNameById, getMembersInfo, getTasksInfo } from "../../utility/role";
 
 import { Member } from "../../models/Member";
 export const AddTeam = async (req: Request, res: Response, next: NextFunction) => {
@@ -37,7 +37,9 @@ Members: Array.isArray(teamInputs.Members) ? [...teamInputs.Members, user!._id] 
   if (event) {
 event.teams.push(newTeam._id)  
 }
-      res.json(savedTeam);
+
+const show=await  showTeamDetails(savedTeam)
+res.json(show);
     } catch (error) {
       console.log('Error adding event:', error);
       next(error);
@@ -65,7 +67,8 @@ export const GetTeams = async (req: Request, res: Response, next: NextFunction) 
         };
     }
 
-    const teams = await team.find().limit(limit).skip(startIndex).exec();
+    const teams = await team.find().sort({ createdAt: 'desc' }) .limit(limit).skip(startIndex).exec();
+    console.log(teams);
     if (teams.length > 0) {
         const teamsWithEvent = await Promise.all(
             teams.map(async (team) => ({
@@ -76,7 +79,7 @@ export const GetTeams = async (req: Request, res: Response, next: NextFunction) 
                 name: team.name,
                 status: team.status,
                 CoverImage: team.CoverImage,
-                tasks: await getTasksInfoIsCompleted(team.tasks),
+                tasks: await getTasksInfo(team.tasks),
                 Members: await getMembersInfo(team.Members),
             }))
         );
@@ -134,8 +137,9 @@ export const uploadTeamImage = async (req: Request, res: Response, next: NextFun
   
       // Save the team
       const savedTeam = await Team.save();
+const show=await  showTeamDetails(savedTeam)
   
-      res.status(200).json(savedTeam);
+      res.status(200).json(show);
     } catch (error) {
       res.status(500).json({ error: error});
     }

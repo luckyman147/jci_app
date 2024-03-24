@@ -17,4 +17,15 @@ class GetTeamById extends GetTeamsEvent {
   GetTeamById(this.id);
   @override
   List<Object> get props => [id];
+}class AddTeam extends GetTeamsEvent {
+  final Team team;
+  AddTeam(this.team);
+  @override
+  List<Object> get props => [team];
+}
+class DeleteTeam extends GetTeamsEvent {
+  final String id;
+  DeleteTeam(this.id);
+  @override
+  List<Object> get props => [id];
 }

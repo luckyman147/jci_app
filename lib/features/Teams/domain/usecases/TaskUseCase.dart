@@ -47,24 +47,24 @@ class UpdateTaskUseCase extends UseCase<Unit, Map<String, dynamic>> {
     return _taskRepository.updateTask(params['id']!, params['task']! as Tasks);
   }
 }
-class DeleteTaskUseCase extends UseCase<Unit, Map<String, String>> {
+class DeleteTaskUseCase extends UseCase<Unit, String> {
   final TaskRepo _taskRepository;
 
   DeleteTaskUseCase(this._taskRepository);
 
   @override
-  Future<Either<Failure, Unit>> call(Map<String, String> params) {
-    return _taskRepository.deleteTask(params['id']!, params['taskid']!);
+  Future<Either<Failure, Unit>> call(String params) {
+    return _taskRepository.deleteTask(params);
   }
 }
-class AddChecklistUseCase extends UseCase<Unit, Map<String, dynamic>> {
+class AddChecklistUseCase extends UseCase<CheckList, Map<String, dynamic>> {
   final TaskRepo _taskRepository;
 
   AddChecklistUseCase(this._taskRepository);
 
   @override
-  Future<Either<Failure, Unit>> call(Map<String, dynamic> params) {
-    return _taskRepository.addChecklist(params['id']!, params['taskid']!, params['checklist']!);
+  Future<Either<Failure, CheckList>> call(Map<String, dynamic> params) {
+    return _taskRepository.addChecklist( params['idTask']!, params['checklist']!);
   }
 }
 class UpdateChecklistUseCase extends UseCase<Unit, Map<String, dynamic>> {
@@ -77,14 +77,69 @@ class UpdateChecklistUseCase extends UseCase<Unit, Map<String, dynamic>> {
     return _taskRepository.updateChecklist(params['id']!, params['taskid']!, params['checklistid']!, params['checklist']! as CheckList);
   }
 }
-class DeleteChecklistUseCase extends UseCase<Unit, Map<String, String>> {
+class DeleteChecklistUseCase extends UseCase<Unit, String> {
   final TaskRepo _taskRepository;
 
   DeleteChecklistUseCase(this._taskRepository);
 
   @override
-  Future<Either<Failure, Unit>> call(Map<String, String> params) {
-    return _taskRepository.deleteChecklist(params['id']!, params['taskid']!, params['checklistid']!);
+  Future<Either<Failure, Unit>> call( String params) {
+    return _taskRepository.deleteChecklist( params);
+  }
+}
+class UpdateIsCompletedUseCases extends UseCase<Unit, Map<String, dynamic>> {
+  final TaskRepo _taskRepository;
+
+  UpdateIsCompletedUseCases(this._taskRepository);
+
+  @override
+  Future<Either<Failure, Unit>> call(Map<String, dynamic> params) {
+    return _taskRepository.UpdateTask(params['id']!, params['IsCompleted']! as bool);
+  }
+}
+
+class UpdateChecklistStatusUseCase extends UseCase<Unit, Map<String, dynamic>> {
+  final TaskRepo _taskRepository;
+
+  UpdateChecklistStatusUseCase(this._taskRepository);
+
+  @override
+  Future<Either<Failure, Unit>> call(Map<String, dynamic> params) {
+    return _taskRepository.UpdateChecklistStatus(params['taskid']!, params['checkid']!, params['IsCompleted']! as bool);
+  }
+}
+class UpdateTaskNameUseCase extends UseCase<Unit, Map<String, dynamic>> {
+  final TaskRepo _taskRepository;
+
+  UpdateTaskNameUseCase(this._taskRepository);
+
+  @override
+  Future<Either<Failure, Unit>> call(Map<String, dynamic> params) {
+    return _taskRepository.UpdateTaskName(params['taskid']!, params['name']! as String);
+  }
+
+
+}class UpdateTaskTimelineUseCase extends UseCase<Unit, Map<String, dynamic>> {
+  final TaskRepo _taskRepository;
+
+  UpdateTaskTimelineUseCase(this._taskRepository);
+
+  @override
+  Future<Either<Failure, Unit>> call(Map<String, dynamic> params) {
+    return _taskRepository.UpdateTimeline(params['id']!, params['StartDate']! as DateTime, params['Deadline']! as DateTime);
+  }
+
+
+}
+class UpdateMembersUsecases extends UseCase<Unit, Map<String, dynamic>> {
+  final TaskRepo _taskRepository;
+
+  UpdateMembersUsecases(this._taskRepository);
+
+  @override
+  Future<Either<Failure, Unit>> call(Map<String, dynamic> params) {
+    return _taskRepository.UpdateMembers(
+        params['taskid']!, params['status']! as bool , params['memberId']! as String);
   }
 }
 

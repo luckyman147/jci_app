@@ -6,7 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/core/util/snackbar_message.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/TeamActions/team_actions_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
+
 import 'package:jci_app/features/Teams/presentation/widgets/MembersTeamSelection.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 
@@ -20,7 +21,7 @@ import '../../../auth/domain/entities/Member.dart';
 import '../../domain/entities/Team.dart';
 import 'EventSelection.dart';
 
-Widget ActionsWidgets(mediaQuery,GlobalKey<FormState> key,TextEditingController TeamName,TextEditingController description ) => BlocConsumer<TeamActionsBloc, TeamActionsState>(
+Widget ActionsWidgets(mediaQuery,GlobalKey<FormState> key,TextEditingController TeamName,TextEditingController description ) => BlocConsumer<GetTeamsBloc, GetTeamsState>(
   builder: (context, state) {
     return BlocBuilder<PageIndexBloc, PageIndexState>(
   builder: (context, state) {
@@ -34,12 +35,13 @@ Widget ActionsWidgets(mediaQuery,GlobalKey<FormState> key,TextEditingController 
     );
   },
 );
-  }, listener: (BuildContext context, TeamActionsState state) {
+  }, listener: (BuildContext context, GetTeamsState state) {
     log(state.toString());
-    if (state is ErrorMessage)                                                {SnackBarMessage.showErrorSnackBar(message: state.message, context: context);
+    if (state.status ==  TeamStatus.error)
+    {SnackBarMessage.showErrorSnackBar(message: state.errorMessage, context: context);
     }
-    if (state is TeamAdded) {
-      SnackBarMessage.showSuccessSnackBar(message: state.message, context: context);
+    if (state.status == TeamStatus.success) {
+      SnackBarMessage.showSuccessSnackBar(message: "Team Added", context: context);
       GoRouter.of(context).go('/home');
     }
 
@@ -61,7 +63,7 @@ Widget DoneActions(TextEditingController TeamName, TextEditingController descrip
                       CoverImage: form.imageInput.value !=null? form.imageInput.value!.path:"",
                       event: form.eventFormz.value==null?"":form.eventFormz.value!.id,
                       id: '', TeamLeader: '', status: Visstate.isVisible, tasks: [], Members:getIds( form.membersTeamFormz.value??[]));
-                  context.read<TeamActionsBloc>().add(AddTeam(team));
+                  context.read<GetTeamsBloc>().add(AddTeam(team));
                 }
 
               },
@@ -288,21 +290,14 @@ Widget bottomMembersSheet(BuildContext context, MediaQueryData mediaQuery,
     List<Member> members,
 
 
+
+
     ) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16.0,),
     child: InkWell(
       onTap: () {
-        showModalBottomSheet(
-          context: context,
-          builder: (ctx) {
-            return BlocBuilder<FormzBloc, FormzState>(
-              builder: (context, state) {
-                return MembersTeamBottomSheet(mediaQuery);
-              },
-            );
-          },
-        );
+        MemberBottomSheetBuilder(context, mediaQuery, (value){}, (value){});
       },
       child:Container(
           width: mediaQuery.size.width,
@@ -325,6 +320,21 @@ Widget bottomMembersSheet(BuildContext context, MediaQueryData mediaQuery,
           )),
     ),
   );}
+
+void MemberBottomSheetBuilder(BuildContext context, MediaQueryData mediaQuery,
+    Function(Member) onRemoveTap, Function(Member) onAddTap
+    ) {
+  showModalBottomSheet(
+    context: context,
+    builder: (ctx) {
+      return BlocBuilder<FormzBloc, FormzState>(
+        builder: (context, state) {
+          return MembersTeamBottomSheet(mediaQuery, onRemoveTap, onAddTap);
+        },
+      );
+    },
+  );
+}
 
 
 Widget membersImage(BuildContext context, MediaQueryData mediaQuery,
@@ -394,7 +404,7 @@ Widget bottomEventSheet(BuildContext context, MediaQueryData mediaQuery,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child:
-              event!=null&& event.name.isNotEmpty&& event.name!='Choose the Event'?imageEventWidget(event):
+              event!=null&& event.name.isNotEmpty&& event.name!='Choose the Event'?imageEventWidget(event,mediaQuery):
               Text("Select Events",style: PoppinsRegular(18, ThirdColor),),
             ),
           )),

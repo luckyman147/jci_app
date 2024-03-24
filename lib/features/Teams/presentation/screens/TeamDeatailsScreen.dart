@@ -37,16 +37,20 @@ final TextEditingController _taskController = TextEditingController();
     return Scaffold(
 
 
-body: SafeArea(child: SingleChildScrollView(
-  child: Column(
-  
-    children: [
-  
-      SizedBox(
-height: mediaQuery.size.height,
+body: SafeArea(child: Scrollbar(
 
-          child: GetTeamByid(widget.id,  _taskController,)),
-    ],
+  child: SingleChildScrollView(
+    scrollDirection: Axis.vertical,
+    child: Column(
+
+      children: [
+
+        SizedBox(
+  height: mediaQuery.size.height,
+
+            child: GetTeamByid(widget.id,  _taskController,)),
+      ],
+    ),
   ),
 )),
     );

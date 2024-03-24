@@ -149,6 +149,14 @@ class MembersTeamChanged extends FormzEvent {
   @override
   List<Object> get props => [memberTeam];
 }
+class InitMembers extends FormzEvent {
+  final List<Member> members;
+
+  const InitMembers({required this.members});
+
+  @override
+  List<Object> get props => [members];
+}
 class RemoveMember extends FormzEvent {
   final Member member;
 

@@ -6,15 +6,18 @@ import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visi
 import 'package:jci_app/features/Teams/presentation/widgets/TaskDetailWidget.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/CreateTeamWIdgets.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/TaskImpl.dart';
+import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 
 import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
 import '../../../auth/presentation/bloc/Members/members_bloc.dart';
+import '../../domain/entities/Team.dart';
 
 class CreateTaskScreen extends StatefulWidget {
-  final String teamId;
+  final Team team;
   final String taskId;
 
-  const CreateTaskScreen({Key? key, required this.teamId, required this.taskId})
+
+  const CreateTaskScreen({Key? key, required this.team, required this.taskId})
       : super(key: key);
 
   @override
@@ -28,9 +31,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   @override
   void initState() {
     context.read<GetTaskBloc>().add(
-        GetTaskById(ids: {"id": widget.teamId, "taskid": widget.taskId}));
+        GetTaskById(ids: {"id": widget.team.id, "taskid": widget.taskId}));
 
- //   context.read<MembersBloc>().add(GetAllMembersEvent());
+    //   context.read<MembersBloc>().add(GetAllMembersEvent());
     // TODO: implement initState
     super.initState();
   }
@@ -40,7 +43,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     final mediaQuery = MediaQuery.of(context);
 
     return Scaffold(
-     /* appBar: AppBar(
+      /* appBar: AppBar(
         backgroundColor: Colors.white,
         title: BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
           builder: (context, state) {
@@ -50,11 +53,17 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       ),*/
 
 
-      body: SizedBox(
-        height: mediaQuery.size.height,
+      body: BlocBuilder<GetTaskBloc, GetTaskState>(
+        builder: (context, state) {
+          return SizedBox(
+            height: mediaQuery.size.height,
 
-        child: GetTaskByidWidget(widget.teamId, widget.taskId,_taskNameController,),)
-    ,
+            child: GetTaskByidWidget(
+                widget.team, widget.taskId, _taskNameController,
+                getIndexById(widget.taskId, state.tasks)),);
+        },
+      )
+      ,
     );
   }
 }

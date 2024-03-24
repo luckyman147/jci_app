@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/core/error/Failure.dart';
+import 'package:jci_app/features/Teams/data/models/CheckListModel.dart';
 import 'package:jci_app/features/Teams/domain/entities/Checklist.dart';
 import 'package:jci_app/features/Teams/domain/entities/Task.dart';
 import 'package:jci_app/features/Teams/domain/repository/TaskRepo.dart';
@@ -18,26 +19,25 @@ class TaskRepoImpl implements TaskRepo{
    required this.networkInfo
   });
   @override
-  Future<Either<Failure, Unit>> addChecklist(String id, String taskid, List<CheckList> checklist) {
-    // TODO: implement addChecklist
-    throw UnimplementedError();
+  Future<Either<Failure, CheckList>> addChecklist( String taskid, String name)async  {
+
+    return await _getCheckMessage(taskRemoteDataSource.addCheckList(taskid, name));
+
   }
 
   @override
-  Future<Either<Failure, Tasks>> addTask(String Teamid, String name) {
-    return _getMessage(taskRemoteDataSource.AddTask(Teamid, name));
+  Future<Either<Failure, Tasks>> addTask(String Teamid, String name)async  {
+    return await _getMessage(taskRemoteDataSource.AddTask(Teamid, name));
   }
 
   @override
-  Future<Either<Failure, Unit>> deleteChecklist(String id, String taskid, String checklistid) {
-    // TODO: implement deleteChecklist
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> deleteChecklist( String checklistid) {
+return  _getMessageUnit(taskRemoteDataSource.deleteCheckList( checklistid));
   }
 
   @override
-  Future<Either<Failure, Unit>> deleteTask(String id, String taskid) {
-    // TODO: implement deleteTask
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> deleteTask(String taskid) {
+    return _getMessageUnit(taskRemoteDataSource.deleteTask( taskid));
   }
 
   @override
@@ -91,6 +91,9 @@ class TaskRepoImpl implements TaskRepo{
     // TODO: implement updateTask
     throw UnimplementedError();
   }
+
+
+
   Future<Either<Failure, Tasks>> _getMessage(
       Future<Tasks> task) async {
     if (await networkInfo.isConnected) {
@@ -111,5 +114,69 @@ class TaskRepoImpl implements TaskRepo{
     else {
       return Left(OfflineFailure());
     }
+  }  Future<Either<Failure, Unit>> _getMessageUnit(
+      Future<Unit> task) async {
+    if (await networkInfo.isConnected) {
+      try {
+     await task;
+        return  Right(unit);
+      }
+
+
+      on ServerException {
+        return Left(ServerFailure());
+      }
+    }
+
+
+    else {
+      return Left(OfflineFailure());
+    }
+  }
+  Future<Either<Failure, CheckList>> _getCheckMessage(
+      Future<CheckListModel> task) async {
+    if (await networkInfo.isConnected) {
+      try {
+      final tasks=  await task;
+        return  Right(tasks);
+      }
+
+      on EmptyDataException {
+        return Left(EmptyDataFailure());
+      }
+      on ServerException {
+        return Left(ServerFailure());
+      }
+    }
+
+
+    else {
+      return Left(OfflineFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> UpdateTask(String id, bool isCompleted) async{
+    return _getMessageUnit(taskRemoteDataSource.updateIscompleted(id, isCompleted));
+  }
+
+  @override
+  Future<Either<Failure, Unit>> UpdateChecklistStatus(String taskid, String checkid, bool isCompleted) {
+return _getMessageUnit(taskRemoteDataSource.updateChecklistStatus(taskid, checkid, isCompleted));
+  }
+
+  @override
+  Future<Either<Failure, Unit>> UpdateTaskName(String taskid, String name) {
+    return _getMessageUnit(taskRemoteDataSource.updateTaskName(taskid, name));
+  }
+
+  @override
+  Future<Either<Failure, Unit>> UpdateTimeline(String taskid, DateTime StartDate, DateTime Deadline) {
+    return _getMessageUnit(taskRemoteDataSource.UpdateTimeline(taskid, StartDate, Deadline));
+  }
+
+  @override
+  Future<Either<Failure, Unit>> UpdateMembers(String taskid, bool Status, String memberid) {
+    return _getMessageUnit(taskRemoteDataSource.UpdateMembers(taskid, Status, memberid));
   }
 }

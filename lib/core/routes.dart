@@ -17,6 +17,7 @@ import 'package:jci_app/features/intro/presentation/bloc/index_bloc.dart';
 
 
 
+import '../features/Teams/domain/entities/Team.dart';
 import '../features/Teams/presentation/screens/CreateTeamScreen.dart';
 import '../features/auth/presentation/pages/SignUPPage.dart';
 import '../features/intro/presentation/pages/Introduction.dart';
@@ -66,9 +67,9 @@ GoRoute(
   name: 'Task',
 path: '/TaskDetails/:teamId/:TaskId',
 builder: (BuildContext context, GoRouterState state) {
-  final  teamId = state.pathParameters['teamId']! ;
+  final  teamId = state.pathParameters['teamId']! as Team;
   final  TaskId = state.pathParameters['TaskId']! ;
-  return CreateTaskScreen(teamId: teamId, taskId: TaskId,);
+  return CreateTaskScreen(team:teamId , taskId: TaskId,);
 },
 
 

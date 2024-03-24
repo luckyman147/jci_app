@@ -1,13 +1,10 @@
-import express, { Request, Response } from "express";
+import express, { Response } from "express";
 import multer from "multer";
-import { GetTaskById, GetTasksOFTeam, addTask, deleteChecklist, deleteTask, updateTask } from "../../controllers/teams/taskController";
+import { addCheck, deleteChecklist, updateChecklistName, updateIsCompletedChecklist } from "../../controllers/teams/ChecklistController";
+import { GetTaskById, GetTasksOFTeam, addTask, deleteFile, deleteTask, updateDeadline, updateFiles, updateIsCompleted, updateMembers, updateTask, updateTaskName } from "../../controllers/teams/taskController";
 import { AddTeam, GetTeams, addMember, deleteTeam, getTeamById, updateImage, updateTeam, uploadTeamImage } from "../../controllers/teams/teamsController";
+
 import { Authenticate } from "../../middleware/CommonAuth";
-import paginatedResults, { PaginatedResponse } from "../../middleware/pagination";
-import { Task } from "../../models/teams/TaskModel";
-
-
-
 interface CustomResponse extends Response {
     paginatedResults: any;
 }
@@ -29,9 +26,25 @@ router.get('/:id/tasks',GetTasksOFTeam)
 router.get('/:id/tasks/:taskId',GetTaskById)
 
 
+
  //& get tasks
-router.post('/:id/tasks',addTask)// create a task 
+
+ router.post('/:id/tasks',addTask),
+ // create a tas
+
+router.put('/:taskid/UpdateStatus',updateIsCompleted)
 router.put('/:id/tasks/:taskid', upload.array("CoverImage",4),updateTask)//* update tasks 
-router.delete('/:id/tasks/:taskid',deleteTask)     //! delete tasks
-router.delete('/:id/tasks/:taskid/checklist/:checklistid',deleteChecklist)
+router.put('/tasks/:taskid/UpdateName',updateTaskName)//* update tasks
+router.put('/:taskid/UpdateDeadline',updateDeadline)//* update tasks 
+router.put('/:taskid/UpdateMembers',updateMembers)//* update tasks 
+router.put('/:taskid/UpdateFiles',upload.single("CoverImage"),updateFiles)//* update tasks 
+
+router.delete('/tasks/:taskid',deleteTask)
+router.delete('/tasks/:taskid/File/:fileid',deleteFile)
+//! Checklist
+router.delete('/checklist/:checklistid',deleteChecklist)
+router.put('/:taskid/UpdateCheckStatus/:checkid',updateIsCompletedChecklist)
+router.put('/:taskid/UpdateCheckName/:checkid',updateChecklistName)
+router.post('/:idTask/Checklist',addCheck)// create a a checklist
+
 export { router as TeamRoute };

@@ -13,8 +13,19 @@ class Tasks{
   final List<CheckList> CheckLists;
   final bool isCompleted;
 
+
+  //empty task
+
+
   Tasks( {required this.id,required this.name, required this.AssignTo, required this.Deadline, required this.attachedFile, required this.CheckLists,
      required this.StartDate, required this.description
     ,required this.isCompleted});
 
 }
+
+//make to json
+
+
+//make from json
+
+

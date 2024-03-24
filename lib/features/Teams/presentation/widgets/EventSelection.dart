@@ -22,7 +22,7 @@ final ff=state.eventFormz.value??EventTest;
 return  Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          imageEventWidget(item),
+          imageEventWidget(item,mediaQuery),
           SizedBox(
             width: mediaQuery.size.width / 3,
             child: ElevatedButton(
@@ -165,24 +165,7 @@ BlocConsumer<AcivityFBloc, AcivityFState>(
       );
 
     }
-  /*  else if (state is EventByNameLoadedState){
-      debugPrint(state.toString());
-      debugPrint("name is ${name.isEmpty}");
-      if (name.isNotEmpty){
-        return RefreshIndicator(
-            onRefresh: () {
-              print(state.Events.length);
-              return
 
-                RefreshEvents(context,SearchType.Name,name);
-            },
-            child: EventsDetails( state.Events,mediaQuery));
-      }
-      else{
-        context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: activity.Events));
-      }
-
-    }*/
     else if (state is ErrorActivityState) {
       return MessageDisplayWidget(message: state.message);
     }
@@ -216,7 +199,7 @@ Widget EventsDetails(List<Event> Events,mediaQuery)=>ListView.separated(
   },
   separatorBuilder: (BuildContext context, int index) { return const SizedBox(height: 10,);  },
 
-);Widget imageEventWidget(Event item){ return Row(
+);Widget imageEventWidget(Event item,mediaQuery){ return Row(
     children: [
       item.CoverImages.isEmpty
           ?  ClipRRect(
@@ -242,7 +225,11 @@ Widget EventsDetails(List<Event> Events,mediaQuery)=>ListView.separated(
       ),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Text(item.name,style: PoppinsSemiBold(18, textColorBlack,TextDecoration.none),),
+        child: SizedBox(
+            width: mediaQuery.size.width/4,
+            child: Text(item.name,
+              overflow: TextOverflow.ellipsis,
+              style: PoppinsSemiBold(18, textColorBlack,TextDecoration.none),)),
       ),
 
     ]);}

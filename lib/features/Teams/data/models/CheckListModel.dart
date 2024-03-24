@@ -6,7 +6,20 @@ class CheckListModel extends  CheckList{
   CheckListModel({required super.name, required super.isCompleted, required super.id});
 
   factory CheckListModel.fromJson(Map<String, dynamic> json) =>
-      _$CheckListModelFromJson(json);
+
+  CheckListModel(
+  name: json['name'] as String,
+
+  isCompleted: json['isCompleted'] as bool,
+  id: json['id'] !=null? json['id'] as String : json['_id'] as String
+  );
+  static CheckListModel fromEntity(CheckList entity) {
+    return CheckListModel(
+      name: entity.name,
+      id: entity.id,
+      isCompleted: entity.isCompleted,
+    );
+  }
 
   Map<String, dynamic> toJson() => _$CheckListModelToJson(this);
 }

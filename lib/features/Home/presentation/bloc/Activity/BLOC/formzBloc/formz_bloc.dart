@@ -41,6 +41,7 @@ class FormzBloc extends Bloc<FormzEvent, FormzState> {
 
     on<MemberFormzChanged>(_onMemberFormChanged);
 on<MembersTeamChanged>(_onMembersTeamChanged);
+on<InitMembers>(_initMembersTeamFormz);
 on<EventChanged>(_onEventChanged);
 
 
@@ -186,7 +187,17 @@ on<EventChanged>(_onEventChanged);
     emit(state.copyWith(
       eventFormz: evented,
     ));
-  }void _onMembersTeamChanged(
+  }
+  void _initMembersTeamFormz(
+      InitMembers event, Emitter<FormzState> emit) {
+    final members = MembersTeamFormz.dirty(event.members);
+    emit(state.copyWith(
+      membersTeamFormz: members,
+    ));
+  }
+
+
+  void _onMembersTeamChanged(
       MembersTeamChanged event, Emitter<FormzState> emit) {
     final currentMembers = state.membersTeamFormz.value ?? [];
     final updatedMembers = [...currentMembers, event.memberTeam];

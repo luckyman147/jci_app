@@ -12,7 +12,7 @@ final dynamic TeamLeader;
 final bool status;
   final List<dynamic > Members;
   final String CoverImage;
-  final List<Map<String,dynamic>> tasks;
+  final List<Tasks> tasks;
 
   Team( {required this.name,
   required this.id,

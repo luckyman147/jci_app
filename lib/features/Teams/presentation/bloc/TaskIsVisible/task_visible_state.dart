@@ -1,31 +1,58 @@
 part of 'task_visible_bloc.dart';
+enum Section{
+  Details,Attachments,Comments
+
+}
+enum TextFieldsTitle {
+  Active,Inactive}
+enum TextFieldsDescription {
+  Active,Inactive}
 
  class TaskVisibleState extends Equatable {
    final bool WillAdded;
-   final List<Tasks> tasks;
+   final bool WillDeleted;
+
+final Section section;
+final TextFieldsTitle textFieldsTitle;
+final TextFieldsDescription textFieldsDescription;
 
 
-   TaskVisibleState(this.WillAdded, this.tasks,);
+   TaskVisibleState({this.WillAdded=false,this.WillDeleted=false,
+
+   this.section=Section.Details,
+    this.textFieldsTitle=TextFieldsTitle.Inactive,
+    this.textFieldsDescription=TextFieldsDescription.Inactive
+
+   });
 
    TaskVisibleState copyWith({
+     bool? WillDeleted,
     bool? WillAdded,
-    List<Tasks>? tasks,
+    Section? section,
+    TextFieldsTitle? textFieldsTitle,
+    TextFieldsDescription? textFieldsDescription
+
    }) {
    return TaskVisibleState(
-   WillAdded ?? this.WillAdded,
-    tasks ?? this.tasks,
+      WillDeleted: WillDeleted ?? this.WillDeleted,
+      WillAdded: WillAdded ?? this.WillAdded,
+      section: section ?? this.section,
+      textFieldsTitle: textFieldsTitle ?? this.textFieldsTitle,
+      textFieldsDescription: textFieldsDescription ?? this.textFieldsDescription
+
+
 
    );
    }
 
    @override
    // TODO: implement props
-   List<Object?> get props => [WillAdded,tasks];
+   List<Object?> get props => [WillAdded,WillDeleted,section,textFieldsTitle,textFieldsDescription];
    }
 
 
 class TaskVisibleInitial extends TaskVisibleState {
-  TaskVisibleInitial(super.WillAdded, super.tasks);
+  TaskVisibleInitial();
 
   @override
   List<Object> get props => [];

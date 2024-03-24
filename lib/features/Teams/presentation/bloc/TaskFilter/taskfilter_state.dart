@@ -1,5 +1,5 @@
 part of 'taskfilter_bloc.dart';
-enum TaskFilter{ All,Date,Member,Pending,Completed,Over,Today,ThisWeek}
+enum TaskFilter{ All,Pending,Completed,}
  class TaskfilterState extends Equatable {
   final TaskFilter selectedFilter;
   const TaskfilterState({this.selectedFilter=TaskFilter.All});

@@ -11,10 +11,11 @@ import 'package:jci_app/features/Teams/domain/usecases/TeamUseCases.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/NumPages/num_pages_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/TaskActions/task_actions_bloc.dart';
+
 import 'package:jci_app/features/Teams/presentation/bloc/TaskFilter/taskfilter_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/TeamActions/team_actions_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/Timeline/timeline_bloc.dart';
+
 
 import 'domain/usecases/TaskUseCase.dart';
 
@@ -24,13 +25,22 @@ Future<void> initTeams() async {
 
   //bloc
 
+  sl.registerFactory(() => TimelineBloc());
   sl.registerFactory(() => TaskVisibleBloc());
   sl.registerFactory(() => TaskfilterBloc());
-sl.registerFactory(() => TaskActionsBloc(sl(),sl()  ,sl()));
+
   sl.registerFactory(() => NumPagesBloc());
-  sl.registerFactory(() => GetTaskBloc(sl(),sl() ,sl() ));
-sl.registerFactory(() => TeamActionsBloc(sl(), sl(),sl()  ));
-  sl.registerFactory(() => GetTeamsBloc(sl(), sl()  ));
+  sl.registerFactory(() => GetTaskBloc(addChecklistUseCase:sl(),
+      getTasksOfTeamUseCase: sl(),
+      getTasksByIdUseCase: sl(),
+      addTaskUseCase: sl(),
+      updateIsCompletedUseCases: sl(),
+      deleteTaskUseCase: sl(),
+      deleteChecklistUseCase: sl(),
+      updateChecklistStatusUseCase: sl(),
+      updateTaskNameUseCase: sl(), updateTaskTimelineUseCase: sl(), UpdateMembersUseCase: sl()));
+
+  sl.registerFactory(() => GetTeamsBloc(sl(), sl()  ,sl(),sl(),sl()));
   //datasources
 
   sl.registerLazySingleton<TaskRemoteDataSource>(() => TaskRemoteDataSourceImpl(client: sl()));
@@ -38,6 +48,15 @@ sl.registerFactory(() => TeamActionsBloc(sl(), sl(),sl()  ));
   sl.registerLazySingleton<TeamLocalDataSource>(() => TeamLocalDataSourceImpl());
   sl.registerLazySingleton<TaskLocalDataSource>(() => TaskLocalDataSourceImpl());
   //use cases
+  sl.registerLazySingleton(() => AddChecklistUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateMembersUsecases(sl()));
+  sl.registerLazySingleton(() => DeleteChecklistUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteTaskUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateTaskTimelineUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateTaskNameUseCase(sl()));
+
+  sl.registerLazySingleton(() => UpdateChecklistStatusUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateIsCompletedUseCases(sl()));
   sl.registerLazySingleton(() => AddTaskUseCase(sl()));
   sl.registerLazySingleton(() => UpdateTaskUseCase(sl()));
   sl.registerLazySingleton(() => GetTasksOfTeamUseCase(sl()));

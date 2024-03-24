@@ -1,12 +1,14 @@
-import { plainToClass } from "class-transformer"
-import { validate } from "class-validator"
-import { NextFunction, Request, Response } from "express"
-import { TaskInput, firstTaskInput } from "../../dto/teams.dto"
-import { CheckList } from "../../models/teams/CheckListModel"
-import { Task } from "../../models/teams/TaskModel"
-import { team } from "../../models/teams/team"
-import { getCheckListsInfoByIds, getMembersInfo, getTaskById, getTasksInfo } from "../../utility/role"
-import { basename } from "path"
+import { plainToClass } from "class-transformer";
+import { validate } from "class-validator";
+import { NextFunction, Request, Response } from "express";
+import moment from 'moment';
+import * as path from "path";
+import { IsCompletedInput, MembersInput, TaskInput, TimelineInput, firstTaskInput } from "../../dto/teams.dto";
+import { File } from "../../models/FileModel";
+import { CheckList } from "../../models/teams/CheckListModel";
+import { Task } from "../../models/teams/TaskModel";
+import { team } from "../../models/teams/team";
+import { getCheckListsInfoByIds, getFilesInfoByIds, getMembersInfo, getTaskById, getTasksInfo } from "../../utility/role";
 
 export const GetTasksOFTeam=async(req:Request,res:Response,next:NextFunction)=>{
 
@@ -39,7 +41,7 @@ export const GetTaskById=async(req:Request,res:Response,next:NextFunction)=>{
             name: task.name,
             AssignTo:await  getMembersInfo(task.AssignTo),
             Deadline: task.Deadline,
-     attachedFile:task.attachedFile,
+     attachedFile:await    getFilesInfoByIds(task.attachedFile),
      description: task.description,
      StartDate:task.StartDate,
             isCompleted: task.isCompleted,
@@ -86,18 +88,17 @@ if (!Team) {
      console.log('saved task')
   
    try{
-        console.log('on save task')
+       
 
       const savedTask = await newTask.save();
-              console.log('on save task')
+           
 
  await Team.tasks.push(savedTask._id)
-        console.log('on save task')
 
     await Team.save()
-            console.log('on save task')
+    
 
- console.log('saved task')
+
       res.status(201).json(savedTask);
 }catch(err){
     console.log("error",err)
@@ -108,6 +109,14 @@ if (!Team) {
   };
 
 
+
+
+
+
+
+
+   
+ 
   //& update tasks
   export const updateTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -166,67 +175,262 @@ if (!Team) {
       res.status(500).json({ error: 'Internal server error' });
     }
   };
-  export const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
+ export const updateFiles = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const teamId = req.params.id;
-      const taskId = req.params.taskid;
+     
+      const taskId = req.params.taskid ;
   
-      const Team = await team.findById(teamId);
-      if (!Team) {
-        return res.status(404).json({ error: 'Team not found' });
-      }
+      
   
-      const taskToDeleteIndex = Team.tasks.findIndex((task) => task._id.toString() === taskId);
-      if (taskToDeleteIndex === -1) {
-        return res.status(404).json({ error: 'Task not found in the team' });
-      }
-  
-      // Remove the task from the team's tasks array
-      const deletedTask = Team.tasks.splice(taskToDeleteIndex, 1)[0];
-  
-      // Save the updated team
-      const savedTeam = await Team.save();
-  
-      res.status(200).json({ deletedTask, team: savedTeam });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal server error' });
-    }
-  };
-  export const deleteChecklist = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const teamId = req.params.id;
-      const taskId = req.params.taskid;
-      const checklistId = req.params.checklistid;
-  
-      const Team = await team.findById(teamId);
-      if (!Team) {
-        return res.status(404).json({ error: 'Team not found' });
-      }
-  
-      const taskToUpdate = Team.tasks.find((task) => task._id.toString() === taskId);
+      const taskToUpdate = await Task.findById(taskId)
       if (!taskToUpdate) {
         return res.status(404).json({ error: 'Task not found in the team' });
       }
-  console.log(taskToUpdate)
-  const task= await Task.findById(taskId)
-      const checklistToDeleteIndex = task!.CheckList.findIndex(
-        (checklist:any) => checklist._id.toString() === checklistId
-      );
-      if (checklistToDeleteIndex === -1) {
-        return res.status(404).json({ error: 'Checklist not found in the task' });
+  
+      
+  
+  console.log(req.file)
+     
+  
+     
+      const attachedFile = req.file;
+      if (!attachedFile) {
+        return res.status(400).send('Invalid or missing files');
       }
   
-      // Remove the checklist item from the task's CheckList array
-      const deletedChecklist = task!.CheckList.splice(checklistToDeleteIndex, 1)[0];
-  await task?.save()
-      // Save the updated team
-      const savedTeam = await Team.save();
+      const fileExtension = path.extname(attachedFile.originalname);
+    
+     const founded= await File
+     .findOne({ path: attachedFile.originalname })
+
+    if (!founded) {
+      // Convert the file to a base64 string
+      const base64File = attachedFile.buffer.toString('base64');
+      const file=new File({
+        path: attachedFile.originalname ,
+        url:base64File,
+        extension:fileExtension,
+
+      })
+
+      taskToUpdate.attachedFile.push(file._id);
+await   file.save()
   
-      res.status(200).json({ deletedChecklist, task });
+     
+      await taskToUpdate.save();
+  
+      res.status(200).json({ file});
+    }
+  else{
+    if (taskToUpdate.attachedFile.includes(founded._id)){
+      return res.status(400).json({ error: 'File already exists' });
+    }
+    else{
+      taskToUpdate.attachedFile.push(founded._id);
+      await taskToUpdate.save();
+      res.status(200).json({ updatedTask: taskToUpdate});
+    }
+  }
+  }
+    
+    
+    catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+
+
+
+
+  export const updateIsCompleted = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const teamId = req.params.id;
+      const taskId = req.params.taskid;
+  
+      const task = await Task.findById(taskId);
+      if (!task) {
+        return res.status(404).json({ error: 'task not found' });
+      }
+    const taskInput = plainToClass(IsCompletedInput, req.body);
+      const errors = await validate(taskInput, { validationError: { target: false } });
+      if (errors.length > 0) {
+        return res.status(400).json({ message: 'Input validation failed', errors });
+      }
+           
+task.isCompleted=taskInput.IsCompleted
+await task.save()
+      res.status(200).json({ message:"Completed" , task });}
+   
+    
+    catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+  
+  
+  export const updateDeadline = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      
+      const taskId = req.params.taskid;
+      
+  
+      const task = await Task.findById(taskId);
+      if (!task) {
+        return res.status(404).json({ error: 'task not found' });
+      }
+    const timelineInput = plainToClass(TimelineInput, req.body);
+      const errors = await validate(timelineInput, { validationError: { target: false } });
+      if (errors.length > 0) {
+        return res.status(400).json({ message: 'Input validation failed', errors });
+      }
+           console.log(timelineInput)
+           const startDateUtc = moment.utc(timelineInput.StartDate).toDate();
+           console.log(startDateUtc)
+const deadlineUtc =  moment.utc(timelineInput.Deadline).toDate();
+task.StartDate=startDateUtc
+task.Deadline=deadlineUtc
+await task.save()
+console.log(task)
+      res.status(200).json({ message:"Completed" , task });}
+   
+    
+    catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+  
+    export const updateMembers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      
+      const taskId = req.params.taskid;
+      
+  
+      const task = await Task.findById(taskId);
+      if (!task) {
+        return res.status(404).json({ error: 'task not found' });
+      }
+    const membersInput = plainToClass(MembersInput, req.body);
+      const errors = await validate(membersInput, { validationError: { target: false } });
+      if (errors.length > 0) {
+        return res.status(400).json({ message: 'Input validation failed', errors });
+      }
+         console.log(membersInput.Status)  
+    //        if (task.AssignTo.includes(membersInput.Member) && membersInput.Status=="true"){
+    // return res.status(400).json({ error: 'Member already exists' });}
+if (membersInput.Status=="true"){
+
+  console.log(membersInput.Member)  
+  console.log(membersInput.Status)  
+   
+  await task.AssignTo.push(membersInput.Member)
+
+    await task.save()
+    
+      res.status(200).json({ message:"Completed" , task });
+}
+else {
+  console.log(membersInput.Member)
+
+  task.AssignTo = task.AssignTo.filter((member) => member._id.toString() !== membersInput.Member.toString());
+
+await task.save()
+    res.status(200).json({ message:"Completed" , task });
+  
+}
+}
+   
+    
+    catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+  
+  
+  
+  
+  
+  
+  
+  
+  export const updateTaskName = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      
+      const taskId = req.params.taskid;
+  
+      const task = await Task.findById(taskId);
+      if (!task) {
+        return res.status(404).json({ error: 'task not found' });
+      }
+    const taskInput = plainToClass(firstTaskInput, req.body);
+      const errors = await validate(taskInput, { validationError: { target: false } });
+      if (errors.length > 0) {
+        return res.status(400).json({ message: 'Input validation failed', errors });
+      }
+           
+task.name=taskInput.name
+await task.save()
+      res.status(200).json({ message:"Completed" , task });}
+   
+    
+    catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+
+
+
+ 
+
+
+  export const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+      const taskId = req.params.taskid;
+         const task = await Task.findById(taskId);
+                  if (!task) {
+                    return res.status(404).json({ error: 'Task not found' });
+                  }
+
+                  // Delete the Team
+                  await task.deleteOne();
+
+                  res.status(204).json({message:"deleted successully"});
+  
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };export const deleteFile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+      const taskId = req.params.taskid;
+      const fileId = req.params.fileid;
+         const task = await Task.findById(taskId);
+                  if (!task) {
+                    return res.status(404).json({ error: 'Task not found' });
+                  }
+                  const file=await File.findById(fileId)
+                  if (!file) {
+                    return res.status(404).json({ error: 'File not found' });
+                  }
+
+            task.attachedFile = task.attachedFile.filter((file) => file._id.toString() !== file._id.toString());
+await file.deleteOne()
+                  await task.save();
+
+                  res.status(204).json({message:"deleted successully"});
+  
+
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Internal server error' });
     }
   };
   
+ 

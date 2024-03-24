@@ -1,4 +1,6 @@
+import { NextFunction } from "express";
 import mongoose, { Document, Schema } from "mongoose";
+import { CheckList } from "./CheckListModel";
 
 export interface Task extends Document{
 
@@ -6,7 +8,7 @@ export interface Task extends Document{
     AssignTo:any[]
     StartDate: Date
     Deadline: Date
-    attachedFile: string[]
+    attachedFile: any[]
     CheckList: any[]
     isCompleted:boolean
     description:string
@@ -30,13 +32,20 @@ export const TaskSchema=new Schema({
         currentDate.setDate(currentDate.getDate() + 1);
         return currentDate;
       } },
-    attachedFile: { type: [String], default: []},
+    attachedFile:[{type: mongoose.Schema.Types.ObjectId,
+        ref: 'File',
+        default:[]}],
     CheckList: [{ type: mongoose.Schema.Types.ObjectId,
         ref: 'CheckList',default:[]},
     
     ],
 
-},{
+}
+
+
+
+
+,{
     toJSON:{
         transform(doc,ret){
             delete ret.__v
@@ -46,7 +55,15 @@ export const TaskSchema=new Schema({
     },
     
     timestamps:true
-})
+}
+
+
+
+
+
+)
+
+
    
 
 

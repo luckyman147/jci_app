@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { File } from '../models/FileModel';
 import { Member } from "../models/Member";
 import { Event } from "../models/activities/eventModel";
 import { Role } from "../models/role";
@@ -119,7 +120,7 @@ export const getTeamByEvent= async () =>{
         name: task.name,
         AssignTo:await  getMembersInfo(task.AssignTo),
         Deadline: task.Deadline,
- 
+ StartDate:task.StartDate,
         isCompleted: task.isCompleted,
         CheckList: await  getCheckListsInfoByIds(task.CheckList),
     
@@ -173,6 +174,23 @@ export   function shortenBase64(base64String:string) {
       }));
   
       return checkListsInfo;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal server error');
+    }
+  };  export const getFilesInfoByIds = async (checkListIds:string[]) => {
+    try {
+      const Files = await File.find({ _id: { $in: checkListIds } });
+  
+      const FilesInfo = Files.map((file) => ({
+        id: file._id,
+        url: file.url,
+        extension: file.extension,
+        path: file.path,
+   
+      }));
+  
+      return FilesInfo;
     } catch (error) {
       console.error(error);
       throw new Error('Internal server error');

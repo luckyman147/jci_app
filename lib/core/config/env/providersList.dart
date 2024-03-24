@@ -10,10 +10,11 @@ import 'package:jci_app/features/Home/presentation/bloc/DescriptionBoolean/descr
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/TaskActions/task_actions_bloc.dart';
+
 import 'package:jci_app/features/Teams/presentation/bloc/TaskFilter/taskfilter_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/TeamActions/team_actions_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/Timeline/timeline_bloc.dart';
+
 import 'package:jci_app/features/auth/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
@@ -50,15 +51,16 @@ List<SingleChildWidget> providersList = [
   BlocProvider(create: (_) => di.sl<SignUpBloc>()),
   BlocProvider(create: (_) => di.sl<LoginBloc>()),
   BlocProvider(create: (_) => di.sl<ParticpantsBloc>()),
-BlocProvider(create: (_) => di.sl<TeamActionsBloc>()),
+
   BlocProvider(create: (_) => localeCubit()..getSavedLanguage()),
   BlocProvider(create: (_) => ActivityCubit()),
   BlocProvider(create: (_) => di.sl<FormzBloc>()),
   BlocProvider(create: (_) => di.sl<GetTeamsBloc>()..add(GetTeams())),
   BlocProvider(create: (_) => di.sl<GetTaskBloc>()),
   BlocProvider(create: (_) => di.sl<NumPagesBloc>()),
-  BlocProvider(create: (_)=> di.sl<TaskActionsBloc>()),
+
   BlocProvider(create: (_)=> di.sl<TaskVisibleBloc>()),
+  BlocProvider(create: (_)=> di.sl<TimelineBloc>()),
   BlocProvider(create: (_)=> di.sl<TaskfilterBloc>()),
 
 

@@ -20,9 +20,10 @@ class CreatTeamScreen extends StatefulWidget {
 class _CreatTeamScreenState extends State<CreatTeamScreen> {
   @override
   void initState() {
-    context.read<MembersBloc>().add(GetAllMembersEvent());
-    context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: activity.Events));
 
+    context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: activity.Events));
+    context.read<MembersBloc>().add(GetAllMembersEvent());
+    context.read<FormzBloc>().add(InitMembers(members: []));
     // TODO: implement initState
     super.initState();
   }

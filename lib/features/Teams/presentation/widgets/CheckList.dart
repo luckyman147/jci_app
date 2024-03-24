@@ -10,33 +10,104 @@ import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/TaskIsVisible/task_visible_bloc.dart';
 
 class CheckListWidget extends StatelessWidget {
-  final List<CheckList> checkList;
-  const CheckListWidget({Key? key, required this.checkList}) : super(key: key);
+  final List<Map<String,dynamic>> checkList;
+  final String id ;
+
+  const CheckListWidget({Key? key, required this.checkList, required this.id}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(itemBuilder: (context ,index)=>Padding(
-      padding: paddingSemetricHorizontal(h: 18),
-      child: Container(
-        decoration: BoxDecoration(
-          color: textColorWhite,
+    return ListView.separated(itemBuilder: (context, index) =>
+        Padding(
+          padding: paddingSemetricHorizontal(h: 18),
+          child: BlocBuilder<GetTaskBloc, GetTaskState>(
+            builder: (context, state) {
+              return Container(
+                 // set the desired height
 
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: textColorBlack,width: 2),
+                decoration:  BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 1,
+                      offset: Offset(0, 1), // changes position of shadow
+                    ),
+                  ],
+
+                  borderRadius: BorderRadius.circular(15),
+
+                ),
+                child: ListTile(
+                  minVerticalPadding: 5,
+                  enableFeedback: true,
+                  tileColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(color:textColor, width: 1.5)),
+
+
+
+                  leading:
+                  Checkbox(
+                    activeColor: PrimaryColor,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    splashRadius: 70,
+                    checkColor: textColorWhite,
+                    side: BorderSide(color: textColorBlack),
+
+
+                    value:checkList[index]['isCompleted'], onChanged: (bool? value) {
+
+                    context.read<GetTaskBloc>().add(UpdateChecklistStatus({"taskid":id,"checkid":checkList[index]['id'],
+                      "IsCompleted":value }));
+
+                  },)
+
+
+
+
+
+
+
+                  ,
+
+
+                  title: TextField(
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (string){
+                      log("$string");
+                    },
+                    enabled: true,
+                    controller: TextEditingController(
+                        text: checkList[index]['name']),
+                    style: PoppinsSemiBold(18, textColorBlack,checkList[index]["isCompleted"]?TextDecoration.lineThrough:TextDecoration.none),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.all(18),
+                    ),
+                  ),
+
+
+                  trailing: InkWell(
+                    onTap: () {
+                        context.read<GetTaskBloc>().add(DeleteChecklist(id,checkList[index]['id']));
+                    },
+                    child: Icon(Icons.delete, color: Colors.red, size: 20,),
+                  ),
+                ),
+              );
+            },
+          ),
         ),
-        child: ListTile(
-
-
-          leading: InkWell(child: Icon(checkList[index].isCompleted?
-          Icons.check_box:Icons.check_box_outline_blank,color: PrimaryColor,size: 20,)),
-          title: Text(checkList[index].name,style: PoppinsRegular(17, textColor),),
-        ),
-      ),
-    ),
-        separatorBuilder: (context,index)=> SizedBox(height: 10,), itemCount: checkList.length);
+        separatorBuilder: (context, index) => SizedBox(height: 10,),
+        itemCount: checkList.length);
   }
 }
-Widget CheckListAddField(TextEditingController controller, String id) =>
+
+Widget CheckListAddField(TextEditingController controller, String id,FocusNode focus,mediaQuery) =>
     BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
       builder: (context, state) {
         return Padding(
@@ -44,56 +115,78 @@ Widget CheckListAddField(TextEditingController controller, String id) =>
           child: InkWell(
             onTap: () {
               context.read<TaskVisibleBloc>().add(ToggleTaskVisible(false));
+            FocusScope.of(context).requestFocus(focus);
             },
             child: Container(
-              decoration: taskDecoration,
-              child: TextField(
-
-                controller: controller,
-                onTapOutside: (rr) {
-                  context.read<TaskVisibleBloc>().add(ToggleTaskVisible(true));
-                },
-                style: PoppinsRegular(18, textColorBlack),
-                onChanged: (value) {
-                  log(controller.text);
-                },
-                decoration: InputDecoration(
 
 
-                  enabled: state.WillAdded,
 
-                  prefixIcon: GestureDetector(
-                      onTap: () {
-                        context.read<TaskVisibleBloc>().add(
-                            ToggleTaskVisible(true));
-                      },
-                      child: state.WillAdded ? Icon(Icons.cancel,color: Colors.red,) : SizedBox()
-                  ),
-                  suffixIcon: GestureDetector(
-                      onTap: () {
-                        if (controller.text.isEmpty) {
-                          SnackBarMessage.showErrorSnackBar(
-                              message: "Empty Field", context: context);
-                        }
-                        else {
-                          log(id);
 
-                          controller.clear();
-                          context.read<TaskVisibleBloc>().add(
-                              ToggleTaskVisible(true));
-                        }
-                      },
-                      child: state.WillAdded ? Icon(
-                        Icons.check_circle, color: PrimaryColor,) : SizedBox()
-                  ),
-                  hintText: 'Add CheckList',
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(18),
-                ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: BackWidgetColor, width: 2),
+                borderRadius: BorderRadius.circular(15),
               ),
+              child:
+              !state.WillAdded? SizedBox(
+
+
+                      width: mediaQuery.size.width/1.1,
+
+                  child: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Text("Add CheckList",textAlign: TextAlign.center ,style: PoppinsRegular(18, textColor),),
+                  )):
+
+              textFieldcHECKLIST(focus, controller, context, state, id),
 
             ),
           ),
         );
       },
     );
+
+TextField textFieldcHECKLIST(FocusNode focus, TextEditingController controller, BuildContext context, TaskVisibleState state, String id) {
+  return TextField(
+focusNode: focus ,
+              controller: controller,
+
+              style: PoppinsRegular(18, textColorBlack),
+
+              decoration: InputDecoration(
+
+                prefixIcon: GestureDetector(
+                    onTap: () {
+                      context.read<TaskVisibleBloc>().add(
+                          ToggleTaskVisible(true));
+                    focus.unfocus();
+                    },
+                    child: state.WillAdded ? Icon(
+                      Icons.cancel, color: Colors.red,) : SizedBox()
+                ),
+                suffixIcon: GestureDetector(
+                    onTap: () {
+                      if (controller.text.isEmpty) {
+                        SnackBarMessage.showErrorSnackBar(
+                            message: "Empty Field", context: context);
+                      }
+                      else {
+                        log(id);
+                        context.read<TaskVisibleBloc>().add(
+                            ToggleTaskVisible(true));
+                        context.read<GetTaskBloc>().add(AddCheckList(
+                            {"idTask": id, "checklist": controller.text}));
+
+
+                        controller.clear();
+                      }
+                    },
+                    child: state.WillAdded ? Icon(
+                      Icons.check_circle, color: PrimaryColor,) : SizedBox()
+                ),
+                hintText: 'Add CheckList',
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.all(18),
+              ),
+            );
+}

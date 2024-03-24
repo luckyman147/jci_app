@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
@@ -27,14 +28,45 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
   final GetAllTeamsUseCase getAllTeamsUseCase;
   final GetTeamByIdUseCase getTeamByIdUseCase;
-
-  GetTeamsBloc(this.getAllTeamsUseCase, this.getTeamByIdUseCase)
+  final AddTeamUseCase addTeamUseCase;
+  final UpdateTeamUseCase updateTeamUseCase;
+  final DeleteTeamUseCase deleteTeamUseCase;
+  GetTeamsBloc(this.getAllTeamsUseCase, this.getTeamByIdUseCase, this.addTeamUseCase, this.updateTeamUseCase, this.deleteTeamUseCase)
       : super(GetTeamsInitial()) {
     on<GetTeams>(onGetTeams,transformer: throttleDroppable(throttleDuration));
    on<GetTeamById>(onGetTeamById);
 
+    on<AddTeam>(ACtionEvent);
+  }
+
+  void ACtionEvent(AddTeam event, Emitter<GetTeamsState> emit) async {
+
+
+
+    try {
+      final result = await addTeamUseCase(event.team);
+emit(_mapFailureOrAddToState(result));
+    } catch (error) {
+      emit(state.copyWith(status: TeamStatus.error));
+
+    }
 
   }
+
+
+
+
+void deleteTeam(DeleteTeam event, Emitter<GetTeamsState> emit) async {
+    try {
+      final result = await deleteTeamUseCase(event.id);
+      emit(_mapFailureOrDeleteToState(result,event.id));
+    } catch (error) {
+      emit(state.copyWith(status: TeamStatus.error));
+    }
+  }
+
+
+
   Future<void> onGetTeams(GetTeams event, Emitter<GetTeamsState> emit) async {
     if (state.hasReachedMax) return;
     try {
@@ -55,6 +87,7 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
       ));
     } catch (error) {
       emit(state.copyWith(status: TeamStatus.error));
+
     }
   }
 
@@ -64,7 +97,7 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
       final result = await getTeamByIdUseCase(event.id);
       emit(_mapFailureOrTeamByIdToState(result));
     } catch (error) {
-      emit(GetTeamsError('An error occurred'));
+      emit(GetTeamsError('An error ssssd'));
     }
   }
   GetTeamsState _mapFailureOrTeamToState(Either<Failure, List<Team>> either) {
@@ -86,6 +119,32 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
           ),
     );
   }
+  GetTeamsState _mapFailureOrAddToState(Either<Failure, Team> either) {
+    return either.fold(
+            (failure) => state.copyWith(status: TeamStatus.error, errorMessage: mapFailureToMessage(failure)),
+            (act) => state.copyWith(
+            teams: UnmodifiableListView(
+                [act, ...state.teams]
+            ),status: TeamStatus.success
+
+
+        )
+
+    );
+  }
+
+  GetTeamsState _mapFailureOrDeleteToState(Either<Failure, Unit> result,String id) {
+    return result.fold(
+            (failure) => state.copyWith(status: TeamStatus.error, errorMessage: mapFailureToMessage(failure)),
+            (act) => state.copyWith(
+            teams: UnmodifiableListView(
+                state.teams.where((element) => element.id != id)
+            ),status: TeamStatus.success
+        )
+
+    );
+  }
+
 }
 
 

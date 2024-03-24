@@ -8,7 +8,7 @@ abstract class TeamRepo{
 
   Future<Either<Failure,List<Team>>> getTeams(String page,String limit);
   Future<Either<Failure,Team>> getTeamById(String id );
-  Future<Either<Failure,Unit>> addTeam(Team team);
+  Future<Either<Failure,Team>> addTeam(Team team);
   Future<Either<Failure,Unit>> updateTeam(Team team);
   Future<Either<Failure,Unit>> deleteTeam(String id);
   Future<Either<Failure,Unit>> updateImage(String id, String path);

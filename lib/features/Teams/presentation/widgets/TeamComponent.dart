@@ -110,8 +110,8 @@ class myTaskButtons extends StatelessWidget {
                   ? textColorWhite
                   : Colors.black,
               shape: RoundedRectangleBorder(
-                side: BorderSide(color: Colors.black, width: 1.0),
-                borderRadius: BorderRadius.circular(16.0),
+                side: BorderSide(color: textColorBlack, width: 1.0),
+                borderRadius: BorderRadius.circular(10.0),
               ),
             ),
             onPressed: () {

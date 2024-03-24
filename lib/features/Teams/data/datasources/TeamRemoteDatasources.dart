@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -22,7 +23,7 @@ abstract class TeamRemoteDataSource {
   Future<List<TeamModel>> getAllTeams(String page,String limit);
   Future<TeamModel> getTeamById(String id);
 
-  Future<Unit> createTeam(TeamModel Team);
+  Future<TeamModel> createTeam(TeamModel Team);
   Future<Unit> updateTeam(TeamModel Team);
   Future<Unit> deleteTeam(String id);
 
@@ -34,7 +35,7 @@ class TeamRemoteDataSourceImpl implements TeamRemoteDataSource{
 
   TeamRemoteDataSourceImpl({required this.client});
   @override
-  Future<Unit> createTeam(TeamModel Team)async  {
+  Future<TeamModel> createTeam(TeamModel Team)async  {
 final tokens= await Store.GetTokens();
   final body =Team.toJson();
   debugPrint(body.toString()  );
@@ -52,10 +53,12 @@ final tokens= await Store.GetTokens();
       final Map<String, dynamic> decodedJson = json.decode(response.body) ;
 
 
-      final upload_response=await uploadImages(decodedJson['_id'], Team.CoverImage,TeamUrl,"CoverImage");
+      final upload_response=await uploadImages(decodedJson['id'], Team.CoverImage,TeamUrl,"CoverImage");
     if (upload_response.statusCode==200){
-      log("message");
-        return Future.value(unit);
+      final bodyStream = upload_response.stream;
+      final bodyBytes = await bodyStream.toBytes();
+      final bodyString = utf8.decode(bodyBytes);
+      return  TeamModel.fromJson(jsonDecode(bodyString));
       }
       else if (upload_response.statusCode==400){
         debugPrint(upload_response.reasonPhrase.toString());
@@ -70,6 +73,10 @@ final tokens= await Store.GetTokens();
     else if (response.statusCode == 400) {
       throw WrongCredentialsException();
     }
+    else if  (response.statusCode == 401){
+      throw UnauthorizedException();
+    }
+
     else {
       throw ServerException();
     }
@@ -87,7 +94,7 @@ final tokens= await Store.GetTokens();
       return Future.value(unit);
     }
     else{
-      throw EmptyDataException();
+      throw ServerException();
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 
 import '../../../../core/error/Failure.dart';
 import '../entities/Checklist.dart';
@@ -10,9 +11,14 @@ abstract class TaskRepo {
 
   Future<Either<Failure,Tasks>> addTask(String Teamid, String name);
   Future<Either<Failure,Unit>> updateTask(String id,  Tasks task);
-  Future<Either<Failure,Unit>> deleteTask(String id, String taskid);
-  Future<Either<Failure,Unit>> addChecklist(String id, String taskid, List<CheckList> checklist);
+  Future<Either<Failure,Unit>> deleteTask( String taskid);
+  Future<Either<Failure,Unit>> UpdateTask(String id, bool isCompleted);
+  Future<Either<Failure,Unit>> UpdateChecklistStatus(String taskid, String checkid, bool isCompleted);
+  Future<Either<Failure,CheckList>> addChecklist( String taskid, String name);
+  Future<Either<Failure,Unit>> UpdateTaskName( String taskid, String name);
+  Future<Either<Failure,Unit>> UpdateTimeline( String taskid, DateTime StartDate,DateTime Deadline);
+Future <Either<Failure,Unit>> UpdateMembers(String taskid, bool Status, String memberid);
   Future<Either<Failure,Unit>> updateChecklist(String id, String taskid, String checklistid, CheckList checklist);
-  Future<Either<Failure,Unit>> deleteChecklist(String id, String taskid, String checklistid);
+  Future<Either<Failure,Unit>> deleteChecklist(String checklistid);
 
 }

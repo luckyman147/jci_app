@@ -11,38 +11,42 @@ part 'task_visible_event.dart';
 part 'task_visible_state.dart';
 
 class TaskVisibleBloc extends Bloc<TaskVisibleEvent, TaskVisibleState> {
-  TaskVisibleBloc() : super(TaskVisibleInitial(false,[])) {
+  TaskVisibleBloc() : super(TaskVisibleInitial()) {
     on<TaskVisibleEvent>((event, emit) {
     });
     on<ToggleTaskVisible>(_onToggleTaskVisible);
-    on<FullTasks>(_onFullTasks);
-    on<AddedTaskedEvent>(_onAddedTaskedEvent);
+    on<DeletedTaskedEvent>(ondeleted);
+    on<ChangeSectionEvent>(_ChangeSectionEvent);
+    on<ChangeTextFieldsTitle>(_changeTextFieldsTitle);
+    on<ChangeTextFieldsDescription>(_changeTextFieldsDescription);
+
+
   }
   void _onToggleTaskVisible(ToggleTaskVisible event, Emitter<TaskVisibleState> emit) {
 
     emit(state.copyWith(WillAdded: !event.WillVisible));
     log(state.WillAdded.toString());
   }
+  void ondeleted(DeletedTaskedEvent event, Emitter<TaskVisibleState> emit) {
 
-  void _onFullTasks(FullTasks event, Emitter<TaskVisibleState> emit) {
-    emit(state.copyWith(tasks: UnmodifiableListView(
-    event.tasks,
-    )));
-    log("ssss"+state.tasks.length.toString());
-
+    emit(state.copyWith(WillDeleted: !event.deleted));
+    log(state.WillDeleted.toString());
   }
-  void _onAddedTaskedEvent(AddedTaskedEvent event, Emitter<TaskVisibleState> emit) {
- final result=   List.of(state.tasks)..add(event.task);
-    emit(state.copyWith(tasks: UnmodifiableListView(
-   [event.task,
-     ...state.tasks,
 
-   ],)));
+void _changeTextFieldsTitle(ChangeTextFieldsTitle event, Emitter<TaskVisibleState> emit) {
+    emit(state.copyWith(textFieldsTitle: event.textFieldsTitle));
   }
+  void _changeTextFieldsDescription(ChangeTextFieldsDescription event, Emitter<TaskVisibleState> emit) {
+    emit(state.copyWith(textFieldsDescription: event.textFieldsDescription));
+  }
+
   void resetTaskVisible( Emitter<TaskVisibleState> emit) {
-    emit(TaskVisibleInitial(false,[]));
+    emit(TaskVisibleInitial());
   }
 
+  void _ChangeSectionEvent(ChangeSectionEvent event, Emitter<TaskVisibleState> emit) {
+    emit(state.copyWith(section: event.section));
+  }
 
 
 }

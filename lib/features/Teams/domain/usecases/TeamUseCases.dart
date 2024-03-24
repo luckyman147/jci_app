@@ -27,14 +27,14 @@ class GetTeamByIdUseCase  extends UseCase<Team, String>{
     return await _teamRepository.getTeamById(id);
   }
 }
-class AddTeamUseCase  extends UseCase<Unit, Team>{
+class AddTeamUseCase  extends UseCase<Team, Team>{
   final TeamRepo _teamRepository;
 
   AddTeamUseCase(this._teamRepository);
 
 
   @override
-  Future<Either<Failure, Unit>> call(Team team) async {
+  Future<Either<Failure, Team>> call(Team team) async {
     return await _teamRepository.addTeam(team);
   }
 }

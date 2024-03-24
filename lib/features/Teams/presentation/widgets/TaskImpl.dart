@@ -14,16 +14,17 @@ import 'package:jci_app/features/Teams/presentation/widgets/TaskWidget.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../Home/presentation/widgets/ErrorDisplayMessage.dart';
 import '../../domain/entities/Team.dart';
-import '../bloc/TaskActions/task_actions_bloc.dart';
 
-Widget GetTasksWidget(String id, MediaQueryData mediaQuery,
+
+Widget GetTasksWidget(Team team, MediaQueryData mediaQuery,
     TextEditingController controller) {
   return BlocBuilder<GetTaskBloc, GetTaskState>(
       builder: (context, state) {
         log(state.status.toString());
         if (state is AddTaskMessage) {
           log("AddTaskMessage");
-          return TaskWidget(tasks: state.tasks, teamid: id,);
+
+          return TaskWidget(tasks: state.tasks, team: team,);
 
         }
 
@@ -33,29 +34,29 @@ Widget GetTasksWidget(String id, MediaQueryData mediaQuery,
           case TaskStatus.error:
             return MessageDisplayWidget(message: state.errorMessage);
           case TaskStatus.success:
-            return TaskWidget(tasks: state.tasks, teamid: id,);
+            return TaskWidget(tasks: state.tasks, team: team,);
             case TaskStatus.Changed:
               log(state.tasks.length.toString());
-              return TaskWidget(tasks: state.tasks, teamid: id,);
+              return TaskWidget(tasks: state.tasks, team: team,);
           default:
-            return LoadingWidget();
+            return Text("data");
         }
 
       });
 }
-Widget GetTaskByidWidget(String id,String taskId,TextEditingController TaskName,){
+Widget GetTaskByidWidget(Team team,String taskId,TextEditingController TaskName,int index){
   return BlocBuilder<GetTaskBloc, GetTaskState>(
     builder: (context, state) {
-      if (state is GetTaskInitial || state is GetTaskLoading) {
+      if (state is GetTaskInitial || state is GetTaskLoading|| state.status==TaskStatus.Loading) {
         return LoadingWidget();
       }   else if (state is GetTaskByIdLoaded) {
         log("zeeshan" + state.task.toString());
         return RefreshIndicator(
           onRefresh: () async {
-            context.read<GetTaskBloc>().add(GetTaskById(ids:{'id': id, 'taskid': taskId}));
+            context.read<GetTaskBloc>().add(GetTaskById(ids:{'id': team.id, 'taskid': taskId}));
           },
 
-          child: TaskDetailsWidget(task: state.task, TaskNamed:TaskName , ),
+          child: TaskDetailsWidget(task: state.tasks[index],index: index, team: team, ),
         );
       }else if (state is GetTaskError) {
         return MessageDisplayWidget(message: "Error");
@@ -107,16 +108,15 @@ Widget TaskAddField(TextEditingController controller, String id) =>
           padding: paddingSemetricVerticalHorizontal(h: 18),
           child: InkWell(
             onTap: () {
-              context.read<TaskVisibleBloc>().add(ToggleTaskVisible(false));
+              if (state.WillDeleted==false){
+              context.read<TaskVisibleBloc>().add(ToggleTaskVisible(false));}
             },
             child: Container(
               decoration: taskDecoration,
               child: TextField(
 
                 controller: controller,
-                onTapOutside: (rr) {
-                  context.read<TaskVisibleBloc>().add(ToggleTaskVisible(true));
-                },
+
                 style: PoppinsRegular(18, textColorBlack),
                 onChanged: (value) {
                   log(controller.text);

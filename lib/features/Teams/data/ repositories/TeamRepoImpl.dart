@@ -32,6 +32,10 @@ class TeamRepoImpl implements TeamRepo{
       } on WrongCredentialsException {
         return Left(WrongCredentialsFailure());
       }
+      on UnauthorizedException {
+
+        return Left(UnauthorizedFailure());
+      }
       on ServerException {
         return Left(ServerFailure());
       }
@@ -67,18 +71,40 @@ class TeamRepoImpl implements TeamRepo{
   }
 
   @override
-  Future<Either<Failure, Unit>> addTeam(Team team) async{
+  Future<Either<Failure, Team>> addTeam(Team team) async{
 
 final teamMosdel=TeamModel.fromEntity(team,true);
-    return   _getMessage( teamRemoteDataSource.createTeam(teamMosdel));
+    return   _getTeamMessage( teamRemoteDataSource.createTeam(teamMosdel));
   }
 
   @override
   Future<Either<Failure, Unit>> deleteTeam(String id) {
-    // TODO: implement deleteTeam
-    throw UnimplementedError();
+    return _getMessage(teamRemoteDataSource.deleteTeam(id));
   }
+  Future<Either<Failure, Team>> _getTeamMessage(
+      Future<TeamModel> task) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final tasks=  await task;
+        return  Right(tasks);
+      }
 
+      on EmptyDataException {
+        return Left(EmptyDataFailure());
+      }
+      on UnauthorizedException {
+        return Left (UnauthorizedFailure());
+      }
+      on ServerException {
+        return Left(ServerFailure());
+      }
+    }
+
+
+    else {
+      return Left(OfflineFailure());
+    }
+  }
   @override
   Future<Either<Failure, Team>> getTeamById(String id)async  {
 
@@ -131,5 +157,23 @@ final teamMosdel=TeamModel.fromEntity(team,true);
     // TODO: implement uploadTeamImage
     throw UnimplementedError();
   }
+  Future<Either<Failure, Unit>> _getMessageUnit(
+      Future<Unit> team) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await team;
+        return  Right(unit);
+      }
 
+
+      on ServerException {
+        return Left(ServerFailure());
+      }
+    }
+
+
+    else {
+      return Left(OfflineFailure());
+    }
+  }
 }

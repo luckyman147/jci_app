@@ -6,6 +6,8 @@ import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/widgets/backbutton.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/TeamImpl.dart';
+import 'package:jci_app/features/auth/presentation/bloc/Members/members_bloc.dart';
+import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
 import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import '../../../Home/presentation/widgets/Compoenents.dart';
@@ -25,6 +27,8 @@ class _AllTeamsScreenState extends State<AllTeamsScreen> {
   void initState() {
      context.read<GetTeamsBloc>().add(GetTeams());
      context.read<GetTaskBloc>().add(resetevent());
+
+
 
      _scrollController.addListener(_onScroll);
     //context.read<GetTeamsBloc>().add(GetTeams());
@@ -69,7 +73,9 @@ class _AllTeamsScreenState extends State<AllTeamsScreen> {
                children: [
                  const SearchButton(
                  color: PrimaryColor, IconColor: textColorBlack,),
-                 AddButton(color: PrimaryColor, IconColor: textColorBlack, icon: Icons.add_rounded, onPressed: () {
+                 AddButton(color: PrimaryColor, IconColor: textColorBlack, icon: Icons.add_rounded,
+                     onPressed: () {
+
 context.go('/CreateTeam');
                  }),
 

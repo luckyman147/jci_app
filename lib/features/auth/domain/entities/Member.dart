@@ -13,10 +13,29 @@ class Member extends Equatable {
   final String password;
   final bool is_validated;
   final List<bool> cotisation;
-  final List<String> Images;final List<String> Activities;
+  final List<dynamic> Images;final List<String> Activities;
  final bool IsSelected;
 
   final String role;
+
+  factory  Member.fromImages(Map<String, dynamic> data) {
+    return Member(
+      id: data['id']??data['_id'] ,
+      email: data['email']??'',
+      firstName: data['firstName'],
+      lastName: data['lastName']??'',
+      phone: data['phone']??'',
+      password: data['password']??'',
+      is_validated: data['is_validated']??false,
+      cotisation: data['cotisation']??[],
+      Images: data['Images'] as List<dynamic>,
+      Activities: data['Activities']??[],
+      IsSelected: data['IsSelected']??false,
+      role: data['role']??'',
+    );
+  }
+
+
 
   const Member(
 

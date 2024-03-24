@@ -1,23 +1,32 @@
 part of 'get_task_bloc.dart';
-enum TaskStatus { initial, success, error,Changed }
+enum TaskStatus { initial, success, error,Changed,Loading,SuccessCheck }
  class GetTaskState extends Equatable {
   final TaskStatus status;
-  final List<Tasks> tasks;
+  final List<Map<String, dynamic>> tasks;
   final String errorMessage;
 
 
-  GetTaskState( {this.tasks=const [], this.status = TaskStatus.initial, this.errorMessage = ""}
+
+  GetTaskState( {this.tasks=const [], this.status = TaskStatus.initial, this.errorMessage = "",
+
+
+}
       );
 
   GetTaskState copyWith({
 
-    List<Tasks>? tasks,
+
+
+    List<Map<String, dynamic>>? tasks,
+
     TaskStatus? status,
     String? errorMessage,
   }) {
     return GetTaskState(
 
+
      tasks: tasks ?? this.tasks,
+
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
 
@@ -73,6 +82,7 @@ class GetTaskByIdLoaded extends GetTaskState {
   @override
   List<Object> get props => [task];
 }
+
 class GetTaskEmpty extends GetTaskState {
   GetTaskEmpty();
 

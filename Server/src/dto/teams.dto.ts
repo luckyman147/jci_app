@@ -35,9 +35,26 @@ export interface TasksField{
 
 }
 
-export class  firstTaskInput{
+export class  IsCompletedInput{
+    @IsNotEmpty()
+    IsCompleted:boolean
+
+}export class  TimelineInput{
+    @IsNotEmpty()
+    StartDate:Date
+    @IsNotEmpty()
+    Deadline:Date
+}export class  MembersInput{
+    @IsNotEmpty()
+    Member:string
+    @IsNotEmpty()
+    Status:string
+}export class  firstTaskInput{
     @IsNotEmpty()
     name:string
+}export class  FilesInput{
+    @IsNotEmpty()
+    attachedFile:string
 }
 export class TaskInput{
     @IsNotEmpty()
@@ -49,6 +66,6 @@ export class TaskInput{
     description:string
     AssignTo:any[]
    
-    attachedFile: String
+    attachedFile: string
     CheckList: any[]
 }
