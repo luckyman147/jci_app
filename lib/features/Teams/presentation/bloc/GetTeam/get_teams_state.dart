@@ -7,12 +7,14 @@ enum TeamStatus { initial, success, error ,Deleted,DeletedError,IsRefresh}
    final String errorMessage;
    final List<dynamic> isExisted;
    final List<dynamic> members;
+   final Map<String,dynamic> teamById;
 
 
   const GetTeamsState({this.status = TeamStatus.initial,
    this.hasReachedMax = false,
    this.teams = const [],
     this.isExisted = const[],
+    this.teamById = const {},
 
     this.members = const [],
    this.errorMessage = ""}
@@ -20,25 +22,28 @@ enum TeamStatus { initial, success, error ,Deleted,DeletedError,IsRefresh}
 
    GetTeamsState copyWith({
 
+
      List<dynamic >?isExisted,
      List<dynamic>? members,
      TeamStatus? status,
      List<Team>? teams,
      bool? hasReachedMax,
      String? errorMessage,
+     Map<String,dynamic>? teamById
    }) {
      return GetTeamsState(
         isExisted: isExisted ?? this.isExisted,
         members: members ?? this.members,
        status: status ?? this.status,
        teams: teams ?? this.teams,
+       teamById: teamById ?? this.teamById,
        hasReachedMax: hasReachedMax ?? this.hasReachedMax,
        errorMessage: errorMessage ?? this.errorMessage,
      );
    }
 
    @override
-   List<Object?> get props => [status, teams,members,isExisted, hasReachedMax, errorMessage];
+   List<Object?> get props => [status,teamById, teams,members,isExisted, hasReachedMax, errorMessage];
 }
 
 class GetTeamsInitial extends GetTeamsState {

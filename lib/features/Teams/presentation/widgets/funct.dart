@@ -19,6 +19,7 @@ import 'package:jci_app/features/auth/domain/entities/Member.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../../../auth/presentation/bloc/Members/members_bloc.dart';
+import '../../domain/entities/Team.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/GetTeam/get_teams_bloc.dart';
 import '../bloc/TaskIsVisible/task_visible_bloc.dart';
@@ -54,8 +55,15 @@ List<int> generateNumbers(int num) {
 }
 List<Map<String, dynamic>> mapObjects(List<Tasks> objects) {
   return objects.map((object) => {'id': object.id, 'isCompleted': object.isCompleted}).toList();
-}List<Map<String, dynamic>> mapChecklist(List<CheckList> objects) {
+}
+List<Map<String, dynamic>> mapChecklist(List<CheckList> objects) {
   return objects.map((object) => {'id': object.id, 'isCompleted': object.isCompleted,"name":object.name,"IsUpdated":false}).toList();
+}Map<String, dynamic> mapTeam(Team objects) {
+  return {'id': objects.id, 'name': objects.name,
+    "CoverImage":objects.CoverImage,
+    "TeamLeader":objects.TeamLeader,
+
+    'description': objects.description, 'status': objects.status, 'Members': objects.Members,};
 }
 List<Map<String, dynamic>> filterCompletedTasks(List<Map<String, dynamic>> tasks) {
   return tasks.where((task) => task['isCompleted']).toList();

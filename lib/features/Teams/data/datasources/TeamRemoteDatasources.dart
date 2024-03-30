@@ -27,6 +27,7 @@ abstract class TeamRemoteDataSource {
   Future<Unit> updateTeam(TeamModel Team);
   Future<Unit> deleteTeam(String id);
 Future<List<TeamModel>> getTeamByName(String name);
+Future<Unit> updateMembers(String teamid, String memberid, String Status);
 
 }
 
@@ -218,6 +219,32 @@ log("sbody"+body.toString() );
         final List<TeamModel> teams = decodedJson.map((e) => TeamModel.fromJson(e)).toList();
 
         return teams;
+      } else if (response.statusCode == 400) {
+        throw EmptyDataException();
+      }else{
+        throw ServerException();
+      }
+    });
+  }
+
+  @override
+  Future<Unit> updateMembers(String teamid, String memberid, String Status) async {
+    final tokens=await Store.GetTokens();
+    final response =  client.put(
+      Uri.parse( Urls.TeamMember(teamid)),
+body: json.encode({"Member":memberid,"Status":Status}),
+      headers: {"Content-Type": "application/json",
+        "Authorization": "Bearer ${tokens[1]}"
+      },
+
+
+    );
+
+    return response.then((response) async {
+      log( response.statusCode.toString());
+      if (response.statusCode == 200) {
+        final List<dynamic> decodedJson = json.decode(response.body) ;
+        return Future.value(unit);
       } else if (response.statusCode == 400) {
         throw EmptyDataException();
       }else{

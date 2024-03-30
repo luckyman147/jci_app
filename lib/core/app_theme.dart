@@ -165,7 +165,7 @@ InputDecoration inputDecoration (mediaQuery,bool isempty )=> InputDecoration(
     Icons.search,
     color: textColor,
   ),
-  hintText: "Search for a Member",
+  hintText: "Search by name or email",
   hintStyle: PoppinsRegular(
     mediaQuery.devicePixelRatio * 6,
     textColor,

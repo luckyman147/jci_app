@@ -1,6 +1,6 @@
 import 'dart:io';
 
-  final BaseUrl = "http://192.168.1.13:8080";
+  final BaseUrl = "http://192.168.32.217:8080";
 final LoginUrl = "$BaseUrl/auth/login";
 final SignUpUrl = "$BaseUrl/auth/signup";
 final ForgetPasswordUrl = "$BaseUrl/auth/forgetPassword";
@@ -42,4 +42,8 @@ void main() {
   } else {
     print('Running on a physical device.');
   }
+}
+
+class Urls{
+  static String TeamMember(String teamId) => "$TeamUrl$teamId/TeamMembers";
 }

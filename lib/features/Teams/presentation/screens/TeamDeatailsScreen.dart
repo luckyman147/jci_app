@@ -29,6 +29,8 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
 
   @override
   void initState() {
+
+    context.read<GetTeamsBloc>().add(GetTeamById({"id": widget.id,"isUpdated": false}));
     context.read<GetTaskBloc>().add(GetTasks(id: widget.id, filter: TaskFilter.All));
     context.read<TaskVisibleBloc>().add(ToggleTaskVisible(true));
 init(widget.id,context);

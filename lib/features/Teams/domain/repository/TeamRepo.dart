@@ -15,5 +15,7 @@ abstract class TeamRepo{
   Future<Either<Failure,Unit>> updateImage(String id, String path);
   Future<Either<Failure,Unit>> uploadTeamImage(String id, String path);
 
+  Future<Either<Failure,Unit>> UpdateMembers(String teamid, String memberid, String Status);
+
 
 }

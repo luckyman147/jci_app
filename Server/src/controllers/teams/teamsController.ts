@@ -1,7 +1,7 @@
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
-import { TeamInputs } from "../../dto/teams.dto";
+import { MembersInput, TeamInputs } from "../../dto/teams.dto";
 import { Event } from "../../models/activities/eventModel";
 import { Team, team } from "../../models/teams/team";
 import { getEventNameById, getMembersInfo, getTasksInfo } from "../../utility/role";
@@ -357,3 +357,68 @@ const showTeamDetails = async (team:Team) => {
     console.error("Error in showTeamDetails:", error);
     throw error;
   }}
+
+
+
+
+
+
+
+  export const UpdateTeamMembers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      
+      const teamId = req.params.teamid;
+      const user=req.member?._id
+  
+      const Team = await team.findById(teamId);
+      if (!Team) {
+        return res.status(404).json({ error: 'team not found' });
+      }
+    const membersInput = plainToClass(MembersInput, req.body);
+      const errors = await validate(membersInput, { validationError: { target: false } });
+      if (errors.length > 0) {
+        return res.status(400).json({ message: 'Input validation failed', errors });
+      }
+         console.log(membersInput.Status)  
+ //invite members
+if (membersInput.Status=="add"){
+
+  console.log(membersInput.Member)  
+  console.log(membersInput.Status)  
+   
+  await Team.Members.push(membersInput.Member)
+
+    await Team.save()
+    
+      res.status(200).json({ message:"Completed" , Team });
+}
+//kick Member
+else  if (membersInput.Status == "kick") {
+  console.log(membersInput.Member)
+
+  Team.Members = Team.Members.filter((member) => member._id.toString() !== membersInput.Member.toString());
+
+await Team.save()
+    res.status(200).json({ message:"Completed" , Team });
+  
+}
+else{
+  //exit 
+  
+  Team.Members = Team.Members.filter((member) => member._id.toString() !== user);
+
+await Team.save()
+    res.status(200).json({ message:"Completed" , Team });
+}
+}
+   
+    
+    catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+  
+  
+  
+  

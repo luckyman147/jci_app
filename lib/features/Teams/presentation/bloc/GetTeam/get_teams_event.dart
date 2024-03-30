@@ -75,3 +75,12 @@ class  checkIfPartipated extends GetTeamsEvent {
   @override
   List<Object> get props => [];
 }
+class UpdateTeamMember extends GetTeamsEvent{
+  final Map<String,String> fields;
+
+  UpdateTeamMember({required this.fields});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [fields];
+}

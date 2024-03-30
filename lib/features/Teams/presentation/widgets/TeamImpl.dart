@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/Home/presentation/widgets/ErrorDisplayMessage.dart';
+import 'package:jci_app/features/Teams/data/models/TeamModel.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
@@ -14,7 +15,7 @@ import 'package:jci_app/features/Teams/presentation/widgets/DetailTeamWidget.dar
 import 'package:jci_app/features/Teams/presentation/widgets/TeamWidget.dart';
 
 import '../bloc/NumPages/num_pages_bloc.dart';
-enum TeamAction { Upload, delete }
+enum TeamAction { Upload, delete,Exit }
 Widget allTeams(String id,ScrollController scrollController,bool isHome) {
   return BlocBuilder<NumPagesBloc, NumPagesState>(
     builder: (context, ste) {
@@ -65,15 +66,16 @@ Widget GetTeamByid(String id,TextEditingController taskController,int index) {
     builder: (context, state) {
       if (state is GetTeamsInitial || state is GetTeamsLoading) {
         return LoadingWidget();
-      }   else if (state is GetTeamsLoadedByid) {
-              log("zeeshan" + state.team.toString());
+      }   else if (state.status ==TeamStatus.success ) {
+              log("zeeshan" + state.teamById.toString());
               return RefreshIndicator(
                 onRefresh: () async {
                   context.read<GetTeamsBloc>().add(GetTeamById({"id": id,"isUpdated":false}));
                 },
-                child: TeamDetailWidget(team: state.team, taskController: taskController,),
+
+                child: TeamDetailWidget(team:TeamModel.fromJson( state.teamById), taskController: taskController,),
               );
-            }else if (state is GetTeamsError) {
+            }else if (state.status ==TeamStatus.error ) {
         return MessageDisplayWidget(message: "Error");
       }
       return LoadingWidget();

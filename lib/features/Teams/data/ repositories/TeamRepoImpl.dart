@@ -223,5 +223,10 @@ final CacheStatus status=isPrivate?CacheStatus.Private:CacheStatus.Public;
     }
   }
 
+  @override
+  Future<Either<Failure, Unit>> UpdateMembers(String teamid, String memberid, String Status) {
+return _getMessageUnit(teamRemoteDataSource.updateMembers(teamid, memberid, Status));
+  }
+
 
 }

@@ -70,5 +70,15 @@ class getTeamByNameUseCase  extends UseCase<List<Team>, Map<String,dynamic>>{
     return _teamRepository.getTeamByName(params['name']);
   }
 }
+class UpdateTeamMembersUseCase  extends UseCase<Unit, Map<String,dynamic>>{
+  final TeamRepo _teamRepository;
+
+  UpdateTeamMembersUseCase(this._teamRepository);
+
+  @override
+  Future<Either<Failure, Unit>> call(Map<String,dynamic> params) {
+    return _teamRepository.UpdateMembers(params['teamid'],params['memberid'],params['Status']);
+  }
+}
 
 

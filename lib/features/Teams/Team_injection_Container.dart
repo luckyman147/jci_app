@@ -41,7 +41,7 @@ Future<void> initTeams() async {
       updateTaskNameUseCase: sl(), updateTaskTimelineUseCase: sl(),
       UpdateMembersUseCase: sl(), updateFileUseCase: sl (), deleteFileUseCase: sl(), updateChecklistNameUseCase: sl()));
 
-  sl.registerFactory(() => GetTeamsBloc(sl(), sl()  ,sl(),sl(),sl(),sl()));
+  sl.registerFactory(() => GetTeamsBloc(sl(), sl()  ,sl(),sl(),sl(),sl(),sl()));
   //datasources
 
   sl.registerLazySingleton<TaskRemoteDataSource>(() => TaskRemoteDataSourceImpl(client: sl()));
@@ -60,6 +60,8 @@ Future<void> initTeams() async {
   sl.registerLazySingleton(() => DeleteTaskUseCase(sl()));
   sl.registerLazySingleton(() => UpdateTaskTimelineUseCase(sl()));
   sl.registerLazySingleton(() => UpdateTaskNameUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateTeamMembersUseCase(sl()));
+
 
   sl.registerLazySingleton(() => UpdateChecklistStatusUseCase(sl()));
   sl.registerLazySingleton(() => UpdateIsCompletedUseCases(sl()));

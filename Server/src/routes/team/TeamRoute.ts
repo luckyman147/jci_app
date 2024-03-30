@@ -2,7 +2,7 @@ import express, { Response } from "express";
 import multer from "multer";
 import { addCheck, deleteChecklist, updateChecklistName, updateIsCompletedChecklist } from "../../controllers/teams/ChecklistController";
 import { GetTaskById, GetTasksOFTeam, addTask, deleteFile, deleteTask, updateDeadline, updateFiles, updateIsCompleted, updateMembers, updateTask, updateTaskName } from "../../controllers/teams/taskController";
-import { AddTeam, GetTeams, addMember, deleteTeam, getTeamById, getTeamByName, updateImage, updateTeam, uploadTeamImage } from "../../controllers/teams/teamsController";
+import { AddTeam, GetTeams, UpdateTeamMembers, addMember, deleteTeam, getTeamById, getTeamByName, updateImage, updateTeam, uploadTeamImage } from "../../controllers/teams/teamsController";
 
 import { Authenticate } from "../../middleware/CommonAuth";
 interface CustomResponse extends Response {
@@ -18,6 +18,7 @@ router.get('/All',Authenticate, GetTeams);
 router.get("/get",Authenticate,getTeamByName);// get teams /
 router.get('/get/:id', getTeamById);// get team by id/ 
 router.post('/', Authenticate, AddTeam);//create team
+router.put('/:teamid/TeamMembers', Authenticate, UpdateTeamMembers);//create team
 router.post('/:id/AddMember/:memberId', addMember);//*add member
 router.put('/:id',updateTeam);//update team
 router.delete('/:id',deleteTeam)//!delete team 
