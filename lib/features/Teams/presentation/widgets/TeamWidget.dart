@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:circle_progress_bar/circle_progress_bar.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +8,14 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/widgets/TaskComponents.dart';
+import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../domain/entities/Task.dart';
 import '../../domain/entities/Team.dart';
+import 'DetailTeamWidget.dart';
 import 'MembersTeamSelection.dart';
 
 class TeamWidget extends StatelessWidget {
@@ -56,7 +59,10 @@ Widget body(List<Team> teams, int index, MediaQueryData mediaQuery,
               horizontal: mediaQuery.size.width / 13),
           child: InkWell(
             onTap: () {
-              context.go('/TeamDetails/${teams[index].id}');
+              context.go('/TeamDetails/${teams[index].id}/$index'
+
+              );
+              context.read<GetTeamsBloc>().add(GetTeamById({"id": teams[index].id,"isUpdated":true}));
             },
             child: Container(
               height: mediaQuery.size.height / 5,
@@ -71,25 +77,20 @@ Widget body(List<Team> teams, int index, MediaQueryData mediaQuery,
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                       children: [
-                        SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 18.0),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceEvenly,
-                                children: [
-                                  details(teams, index),
-                                  Images(teams, index),
-                                  //pading
-                                  deadline(parse),
-                                ]),
-                          ),
+
+                        Padding(
+                          padding: paddingSemetricHorizontal(h: 10),
+                          child: ImageCard(mediaQuery, teams[index], mediaQuery.size.height / 12.5,),
                         ),
-                        CircleProgess(teams, index)
+
+                        SingleChildScrollView(
+
+                          scrollDirection: Axis.horizontal,
+                          child: details(teams, index,mediaQuery),
+                        ),
+
                       ],
                     ),
                   );
@@ -100,9 +101,9 @@ Widget body(List<Team> teams, int index, MediaQueryData mediaQuery,
         ));
 
 
-Widget details(List<Team> teams, int index) =>
+Widget details(List<Team> teams, int index,MediaQueryData mediaQuery) =>
     Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -110,24 +111,85 @@ Widget details(List<Team> teams, int index) =>
           style: PoppinsSemiBold(
               18, textColorBlack, TextDecoration.none),
         ),
-        !teams[index].TeamLeader.isEmpty
-            ? Text(
-          "By ${teams[index].TeamLeader[0]["firstName"]}",
-          style: PoppinsRegular(
-            14,
-            textColorBlack,
-          ),
-        )
-            : SizedBox(),
-        Text(
-          teams[index].event['name']!,
-          style: PoppinsRegular(
-            14,
-            textColorBlack,
+        SizedBox(
+          width: mediaQuery.size.width / 1.8,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CircleProgess(teams, index),
+              Padding(
+                padding:paddingSemetricHorizontal(),
+                child: Container(
+
+                  decoration: BoxDecoration(
+                    color: teams[index].status?Colors.green:Colors.red,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(teams[index].status?"Public":"Private",style: PoppinsRegular(14, textColorWhite),),
+                  ),
+                ),
+              )
+            ],
           ),
         ),
+        Padding(
+          padding: paddingSemetricVertical(v:15),
+          child: SizedBox(
+            width: mediaQuery.size.width / 2,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment
+                  .spaceBetween,
+              children: [
+                TaskRow(teams, index),
+                Row(
+                  children: [
+                    Images(teams, index),
+
+                    BlocBuilder<GetTeamsBloc, GetTeamsState>(
+                      builder: (context, state) {
+                        if (state.isExisted.isEmpty) {
+                          return buildAddButton(() => null);
+                        }
+                        if (!state.isExisted[index]){
+                        return buildAddButton(() => null);}
+                        else{
+                          return SizedBox();
+                        }
+                      },
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+
+        // eventRow(mediaQuery, teams, index),
+
       ],
     );
+
+Row eventRow(MediaQueryData mediaQuery, List<Team> teams, int index) {
+  return Row(
+        children: [
+          Icon(Icons.event,color: SecondaryColor,),
+          SizedBox(width: 5,),
+          SizedBox(
+            width:mediaQuery.size.width/5,
+            child: Text(
+              teams[index].event['name']!,
+              overflow: TextOverflow.ellipsis,
+              style: PoppinsRegular(
+                14,
+                textColorBlack,
+              ),
+            ),
+          ),
+        ],
+      );
+}
 
 
 int calculateSumCompletedTasks(List<Map<String, dynamic>> tasks) {
@@ -191,55 +253,78 @@ Widget Images(List<Team> teams, int index) =>
 
 Widget CircleProgess(List<Team> teams, int index,
    ) =>
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          SizedBox(
-            height: 110,
-            child: CircleProgressBar(
-              foregroundColor: Colors.blue,
-              backgroundColor: Colors.black12,
-              strokeWidth: 10,
-              value: teams[index].tasks.isEmpty
-                  ? 0
-                  : calculateCompletedTasks(
-                  teams[index].tasks) /
-                  teams[index].tasks.length,
-              child: Align(
-                alignment: Alignment.center,
-                child: AnimatedCount(
-                  style: PoppinsSemiBold(20, textColorBlack,
-                      TextDecoration.none),
-                  count: teams[index].tasks.isEmpty
-                      ? 0
-                      :( calculateCompletedTasks(
-                      teams[index].tasks) /
-                      teams[index].tasks.length)*100,
-                  unit: '%',
-                  duration: Duration(milliseconds: 500),
-                ),
+    !teams[index].TeamLeader.isEmpty
+        ? Text(
+      "By ${teams[index].TeamLeader[0]["firstName"]}",
+      style: PoppinsSemiBold(
+        14,
+        textColor,
+        TextDecoration.none,
+      ),
+    )
+        : SizedBox();
+
+SizedBox progresscircle(List<Team> teams, int index) {
+  return SizedBox(
+          height: 90,
+          child: CircleProgressBar(
+            foregroundColor: Colors.blue,
+            backgroundColor: Colors.black12,
+            strokeWidth: 8,
+            value: teams[index].tasks.isEmpty
+                ? 0
+                : calculateCompletedTasks(
+                teams[index].tasks) /
+                teams[index].tasks.length,
+            child: Align(
+              alignment: Alignment.center,
+              child: AnimatedCount(
+                style: PoppinsSemiBold(17, textColorBlack,
+                    TextDecoration.none),
+                count: teams[index].tasks.isEmpty
+                    ? 0
+                    :( calculateCompletedTasks(
+                    teams[index].tasks) /
+                    teams[index].tasks.length)*100,
+                unit: "%",
+                duration: Duration(milliseconds: 500),
               ),
             ),
           ),
-          Row(children: [
-            Icon(
-              Icons.check_circle,
-              color: PrimaryColor,
-              size: 20,
-            ),
-            Text(
-              " ${calculateCompletedTasks(teams[index].tasks)} tasks",
-              style: PoppinsLight(
-                14,
-                textColorBlack,
+        );
+}
+
+Widget TaskRow(List<Team> teams, int index) {
+  return Container(
+    decoration: BoxDecoration(
+      color: textColorWhite,
+      border: Border.all(color: BackWidgetColor, width: 2),
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Flex(
+          direction: Axis.horizontal,
+          children: [
+              Icon(
+                Icons.check_box_outlined,
+                color: PrimaryColor,
+                size: 20,
               ),
-            ),
-          ])
-        ],
-      ),
-    );
+              Text(
+                " ${calculateCompletedTasks(teams[index].tasks)} / ${teams[index].tasks.length} ",
+                style: PoppinsSemiBold(
+                  15,
+                  textColorBlack,
+                  TextDecoration.none,
+                ),
+              ),
+
+            ]),
+
+    ),
+  );
+}
 
 
 Padding deadline(DateTime parse) =>
@@ -264,3 +349,93 @@ Padding deadline(DateTime parse) =>
         ],
       ),
     );
+
+
+class TeamHomeWidget extends StatelessWidget {
+  final List<Team> teams;
+
+
+  const TeamHomeWidget({
+    Key? key,
+    required this.teams  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+
+    return ListView.separated(
+       scrollDirection: Axis.horizontal,
+        itemBuilder: (ctx, index) {
+
+          String date =teams[index].event['ActivityEndDate']!;
+          final parse = DateTime.parse(date);
+          final Isfinished=DateTime.now().compareTo(parse);
+          return SingleChildScrollView(
+            child: InkWell(
+              onTap: () {
+                context.go('/TeamDetails/${teams[index].id}/$index');
+              },
+              child: Container(
+                width: mediaQuery.size.width /2,
+
+                decoration: BoxDecoration(
+                  color: textColorWhite,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: BackWidgetColor,
+                    width: 2,
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+
+                    children: [
+                      Text(
+                        teams[index].name,
+                        style: PoppinsSemiBold(
+                          18,
+                          textColorBlack,
+                          TextDecoration.none,
+                        ),
+                      ),
+
+
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                          SizedBox(
+                            width: mediaQuery.size.width / 2,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment
+                                  .spaceBetween,
+                              children: [
+                                TaskRow(teams, index),
+                                Images(teams, index),
+
+                              ],
+                            ),
+                          ),
+                ],
+              ),
+
+
+                      // eventRow(mediaQuery, teams, index),
+
+                    ],
+                  ),
+                ),
+              ),
+            )
+
+          ) ;       },
+        separatorBuilder: (BuildContext context, int index) {
+          return const SizedBox(
+            width: 20,
+          );
+        },
+        itemCount:min(teams.length, 2));
+  }
+}

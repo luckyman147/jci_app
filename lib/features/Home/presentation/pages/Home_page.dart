@@ -50,30 +50,7 @@ class _HomePageState extends State<HomePage> {
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(24), topRight: Radius.circular(24)),
 
-              child: BottomNavigationBar( type: BottomNavigationBarType.fixed,
-                  showSelectedLabels: true,
-                  showUnselectedLabels: true,
-                landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
-                // backgroundColor: Colors.transparent,
-                  selectedItemColor: PrimaryColor,
-
-                  selectedLabelStyle: PoppinsRegular(15, PrimaryColor),
-                  unselectedItemColor: ThirdColor,
-                  currentIndex: state.index,
-                  onTap: (index) {
-                    context.read<PageIndexBloc>().add(SetIndexEvent(index:index));
-                  },
-                  items:  [
-                    BottomNavigationBarItem(
-
-                        icon: Icon(Icons.home,size: 31,), label: "Home"),
-                    BottomNavigationBarItem(
-                        icon: SvgPicture.string(EventIcon ,color:state.index==1?PrimaryColor:ThirdColor,), label: "Activities".tr(context)),
-                    BottomNavigationBarItem(
-                        icon: SvgPicture.string(TeamsIcon,color: state.index==2?PrimaryColor:ThirdColor ,), label: "Teams".tr(context)),
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.person,size: 31,), label: "Profile".tr(context)),
-                  ]),
+              child: buildBottomNavigationBar(state, context),
             ),
           ),
           body:widgets[state.index],
@@ -86,5 +63,32 @@ class _HomePageState extends State<HomePage> {
     );
   },
 );
+  }
+
+  BottomNavigationBar buildBottomNavigationBar(PageIndexState state, BuildContext context) {
+    return BottomNavigationBar( type: BottomNavigationBarType.fixed,
+                showSelectedLabels: true,
+                showUnselectedLabels: true,
+              landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
+              // backgroundColor: Colors.transparent,
+                selectedItemColor: PrimaryColor,
+
+                selectedLabelStyle: PoppinsRegular(15, PrimaryColor),
+                unselectedItemColor: ThirdColor,
+                currentIndex: state.index,
+                onTap: (index) {
+                  context.read<PageIndexBloc>().add(SetIndexEvent(index:index));
+                },
+                items:  [
+                  BottomNavigationBarItem(
+
+                      icon: Icon(Icons.home,size: 31,), label: "Home"),
+                  BottomNavigationBarItem(
+                      icon: SvgPicture.string(EventIcon ,color:state.index==1?PrimaryColor:ThirdColor,), label: "Activities".tr(context)),
+                  BottomNavigationBarItem(
+                      icon: SvgPicture.string(TeamsIcon,color: state.index==2?PrimaryColor:ThirdColor ,), label: "Teams".tr(context)),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.person,size: 31,), label: "Profile".tr(context)),
+                ]);
   }
 }

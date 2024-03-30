@@ -14,6 +14,7 @@ import 'package:jci_app/features/Teams/presentation/widgets/TaskWidget.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../Home/presentation/widgets/ErrorDisplayMessage.dart';
 import '../../domain/entities/Team.dart';
+import '../bloc/TaskFilter/taskfilter_bloc.dart';
 
 
 Widget GetTasksWidget(Team team, MediaQueryData mediaQuery,
@@ -23,6 +24,7 @@ Widget GetTasksWidget(Team team, MediaQueryData mediaQuery,
         log(state.status.toString());
         if (state is AddTaskMessage) {
           log("AddTaskMessage");
+          context.read<TaskfilterBloc>().add(filterTask(state.tasks));
 
           return TaskWidget(tasks: state.tasks, team: team,);
 
@@ -34,12 +36,16 @@ Widget GetTasksWidget(Team team, MediaQueryData mediaQuery,
           case TaskStatus.error:
             return MessageDisplayWidget(message: state.errorMessage);
           case TaskStatus.success:
+           // context.read<TaskfilterBloc>().add(filterTask(state.tasks));
+
             return TaskWidget(tasks: state.tasks, team: team,);
             case TaskStatus.Changed:
+             // context.read<TaskfilterBloc>().add(filterTask(state.tasks));
+
               log(state.tasks.length.toString());
               return TaskWidget(tasks: state.tasks, team: team,);
           default:
-            return Text("data");
+            return LoadingWidget();
         }
 
       });
@@ -145,9 +151,12 @@ Widget TaskAddField(TextEditingController controller, String id) =>
                             "Teamid": id,
                             "name": controller.text
                           }));
+
                           controller.clear();
                           context.read<TaskVisibleBloc>().add(
                               ToggleTaskVisible(true));
+                          context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+
                         }
                       },
                       child: state.WillAdded ? Icon(

@@ -38,9 +38,10 @@ Future<void> initTeams() async {
       deleteTaskUseCase: sl(),
       deleteChecklistUseCase: sl(),
       updateChecklistStatusUseCase: sl(),
-      updateTaskNameUseCase: sl(), updateTaskTimelineUseCase: sl(), UpdateMembersUseCase: sl()));
+      updateTaskNameUseCase: sl(), updateTaskTimelineUseCase: sl(),
+      UpdateMembersUseCase: sl(), updateFileUseCase: sl (), deleteFileUseCase: sl(), updateChecklistNameUseCase: sl()));
 
-  sl.registerFactory(() => GetTeamsBloc(sl(), sl()  ,sl(),sl(),sl()));
+  sl.registerFactory(() => GetTeamsBloc(sl(), sl()  ,sl(),sl(),sl(),sl()));
   //datasources
 
   sl.registerLazySingleton<TaskRemoteDataSource>(() => TaskRemoteDataSourceImpl(client: sl()));
@@ -49,6 +50,11 @@ Future<void> initTeams() async {
   sl.registerLazySingleton<TaskLocalDataSource>(() => TaskLocalDataSourceImpl());
   //use cases
   sl.registerLazySingleton(() => AddChecklistUseCase(sl()));
+  sl.registerLazySingleton(() => getTeamByNameUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateChecklistNameUseCase(sl()));
+
+  sl.registerLazySingleton(() => DeleteFileUseCases(sl()));
+  sl.registerLazySingleton(() => UpdateFileUseCase(sl()));
   sl.registerLazySingleton(() => UpdateMembersUsecases(sl()));
   sl.registerLazySingleton(() => DeleteChecklistUseCase(sl()));
   sl.registerLazySingleton(() => DeleteTaskUseCase(sl()));

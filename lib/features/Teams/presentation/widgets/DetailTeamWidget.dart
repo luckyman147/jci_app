@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:circle_progress_bar/circle_progress_bar.dart';
 
@@ -6,15 +7,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:go_router/go_router.dart';
+
 import 'package:intl/intl.dart';
-import 'package:jci_app/core/util/snackbar_message.dart';
+
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 
 import 'package:jci_app/features/Teams/presentation/widgets/TaskImpl.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/TaskWidget.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/TeamComponent.dart';
+import 'package:jci_app/features/Teams/presentation/widgets/TeamImpl.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 
 
@@ -22,18 +26,34 @@ import '../../../../core/app_theme.dart';
 
 import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 
+import '../../../Home/presentation/widgets/Functions.dart';
+import '../../../auth/domain/entities/Member.dart';
 import '../../domain/entities/Team.dart';
+import '../bloc/TaskFilter/taskfilter_bloc.dart';
 import 'MembersTeamSelection.dart';
 
+import 'TaskComponents.dart';
 import 'TeamWidget.dart';
 
-class TeamDetailWidget extends StatelessWidget {
+class TeamDetailWidget extends StatefulWidget {
   final Team team;
+
   final TextEditingController taskController;
 
   TeamDetailWidget({Key? key, required this.team, required this.taskController})
       : super(key: key);
 
+  @override
+  State<TeamDetailWidget> createState() => _TeamDetailWidgetState();
+}
+
+class _TeamDetailWidgetState extends State<TeamDetailWidget> {
+  @override
+  void initState() {
+    log(widget.team.Members.toString());
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -48,13 +68,14 @@ class TeamDetailWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Header(context, mediaQuery),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SizedBox(
+                    width: mediaQuery.size.width/.8,
+                      child: Header(context, mediaQuery)),
+                ),
 
-          /*      Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: mediaQuery.size.width / 20,vertical: 10),
-                  child: description(mediaQuery, context),
-                ),*/
+
 
               state.tasks.isEmpty?SizedBox():
                 Column(
@@ -83,9 +104,9 @@ class TeamDetailWidget extends StatelessWidget {
                     children: [
 
                       Text('Tasks', style: PoppinsSemiBold(
-                          20, textColorBlack, TextDecoration.none),),
+                          mediaQuery.devicePixelRatio*6, textColorBlack, TextDecoration.none),),
 state.tasks.isEmpty?SizedBox():
-                      buillLinkedtext(mediaQuery,team),
+                      buillLinkedtext(mediaQuery,widget.team),
 
                     ],
                   ),
@@ -94,8 +115,8 @@ state.tasks.isEmpty?SizedBox():
 
 
                   children: [
-                    TaskAddField(taskController, team.id),
-                    state.tasks.isEmpty?SizedBox():
+                    TaskAddField(widget.taskController, widget.team.id),
+
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Padding(
@@ -107,7 +128,7 @@ state.tasks.isEmpty?SizedBox():
 
                       height: mediaQuery.size.height / 1.5,
                       child: GetTasksWidget(
-                          team, mediaQuery, taskController),
+                          widget.team, mediaQuery, widget.taskController),
                     ),
 
                   ],
@@ -149,21 +170,24 @@ state.tasks.isEmpty?SizedBox():
               showDragHandle: true,
               backgroundColor: textColorWhite,
               context: context, builder: (context) {
-            return BottomTaskSheet(mediaQuery, state.tasks,team);
+            return SingleChildScrollView(
+
+
+                child: BottomTaskSheet(mediaQuery, state.tasks,team));
           });
         },
             child: Text("Show More",
               style: PoppinsSemiBold(
-                  17, PrimaryColor, TextDecoration.underline),));
+                  mediaQuery.devicePixelRatio*5, PrimaryColor, TextDecoration.underline),));
       },
     );
   }
 
   SizedBox description(mediaQuery, BuildContext context) {
     double maxHeight = 200; // Set the maximum height limit to 200
-    double height = mediaQuery.size.height * (team.Members.length / 100);
+    double height = mediaQuery.size.height * (widget.team.Members.length / 100);
     height = height > maxHeight ? maxHeight : height;
-    String date = team.event['ActivityEndDate']!;
+    String date = widget.team.event['ActivityEndDate']!;
     final parse = DateTime.parse(date);
     return SizedBox(
 
@@ -184,14 +208,27 @@ state.tasks.isEmpty?SizedBox():
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  team.TeamLeader.isNotEmpty
-                      ?
-                  Text("By ${ team.TeamLeader[0]["firstName"]}",
-                    style: PoppinsRegular(
-                      mediaQuery.devicePixelRatio * 5, textColorBlack,),)
-                      : SizedBox(),
-                  membersTeamImage(
-                      context, mediaQuery, team.Members.length, team.Members,30,40),
+                  buildText("Members", mediaQuery),
+                  BlocBuilder<GetTeamsBloc, GetTeamsState>(
+  builder: (context, state) {
+    return Row(
+                    children: [
+
+                      GestureDetector(
+                        onTap: () {
+                          TeamMembersShett(context, mediaQuery);},
+                        child: membersTeamImage(
+                            context, mediaQuery, widget.team.Members.length, widget.team.Members,30,40),
+                      ),
+                      buildAddButton((){
+
+
+
+                      })
+                    ],
+                  );
+  },
+),
                 ],
               ),
 
@@ -200,7 +237,7 @@ state.tasks.isEmpty?SizedBox():
                 padding: EdgeInsets.symmetric(
 
                     horizontal: 8.0,),
-                child: Circle(team, parse, mediaQuery, context),
+                child: Circle(widget.team, parse, mediaQuery, context),
               ),
             ],
           ),
@@ -210,7 +247,7 @@ Column(
   children: [
     Text("Description", style: PoppinsSemiBold( 14, textColorBlack, TextDecoration.none),),
               SingleChildScrollView(
-                child: Text(team.description, textAlign: TextAlign.justify,
+                child: Text(widget.team.description, textAlign: TextAlign.justify,
                   style: PoppinsRegular(
                     mediaQuery.devicePixelRatio * 4, textColor,) ,),
               ),
@@ -222,6 +259,65 @@ Column(
     );
   }
 
+  Future<dynamic> TeamMembersShett(BuildContext context, mediaQuery,) {
+    return showModalBottomSheet(
+
+                            showDragHandle: true,
+                            context: context,
+                            builder: (context) {
+                              log(Member.toMember(widget.team.Members[0]).toString());
+                              return SizedBox(
+                                height: mediaQuery.size.height / 1.5,
+                                width: mediaQuery.size.width,
+                                child: SingleChildScrollView(
+
+                                child: Padding(
+                                  padding:paddingSemetricVerticalHorizontal(h: 14),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children:[
+                                      Padding(
+                                        padding:paddingSemetricHorizontal(),
+                                        child: Text("Board members ( ${widget.team.Members.length} )",style: PoppinsSemiBold(17, textColorBlack, TextDecoration.none),),
+                                      ),
+                                      SeachMemberWidget(mediaQuery, context,(value){},false),
+                                      Padding(
+                                        padding: paddingSemetricVertical(),
+                                        child: SizedBox(
+                                                                            height: mediaQuery.size.height/1.5,
+                                          width: mediaQuery.size.width,
+                                          child: TeamMembers(),
+                                        ),
+                                      )
+                                    ]
+                                  ),
+                                ),
+                                ),
+                              );
+                      });
+  }
+
+  ListView TeamMembers() {
+    return ListView.separated(
+                                            itemBuilder: (context,index){
+                                          return     Padding(
+                                            padding:paddingSemetricHorizontal(h: 10),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                imageWidget(Member.toMember(widget.team.Members[widget.team.Members.length-index-1])),
+                                                Member.toMember(widget.team.Members[widget.team.Members.length-index-1]).id!= Member.toMember(widget.team.TeamLeader[0]).id?
+                                                Text("Member",style: PoppinsSemiBold(17, textColorBlack, TextDecoration.none),):
+                                                Text("Admin",style: PoppinsSemiBold(17, textColorBlack, TextDecoration.none),),
+                                              ],
+                                            ),
+                                          );
+                                            }, separatorBuilder: (context,int){
+                                          return SizedBox(height: 10,);
+                                        }, itemCount: widget.team.Members.length);
+  }
+
   Widget ProgessBar(MediaQueryData mediaQuery, BuildContext context,) {
 
 
@@ -231,7 +327,7 @@ Column(
         double containerWidth = MediaQuery
           .of(context)
           .size
-          .width / (state.tasks.length*1.1);
+          .width / (state.tasks.length*1.2);
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
@@ -306,7 +402,6 @@ Column(
     );
   }
 
-
   Widget Header(BuildContext contex, mediaQuery) =>
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -315,38 +410,76 @@ Column(
             return BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
               builder: (context, ste) {
                 return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
 
                   children: [
                     BackButton(onPressed: () {
                       GoRouter.of(context).go('/home');
                       context.read<GetTaskBloc>().add(resetevent());
+
+                      context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
+                      context.read<GetTeamsBloc>().add(GetTeams(isPrivate: false,isUpdated: ste.isUpdated));
+                      context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(ste.isUpdated));
+
+                      context.read<TaskfilterBloc>().add(filterTask([]));
+
                     },),
                     SizedBox(
-                      width: mediaQuery.size.width / 1.2,
+                      width: mediaQuery.size.width / 1.3,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 18.0),
                         child:
 
 
                         ste.WillAdded ? Text("Add Task", style: PoppinsSemiBold(
-                            mediaQuery.devicePixelRatio * 6, textColorBlack,
+                            mediaQuery.devicePixelRatio * 5, textColorBlack,
                             TextDecoration.none),) : ste.WillDeleted ? Text("Delete Task", style: PoppinsSemiBold(
-                            mediaQuery.devicePixelRatio * 6, textColorBlack,
+                            mediaQuery.devicePixelRatio * 5, textColorBlack,
                             TextDecoration.none),) :
 
                         Row(
 
                             children: [
-                              ImageCard(mediaQuery, team),
+                              ImageCard(mediaQuery, widget.team,mediaQuery.size.height / 20.5,),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8.0),
-                                child: Text(team.name, style: PoppinsSemiBold(
-                                    mediaQuery.devicePixelRatio * 5,
-                                    textColorBlack, TextDecoration.none),),
+                                child: SizedBox(
+                                  width: mediaQuery.size.width /3,
+                                  child: Text(widget.team.name,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: PoppinsSemiBold(
+                                      mediaQuery.devicePixelRatio * 4,
+                                      textColorBlack, TextDecoration.none),),
+                                ),
                               ),
-                              Icon(Icons.more_vert, color: textColorBlack,),
+                              Container(
+                                height: 20,
+                                width: 20,
+
+                                decoration: BoxDecoration(
+                                  color:! widget.team.status  ? Colors.red : Colors.green,
+                                  shape: BoxShape.circle,
+
+                                ),
+
+                              ),
+
+
+
+                              IconButton(icon:Icon(Icons.more_vert, color: textColorBlack,), onPressed: () {
+
+                                showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return SizedBox(
+                                        height: mediaQuery.size.height / 4,
+                                        width: double.infinity,
+                                        child: ModelShowBottomActions(mediaQuery, context),
+                                      );
+                                    });
+
+                              },),
 
                             ]
                         ),
@@ -362,6 +495,30 @@ Column(
           },
         ),
       );
+
+  Column ModelShowBottomActions(mediaQuery, BuildContext context) {
+    return Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            actionTeamRow(mediaQuery, TeamAction.Upload, Icons.edit, "Update", () async{
+                                              context.read<TaskVisibleBloc>().add(ChangeImageEvent(widget.team.CoverImage));
+                                              final  image=  await  convertBase64ToXFile(widget.team.CoverImage);
+                                              //log("kkkkkkkkkkkk${image!.path}");
+                                              if (!mounted) return;
+                                              context.go('/CreateTeam?team=${jsonEncode(widget.team.toJson())}&&image=${image}');
+                                              context.read<TaskVisibleBloc>().add(ChangeImageEvent( image!.path));
+
+                                            })
+                                            ,actionTeamRow(mediaQuery, TeamAction.delete, Icons.delete, "Delete", () {
+                                              context.read<GetTeamsBloc>().add(DeleteTeam( widget.team.id));
+                                              context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+
+
+
+                                            })
+
+                                            ]);
+  }
 }
 
 
@@ -393,7 +550,7 @@ Widget Circle(Team team, DateTime parse, MediaQueryData mediaQuery,
     );
 
 
-Widget ImageCard(mediaQuery, Team team) =>
+Widget ImageCard(mediaQuery, Team team,double height) =>
     team.CoverImage.isNotEmpty
         ? ClipRRect(
         borderRadius: BorderRadius.circular(100),
@@ -402,8 +559,8 @@ Widget ImageCard(mediaQuery, Team team) =>
         child: Image.memory(
           base64Decode(team.CoverImage),
           fit: BoxFit.cover,
-          height: mediaQuery.size.height / 20.5,
-          width: mediaQuery.size.height / 20.5,
+          height:height,
+          width: height
 
 
         ))
@@ -412,9 +569,10 @@ Widget ImageCard(mediaQuery, Team team) =>
       borderRadius: BorderRadius.circular(100),
 
       child: Container(
-        height: mediaQuery.size.height / 20.5,
-        width: mediaQuery.size.height / 20.5,
-        color: textColor,
+        height: height,
+        width: height,
+        color: backgroundColored,
+          child: Image.asset("assets/images/jci.png", fit: BoxFit.contain,)
       ),
     );
 

@@ -35,7 +35,25 @@ class Member extends Equatable {
     );
   }
 
+  static Member toMember(Map<String, dynamic> json) {
+    return Member(
+      id: json['_id'] ==null?json['id'] as String:json['_id'] as String,
+      firstName: json['firstName']as String,
+      Images: json['Images'] as List<dynamic>,
+      // null
+      Activities: json['Activities']??[],
+      IsSelected: json['IsSelected']??false,
+      //null
+      email: json['email']??'',
+      lastName: json['lastName']??'',
+      phone: json['phone']??'',
+      password: json['password']??'',
+      is_validated: json['is_validated']??false,
+      cotisation: json['cotisation']??[],
+      role: json['role']??'',
 
+    );
+  }
 
   const Member(
 

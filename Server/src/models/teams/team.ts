@@ -16,6 +16,8 @@ TeamLeader:any
 export const TeamSchema=new Schema({
     name:{type:String,required:true},
     description:{type:String,required:true},
+
+    //public-> true if the team is public and false if it is private
     status:{type:Boolean,default:true},
     
     

@@ -12,19 +12,19 @@ class GetAllTeamsUseCase {
 
 
 
-  Future<Either<Failure, List<Team>>> call({String page="0",String limit="5"}) async {
-    return await _teamRepository.getTeams(page, limit);
+  Future<Either<Failure, List<Team>>> call({String page="0",String limit="5",isPrivate=false,updated=true}) async {
+    return await _teamRepository.getTeams(page, limit, isPrivate, updated);
   }
 }
-class GetTeamByIdUseCase  extends UseCase<Team, String>{
+class GetTeamByIdUseCase  extends UseCase<Team, Map<String,dynamic>>{
   final TeamRepo _teamRepository;
 
   GetTeamByIdUseCase(this._teamRepository);
 
 
   @override
-  Future<Either<Failure, Team>> call(String id) async {
-    return await _teamRepository.getTeamById(id);
+  Future<Either<Failure, Team>> call( Map<String,dynamic> params) async {
+    return await _teamRepository.getTeamById(params['id']!,params['isUpdated']!);
   }
 }
 class AddTeamUseCase  extends UseCase<Team, Team>{
@@ -60,3 +60,15 @@ class DeleteTeamUseCase  extends UseCase<Unit, String>{
     return await _teamRepository.deleteTeam(id);
   }
 }
+class getTeamByNameUseCase  extends UseCase<List<Team>, Map<String,dynamic>>{
+  final TeamRepo _teamRepository;
+
+  getTeamByNameUseCase(this._teamRepository);
+
+  @override
+  Future<Either<Failure, List<Team>>> call(Map<String,dynamic> params) {
+    return _teamRepository.getTeamByName(params['name']);
+  }
+}
+
+

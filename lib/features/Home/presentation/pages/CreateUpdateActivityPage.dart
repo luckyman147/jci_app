@@ -23,6 +23,7 @@ import 'package:jci_app/features/Home/presentation/bloc/textfield/textfield_bloc
 
 import 'package:jci_app/features/Home/presentation/widgets/AddActivityWidgets.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Compoenents.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 
 
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
@@ -116,7 +117,7 @@ return      LoadingWidget();
     _LeaderController.text=event.LeaderName;
     context.read<FormzBloc>().add(EndTimeChanged(date: event.ActivityEndDate));
     context.read<FormzBloc>().add(RegistraTimeChanged(date: event.registrationDeadline));
-    context.read<FormzBloc>().add(ImageInputChanged(  imageInput:ha??XFile("")));
+    context.read<TaskVisibleBloc>().add(ChangeImageEvent(  ha.path??"assets/images/blankjci.jpeg"));
     context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent(event.IsPaid));
   }
   void TrainingUpdateInfo(Training train,ha)async{
@@ -124,8 +125,8 @@ return      LoadingWidget();
 
     _ProfesseurName.text=train.ProfesseurName;
     context.read<FormzBloc>().add(EndTimeChanged(date: train.ActivityEndDate));
+   context.read<TaskVisibleBloc>().add(ChangeImageEvent(  ha.path??"assets/images/blankjci.jpeg"));
 
-    context.read<FormzBloc>().add(ImageInputChanged(  imageInput:ha??XFile("")));
     context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent(train.IsPaid));
   }
   void MeetingUpdateInfo(Meeting meeting)async{

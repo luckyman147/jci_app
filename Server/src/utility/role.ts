@@ -29,7 +29,7 @@ export const getEventNameById = async (eventId: string): Promise<any | null> => 
       // Check if the event is found
       if (event) {
         // Return the event name
-        return {name:event.name,ActivityEndDate:event.ActivityEndDate};
+        return {name:event.name,ActivityEndDate:event.ActivityEndDate,id:event._id};
       } else {
         // Event not found
         return null;
@@ -121,6 +121,7 @@ export const getTeamByEvent= async () =>{
         AssignTo:await  getMembersInfo(task.AssignTo),
         Deadline: task.Deadline,
  StartDate:task.StartDate,
+ attachedFile:await getFilesInfoByIds(task.attachedFile),
         isCompleted: task.isCompleted,
         CheckList: await  getCheckListsInfoByIds(task.CheckList),
     

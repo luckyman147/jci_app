@@ -32,6 +32,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   void initState() {
     context.read<GetTaskBloc>().add(
         GetTaskById(ids: {"id": widget.team.id, "taskid": widget.taskId}));
+    context.read<TaskVisibleBloc>().add(ToggleTaskVisible(true));
+    context.read<TaskVisibleBloc>().add(ChangeTextFieldsTitle(TextFieldsTitle.Inactive));
 
     //   context.read<MembersBloc>().add(GetAllMembersEvent());
     // TODO: implement initState
@@ -42,28 +44,15 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
 
-    return Scaffold(
-      /* appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
-          builder: (context, state) {
-            return TaskDetailHeader(context, widget.teamId,widget.taskId, "Task Details",state.WillAdded);
-          },
-        ),
-      ),*/
-
-
-      body: BlocBuilder<GetTaskBloc, GetTaskState>(
+    return  BlocBuilder<GetTaskBloc, GetTaskState>(
         builder: (context, state) {
-          return SizedBox(
-            height: mediaQuery.size.height,
-
+          return SingleChildScrollView(
             child: GetTaskByidWidget(
                 widget.team, widget.taskId, _taskNameController,
-                getIndexById(widget.taskId, state.tasks)),);
+                getIndexById(widget.taskId, state.tasks)),
+          );
         },
-      )
-      ,
+      
     );
   }
 }

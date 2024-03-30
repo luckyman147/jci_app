@@ -12,8 +12,7 @@ MemberModel _$MemberModelFromJson(Map<String, dynamic> json) => MemberModel(
       is_validated: json['is_validated'] as bool,
       cotisation:
           (json['cotisation'] as List<dynamic>).map((e) => e as bool).toList(),
-      Images:
-          (json['Images'] as List<dynamic>).map((e) => e as String).toList(),
+      Images: json['Images'] as List<dynamic>,
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
       phone: json['phone'] as String,

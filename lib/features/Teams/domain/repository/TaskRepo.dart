@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 
 import '../../../../core/error/Failure.dart';
@@ -19,6 +20,10 @@ abstract class TaskRepo {
   Future<Either<Failure,Unit>> UpdateTimeline( String taskid, DateTime StartDate,DateTime Deadline);
 Future <Either<Failure,Unit>> UpdateMembers(String taskid, bool Status, String memberid);
   Future<Either<Failure,Unit>> updateChecklist(String id, String taskid, String checklistid, CheckList checklist);
+  Future<Either<Failure,Unit>> updateChecklistName( String taskid, String checklistid, String name);
+
   Future<Either<Failure,Unit>> deleteChecklist(String checklistid);
+  Future<Either<Failure,TaskFile>> UpdateFiles(String taskid, TaskFile file);
+  Future<Either<Failure,Unit>> DeleteFiles(String taskid, String file);
 
 }

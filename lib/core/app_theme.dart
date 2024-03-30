@@ -87,7 +87,25 @@ ButtonStyle bottondec(bool value)=>ElevatedButton.styleFrom(
 );
 
 
+ButtonStyle styleFrom(bool isActive) {
+  return ElevatedButton.styleFrom(
+    onPrimary: PrimaryColor.withOpacity(.3),
+    onSurface: PrimaryColor,
+    primary: isActive?PrimaryColor:BackWidgetColor,
+    shadowColor: SecondaryColor.withOpacity(.3),
+    splashFactory: InkRipple.splashFactory,
+    surfaceTintColor: isActive?PrimaryColor:BackWidgetColor,
+    side: BorderSide(color: BackWidgetColor, width: 2),
+    fixedSize: Size(120, 40),
+    elevation: 0,
+    backgroundColor: isActive?PrimaryColor:textColorWhite,
 
+    shape: RoundedRectangleBorder(
+
+      borderRadius: BorderRadius.circular(10.0),
+    ),
+  );
+}
 
 
 final taskDecoration=BoxDecoration(
@@ -141,8 +159,8 @@ scaffoldBackgroundColor:textColorWhite ,
   ),
 );
 
-InputDecoration inputDecoration (FormzState state,mediaQuery )=> InputDecoration(
-  errorText: state.memberName.displayError!= null?"Empty Field":null,
+InputDecoration inputDecoration (mediaQuery,bool isempty )=> InputDecoration(
+  errorText:isempty ?"Empty Field":null,
   prefixIcon: Icon(
     Icons.search,
     color: textColor,

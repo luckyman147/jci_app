@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:jci_app/core/config/services/TeamStore.dart';
 
 import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/core/network/network_info.dart';
@@ -106,33 +107,61 @@ final teamMosdel=TeamModel.fromEntity(team,true);
     }
   }
   @override
-  Future<Either<Failure, Team>> getTeamById(String id)async  {
+  Future<Either<Failure, Team>> getTeamById(String id,bool updated)async  {
 
-      try {
-        final remoteTeams = await teamRemoteDataSource.getTeamById(id);
-
-        return Right(remoteTeams);
-      } on ServerException {
-        return Left(ServerFailure());
-      }
-
-
-  }
-
-  @override
-  Future<Either<Failure, List<Team>>> getTeams(String page,String limit) async {
 
     if (await networkInfo.isConnected) {
+
       try {
-        final remoteTeams = await teamRemoteDataSource.getAllTeams(page,limit);
-        teamLocalDataSource.cacheTeams(remoteTeams);
-        return Right(remoteTeams);
+        if (updated) {
+          final remoteTeams = await teamRemoteDataSource.getTeamById(id);
+          teamLocalDataSource.cacheTeamByid(remoteTeams);
+          return Right(remoteTeams);}
+        else{
+
+          final localTeams = await teamLocalDataSource.getTeamById(id);
+          return Right(localTeams);
+
+
+        }
       } on ServerException {
         return Left(ServerFailure());
       }
     } else {
       try {
-        final localTeams = await teamLocalDataSource.getAllCachedTeams();
+        final localTeams = await teamLocalDataSource.getTeamById(id);
+        return Right(localTeams);
+      } on EmptyCacheException {
+        return Left(EmptyCacheFailure());
+      }
+    }
+
+
+  }
+
+  @override
+  Future<Either<Failure, List<Team>>> getTeams(String page,String limit,bool isPrivate,bool updated) async {
+final CacheStatus status=isPrivate?CacheStatus.Private:CacheStatus.Public;
+    if (await networkInfo.isConnected) {
+
+      try {
+        if (updated) {
+        final remoteTeams = await teamRemoteDataSource.getAllTeams(page,limit,isPrivate);
+        teamLocalDataSource.cacheTeams(remoteTeams,status);
+        return Right(remoteTeams);}
+        else{
+
+          final localTeams = await teamLocalDataSource.getAllCachedTeams(status);
+          return Right(localTeams);
+
+
+        }
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      try {
+        final localTeams = await teamLocalDataSource.getAllCachedTeams(status);
         return Right(localTeams);
       } on EmptyCacheException {
         return Left(EmptyCacheFailure());
@@ -148,8 +177,8 @@ final teamMosdel=TeamModel.fromEntity(team,true);
 
   @override
   Future<Either<Failure, Unit>> updateTeam(Team team) {
-    // TODO: implement updateTeam
-    throw UnimplementedError();
+     final teamMosdel=TeamModel.fromEntity(team,false);
+      return _getMessage(teamRemoteDataSource.updateTeam(teamMosdel));
   }
 
   @override
@@ -176,4 +205,23 @@ final teamMosdel=TeamModel.fromEntity(team,true);
       return Left(OfflineFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, List<Team>>> getTeamByName(String names)async  {
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteTeams = await teamRemoteDataSource.getTeamByName(names);
+
+        return Right(remoteTeams);
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+
+        return Left(EmptyCacheFailure());
+
+    }
+  }
+
+
 }

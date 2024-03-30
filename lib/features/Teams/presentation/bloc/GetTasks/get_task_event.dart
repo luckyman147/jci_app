@@ -6,9 +6,10 @@ abstract class GetTaskEvent extends Equatable {
 
 class GetTasks extends GetTaskEvent {
   final String id;
-  GetTasks({required this.id});
+  final TaskFilter filter;
+  GetTasks({required this.id,required this.filter});
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id,filter];
 }
 class GetTaskById extends GetTaskEvent {
  final Map<String,String >ids;
@@ -119,4 +120,25 @@ class init_members extends GetTaskEvent {
   init_members(this.members, this.id);
   @override
   List<Object> get props => [members,id];
+}
+class UpdateFile extends GetTaskEvent {
+  final Map<String,dynamic> fields;
+
+  UpdateFile(this.fields, );
+  @override
+  List<Object> get props => [fields];
+}
+class DeleteFileEvent extends GetTaskEvent {
+  final Map<String,dynamic> fields;
+
+  DeleteFileEvent(this.fields, );
+  @override
+  List<Object> get props => [fields];
+}
+class UpdateChecklistName extends GetTaskEvent {
+  final Map<String,dynamic> fields;
+
+  UpdateChecklistName(this.fields, );
+  @override
+  List<Object> get props => [fields];
 }

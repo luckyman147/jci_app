@@ -226,7 +226,7 @@ Widget EventsDetails(List<Event> Events,mediaQuery)=>ListView.separated(
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: SizedBox(
-            width: mediaQuery.size.width/4,
+            width: mediaQuery.size.width/3,
             child: Text(item.name,
               overflow: TextOverflow.ellipsis,
               style: PoppinsSemiBold(18, textColorBlack,TextDecoration.none),)),

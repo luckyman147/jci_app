@@ -331,7 +331,7 @@ Future<XFile?> convertBase64ToXFile(String base64String) async {
 
   try {
     // Decode base64 string to bytes
-    Uint8List bytes = base64.decode(base64String);
+    Uint8List bytes = base64.decode(base64String.split(' ').last);
 
     // Create a MemoryImage from bytes
     MemoryImage memoryImage = MemoryImage(Uint8List.fromList(bytes));

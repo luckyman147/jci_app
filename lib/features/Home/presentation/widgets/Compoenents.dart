@@ -237,8 +237,8 @@ class MyActivityButtons extends StatelessWidget {
                   ? textColorWhite
                   : Colors.black,
               shape: RoundedRectangleBorder(
-                side: BorderSide(color: Colors.black, width: 1.0),
-                borderRadius: BorderRadius.circular(16.0),
+                side: BorderSide(color: backgroundColored, width:1.0),
+                borderRadius: BorderRadius.circular(10.0),
               ),
             ),
             onPressed: () {
@@ -620,8 +620,8 @@ Widget MonthWeekBuild (activity act,ActivityLoadedMonthState state,MediaQueryDat
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Upcoming ${act.name}", style: PoppinBold(
-                      mediaQuery.size.width / 17, Colors.black,
+                  Text("Upcoming ${act.name}", style: PoppinsSemiBold(
+                      mediaQuery.devicePixelRatio*6, Colors.black,
                       TextDecoration.none),),
                   InkWell(
                     onTap: (){

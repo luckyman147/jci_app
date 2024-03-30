@@ -9,9 +9,11 @@ import 'package:jci_app/core/config/env/urls.dart';
 
 
 import 'package:http/http.dart' as http;
+import 'package:jci_app/core/config/services/uploadImage.dart';
 
 
 import 'package:jci_app/features/Teams/data/models/CheckListModel.dart';
+import 'package:jci_app/features/Teams/data/models/FileModel.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 
 import '../../../../../core/error/Exception.dart';
@@ -19,14 +21,14 @@ import '../models/TaskModel.dart';
 
 
 abstract class TaskRemoteDataSource {
-  Future<List<CheckListModel>> getCheckList(String id,String taskId);
+  
   Future<List<TaskModel>> getTasksOfTeam(String id);
   Future<TaskModel> getTasksById(String id,String taskid);
-
-  Future<Unit> AddAttachedFile(String taskId,String File);
+  Future<Unit> DeleteFiles(String taskId, String file);
+ Future<Unit> UpdateChecklistName(String taskId,String checkListId,String name);
   Future<TaskModel> AddTask(String id,String name);
 Future<CheckListModel> addCheckList(String taskId,String name);
-Future<Unit> addComment(String id,String taskId,String comment);
+
 
   Future<Unit> updateCheckList(String id,String taskId,String checkListId,CheckListModel checkList);
 Future <Unit> updateIscompleted(String taskId,bool isCompleted);
@@ -34,11 +36,13 @@ Future <Unit> updateChecklistStatus(String taskId,String checkid,bool isComplete
 Future <Unit> updateTaskName(String taskId,String name);
 Future <Unit> UpdateMembers(String taskId,bool name,String MemberId);
 Future <Unit> UpdateTimeline(String taskId,DateTime startdate,DateTime enddate);
-  Future<Unit> updateTask(String id,TaskModel Task);
 
-Future<Unit> DeleteAttachedFile(String taskId,String File);
+
+
 Future<Unit> deleteCheckList(String checkListId);
 Future<Unit> deleteTask(String taskid);
+Future<FileModel> UpdateFiles(String taskId, FileModel file );
+
 }
 
 class TaskRemoteDataSourceImpl implements TaskRemoteDataSource{
@@ -108,11 +112,6 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource{
 
   }
 
-  @override
-  Future<Unit> addComment(String id, String taskId, String comment) {
-    // TODO: implement addComment
-    throw UnimplementedError();
-  }
 
   @override
   Future<Unit> deleteCheckList( String checkListId)async {
@@ -133,11 +132,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource{
 
 
   }
-  @override
-  Future<List<CheckListModel>> getCheckList(String id, String taskId) {
-    // TODO: implement getCheckList
-    throw UnimplementedError();
-  }
+
 
   @override
   Future<TaskModel> getTasksById(String id, String taskid)async  {
@@ -187,11 +182,6 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource{
     else {
       throw ServerException();
     }}
-  @override
-  Future<Unit> updateTask( String id, TaskModel Task) {
-    // TODO: implement updateTask
-    throw UnimplementedError();
-  }
 
   @override
   Future<List<TaskModel>> getTasksOfTeam(String id)async {
@@ -264,17 +254,7 @@ body: jsonEncode({"IsCompleted":"$isCompleted"})
 
 }
 
-  @override
-  Future<Unit> AddAttachedFile(String taskId, String File) {
-    // TODO: implement AddAttachedFile
-    throw UnimplementedError();
-  }
 
-  @override
-  Future<Unit> DeleteAttachedFile(String taskId, String File) {
-    // TODO: implement DeleteAttachedFile
-    throw UnimplementedError();
-  }
 
   @override
   Future<Unit> UpdateMembers(String taskId, bool status, String MemberId)async  {
@@ -345,6 +325,77 @@ body: jsonEncode({"IsCompleted":"$isCompleted"})
     }else{
       throw ServerException();
     }
+
+
+  }
+
+  @override
+  Future<Unit> DeleteFiles(String taskId, String file)async  {
+    final response= await client.delete(
+      Uri.parse("$TeamUrl/tasks/$taskId/File/$file"),
+      headers: {"Content-Type": "application/json",
+
+      },);
+    if (response.statusCode == 204) {
+      return Future.value(unit);
+    } else if (response.statusCode == 404) {
+      throw WrongCredentialsException();
+
+    }
+    else {
+      throw ServerException();
+    }}
+
+
+
+  @override
+  Future<FileModel> UpdateFiles(String taskId, FileModel file) async {
+    final updatedFile = await uploadFile(taskId, file.path, TeamUrl, "File");
+
+    // Read the response body as a stream and decode it
+    final responseBody = await updatedFile.stream.bytesToString();
+
+    if (updatedFile.statusCode == 200) {
+      final decodedJson = json.decode(responseBody);
+      log(decodedJson.toString());
+      final FileModel fileModel = FileModel.fromJson(decodedJson);
+      return fileModel;
+    }
+    else if (updatedFile.statusCode == 404) {
+      throw EmptyDataException();
+    }
+   else if  (updatedFile.statusCode == 400) {
+      throw WrongCredentialsException();
+    }
+
+    else {
+      // Handle other status codes if needed
+      throw Exception('Failed to update file: ${updatedFile.reasonPhrase}');
+    }
+  }
+
+  @override
+  Future<Unit> UpdateChecklistName(String taskId, String checkListId, String name)async  {
+    final response = await client.put(
+
+        Uri.parse("$TeamUrl$taskId/UpdateCheckName/$checkListId"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"name":"$name"})
+    );
+    log(response.statusCode.toString());
+    log(response.body);
+    if (response.statusCode == 200) {
+
+      return Future.value(unit);
+    }
+    else if (response.statusCode == 404) {
+      throw EmptyDataException();}
+    else if (response.statusCode == 400) {
+      throw WrongCredentialsException();
+    }else{
+      throw ServerException();
+    }
+
 
 
   }

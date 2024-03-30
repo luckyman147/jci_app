@@ -6,17 +6,19 @@ abstract class GetTeamsEvent extends Equatable {
 class GetTeams extends GetTeamsEvent {
 
 
-
+final bool isPrivate;
+final bool isUpdated;
+  GetTeams({required this.isPrivate,this.isUpdated=true});
 
 
   @override
   List<Object> get props => [];
 }
 class GetTeamById extends GetTeamsEvent {
-  final String id;
-  GetTeamById(this.id);
+  final Map<String,dynamic> fields;
+  GetTeamById(this.fields);
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [fields];
 }class AddTeam extends GetTeamsEvent {
   final Team team;
   AddTeam(this.team);
@@ -28,4 +30,48 @@ class DeleteTeam extends GetTeamsEvent {
   DeleteTeam(this.id);
   @override
   List<Object> get props => [id];
+}
+class UpdateTeam extends GetTeamsEvent {
+  final Team team;
+  UpdateTeam(this.team);
+  @override
+  List<Object> get props => [team];
+}
+class GetTeamByName extends GetTeamsEvent {
+  final Map<String,dynamic> fields;
+  GetTeamByName(this.fields);
+  @override
+  List<Object> get props => [fields];
+}
+class initStatus extends GetTeamsEvent {
+
+
+
+  @override
+  List<Object> get props => [];
+}
+class nitMembersEvent extends GetTeamsEvent {
+
+  final List<Map<String,dynamic>> members;
+  nitMembersEvent(this.members);
+  @override
+  List<Object> get props => [members];
+}
+class AddMembers extends GetTeamsEvent {
+  final List<Map<String,dynamic>> members;
+  AddMembers(this.members);
+  @override
+  List<Object> get props => [members];
+}
+class DeleteMembers extends GetTeamsEvent {
+  final List<Map<String,dynamic>> members;
+  DeleteMembers(this.members);
+  @override
+  List<Object> get props => [members];
+}
+class  checkIfPartipated extends GetTeamsEvent {
+
+  checkIfPartipated();
+  @override
+  List<Object> get props => [];
 }

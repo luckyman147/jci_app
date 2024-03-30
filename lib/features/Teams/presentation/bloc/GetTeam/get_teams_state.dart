@@ -1,25 +1,35 @@
 part of 'get_teams_bloc.dart';
-enum TeamStatus { initial, success, error }
+enum TeamStatus { initial, success, error ,Deleted,DeletedError,IsRefresh}
  class GetTeamsState extends Equatable {
    final TeamStatus status;
    final List<Team> teams;
    final bool hasReachedMax;
    final String errorMessage;
+   final List<dynamic> isExisted;
+   final List<dynamic> members;
 
 
   const GetTeamsState({this.status = TeamStatus.initial,
    this.hasReachedMax = false,
    this.teams = const [],
+    this.isExisted = const[],
+
+    this.members = const [],
    this.errorMessage = ""}
       );
 
    GetTeamsState copyWith({
+
+     List<dynamic >?isExisted,
+     List<dynamic>? members,
      TeamStatus? status,
      List<Team>? teams,
      bool? hasReachedMax,
      String? errorMessage,
    }) {
      return GetTeamsState(
+        isExisted: isExisted ?? this.isExisted,
+        members: members ?? this.members,
        status: status ?? this.status,
        teams: teams ?? this.teams,
        hasReachedMax: hasReachedMax ?? this.hasReachedMax,
@@ -28,7 +38,7 @@ enum TeamStatus { initial, success, error }
    }
 
    @override
-   List<Object?> get props => [status, teams, hasReachedMax, errorMessage];
+   List<Object?> get props => [status, teams,members,isExisted, hasReachedMax, errorMessage];
 }
 
 class GetTeamsInitial extends GetTeamsState {

@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/features/Home/presentation/pages/CreateUpdateActivityPage.dart';
 import 'package:jci_app/features/Home/presentation/pages/detailsPage.dart';
 import 'package:jci_app/features/Home/presentation/widgets/SearchWidget.dart';
@@ -55,10 +59,13 @@ return SearchPage();
 
 
 GoRoute(
-  name: 'CreateTeam',
+  name: 'CreateTeam/',
 path: '/CreateTeam',
 builder: (BuildContext context, GoRouterState state) {
-return CreatTeamScreen();
+  final userJson = state.uri.queryParameters['team'];
+
+  final user = Team.fromJson(jsonDecode(userJson!));
+return CreatTeamScreen(team: user);
 },
 
 
@@ -110,10 +117,11 @@ return ResetPassword(email: email,);
 },
 ),
 GoRoute(
-path: '/TeamDetails/:id',
+path: '/TeamDetails/:id/:index',
 builder: (BuildContext context,  state) {
   final  id= state.pathParameters['id']! ;
-return TeamDetailsScreen(id: id,);
+  final index= state.pathParameters['index']! ;
+return TeamDetailsScreen(id: id, index: int.parse(index),);
 },
 ),
 

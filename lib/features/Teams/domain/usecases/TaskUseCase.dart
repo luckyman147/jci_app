@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/features/Teams/domain/entities/Task.dart';
+import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 import 'package:jci_app/features/Teams/domain/repository/TaskRepo.dart';
 import 'package:jci_app/features/Teams/domain/repository/TeamRepo.dart';
 
@@ -119,7 +120,19 @@ class UpdateTaskNameUseCase extends UseCase<Unit, Map<String, dynamic>> {
   }
 
 
-}class UpdateTaskTimelineUseCase extends UseCase<Unit, Map<String, dynamic>> {
+
+}
+class UpdateChecklistNameUseCase extends UseCase<Unit, Map<String, dynamic>> {
+  final TaskRepo _taskRepository;
+
+  UpdateChecklistNameUseCase(this._taskRepository);
+
+  @override
+  Future<Either<Failure, Unit>> call(Map<String, dynamic> params) {
+    return _taskRepository.updateChecklistName(params['taskid']!, params['checkid']!, params['name']! as String);
+  }
+}
+class UpdateTaskTimelineUseCase extends UseCase<Unit, Map<String, dynamic>> {
   final TaskRepo _taskRepository;
 
   UpdateTaskTimelineUseCase(this._taskRepository);
@@ -140,6 +153,26 @@ class UpdateMembersUsecases extends UseCase<Unit, Map<String, dynamic>> {
   Future<Either<Failure, Unit>> call(Map<String, dynamic> params) {
     return _taskRepository.UpdateMembers(
         params['taskid']!, params['status']! as bool , params['memberId']! as String);
+  }
+}
+class UpdateFileUseCase extends UseCase<TaskFile, Map<String, dynamic>> {
+  final TaskRepo _taskRepository;
+
+  UpdateFileUseCase(this._taskRepository);
+
+  @override
+  Future<Either<Failure, TaskFile>> call(Map<String, dynamic> params) {
+    return _taskRepository.UpdateFiles(params['taskid']!, params['file']! as TaskFile);
+  }
+}
+class DeleteFileUseCases extends UseCase<Unit, Map<String, dynamic>> {
+  final TaskRepo _taskRepository;
+
+  DeleteFileUseCases(this._taskRepository);
+
+  @override
+  Future<Either<Failure, Unit>> call(Map<String, dynamic> params) {
+    return _taskRepository.DeleteFiles(params['taskid']!, params['file']! as String);
   }
 }
 

@@ -20,13 +20,13 @@ import '../../../../../core/error/Exception.dart';
 
 
 abstract class TeamRemoteDataSource {
-  Future<List<TeamModel>> getAllTeams(String page,String limit);
+  Future<List<TeamModel>> getAllTeams(String page,String limit,bool isPrivate);
   Future<TeamModel> getTeamById(String id);
 
   Future<TeamModel> createTeam(TeamModel Team);
   Future<Unit> updateTeam(TeamModel Team);
   Future<Unit> deleteTeam(String id);
-
+Future<List<TeamModel>> getTeamByName(String name);
 
 }
 
@@ -99,13 +99,16 @@ final tokens= await Store.GetTokens();
   }
 
   @override
-  Future<List<TeamModel>> getAllTeams(String page,String limit)async  {
-    final member = await Store.getModel();
-    final memberId = member!.id;
+  Future<List<TeamModel>> getAllTeams(String page,String limit,bool isPrivate)async  {
+ final tokens=await Store.GetTokens();
     final response = await client.get(
 
-      Uri.parse("${TeamUrl}All?start=$page&limit=$limit "),
-      headers: {"Content-Type": "application/json"},
+      Uri.parse("${TeamUrl}All?start=$page&limit=$limit&isPrivate=$isPrivate"),
+      headers: {"Content-Type": "application/json",
+
+        "Authorization": "Bearer ${tokens[1]}"
+      },
+
 
     );
 
@@ -120,7 +123,7 @@ final tokens= await Store.GetTokens();
       else{
         throw EmptyDataException();
       }
-    } else if (response.statusCode == 40) {
+    } else if (response.statusCode == 400) {
       throw EmptyDataException();
     }else{
       throw ServerException();
@@ -155,7 +158,9 @@ final tokens= await Store.GetTokens();
 
   @override
   Future<Unit> updateTeam(TeamModel Team) {
-    final body =Team.toJson();
+log("Team"+Team.toString());
+    final body =Team.toUpdatejson();
+log("sbody"+body.toString() );
     debugPrint(body.toString());
     return client.put(
       Uri.parse(TeamUrl+Team.id),
@@ -168,6 +173,7 @@ final tokens= await Store.GetTokens();
 
         final update_response=await UpdateImage(decodedJson['_id'], Team.CoverImage,TeamUrl);
         if (update_response.statusCode==200){
+
           return Future.value(unit);
         }
         else if (update_response.statusCode==400){
@@ -183,6 +189,38 @@ final tokens= await Store.GetTokens();
         throw WrongCredentialsException();
       }
       else {
+        throw ServerException();
+      }
+    });
+  }
+
+  @override
+  Future<List<TeamModel>> getTeamByName(String name) async{
+    final tokens=await Store.GetTokens();
+    final response =  client.get(
+      Uri.parse( TeamUrl+ 'get?name=$name'),
+
+      headers: {"Content-Type": "application/json",
+      "Authorization": "Bearer ${tokens[1]}"
+
+
+      },
+
+
+    );
+
+    return response.then((response) async {
+      if (response.statusCode == 200) {
+        final List<dynamic> decodedJson = json.decode(response.body) ;
+
+
+        log("message");
+        final List<TeamModel> teams = decodedJson.map((e) => TeamModel.fromJson(e)).toList();
+
+        return teams;
+      } else if (response.statusCode == 400) {
+        throw EmptyDataException();
+      }else{
         throw ServerException();
       }
     });

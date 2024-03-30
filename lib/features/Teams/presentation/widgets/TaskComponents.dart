@@ -1,7 +1,12 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jci_app/core/util/snackbar_message.dart';
+import 'package:open_file/open_file.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
@@ -12,7 +17,7 @@ import '../bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../bloc/Timeline/timeline_bloc.dart';
 import 'MembersTeamSelection.dart';
 import 'funct.dart';
-
+import 'package:path_provider/path_provider.dart';
 Widget buildAddButton(Function() onadd) {
   return SizedBox(
     height: 30,
@@ -32,7 +37,7 @@ Widget buildAddButton(Function() onadd) {
   );
 }
 
-Text buildText(String text) => Text(text,style: PoppinsRegular(18, textColor),);
+Text buildText(String text,MediaQueryData mediaQuery) => Text(text,style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColor),);
 
 Widget BorderSelection(String text , Section sec) {
   return BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
@@ -70,9 +75,9 @@ Widget buildTextField(FocusNode tasknode,bool title, TextEditingController TaskN
         return !title?
         SizedBox(
 
-            width: mediaQuery.size.width/1.2,
+            width: mediaQuery.size.width/1.5,
             child: buildTextName(onTap, TaskName)):SizedBox(
-            width: mediaQuery.size.width/1.2,
+            width: mediaQuery.size.width/1.5,
 
 
             child: buildtextfield(tasknode,title,TaskName, hintText,OnPressed  ));
@@ -143,7 +148,7 @@ Widget BottomShetTaskBody(
         Text(
           sheetTitle,
           style: PoppinsSemiBold(
-            mediaQuery.devicePixelRatio * 6,
+            mediaQuery.devicePixelRatio * 7,
             PrimaryColor,
             TextDecoration.none,
           ),
@@ -157,7 +162,8 @@ Widget BottomShetTaskBody(
                 context,Startdate,(value) {
 
               context.read<TimelineBloc>().add(onStartDateChanged(startdate: value));
-            }
+
+                }
 
             );
 
@@ -195,6 +201,9 @@ Widget BottomShetTaskBody(
           onPressed: (){
             log("Startdate $Startdate  Deadlinedate $Deadlinedate  taskid $taskid");
             context.read<GetTaskBloc>().add(UpdateTimeline({"StartDate":Startdate,"Deadline":Deadlinedate,"id":taskid}));
+            context.pop();
+            context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+
           },
           child: Center(
             child: Text(
@@ -241,6 +250,123 @@ log(ff.toString());
 
 
   );
+}
+
+
+
+
+
+
+
+
+
+class AttachedFileWidget extends StatelessWidget {
+  final List<Map<String, dynamic>> fileList;
+  final String idTask;
+
+  AttachedFileWidget({required this.fileList, required this.idTask});
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: fileList.map((fileData) {
+        return Padding(
+            padding:paddingSemetricVertical(),
+            child: _buildFileRow(context,fileData,mediaQuery,idTask));
+      }).toList(),
+    );
+  }
+
+  Widget _buildFileRow(BuildContext context ,Map<String, dynamic> fileData,MediaQueryData mediaQuery,String idTask ) {
+
+    String fileName = fileData['path'] ?? '';
+    String extension = fileData['extension'] ?? '';
+    IconData iconData = _getIconForExtension(extension);
+
+    return InkWell(
+      onTap: ()async  {
+        await openFile(fileData, fileName);
+        // Open file
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+
+              decoration: const BoxDecoration(
+                color: PrimaryColor,
+                shape: BoxShape.circle,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(child: Icon(iconData, size: 20,color: Colors.white,)),
+              )), // Adjust icon size as needed
+          SizedBox(width: 10), // Adjust as needed for spacing between icon and file name
+          Text(fileName, style: PoppinsRegular(12,textColorBlack)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                  tooltip: 'Save',
+                  onPressed: ()async {
+
+
+                final result=await FileStorage.writeCounter(fileData['url'], fileData['path']!);
+                if (result){
+
+                SnackBarMessage.showSuccessSnackBar(message: "dowloaded succefully", context: context);}
+                else{
+                  SnackBarMessage.showErrorSnackBar(message: "error dowloading file", context: context);
+                }
+              }, icon: Icon(Icons.save_alt,color: textColor,size: 30,)),
+              IconButton(
+
+                  onPressed: (){
+                context.read<GetTaskBloc>().add(DeleteFileEvent({"file":fileData['id'],'taskid':idTask}));
+                context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+
+
+              }, icon: Icon(Icons. delete,color: textColor,size: 30,)),
+            ],
+          ),
+
+        ],
+      ),
+    );
+  }
+
+
+  IconData _getIconForExtension(String extension) {
+    switch (extension) {
+      case '.docx':
+      case '.pdf':
+        return Icons.picture_as_pdf;
+      case '.jpg':
+      case '.jpeg':
+      case '.png':
+        return Icons.image;
+      case '.mp4':
+      case '.avi':
+      case '.mov':
+      case '.wmv':
+
+        return Icons.video_library; // Video icon
+      case '.mp3':
+      case '.wav':
+      case '.aac':
+      case '.m4a':
+      case '.ogg':
+        case '.flac':
+
+        return Icons.music_note; // Music icon
+      default:
+        return Icons.insert_drive_file; // Default icon for unknown extensions
+    }
+  }
+
 }
 
 

@@ -30,7 +30,7 @@ dependencies:
   # Value equality
   equatable: ^2.0.5
   json_serializable:
-
+  image:
   # Service locator
   get_it: ^7.6.0
   # Remote API
@@ -41,6 +41,8 @@ dependencies:
   circle_progress_bar: ^0.1.1
   formz:
   intl:
+  file_picker:
+  open_file:
   # Local cache
   shared_preferences: ^2.1.1
   # The following adds the Cupertino Icons font to your application.
@@ -57,6 +59,7 @@ dependencies:
   jwt_decode:
   google_nav_bar: ^5.0.6
   shimmer: ^3.0.0
+  permission_handler:
 
 
   flutter_time_picker_spinner: ^2.0.0
@@ -84,6 +87,7 @@ flutter:
     - assets/images/us.png
     - assets/images/goal.png
     - assets/images/vision.png
+    - assets/images/blankjci.jpeg
     - assets/json/
     - assets/lang/en.json
     - assets/lang/fr.json

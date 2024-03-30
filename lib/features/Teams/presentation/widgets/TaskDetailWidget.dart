@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-
+import 'package:file_picker/file_picker.dart';
+import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/TaskFilter/taskfilter_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 
 import 'package:jci_app/features/Teams/presentation/bloc/Timeline/timeline_bloc.dart';
@@ -52,14 +54,20 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
     // TODO: implement dispose
     super.dispose();
   }
+  @override
+  void initState() {
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final TextEditingController TaskName = TextEditingController(
         text: widget.task['name']);
-
+log('task name ${widget.task['attachedFile']}');
     final mediaQuery = MediaQuery.of(context);
     return SingleChildScrollView(
+
       child: BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
         builder: (context, state) {
           return Padding(
@@ -78,10 +86,12 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
                 SizedBox(height: 10,),
                 Container(
                   decoration: taskdex,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: ListView(
+                    shrinkWrap: true,
+                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+
                     children: [
-                      buildSection(),
+                     // buildSection(),
                       //   SizedBox(height: 10,),é
                       buildAssignTo(context, mediaQuery),
                       //  SizedBox(height: 10,),
@@ -121,15 +131,16 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
   SingleChildScrollView buildChecklist(MediaQueryData mediaQuery,
       BuildContext context, FocusNode checklistFocus) {
     return SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       child: Container(
         decoration: taskdex,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          shrinkWrap: true, keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: [
 
             Padding(
               padding: paddingSemetricHorizontal(),
-              child: buildText("Task Checklist"),
+              child: buildText("Task Checklist",mediaQuery),
             ),
             Padding(
               padding: paddingSemetricVertical(),
@@ -172,11 +183,12 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          buildText("Timeline"),
+          buildText("Timeline",mediaQuery),
           InkWell(
             onTap: () {
+
               context.read<TimelineBloc>().add(initTimeline({
-                'StartDate': widget.task['StartDate'],
+                'Start Date': widget.task['StartDate'],
                 'Deadline': widget.task['Deadline']
               }));
 
@@ -214,7 +226,7 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
           height: mediaQuery.size.height / 2.5,
           child: BlocBuilder<TimelineBloc, TimelineState>(
             builder: (context, ste) {
-              log(ste.timeline['StartDate'].toString() + "startss");
+              log(ste.timeline['Start Date'].toString() + "startss");
               log(ste.timeline['Deadline'].toString() + "jjjj");
 
               return BlocBuilder<GetTaskBloc, GetTaskState>(
@@ -225,7 +237,7 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
                       context,
                       mediaQuery,
                       "Timeline",
-                      ste.timeline['StartDate'],
+                      ste.timeline['Start Date'],
                       ste.timeline['Deadline'],
                       "StartDate",
                       "Deadline",
@@ -265,25 +277,30 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
               },
             ),
           ),
-          buildTextField(
-              taskNameFocusNode,
-              state.textFieldsTitle == TextFieldsTitle.Active,
-              TaskName, () {
-            log("message");
-            context.read<TaskVisibleBloc>().add(
-                ChangeTextFieldsTitle(TextFieldsTitle.Active));
-            FocusScope.of(context).requestFocus(taskNameFocusNode);
-          },
-              "TaskName here",
-              mediaQuery,
-                  () {
-                context.read<GetTaskBloc>().add(UpdateTaskName(
-                    {"taskid": widget.task['id'], "name": TaskName.text}));
-                context.read<TaskVisibleBloc>().add(
-                    ChangeTextFieldsTitle(TextFieldsTitle.Inactive));
-              }
+          SizedBox(
+
+            child: buildTextField(
+                taskNameFocusNode,
+                state.textFieldsTitle == TextFieldsTitle.Active,
+                TaskName, () {
+              log("message");
+              context.read<TaskVisibleBloc>().add(
+                  ChangeTextFieldsTitle(TextFieldsTitle.Active));
+              FocusScope.of(context).requestFocus(taskNameFocusNode);
+            },
+                "TaskName here",
+                mediaQuery,
+                    () {
+                  context.read<GetTaskBloc>().add(UpdateTaskName(
+                      {"taskid": widget.task['id'], "name": TaskName.text}));
+                  context.read<TaskVisibleBloc>().add(
+                      ChangeTextFieldsTitle(TextFieldsTitle.Inactive));
+                  context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+
+                    }
 
 
+            ),
           ),
         ],
       ),
@@ -332,9 +349,15 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
                 Padding(
                   padding: paddingSemetricVertical(),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                     children: [
-                      buildText("Members"),
+                      buildText("Members",mediaQuery),
+                      Padding(
+                        padding:paddingSemetricHorizontal(),
+                        child: buildAddButton(() {
+                          buildAssignBottomSheetBuilderFunction(context, mediaQuery, state);
+                        }),
+                      )
                     ],
                   ),
                 ),
@@ -344,32 +367,16 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
                     state.tasks[widget.index]['AssignTo'].isEmpty ||
                         state.tasks[widget.index]['AssignTo'] == null ? SizedBox() :
 
-                    membersTeamImage(
-                        context, mediaQuery, state.tasks[widget.index]['AssignTo'].length,
-                        state.tasks[widget.index]['AssignTo'],30,40),
-                    buildAddButton(() {
+                    GestureDetector(
+                      onTap: (){
+                        buildAssignBottomSheetBuilderFunction(context, mediaQuery, state);
 
+                      },
+                      child: membersTeamImage(
+                          context, mediaQuery, state.tasks[widget.index]['AssignTo'].length,
+                          state.tasks[widget.index]['AssignTo'],30,40),
+                    ),
 
-                     // context.read<GetTaskBloc>().add(init_members(convertIdKey(widget.team.Members ),state.tasks[widget.index]['id']));
-
-                      AssignBottomSheetBuilder(context, mediaQuery, (member) {
-                        //delete memberr
-                        log(member.id.toString());
-                        context.read<GetTaskBloc>().add(
-
-                            UpdateMember(
-                            {"taskid": state.tasks[widget.index]['id'], "member": member,
-                              'status': false, 'memberId': member.id}));
-                      }, (member) {
-                        //add member
-                        context.read<GetTaskBloc>().add(UpdateMember(
-                            {"taskid": state.tasks[widget.index]['id'], "member": member,
-                              'status': true, 'memberId': member.id}));
-                      },widget.team,
-                        widget.index
-
-                      );
-                    })
 
                   ],
                 ),
@@ -380,7 +387,33 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
     );
   }
 
+  void buildAssignBottomSheetBuilderFunction(BuildContext context, MediaQueryData mediaQuery, GetTaskState state) {
+    return AssignBottomSheetBuilder(context, mediaQuery, (member) {
+                        //delete memberr
+                        log(member.id.toString());
+                        context.read<GetTaskBloc>().add(
+
+                            UpdateMember(
+                                {"taskid": state.tasks[widget.index]['id'], "member": member,
+                                  'status': false, 'memberId': member.id}));
+                        context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+
+    }, (member) {
+                        //add member
+                        context.read<GetTaskBloc>().add(UpdateMember(
+                            {"taskid": state.tasks[widget.index]['id'], "member": member,
+                              'status': true, 'memberId': member.id}));
+                        context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+
+    },widget.team,
+                          widget.index
+
+                      );
+  }
+
   Widget buildAttachedfile(BuildContext context, MediaQueryData mediaQuery) {
+    return BlocBuilder<GetTaskBloc, GetTaskState>(
+  builder: (context, state) {
     return Padding(
       padding: paddingSemetricVerticalHorizontal(),
       child: Column(
@@ -389,26 +422,37 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
             Padding(
               padding: paddingSemetricVertical(),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                 children: [
-                  buildText('Attached Files'),
+                  buildText('Attached Files',mediaQuery),
+                  Padding(
+                    padding: paddingSemetricHorizontal(),
+                    child: buildAddButton(() async{
+                     FileStorage.pickFile(mounted, context, widget.task['id']);
+                     context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+
+                    }
+                    ),
+                  )
                 ],
               ),
             ),
-            widget.task['attachedFile'].isEmpty ||
-                widget.task['attachedFile'] == null
-                ? buildAddButton(() {})
-                :
             Row(
               children: [
-                //membersTeamImage(context, mediaQuery, task['AssignTo'].length, task['AssignTo']),
-                buildAddButton(() {})
+                state.tasks[widget.index]['attachedFile'] .isEmpty ||
+                    state.tasks[widget.index]['attachedFile']  == null
+                    ? SizedBox() :
+
+                AttachedFileWidget (  fileList: state.tasks[widget.index]['attachedFile'] as List<Map<String,dynamic>>, idTask: state.tasks[widget.index]['id'] as String,),
+
 
               ],
             ),
           ]
       ),
     );
+  },
+);
   }
 
   Row TaskDetailHeader(BuildContext context, int index, String text,

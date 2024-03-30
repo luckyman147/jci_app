@@ -1,8 +1,9 @@
+import 'package:jci_app/features/Teams/domain/entities/Task.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../domain/entities/Team.dart';
 import 'TaskModel.dart';
-part 'TeamModel.g.dart';
+
 @JsonSerializable()
 class TeamModel extends Team{
   TeamModel({required super.name, required super.description, required super.event, required super.Members, required super.CoverImage, required super.tasks, required super.id, required super.TeamLeader, required super.status});
@@ -20,13 +21,37 @@ class TeamModel extends Team{
             .map((e) => TaskModel.fromJson(e as Map<String, dynamic>))
             .toList(),
         id: json['id']==null?json['_id'] as String:json['id'] as String,
-        TeamLeader: json['TeamLeader'],
+        TeamLeader: json['TeamLeader'] ?? "",
         status: json['status'] as bool,
       );
 
 
-  Map<String, dynamic> toJson() => _$TeamModelToJson(this);
+  Map<String, dynamic> toJson() =>
 
+      {
+        'name': name,
+        'description': description,
+        'event': event,
+        'Members': Members,
+        'CoverImage': CoverImage,
+        'tasks': tasks,
+        'id': id,
+        'TeamLeader': TeamLeader,
+        'status': status,
+      };
+  Map<String, dynamic> toUpdatejson() =>
+
+      {
+        'name': name,
+        'description': description,
+        'event': event,
+        'Members': Members,
+        'CoverImage': CoverImage,
+        'tasks': getidsObTasks(tasks),
+        'id': id,
+        'TeamLeader': TeamLeader,
+        'status': status,
+      };
 
   Team toEntity() {
     return Team(
@@ -53,5 +78,13 @@ class TeamModel extends Team{
       CoverImage: entity.CoverImage,
       tasks: entity.tasks,
     );
+  }
+factory TeamModel.empty(){
+    return TeamModel(name: "",description: "",event: {},Members: [],CoverImage: "",tasks: [],id: "",TeamLeader: "",status: false);}
+  getidsObTasks(List<Tasks> objects) {
+    if (objects.isEmpty || objects == null  ) {
+      return [];
+    }
+    return objects.map((obj) => obj.id ).toList();
   }
 }

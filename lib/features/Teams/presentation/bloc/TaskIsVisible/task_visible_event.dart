@@ -51,3 +51,27 @@ class ChangeTextFieldsDescription extends TaskVisibleEvent {
   @override
   List<Object> get props => [textFieldsDescription];
 }
+class ChangeImageEvent extends TaskVisibleEvent {
+  final String image;
+  ChangeImageEvent(this.image);
+  @override
+  List<Object> get props => [image];
+}
+class ChangeWillSearchEvent extends TaskVisibleEvent {
+  final bool willSearch;
+  ChangeWillSearchEvent(this.willSearch);
+  @override
+  List<Object> get props => [willSearch];
+}
+class changePrivacyEvent extends TaskVisibleEvent {
+  final Privacy privacy;
+  changePrivacyEvent (this.privacy);
+  @override
+  List<Object> get props => [privacy];
+}
+class ChangeIsUpdatedEvent extends TaskVisibleEvent {
+  final bool isUpdated;
+  ChangeIsUpdatedEvent(this.isUpdated);
+  @override
+  List<Object> get props => [isUpdated];
+}

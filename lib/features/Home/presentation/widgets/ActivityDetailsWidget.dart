@@ -217,7 +217,11 @@ class ActivityDetail extends StatelessWidget {
           child: Container(
             height: mediaQuery.size.height / 2.5,
             width: double.infinity,
-            color: textColor,
+            color: backgroundColored,
+            child: Image.asset(
+              "assets/images/jci.png",
+              fit: BoxFit.contain,
+            ),
           ),
         );
 
@@ -283,15 +287,12 @@ class ActivityDetail extends StatelessWidget {
               });
         },
         child: Container(
+          height:40,
+          width: 40,
 
           decoration:
               BoxDecoration(color: BackWidgetColor, borderRadius: BorderRadius.all(Radius.circular(10))),
-          child: SvgPicture.string(
-            DotsSvg,
-            color: Colors.black,
-            width: 20,
-            height: 40,
-          ),
+          child: Icon(Icons.more_horiz_sharp, color: textColorBlack, size: 30),
         ),
       ),
 ));
@@ -440,33 +441,7 @@ height: mediaQuery.size.height / 15,
     }
   }
 
-  Widget actionRow(
-          mediaQuery, Activity activity, IconData icon, String action,Function() onTap) =>
-      InkWell(
-        onTap:onTap ,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: mediaQuery.size.width / 30,
-                  vertical: mediaQuery.size.height / 40),
-              child: Icon(
-                icon,
-                size: 30,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "${action} ${activity.runtimeType.toString().split("Model")[0]}",
-                style: PoppinsRegular(
-                    mediaQuery.devicePixelRatio * 8, textColorBlack),
-              ),
-            ),
-          ],
-        ),
-      );
+
 
   Container ispaid(mediaQuery) => Container(
       width: mediaQuery.size.width / 4,
@@ -626,14 +601,14 @@ height: mediaQuery.size.height / 15,
                 child: Center(
                     child: Text(
                   calculateDurationDays(activitys.ActivityBeginDate, activitys.ActivityEndDate),
-                  style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 4,
+                  style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 3.5,
                       ThirdColor, TextDecoration.none),
                 )),
               ),Center(
                   child: Text(
                 calculateDurationhour(activitys.ActivityBeginDate, activitys.ActivityEndDate),
-                style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 4,
-                    ThirdColor, TextDecoration.none),
+                style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 3.5,
+                    textColor, TextDecoration.none),
               )),
             ],
           ),
@@ -725,3 +700,30 @@ Widget cont()=>Padding(
         shape: BoxShape.circle),
   ),
 );
+Widget actionRow(
+    mediaQuery, Activity activity, IconData icon, String action,Function() onTap) =>
+    InkWell(
+      onTap:onTap ,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: mediaQuery.size.width / 30,
+                vertical: mediaQuery.size.height / 40),
+            child: Icon(
+              icon,
+              size: 30,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "${action} ${activity.runtimeType.toString().split("Model")[0]}",
+              style: PoppinsRegular(
+                  mediaQuery.devicePixelRatio * 8, textColorBlack),
+            ),
+          ),
+        ],
+      ),
+    );

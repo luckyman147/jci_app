@@ -55,7 +55,7 @@ List<SingleChildWidget> providersList = [
   BlocProvider(create: (_) => localeCubit()..getSavedLanguage()),
   BlocProvider(create: (_) => ActivityCubit()),
   BlocProvider(create: (_) => di.sl<FormzBloc>()),
-  BlocProvider(create: (_) => di.sl<GetTeamsBloc>()..add(GetTeams())),
+  BlocProvider(create: (_) => di.sl<GetTeamsBloc>()),
   BlocProvider(create: (_) => di.sl<GetTaskBloc>()),
   BlocProvider(create: (_) => di.sl<NumPagesBloc>()),
 

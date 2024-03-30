@@ -3,12 +3,14 @@ import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/features/Teams/data/models/CheckListModel.dart';
 import 'package:jci_app/features/Teams/domain/entities/Checklist.dart';
 import 'package:jci_app/features/Teams/domain/entities/Task.dart';
+import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 import 'package:jci_app/features/Teams/domain/repository/TaskRepo.dart';
 
 import '../../../../core/error/Exception.dart';
 import '../../../../core/network/network_info.dart';
 import '../datasources/TaskLocalDataSources.dart';
 import '../datasources/TaskRemoteDatasources.dart';
+import '../models/FileModel.dart';
 
 class TaskRepoImpl implements TaskRepo{
   final TaskRemoteDataSource taskRemoteDataSource;
@@ -179,4 +181,36 @@ return _getMessageUnit(taskRemoteDataSource.updateChecklistStatus(taskid, checki
   Future<Either<Failure, Unit>> UpdateMembers(String taskid, bool Status, String memberid) {
     return _getMessageUnit(taskRemoteDataSource.UpdateMembers(taskid, Status, memberid));
   }
+
+  @override
+  Future<Either<Failure, Unit>> DeleteFiles(String taskid, String file) {
+    return _getMessageUnit(taskRemoteDataSource.DeleteFiles(taskid, file));
+  }
+
+  @override
+  Future<Either<Failure, TaskFile>> UpdateFiles(String taskid, TaskFile file)async  {
+    if (await networkInfo.isConnected) {
+
+
+      try {
+        final _file=FileModel.fromEntity(file);
+
+        final  remoteTasks= await taskRemoteDataSource.UpdateFiles(taskid, _file);
+
+        return Right(remoteTasks);
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+      on EmptyCacheException {
+        return Left(EmptyCacheFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+
+  }
 }
+
+  @override
+  Future<Either<Failure, Unit>> updateChecklistName(String taskid, String checklistid, String name) {
+    return _getMessageUnit(taskRemoteDataSource.UpdateChecklistName(taskid, checklistid, name));
+  }}

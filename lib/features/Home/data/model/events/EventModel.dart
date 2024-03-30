@@ -14,26 +14,27 @@ class EventModel extends Event{
     required super.ActivityBeginDate, required super.ActivityEndDate, required super.ActivityAdress, required super.ActivityPoints,
     required super.categorie, required super.IsPaid, required super.price, required super.Participants,
     required super.CoverImages, required super.registrationDeadline, required super.IsPart,});
+// empty constructor
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
     return EventModel(
-      id: json['id'] ?? json['_id'], // Use _id if id is null
-      LeaderName: json['LeaderName'],
+      id: json['id'] ?? json['_id']??"", // Use _id if id is null
+      LeaderName: json['LeaderName']??"",
       name: json['name'],
-      description: json['description'],
-      ActivityBeginDate: json['ActivityBeginDate'] != null ? DateTime.parse(json['ActivityBeginDate']) : DateTime.parse(json['ActivityBegindate']),
+      description: json['description']??"",
+      ActivityBeginDate: json['ActivityBeginDate'] != null ? DateTime.parse(json['ActivityBeginDate']) : json['ActivityBegindate']!=null? DateTime.parse(json['ActivityBegindate']): DateTime.now(),
       ActivityEndDate: json['ActivityEndDate'] != null ? DateTime.parse(json['ActivityEndDate']) : json['ActivityEnddate']!=null? DateTime.parse(json['ActivityEnddate']):   DateTime.now(),
 
-      ActivityAdress: json['ActivityAdress'],
-      ActivityPoints: json['ActivityPoints'],
-      categorie: json['categorie'],
-      IsPaid: json['IsPaid'],
-      price: json['price'],
-      Participants: json['Participants']?? json['participants'],
-      CoverImages: json['CoverImages'] != null ? (json['CoverImages'] as List<dynamic>).map((e) => e as String).toList() : (json['coverImages'] as List<dynamic>).map((e) => e as String).toList(),
+      ActivityAdress: json['ActivityAdress']??"",
+      ActivityPoints: json['ActivityPoints']??0,
+      categorie: json['categorie']??"",
+      IsPaid: json['IsPaid']??false,
+      price: json['price']??0,
+      Participants: json['Participants']?? json['participants']??[],
+      CoverImages: json['CoverImages'] != null ? (json['CoverImages'] as List<dynamic>).map((e) => e as String).toList() : json['coverImages']!=null?(json['coverImages'] as List<dynamic>).map((e) => e as String).toList():[],
 
-      registrationDeadline:DateTime.parse( json['registrationDeadline']),
-      IsPart: json['IsPart'],
+      registrationDeadline:json['registrationDeadline']==null ? DateTime.now() :DateTime.parse( json['registrationDeadline']) ,
+      IsPart: json['IsPart']??false,
     );
   }
   Map<String, dynamic> toJson() => _$EventModelToJson(this);

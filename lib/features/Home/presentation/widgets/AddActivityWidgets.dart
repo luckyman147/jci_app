@@ -421,7 +421,7 @@ Widget chooseDate(DateTime todayDate, MediaQueryData mediaQuery, String Format,
               Text(
                 DateFormat(Format).format(todayDate),
                 style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 5,
-                    textColorBlack, TextDecoration.none),
+                    textColor, TextDecoration.none),
               ),
             ],
           ),

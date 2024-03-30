@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/core/util/snackbar_message.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 
 import 'package:jci_app/features/Teams/presentation/widgets/MembersTeamSelection.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
@@ -17,19 +18,22 @@ import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart'
 import '../../../Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
 import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 
+import '../../../Home/presentation/widgets/Functions.dart';
 import '../../../auth/domain/entities/Member.dart';
 import '../../domain/entities/Team.dart';
+import '../bloc/GetTasks/get_task_bloc.dart';
+import '../bloc/TaskFilter/taskfilter_bloc.dart';
 import 'EventSelection.dart';
 
-Widget ActionsWidgets(mediaQuery,GlobalKey<FormState> key,TextEditingController TeamName,TextEditingController description ) => BlocConsumer<GetTeamsBloc, GetTeamsState>(
+Widget ActionsWidgets(mediaQuery,GlobalKey<FormState> key,TextEditingController TeamName,TextEditingController description,Team team ) => BlocConsumer<GetTeamsBloc, GetTeamsState>(
   builder: (context, state) {
     return BlocBuilder<PageIndexBloc, PageIndexState>(
   builder: (context, state) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Header(context,"Create Team"),
-        DoneActions(TeamName, description, key),
+        Header(context,team.isEmpty?"Create Team":"Edit Team"),
+        DoneActions(TeamName, description, key,team),
 
       ],
     );
@@ -42,30 +46,61 @@ Widget ActionsWidgets(mediaQuery,GlobalKey<FormState> key,TextEditingController 
     }
     if (state.status == TeamStatus.success) {
       SnackBarMessage.showSuccessSnackBar(message: "Team Added", context: context);
+      context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
       GoRouter.of(context).go('/home');
+
+
     }
 
 
 },
 );
-Widget DoneActions(TextEditingController TeamName, TextEditingController description,GlobalKey<FormState> key)=>BlocBuilder<FormzBloc, FormzState>(
+Widget DoneActions(TextEditingController TeamName, TextEditingController description,GlobalKey<FormState> key,Team team)=>BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
   builder: (context, form) {
+    return BlocBuilder<FormzBloc, FormzState>(
+  builder: (context, state) {
     return BlocBuilder<VisibleBloc, VisibleState>(
       builder: (context, Visstate) {
         return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: InkWell(
-              onTap:(){
-                if (key.currentState!.validate()&& form.imageInput.value!=null&&form.imageInput.value!.path.isNotEmpty) {
-                  final Team team = Team(
-                      name: TeamName.text,
-                      description: description.text,
-                      CoverImage: form.imageInput.value !=null? form.imageInput.value!.path:"",
-                      event: form.eventFormz.value==null?"":form.eventFormz.value!.id,
-                      id: '', TeamLeader: '', status: Visstate.isVisible, tasks: [], Members:getIds( form.membersTeamFormz.value??[]));
-                  context.read<GetTeamsBloc>().add(AddTeam(team));
-                }
+              onTap:()async {
+                if (key.currentState!.validate()) {
+                  if (team.isEmpty) {
+                    final Team team = Team(
+                        name: TeamName.text,
+                        description: description.text,
+                        CoverImage: form.image,
+                        event: state.eventFormz.value == null ? "" : state
+                            .eventFormz.value!.id,
+                        id: '',
+                        TeamLeader: '',
+                        status: Visstate.isVisible,
+                        tasks: [],
+                        Members: getIds(state.membersTeamFormz.value ?? []));
+                    context.read<GetTeamsBloc>().add(AddTeam(team));
+                  }
+                  else {
 
+
+                    log(getIds(state.membersTeamFormz.value??[] ).toString());
+                    final Team ha = Team(
+                        name: TeamName.text,
+                        description: description.text,
+                        CoverImage: form.image,
+                        event: state.eventFormz.value == null ? "" : state
+                            .eventFormz.value!.id,
+                        id: team.id,
+                        TeamLeader: team.TeamLeader,
+                        status: Visstate.isVisible,
+                        tasks: team.tasks,
+                        Members: getIds(state.membersTeamFormz.value ?? []));
+                   context.read<GetTeamsBloc>().add(UpdateTeam(ha));
+                  }
+                }
+                else{
+                  SnackBarMessage.showErrorSnackBar(message: "Please fill all fields", context: context);
+                }
               },
               child:  Text(
                   "Done",style: PoppinsSemiBold(21, PrimaryColor, TextDecoration.none)
@@ -76,6 +111,8 @@ Widget DoneActions(TextEditingController TeamName, TextEditingController descrip
     );
   },
 );
+  },
+);
 
 
 Row Header(BuildContext context,String text) {
@@ -84,6 +121,13 @@ Row Header(BuildContext context,String text) {
           BackButton(
             onPressed: () {
               GoRouter.of(context).go('/home');
+              context.read<TaskVisibleBloc>().add(ChangeImageEvent("assets/images/jci.png",));
+              context.read<GetTaskBloc>().add(resetevent());
+              context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
+
+              context.read<TaskfilterBloc>().add(filterTask([]));
+              //context.read<FormzBloc>().add(ImageInputChanged(imageInput:XFile("")));
+
             },
           ),
           Text('$text ',style:PoppinsSemiBold(21, textColorBlack, TextDecoration.none)),
@@ -92,7 +136,7 @@ Row Header(BuildContext context,String text) {
 }
 Widget imageTeamPicker(mediaQuery) {
   final ImagePicker picker = ImagePicker();
-  return BlocBuilder<FormzBloc, FormzState>(
+  return BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
     builder: (context, state) {
 
       return Column(
@@ -105,8 +149,8 @@ Widget imageTeamPicker(mediaQuery) {
               await picker.pickImage(source: ImageSource.gallery);
               if (picked != null) {
                 context
-                    .read<FormzBloc>()
-                    .add(ImageInputChanged(imageInput: picked));
+                    .read<TaskVisibleBloc>()
+                    .add(ChangeImageEvent( picked.path));
               }
             },
             child: Stack(
@@ -118,26 +162,25 @@ width: mediaQuery.size.width/1.1
 
 decoration: BoxDecoration(
 borderRadius: BorderRadius.circular(15),
-
-                    color: PrimaryColor.withOpacity(.1),
+border: Border.all(color: textColorBlack,width: 2),
+                    color: textColorWhite,
                   ),
 
 
-                  child: state.imageInput.value != null && state.imageInput.value?.path != null&&state.imageInput.value?.path != ""
-                      ? ClipRRect(
+                  child:
+                       ClipRRect(
                     borderRadius: BorderRadius.circular(15),
-                        child: Image.file(
-                                            File(state.imageInput.value?.path ?? ""),
+                        child:
+
+                        state.image=="assets/images/jci.png"||state.image.isEmpty?
+                        Image.asset("assets/images/jci.png",height: 100,width: 100,):
+                        Image.file(
+                                            File(state.image ),
                                             fit: BoxFit.cover,
                         height: 200,
                                           ),
-                      )
-                      :
+                      )),
 
-          //blase
-choosWidget()
-                ),
-                state.imageInput.value != null && state.imageInput.value?.path != null&&state.imageInput.value?.path != ""?
                 Positioned(
                     right: 0,
 
@@ -149,8 +192,8 @@ choosWidget()
                           await picker.pickImage(source: ImageSource.gallery);
                           if (picked != null) {
                             context
-                                .read<FormzBloc>()
-                                .add(ImageInputChanged(imageInput: picked));
+                                .read<TaskVisibleBloc>()
+                                .add(ChangeImageEvent( picked.path));
                           }
                         },
                         child: Container(
@@ -173,7 +216,7 @@ choosWidget()
                           ),
                         ),
                       ),
-                    ) ):SizedBox()
+                    ) )
               ],
             ),
           ),
@@ -293,6 +336,7 @@ Widget bottomMembersSheet(BuildContext context, MediaQueryData mediaQuery,
 
 
     ) {
+  log("mmmemememmeme"+members.toString());
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16.0,),
     child: InkWell(
@@ -442,14 +486,14 @@ Widget StatusWidget(mediaQuery) => Padding(
       }, child: Container(
     width: mediaQuery.size.width * .3,
       decoration: BoxDecoration(
-      color: state.isPaid?Colors.red:Colors.green,
+      color: !state.isPaid?Colors.red:Colors.green,
       borderRadius: BorderRadius.circular(15.0),
       ),
 
 
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Center(child: Text(state.isPaid?"Private":"Public",style: PoppinsRegular(18, textColorWhite),)),
+        child: Center(child: Text(!state.isPaid?"Private":"Public",style: PoppinsRegular(18, textColorWhite),)),
       )),
   ),
   ],

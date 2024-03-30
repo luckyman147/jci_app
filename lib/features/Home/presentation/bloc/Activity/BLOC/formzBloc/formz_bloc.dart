@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -209,12 +210,15 @@ on<EventChanged>(_onEventChanged);
   void _removeMemberFromList(
       RemoveMember event, Emitter<FormzState> emit) {
     final currentMembers = state.membersTeamFormz.value ?? [];
+    log("ssssssscdzfzedf"+currentMembers.toString() + event.member.toString());
     final updatedMembers = List<Member>.from(currentMembers)
       ..remove(event.member);
 
     final members = MembersTeamFormz.dirty(updatedMembers);
     emit(state.copyWith(
       membersTeamFormz: members,
+      status: FormzSubmissionStatus.success,
+
     ));
   }
 }

@@ -3,7 +3,8 @@ import 'package:jci_app/features/Teams/domain/entities/Task.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'CheckListModel.dart';
-part 'TaskModel.g.dart';
+import 'FileModel.dart';
+
 @JsonSerializable()
 class TaskModel extends Tasks{
   TaskModel({required super.name, required super.AssignTo,
@@ -18,7 +19,7 @@ class TaskModel extends Tasks{
         Deadline: DateTime.parse(json['Deadline'] as String),
         attachedFile:
         json['attachedFile'] == null ? [] : (json['attachedFile'] as List<dynamic>)
-            .map((e) => e as String)
+            .map((e) => FileModel.fromJson(e as Map<String, dynamic>))
             .toList(),
 
 
@@ -33,5 +34,17 @@ class TaskModel extends Tasks{
             .toList(),
       );
 
-  Map<String, dynamic> toJson() => _$TaskModelToJson(this);
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'AssignTo': AssignTo,
+    'Deadline': Deadline.toIso8601String(),
+    'attachedFile': attachedFile,
+    'CheckList': CheckLists,
+    'isCompleted': isCompleted,
+
+
+    'id': id,
+    'StartDate': StartDate.toIso8601String(),
+    'description': description,
+  };
 }

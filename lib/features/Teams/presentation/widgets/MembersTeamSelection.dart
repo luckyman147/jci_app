@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
 import 'package:jci_app/features/Home/presentation/widgets/MemberSelection.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
@@ -19,23 +20,47 @@ import '../../../auth/presentation/bloc/Members/members_bloc.dart';
 Widget MembersTeamContainer(mediaQuery, Member item,bool isExisted,
     Function(Member) onRemoveTap, Function(Member) onAddTap,
     BuildContext context, List<Member> ff) =>
-    BlocBuilder<GetTaskBloc, GetTaskState>(
+    BlocBuilder<FormzBloc, FormzState>(
+  builder: (context, s) {
+    return BlocBuilder<GetTaskBloc, GetTaskState>(
       builder: (context, state) {
-        return Row(
+
+        if (s.status==FormzSubmissionStatus.success){
+
+       return   Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             imageWidget(item),
+
+
             SelectionButton(
                 mediaQuery, ff, item, isExisted,context, onRemoveTap, onAddTap),
-          ],);
+          ],);}
+       else{
+          return   Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              imageWidget(item),
+
+
+              SelectionButton(
+                  mediaQuery, ff, item, isExisted,context, onRemoveTap, onAddTap),
+            ],);
+
+       }
+
       },
     );
+  },
+);
 
 
 Widget SelectionButton(mediaQuery, List<Member> ff, Member item, bool isExisted,
     BuildContext context, Function(Member) onRemoveTap,
     Function(Member) onAddTap) {
-  return BlocBuilder<GetTaskBloc, GetTaskState>(
+  return BlocBuilder<FormzBloc, FormzState>(
+  builder: (context, state) {
+    return BlocBuilder<GetTaskBloc, GetTaskState>(
     builder: (context, state) {
       return SizedBox(
         width: mediaQuery.size.width / 3,
@@ -49,11 +74,14 @@ Widget SelectionButton(mediaQuery, List<Member> ff, Member item, bool isExisted,
               log(isExisted.toString());
               if (isExisted) {
                 context.read<FormzBloc>().add(RemoveMember(member: item));
+                log("ssssssscdzfzedf"+ff.toString() + item.toString());
+
                 onRemoveTap(item);
               }
               else {
                 context.read<FormzBloc>().add(
                     MembersTeamChanged(memberTeam: item));
+
                 onAddTap(item);
               }
             }, child: Text(
@@ -66,6 +94,8 @@ Widget SelectionButton(mediaQuery, List<Member> ff, Member item, bool isExisted,
       );
     },
   );
+  },
+);
 }
 
 SizedBox SelectionAssignButton(mediaQuery, List<Member> ff, Member item,
@@ -112,7 +142,11 @@ Widget MembersTeamBottomSheet(mediaQuery
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 textMemberz(mediaQuery),
-                SeachMemberWidget(mediaQuery, context, state),
+                SeachMemberWidget(mediaQuery, context, (value){
+
+                  SearchAction(context, value, state);
+
+                },state.memberName.displayError!= null),
                 ImportPieceOfAddMember(mediaQuery, state, onRemoveTap, onAddTap)
 
               ],
@@ -200,7 +234,7 @@ Text textMemberz(mediaQuery) {
   );
 }
 
-Padding SeachMemberWidget(mediaQuery, BuildContext context, FormzState state) {
+Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(String value) onChanged,bool isEmpty) {
   return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 8.0,
@@ -212,10 +246,8 @@ Padding SeachMemberWidget(mediaQuery, BuildContext context, FormzState state) {
           mediaQuery.devicePixelRatio * 6,
           textColorBlack,
         ),
-        onChanged: (value) {
-          SearchAction(context, value, state);
-        },
-        decoration: inputDecoration(state, mediaQuery),
+        onChanged: onChanged,
+        decoration: inputDecoration(mediaQuery,isEmpty),
       )
 
   );
@@ -292,10 +324,13 @@ Future<void> RefreshMembers(BuildContext context, SearchType type,
 Widget MembersDetails(List<Member> members, mediaQuery,
     Function(Member) onRemoveTap, Function(Member) onAddTap, List<Member> ff) =>
     ListView.separated(
+
       scrollDirection: Axis.vertical,
 
       itemCount: members.length,
       itemBuilder: (context, index) {
+        log("sssssdede"+members[index].toString());
+        log(ff.toString());
         return MembersTeamContainer(
             mediaQuery, members[index], doesObjectExistInList(ff, members[index]),onRemoveTap, onAddTap, context, ff);
       },

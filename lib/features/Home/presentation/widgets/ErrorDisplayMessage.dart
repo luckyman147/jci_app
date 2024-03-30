@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jci_app/core/app_theme.dart';
 
 class MessageDisplayWidget extends StatelessWidget {
   final String message;
@@ -14,7 +15,7 @@ class MessageDisplayWidget extends StatelessWidget {
       child: SingleChildScrollView(
         child: Text(
           message,
-          style: TextStyle(fontSize: 25),
+          style: PoppinsSemiBold(16, textColorBlack, TextDecoration.none),
           textAlign: TextAlign.center,
         ),
       ),

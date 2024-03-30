@@ -9,3 +9,9 @@ class TaskfilterSelected extends TaskfilterEvent {
   @override
   List<Object> get props => [selectedFilter];
 }
+class filterTask extends TaskfilterEvent {
+  final List<Map<String,dynamic>> tasks;
+  filterTask(this.tasks);
+  @override
+  List<Object> get props => [tasks];
+}

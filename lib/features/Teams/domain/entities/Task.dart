@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 
+import '../../data/models/CheckListModel.dart';
+import '../../data/models/FileModel.dart';
 import 'Checklist.dart';
 
 class Tasks{
@@ -9,12 +12,54 @@ class Tasks{
   final DateTime Deadline;
   final DateTime StartDate;
   final String description;
-  final List<String> attachedFile;
+  final List<TaskFile> attachedFile;
   final List<CheckList> CheckLists;
   final bool isCompleted;
 
 
   //empty task
+// tojson
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'AssignTo': AssignTo,
+      'Deadline': Deadline,
+      'StartDate': StartDate,
+      'description': description,
+      'attachedFile': attachedFile,
+      'CheckLists': CheckLists,
+      'isCompleted': isCompleted,
+    };
+  }
+
+
+  //from json
+  factory Tasks.fromJson(Map<String, dynamic> json) {
+    return Tasks(
+      name: json['name'] as String,
+      AssignTo:   json['AssignTo'] == null ? [] : (json['AssignTo'] as List<dynamic>)
+      ,
+
+      Deadline: DateTime.parse(json['Deadline'] as String),
+      attachedFile:
+      json['attachedFile'] == null ? [] : (json['attachedFile'] as List<dynamic>)
+          .map((e) => FileModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+
+
+      isCompleted: json['isCompleted'] as bool,
+      id: json['id'] !=null? json['id'] as String : json['_id'] as String,
+
+
+      StartDate: DateTime.parse(json['StartDate'] as String),
+      description: json['description'] != null ? json['description'] as String : "",
+      CheckLists: json['CheckList'] == null ? [] : (json['CheckList'] as List<dynamic>)
+          .map((e) => CheckListModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+
 
 
   Tasks( {required this.id,required this.name, required this.AssignTo, required this.Deadline, required this.attachedFile, required this.CheckLists,

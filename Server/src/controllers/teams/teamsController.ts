@@ -47,6 +47,13 @@ res.json(show);
 export const GetTeams = async (req: Request, res: Response, next: NextFunction) => {
     const start: number = parseInt(req.query.start as string);
     const limit: number = parseInt(req.query.limit as string);
+    const memberid=req.member!._id
+    const IsPrivate=req.query.isPrivate as string
+
+    let bollean=false
+    if (IsPrivate=="true"){
+      bollean=true
+    }
 
     const startIndex: number = start;
     const endIndex: number = start + limit;
@@ -66,33 +73,71 @@ export const GetTeams = async (req: Request, res: Response, next: NextFunction) 
             limit: limit
         };
     }
+    
+      if (IsPrivate=="false"){
+        const teams = await team.find({status:true}).sort({ createdAt: 'desc' }) .limit(limit).skip(startIndex).exec();
+if (teams.length > 0) {
+         const teamsWithEvent = await Promise.all(
+                    teams.filter(team => team.status == true) // Filtering teams with status true
+                        .map(async (team) => ({
+                            id: team._id,
+                            event: await getEventNameById(team.Event),
+                            description: team.description,
+                            TeamLeader: await getMembersInfo([team.TeamLeader]),
+                            name: team.name,
+                            status: team.status,
+                            CoverImage: team.CoverImage,
+                            tasks: await getTasksInfo(team.tasks),
+                            Members: await getMembersInfo(team.Members),
+                        }))
+                );
+    
+        results.results = teamsWithEvent;
+        res.status(200).json(results);}
 
-    const teams = await team.find().sort({ createdAt: 'desc' }) .limit(limit).skip(startIndex).exec();
-    console.log(teams);
-    if (teams.length > 0) {
+
+else{
+  res.status(404).json({ message: "No teams found" });
+}
+
+
+
+
+      }
+
+
+       else{
+        const teams = await team.find({status:false,Members:memberid}).sort({ createdAt: 'desc' }) .limit(limit).skip(startIndex).exec();
+
+   if (teams.length > 0) {
         const teamsWithEvent = await Promise.all(
-            teams.map(async (team) => ({
+            
+          teams.map(async (team) => ({
                 id: team._id,
                 event: await getEventNameById(team.Event),
                 description: team.description,
                 TeamLeader: await getMembersInfo([team.TeamLeader]),
                 name: team.name,
                 status: team.status,
+                
                 CoverImage: team.CoverImage,
                 tasks: await getTasksInfo(team.tasks),
                 Members: await getMembersInfo(team.Members),
             }))
         );
 
-        console.log(teamsWithEvent);
+   
         results.results = teamsWithEvent;
-        res.status(200).json(results);
-    } else {
-        res.status(404).json({ error: "No teams found" });
-    }
+       
+        res.status(200).json(results);}
+        else{
+          res.status(404).json({ message: "No teams found" });
+        }
+
+
 };
 
-
+}
 export const getTeamById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = req.params.id;
@@ -113,7 +158,40 @@ const show=await  showTeamDetails(Team)
     }
     
   }
+  export  const getTeamByName= async (req: Request, res: Response, next: NextFunction) => {
+    const name = req.query.name as string;
+   
+   const memberid=req.member!._id
+
+    try {
+      const teams = await team.find({
+        $or: [
+            { status: true },
+            { 
+                status: false,
+                Members: memberid
+            }
+        ],
+        name: { $regex: name, $options: 'i' } // Regex pattern on the name field
+    }).sort({ createdAt: 'desc' }).limit(5)
+
+      if (teams.length > 0) {
+       
+        const StatusTeam=teams.filter((team)=>team.status==true)
+      
+        const show = await Promise.all(StatusTeam.map(showTeamDetails));
+        res.status(200).json(show);
+      
+      
+       
+      } else {
+        res.status(404).json({ message: "No teams found with this name" });
+      }
+    } catch (error) {
+      console.error("Error retrieving team by name:", error);
+    }
   
+  }
 export const uploadTeamImage = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const teamId = req.params.id;

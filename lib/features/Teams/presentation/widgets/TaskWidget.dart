@@ -15,6 +15,7 @@ import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visi
 
 import '../../domain/entities/Task.dart';
 import '../../domain/entities/Team.dart';
+import '../bloc/TaskFilter/taskfilter_bloc.dart';
 import 'DetailTeamWidget.dart';
 import 'TaskDetailWidget.dart';
 import 'TeamComponent.dart';
@@ -82,6 +83,8 @@ if (state.WillAdded==false) {
 
                   context.read<GetTaskBloc>().add(DeleteTask(widget.tasks[index]['id'], ));
                   context.read<TaskVisibleBloc>().add(DeletedTaskedEvent(true));
+                  context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+
 
                 },)
               ),
@@ -119,12 +122,12 @@ if (state.WillAdded==false) {
                       width: mediaQuery.size.width / 3.5,
                       child: Text(widget.tasks[index]['name'],overflow:
                       TextOverflow.ellipsis, maxLines: 1
-                          ,style:PoppinsSemiBold(mediaQuery.devicePixelRatio*4, textColorBlack, TextDecoration.none)),
+                          ,style:PoppinsSemiBold(mediaQuery.devicePixelRatio*5, textColorBlack, TextDecoration.none)),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(DateFormat('MMM,dd').format(widget.tasks[index]['Deadline']),style:PoppinsRegular(mediaQuery.devicePixelRatio*4, textColor),),
+                        Text(DateFormat('MMM,dd').format(widget.tasks[index]['Deadline']),style:PoppinsRegular(mediaQuery.devicePixelRatio*5, textColor),),
 
 
                         Row(
@@ -133,10 +136,11 @@ if (state.WillAdded==false) {
                               children: [
                                 SvgPicture.string(hierarchy),
                                 Text(widget.tasks[index]['CheckLists'].length.toString(),style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColorBlack), ),
-
+Icon(Icons.attach_file_rounded, color: textColorBlack,),
+                                Text(widget.tasks[index]['attachedFile'].length.toString(),style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColorBlack), ),
                               ],
                             ),
-                            builddesc( widget.tasks[index],13,index),
+                            builddesc( widget.tasks[index],10,index),
                           ],
                         )
 
@@ -177,15 +181,17 @@ Future<dynamic> buildShowModalBottomSheet(BuildContext context, MediaQueryData m
       backgroundColor: textColorWhite,
       barrierColor: textColorWhite,
       useSafeArea: true,
+isScrollControlled: true,
 
 
-      isScrollControlled: true,
+
+
+    
       context: context, builder: (BuildContext context) {
 
-    return Container(
-        color: textColorWhite,
-        height: mediaQuery.size.height,
-        child: TaskDetailsWidget(task: tasks[index], index: index, team: team,));
+    return Scaffold(
+
+        body: TaskDetailsWidget(task: tasks[index], index: index, team: team,));
   });
 }
 
@@ -368,6 +374,9 @@ class _buildCheckBoxState extends State<buildCheckBox> {
         value:widget.task['isCompleted'], onChanged: (bool? value) {
 
         context.read<GetTaskBloc>().add(UpdateStatus({"id":widget.task['id'],"IsCompleted":value}, widget.index));
+        context.read<TaskfilterBloc>().add(filterTask(state.tasks));
+        context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+
 
       },);}
 

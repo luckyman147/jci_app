@@ -219,7 +219,7 @@ await   file.save()
      
       await taskToUpdate.save();
   
-      res.status(200).json({ file});
+      res.status(200).json( file);
     }
   else{
     if (taskToUpdate.attachedFile.includes(founded._id)){
@@ -228,7 +228,7 @@ await   file.save()
     else{
       taskToUpdate.attachedFile.push(founded._id);
       await taskToUpdate.save();
-      res.status(200).json({ updatedTask: taskToUpdate});
+      res.status(200).json(founded);
     }
   }
   }
@@ -413,10 +413,13 @@ await task.save()
       const fileId = req.params.fileid;
          const task = await Task.findById(taskId);
                   if (!task) {
+                  console.log("task not found")
                     return res.status(404).json({ error: 'Task not found' });
                   }
                   const file=await File.findById(fileId)
                   if (!file) {
+                                    console.log("file not found")
+
                     return res.status(404).json({ error: 'File not found' });
                   }
 
