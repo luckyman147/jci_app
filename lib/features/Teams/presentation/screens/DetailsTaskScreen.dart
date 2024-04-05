@@ -9,7 +9,7 @@ import 'package:jci_app/features/Teams/presentation/widgets/TaskImpl.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 
 import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
-import '../../../auth/presentation/bloc/Members/members_bloc.dart';
+
 import '../../domain/entities/Team.dart';
 
 class CreateTaskScreen extends StatefulWidget {

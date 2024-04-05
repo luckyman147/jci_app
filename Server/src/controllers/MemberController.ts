@@ -2,9 +2,12 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
 
+import { File } from "../models/FileModel";
 
 import { EditMemberProfileInputs } from '../dto/member.dto';
 import { Member } from '../models/Member';
+import { findroleByid, getActivitiesInfo, getFilesInfoByIds, getMeetingsInfo, getteamsInfo, getTrainingInfo } from '../utility/role';
+import path from 'path';
 
 
 //& Verify email
@@ -41,7 +44,30 @@ export const GetmemberProfile= async(req:Request,res:Response,next:NextFunction)
     if(member){
         const profile=await Member.findById(member?._id)
         if(profile){
-            return res.status(200).json(profile)
+            const [role, teamsInfo, activitiesInfo, trainingsinfo,meetingsInfo,FilesInfo] = await Promise.all([
+                findroleByid(profile.role),
+                getteamsInfo(profile.Teams),
+                getActivitiesInfo(profile.Activities),getTrainingInfo(profile.Activities),
+                getMeetingsInfo(profile.Activities),getFilesInfoByIds(profile.Images)
+            ]);
+
+            const info = {    Activities: [{"Events" : activitiesInfo,"Trainings":trainingsinfo,"Meetings":meetingsInfo}],
+                id: profile.id,
+                firstName: profile.firstName,
+                lastName: profile.lastName,
+                Images: FilesInfo,
+                phone: profile.phone,
+                email: profile.email,
+                cotisation: profile.cotisation,
+                role: role,
+                points: profile.Points,
+                is_validated: profile.is_validated,
+                teams: teamsInfo,
+            
+            };
+
+            
+            return res.status(200).json(info)
         }
         return res.status(404).json({message:'member not found'})
     }
@@ -52,22 +78,19 @@ export const EditmemberProfile= async(req:Request,res:Response,next:NextFunction
     const profileinputs=plainToClass (EditMemberProfileInputs,req.body)
     const errors=await validate(profileinputs,{validationError:{target:false}})
     if(errors.length>0){
+    console.log(errors)
         return res.status(400).json(errors)
     }
 
 
-    const {firstname,lastname,address,description}=profileinputs
+    const {firstName,lastName,phone}=profileinputs
     if(member){
         const profile=await Member.findById(member?._id)
-        if(profile){
-            const files=req.files as Express.Multer.File[]
-            const images=files.map((file:Express.Multer.File)=>file.filename)
-        profile.Images.push(...images)
-           
-            profile.firstName=firstname
-            profile.lastName=lastname
-            profile.address=address
-            profile.description=description
+if (profile){
+            profile.firstName=firstName
+            profile.lastName=lastName
+            profile.phone=phone
+
 
             const updated=await profile.save()
             if(updated){
@@ -79,4 +102,56 @@ export const EditmemberProfile= async(req:Request,res:Response,next:NextFunction
     }
 }
 
+export const updateImageProfile = async (req: Request, res: Response, next: NextFunction) => {
+      const member=req.params.id 
+      try {
+   
+      const user = await Member.findById(member);
+  
+      if (!user) {
+      console.log('no user')
+        return res.status(404).send("No such user");
+      }
+  
+      const image = req.file as Express.Multer.File;
+      const fileExtension = path.extname(image.originalname);
+    
+      const founded= await File
+      .findOne({ path: image.originalname })
+ 
+     if (!founded) {
+       // Convert the file to a base64 string
+       const base64File = image.buffer.toString('base64');
+       const file=new File({
+         path: image.originalname ,
+         url:base64File,
+         extension:fileExtension,
+ 
+       })
+      // Convert the image to base64
+    await file.save()
+  
+      // Add the image to the team
+      user.Images = [file._id]
+  
+      // Save the team
+      const saveduser = await user.save();
+  
+      res.status(200).json(saveduser);
+    }
+    else{
+        
+       
+          user.Images = [founded._id]
+      const saveduser = await user.save();
+          
+          res.status(200).json(saveduser);
+        
+      }
 
+
+} catch (error) {
+        console.log(error);
+      res.status(500).json({ error: "errrr"});
+    }
+}

@@ -9,9 +9,11 @@ import 'package:jci_app/core/strings/app_strings.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/pages/ActivityPage.dart';
 import 'package:jci_app/features/Home/presentation/widgets/HomeWidget.dart';
+import 'package:jci_app/features/MemberSection/presentation/pages/memberProfilPage.dart';
 import 'package:jci_app/features/Teams/presentation/screens/AllTeamsScreen.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
+import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../bloc/PageIndex/page_index_bloc.dart';
 
 
@@ -34,14 +36,7 @@ class _HomePageState extends State<HomePage> {
     return BlocBuilder<PageIndexBloc, PageIndexState>(
       builder: (context, state) {
         final widgets=[
-          HomeWidget(Activity: ste.selectedActivity,),ActivityPage(Activity:ste.selectedActivity ,),AllTeamsScreen(),Center(
-            child: InkWell(
-                onTap: () {
-                  context.read<AuthBloc>().add(SignoutEvent());
-                },
-
-                child: Text("Signout")),
-          )
+          HomeWidget(Activity: ste.selectedActivity,),ActivityPage(Activity:ste.selectedActivity ,),AllTeamsScreen(),MemberSectionPage(),
         ];
         return Scaffold(
           bottomNavigationBar: Container(
@@ -78,6 +73,10 @@ class _HomePageState extends State<HomePage> {
                 currentIndex: state.index,
                 onTap: (index) {
                   context.read<PageIndexBloc>().add(SetIndexEvent(index:index));
+                  if (index==3){
+                    context.read<MembersBloc>().add(GetUserProfileEvent(true));
+
+                  }
                 },
                 items:  [
                   BottomNavigationBarItem(

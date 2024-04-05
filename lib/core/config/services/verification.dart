@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/core/config/services/store.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:http/http.dart' as http;
@@ -61,7 +62,7 @@ void check(BuildContext context)async {
   }
 }
 Future<List<bool>> areMembersInParticipants(List<Activity> activities) async {
-  final member = await Store.getModel();
+  final member = await MemberStore.getModel();
   final memberId = member!.id;
   return activities.map((activity) => activity.Participants.contains(memberId)).toList();
 }

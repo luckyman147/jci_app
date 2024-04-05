@@ -19,17 +19,15 @@ export class CreateMemberInputs{
 }
 export class EditMemberProfileInputs{
  
-    @Length(6,16)
-    firstname:string
+   @IsNotEmpty()
+    firstName:string
 
-    @Length(6,16)
-    lastname:string
-    @Length(6,16)
-    address:string
-    @Length(8,12)
+     @IsNotEmpty()
+    lastName:string
+ 
+     @IsNotEmpty()
     phone:string
-    @Length(10,100)
-    description:string
+
 
 
 

@@ -74,7 +74,9 @@ await generateAccessToken({
     const payload = jwt.verify(signature.split(' ')[1], process.env.APP_SECRET as string) as MemberPayload;
           const check=await isAccessTokenValid(payload._id,signature)
           console.log("check",check)
-      if (check){
+      const role= await Role.findById(payload.role)
+
+      if (check &&(role?.name === 'member' || role?.name === 'admin' || role?.name === 'superadmin')){
         req.member = payload;
           return true;
       }return false 
@@ -93,8 +95,10 @@ await generateAccessToken({
     if (signature) {
       const payload = jwt.verify(signature.split(' ')[1], process.env.APP_SECRET as string) as ADminPayload;
       const role= await Role.findById(payload.role)
-      if (role?.name === 'admin') {
-        req.user = payload;
+      const check=await isAccessTokenValid(payload._id,signature)
+
+      if ((role?.name === 'admin' || role?.name === 'superadmin')&& check) {
+        req.admin = payload;
         return true;
       }
     }
@@ -106,11 +110,20 @@ await generateAccessToken({
       const payload = jwt.verify(signature.split(' ')[1], process.env.APP_SECRET as string) as SuperAdminPayload;
   
       const role= await Role.findById(payload.role)
-      if (role?.name == 'superadmin') {
-        req.user = payload;
+      const check=await isAccessTokenValid(payload._id,signature)
+      if (role?.name == 'superadmin' && check) {
+        req.superadmin = payload;
         return true;
       }
     }
     return false;
   };
-
+  export const generateSecureKey = () => {
+    const characters = process.env.APP_SECRET as string;
+    let key = '';
+    for (let i = 0; i < 5; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        key += characters.charAt(randomIndex);
+    }
+    return key;
+}

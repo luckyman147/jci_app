@@ -1,12 +1,14 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/widgets/loading_widget.dart';
+import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../auth/domain/entities/Member.dart';
-import '../../../auth/presentation/bloc/Members/members_bloc.dart';
+//import '../../../auth/presentation/bloc/Members/members_bloc.dart';
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import 'ErrorDisplayMessage.dart';
 import 'SearchWidget.dart';
@@ -15,7 +17,7 @@ Widget MemberContainer(mediaQuery,Member item)=>BlocBuilder<FormzBloc, FormzStat
 
 
     builder: (context, state)
-    {final ff=state.memberFormz.value??memberTest;
+    {final ff=state.memberFormz.value??Member.memberTest;
       return  Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -245,7 +247,11 @@ Widget MembersDetails(List<Member> members,mediaQuery)=>ListView.separated(
   },
   separatorBuilder: (BuildContext context, int index) { return const SizedBox(height: 10,);  },
 
-);Widget imageWidget(Member item){ return Row(
+);Widget imageWidget(Member item){
+if (item.Images.isNotEmpty){
+  log("image is ${item.Images[0]['url']}");
+}
+  return Row(
     children: [
       item.Images.isEmpty
           ?  ClipRRect(
@@ -263,7 +269,7 @@ Widget MembersDetails(List<Member> members,mediaQuery)=>ListView.separated(
 
         borderRadius: BorderRadius.circular(100),
         child: Image.memory(
-          base64Decode(item.Images.first),
+          base64Decode(item.Images[0]['url']),
           width: 50,
           height: 40,
           fit: BoxFit.cover,
@@ -276,9 +282,3 @@ Widget MembersDetails(List<Member> members,mediaQuery)=>ListView.separated(
 
 
 
-
-
-Member get memberTest=> const Member(
-
-    IsSelected: false, id: "id", role: "role", is_validated: false,
-    cotisation:[false] , Images: [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password", Activities: []);

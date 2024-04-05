@@ -27,3 +27,18 @@ class MemberAddEvent extends MembersEvent {
   @override
   // TODO: implement props
   List<Object?> get props => [index];}
+class GetUserProfileEvent extends MembersEvent {
+  const GetUserProfileEvent(this.isUpdated);
+final bool isUpdated;
+  @override
+  List<Object?> get props => [isUpdated];
+}
+class UpdateMemberProfileEvent extends MembersEvent {
+  final Member member;
+
+
+  UpdateMemberProfileEvent(this.member,);
+
+  @override
+  List<Object?> get props => [member];
+}

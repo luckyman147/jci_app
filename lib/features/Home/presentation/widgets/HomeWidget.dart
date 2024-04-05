@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/core/config/services/TeamStore.dart';
 import 'package:jci_app/core/config/services/store.dart';
 import 'package:jci_app/core/widgets/loading_widget.dart';
@@ -52,7 +53,7 @@ class _HomeWidgetState extends State<HomeWidget> {
 
 
   Future<MemberModel?> _loadMemberModel() async {
-    return await Store.getModel();
+    return await MemberStore.getModel();
   }
   @override
   Widget build(BuildContext context) {

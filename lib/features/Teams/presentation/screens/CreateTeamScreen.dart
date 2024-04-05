@@ -18,7 +18,8 @@ import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart'
 import '../../../Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
 import '../../../Home/presentation/widgets/Functions.dart';
 import '../../../Home/presentation/widgets/MemberSelection.dart';
-import '../../../auth/presentation/bloc/Members/members_bloc.dart';
+
+import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../domain/entities/Team.dart';
 import '../widgets/funct.dart';
 

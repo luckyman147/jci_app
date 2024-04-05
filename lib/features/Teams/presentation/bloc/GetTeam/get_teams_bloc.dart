@@ -6,6 +6,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/core/config/services/store.dart';
 import 'package:jci_app/core/usescases/usecase.dart';
 import 'package:jci_app/features/Teams/domain/usecases/TeamUseCases.dart';
@@ -118,7 +119,7 @@ void deleteTeam(DeleteTeam event, Emitter<GetTeamsState> emit) async {
       final members=teams.isEmpty?[]:teams.map((e) => e.Members).toList();
 
 
-      final store=await Store.getModel();
+      final store=await MemberStore.getModel();
       log(members.toString());
 
       final UpdatedExisted=members.isEmpty?[]:members.map((e) => e.any((element) => element['_id']==store!.id)).toList() ;
@@ -142,7 +143,7 @@ isExisted: UpdatedExisted ,
       final UpdatedMembers=List.of(state.members)..addAll(members );
       log("ssshahah");
 
-      final store=await Store.getModel();
+      final store=await MemberStore.getModel();
 
       final UpdatedExisted=UpdatedMembers.map((e) => e.any((element) => element['_id']==store!.id)).toList() ;
 
@@ -166,7 +167,7 @@ isExisted: UpdatedExisted ,
 void _updateMember(UpdateTeamMember event ,Emitter<GetTeamsState> emit) async {
     try {
       final result = await updateTeamMembersUseCase(event.fields);
-      final user=await Store.getModel();
+      final user=await MemberStore.getModel();
       emit(_mapFailureOrUpdateMemberToState(result,event.fields,user!.id));
     } catch (error) {
       emit(state.copyWith(status: TeamStatus.error));

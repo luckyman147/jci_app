@@ -72,7 +72,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       try {
         print(' ya said im here');
         final failureOrDoneMessage =
-            await loginUseCase.LoginCredentials(event.loginMember);
+            await loginUseCase.LoginCredentials(event.email, event.password);
 
         print("login" + failureOrDoneMessage.toString());
 

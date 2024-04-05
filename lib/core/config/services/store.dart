@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:jci_app/features/auth/data/models/Member/AuthModel.dart';
 import 'package:secure_shared_preferences/secure_shared_pref.dart';
@@ -9,13 +10,23 @@ class Store{
   const Store._();
   static const String _RefreshTokenKey="refreshToken";
   static const String _AccessTokenKey="accessToken";
+  static const _PermissionsKey="permissions";
+static const String _FirstEntryKey="firstEntry";
+static const String _isLogged="isLoggedIn";
 
-  static const String  _UserInfo = 'UserInfo';
   static Future<void> setTokens(String RefreshToke,String AccessToken)async{
     final pref =await SecureSharedPref.getInstance();
     await pref.putString(_RefreshTokenKey, RefreshToke);
     await pref.putString(_AccessTokenKey, AccessToken);
   print(pref.getString(_RefreshTokenKey));
+  }
+  static Future<void> setPermissions(List<String> permissions)async{
+    final pref =await SecureSharedPref.getInstance();
+    await pref.putStringList(_PermissionsKey, permissions);
+  }
+  static Future<List<String>> getPermissions()async{
+    final pref =await SecureSharedPref.getInstance();
+  return pref.getStringList(_PermissionsKey )  as List<String>;
   }
   static Future<List<String?>> GetTokens()async{
     final pref =await SecureSharedPref.getInstance();
@@ -31,7 +42,8 @@ class Store{
    final pref =await SecureSharedPref.getInstance();
 await pref.putString(_RefreshTokenKey, "");
 await pref.putString(_AccessTokenKey, "");
-await pref.putString(_UserInfo, "");
+await pref.putStringList(_PermissionsKey, []);
+
  }
  static Future<String?> getLocaleLanguage ()async {
    final pref =await SharedPreferences.getInstance();
@@ -46,26 +58,23 @@ await pref.putString(_UserInfo, "");
 
 
  }
- static Future<void> saveModel(MemberModel auth) async {
-    final prefs = await SecureSharedPref.getInstance();
-    final key = 'UserInfo';
-    final value = auth.toJson();
-    debugPrint('saveModel: $value');
+ static Future<void> setFirstEntry()async{
+   final pref =await SharedPreferences.getInstance();
+   pref.setBool(_FirstEntryKey,true);
 
-    prefs.putString(_UserInfo, jsonEncode(value));
+ }
+  static Future<bool> isFirstEntry()async{
+    final pref =await SharedPreferences.getInstance();
+    return pref.getBool(_FirstEntryKey)??false;
   }
-  static Future<MemberModel?> getModel() async {
-    final prefs = await SecureSharedPref.getInstance();
+  static Future<void> setLoggedIn(bool isLogged)async{
+    final pref =await SharedPreferences.getInstance();
+    pref.setBool(_isLogged,isLogged);
 
-    final value = await  prefs.getString(_UserInfo);
-
-    if (value == null) {
-      return null;
-    }
-    if (value.isEmpty) {
-      return null;
-    }
-
-    return MemberModel.fromJson(jsonDecode(value));
   }
+  static Future<bool> isLoggedIn()async{
+    final pref =await SharedPreferences.getInstance();
+    return pref.getBool(_isLogged)??false;
+  }
+
 }

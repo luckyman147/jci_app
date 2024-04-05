@@ -117,20 +117,7 @@ Widget details(List<Team> teams, int index,MediaQueryData mediaQuery) =>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CircleProgess(teams, index),
-              Padding(
-                padding:paddingSemetricHorizontal(),
-                child: Container(
-
-                  decoration: BoxDecoration(
-                    color: teams[index].status?Colors.green:Colors.red,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(teams[index].status?"Public":"Private",style: PoppinsRegular(14, textColorWhite),),
-                  ),
-                ),
-              )
+              IsPublic(teams[index].status)
             ],
           ),
         ),
@@ -170,6 +157,23 @@ Widget details(List<Team> teams, int index,MediaQueryData mediaQuery) =>
 
       ],
     );
+
+Padding IsPublic(bool status) {
+  return Padding(
+              padding:paddingSemetricHorizontal(),
+              child: Container(
+
+                decoration: BoxDecoration(
+                  color: status?Colors.green:Colors.red,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(status?"Public":"Private",style: PoppinsRegular(14, textColorWhite),),
+                ),
+              ),
+            );
+}
 
 Row eventRow(MediaQueryData mediaQuery, List<Team> teams, int index) {
   return Row(

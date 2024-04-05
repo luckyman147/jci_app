@@ -181,7 +181,7 @@ Member(email: state.email.value,
   firstName: state.firstname.value,
   lastName: state.lastname.value, id: '',
   role: '', is_validated: false,
-  cotisation: [false], Images: [], phone: '', IsSelected: false, Activities: [],  );
+  cotisation: [false], Images: [], phone: '', IsSelected: false, Activities: [], teams: [], points: 0,  );
 
   context.read<SignUpBloc>().add(SignUpSubmitted(member: member));
 

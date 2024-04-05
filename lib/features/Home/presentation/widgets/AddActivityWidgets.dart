@@ -19,6 +19,7 @@ import 'package:jci_app/features/Teams/presentation/widgets/CreateTeamWIdgets.da
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/strings/app_strings.dart';
+import '../../../auth/domain/entities/Member.dart';
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../bloc/Activity/activity_cubit.dart';
 import '../bloc/IsVisible/bloc/visible_bloc.dart';
@@ -780,7 +781,7 @@ Widget showLeader(activity act,mediaQuery,BuildContext context,TextEditingContro
               ),
             ),
             bottomMemberSheet(context ,mediaQuery,
-                state.memberFormz.value??memberTest,"Select A Director","Director"),
+                state.memberFormz.value??Member.memberTest,"Select A Director","Director"),
           ],
         );
       },

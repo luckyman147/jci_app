@@ -1,9 +1,21 @@
 part of 'locale_cubit.dart';
 
-@immutable
-sealed class LocaleState {}
+class LocaleState  extends Equatable{
+  final Locale locale;
+  final String languageCode;
+  const LocaleState({this.locale=const Locale('en'),this.languageCode=""});
+  LocaleState copyWith({Locale? locale,String? languageCode}) {
+    return LocaleState(
+      locale: locale ?? this.locale,
+      languageCode: languageCode ?? this.languageCode,
+    );
+  }
+  @override
+   List<Object> get props => [locale,languageCode];
 
-final class LocaleInitial extends LocaleState {}
+}
+
+ class LocaleInitial extends LocaleState {}
 
 class ChangeLocalState extends LocaleState {
   final Locale locale;

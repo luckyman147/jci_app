@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:jci_app/core/config/services/verification.dart';
 
 
+import '../../../../../core/config/services/MemberStore.dart';
 import '../../../../../core/config/services/store.dart';
 import '../../../../../core/config/services/uploadImage.dart';
 import '../../../../../core/error/Exception.dart';
@@ -89,7 +90,7 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
 
   @override
   Future<List<TrainingModel>> getAllTraining()async  {
-    final member = await Store.getModel();
+    final member = await MemberStore.getModel();
     final memberId = member!.id;
     final response = await client.post(
 
@@ -120,7 +121,7 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
 
   @override
   Future<TrainingModel> getTrainingById(String id) async{
-    final member = await Store.getModel();
+    final member = await MemberStore.getModel();
     final memberId = member!.id;
     final response =  await client.post(
       Uri.parse(getTrainingsUrl + 'get/$id'),
@@ -143,7 +144,7 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
 
   @override
   Future<List<TrainingModel>> getTrainingOfTheMonth() async{
-    final member = await Store.getModel();
+    final member = await MemberStore.getModel();
     final memberId = member!.id;
     final response =  await client.post(
       Uri.parse(getTrainingByMonth),
@@ -174,7 +175,7 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
 
   @override
   Future<List<TrainingModel>> getTrainingOfTheWeek()async  {
-    final member = await Store.getModel();
+    final member = await MemberStore.getModel();
     final memberId = member!.id;
     final response = await client.post(
 

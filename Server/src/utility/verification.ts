@@ -114,3 +114,6 @@ export const  VerifyrefreshToken =async(refrecshToken:string)=>{
        console.error('Error revoking Access token:', error);
      }
    };
+   export const CheckPermission=async (PermissionId:string,PermissionsIds:string[])=>{
+      return PermissionsIds.includes(PermissionId)
+   }

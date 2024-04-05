@@ -10,6 +10,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/widgets/loading_widget.dart';
+import '../../../Home/domain/entities/Activity.dart';
 import '../../../Home/domain/entities/Event.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../../../Home/presentation/widgets/ErrorDisplayMessage.dart';
@@ -199,7 +200,7 @@ Widget EventsDetails(List<Event> Events,mediaQuery)=>ListView.separated(
   },
   separatorBuilder: (BuildContext context, int index) { return const SizedBox(height: 10,);  },
 
-);Widget imageEventWidget(Event item,mediaQuery){ return Row(
+);Widget imageEventWidget(Activity item,mediaQuery){ return Row(
     children: [
       item.CoverImages.isEmpty
           ?  ClipRRect(

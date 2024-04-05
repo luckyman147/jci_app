@@ -22,7 +22,7 @@ import '../../../../core/app_theme.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../../../Home/presentation/widgets/MemberSelection.dart';
 
-import '../../../auth/presentation/bloc/Members/members_bloc.dart';
+
 import '../../domain/entities/Team.dart';
 import 'CreateTeamWIdgets.dart';
 import 'MembersTeamSelection.dart';
@@ -507,7 +507,7 @@ log('task name ${widget.task['attachedFile']}');
                 ),
               ),
               bottomMemberSheet(context, mediaQuery,
-                  state.memberFormz.value ?? memberTest, "Select A member",
+                  state.memberFormz.value ?? Member.memberTest, "Select A member",
                   "Member"),
             ],
           );

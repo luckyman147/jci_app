@@ -9,14 +9,15 @@ abstract class AuthRepo {
 
 
   Future<Either<Failure, bool>> signOut();
-  Future<Either<Failure, Unit>> GetUserProfile();
-  Future<Either<Failure, List<Member>>> GetAllMembers();
-  Future<Either<Failure, List<Member>>> GetMemberByName(String name);
+Future<Either<Failure,bool>> isFirstEntry();
+  Future<Either<Failure,Unit>> updateLoggedIn(bool value);
+  Future<Either<Failure,Unit>> updateTokenFromStorage();
+  Future<Either<Failure,Unit>> updateFirstEntry();
+  Future<Either<Failure,bool>> isLoggedIn();
   Future<Either<Failure, Member>> sendPasswordResetEmail(String email);
   Future<Either<Failure, Member>> verifyEmail();
   Future<Either<Failure, Unit>> updatePassword(Member member);
 
-  Future<Either<Failure,bool>> refreshToken();
+  Future<Either<Failure,Unit>> refreshToken();
 
-  Future<Either<Failure, Member>> deleteAccount();
 }

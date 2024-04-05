@@ -1,11 +1,14 @@
 import crypto from 'crypto';
 import { File } from '../models/FileModel';
 import { Member } from "../models/Member";
+import { Training } from '../models/activities/TrainingModel';
 import { Event } from "../models/activities/eventModel";
+import { Meeting  } from '../models/activities/meetingModel';
 import { Role } from "../models/role";
 import { CheckList } from '../models/teams/CheckListModel';
 import { Task } from '../models/teams/TaskModel';
 import { team } from "../models/teams/team";
+import { Permission } from '../models/Pemission';
 export const findrole=async (name:string)=>{
     const role = await Role.findOne({ name: name });
     if (role){
@@ -197,3 +200,127 @@ export   function shortenBase64(base64String:string) {
       throw new Error('Internal server error');
     }
   };
+  export const getteamsInfo = async (teamsIds: string[]): Promise<any> => {
+    try {
+      // Query the database to find members by their IDs
+      const teams = await team.find({ _id: { $in: teamsIds } });
+
+      const teamsInfo =
+      Promise.all(
+      teams.map(async(team) => ({
+        id: team._id,
+        name: team.name,
+        CoverImage:team.CoverImage,
+        status: team.status,
+        Members: await getMembersInfo(team.Members)
+        // Add other fields you want to include
+      })));
+  console.log(teams)
+
+      return teamsInfo;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal server error');
+    }
+  };
+  export const getActivitiesInfo = async (EventsIds: string[]): Promise<any> => {
+    try {
+      // Query the database to find members by their IDs
+      const Events = await Event.find({ _id: { $in: EventsIds } });
+      console.log(Events)
+
+      const EventsInfo =
+        Promise.all(
+
+      Events.map(async(act) => ({
+        id: act._id,
+        name: act.name,
+        CoverImages:act.CoverImages,
+        Members:await getMembersInfo(act.Participants)
+
+        // Add other fields you want to include
+      })));
+
+      return EventsInfo;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal server error');
+    }
+  }; export const getTrainingInfo = async (EventsIds: string[]): Promise<any> => {
+    try {
+      // Query the database to find members by their IDs
+      const trainings= await Training.find({ _id: { $in: EventsIds } });
+      console.log(trainings)
+
+      const trainingsInfo =
+        Promise.all(
+
+      trainings.map(async(act) => ({
+        id: act._id,
+        name: act.name,
+        CoverImages:act.CoverImages,
+        Members:await getMembersInfo(act.Participants)
+
+        // Add other fields you want to include
+      })));
+
+      return trainingsInfo;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal server error');
+    }
+  }; export const getMeetingsInfo = async (EventsIds: string[]): Promise<any> => {
+    try {
+      // Query the database to find members by their IDs
+      const Meetings = await Meeting.find({ _id: { $in: EventsIds } });
+      console.log(Meetings)
+
+      const MeetingsInfo =
+        Promise.all(
+
+          Meetings.map(async(act) => ({
+        id: act._id,
+        name: act.name,
+        CoverImages:act.CoverImages,
+        Members:await getMembersInfo(act.Participants)
+
+        // Add other fields you want to include
+      })));
+
+      return MeetingsInfo;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal server error');
+    }
+  };
+  export const GetMemberPermission=async (memberPermissionIds:string[])=>{
+    try{
+      const permissions = await Permission.find({ _id: { $in: memberPermissionIds } });
+      console.log(permissions)
+if (permissions.length>0){
+  const permissionsInfo = permissions.map((permission) => ({
+    id: permission._id,
+    name: permission.name,
+    description: permission.description,
+
+  }));
+  return permissionsInfo
+}
+else{
+  return []
+}
+
+    }catch(e){
+      console.log(e)
+    }
+  }
+  export const getPermissionIdsByRelated = async (searchStrings:string []) => {
+    try {
+        const permissions = await Permission.find({ related: { $in: searchStrings } }, '_id');
+        const permissionIds = permissions.map(permission => permission._id.toString());
+        return permissionIds;
+    } catch (error) {
+        console.error('Error retrieving permission IDs:', error);
+        throw error;
+    }
+};

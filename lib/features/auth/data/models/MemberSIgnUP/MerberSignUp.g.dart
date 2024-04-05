@@ -7,6 +7,8 @@ part of 'MerberSignUp.dart';
 // **************************************************************************
 
 MemberSignup _$MemberSignupFromJson(Map<String, dynamic> json) => MemberSignup(
+      points: json['points'],
+      teams: json['teams'],
       id: json['id'],
       role: json['role'],
       is_validated: json['is_validated'],

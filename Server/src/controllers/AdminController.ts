@@ -1,8 +1,11 @@
+import { plainToClass } from "class-transformer";
+import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
-import { CreateRoleInput } from "../dto/admin.dto";
+import { CreateRoleInput, ValidateCotisation, ValidateMember, ValidatePoints } from "../dto/admin.dto";
 import { Member } from "../models/Member";
+import { Permission } from "../models/Pemission";
 import { Role } from "../models/role";
-import { findrole } from "../utility/role";
+import { findrole, findroleByid, getActivitiesInfo, getFilesInfoByIds, getMeetingsInfo, GetMemberPermission, getteamsInfo, getTrainingInfo } from "../utility/role";
 
 
 //& find member
@@ -29,7 +32,7 @@ if (admin){
 
 }
 export const ChangeToMember=async(req:Request, res:Response,next:NextFunction)=>{
-    const Admin=req.member
+    const Admin=req.admin
     if (Admin){
         const id=req.params.id
         const member = await Member.findById(id);
@@ -60,30 +63,64 @@ export const ChangeToMember=async(req:Request, res:Response,next:NextFunction)=>
 //* get members
 
 export const GetMembers=async( req:Request,res:Response,nex:NextFunction)=>{
-    const admin=req.member
+    const admin=req.admin
     if  (admin){
 
-        const members=await Member.find().select(['email','firstName',"Images"])
+        const members=await Member.find()
         
-        if(members){
+        if(members.length>0){
+            const ALlmembers = await Promise.all(
+                members// Filtering teams with status true
+                    .map(async (member) => ({
+                        id: member._id,
+                        firstName: member.firstName,
+                        email: member.email,
+                        Images:await getFilesInfoByIds(member.Images),
+                  
+
+                    }))
+            );
+
             
-            return res.json(members)
+            return res.json(ALlmembers)
         }
         return res.json({"message":"data not available"})
     }
     }
     export const GetMemberById=async( req:Request,res:Response,nex:NextFunction)=>{
-    const admin=req.member
-    if (admin){
+    const admin=req.admin
+    
 
+const id=req.params.id
+        const profile=await Member.findById(id)
+        if(profile){
+            const [role, teamsInfo, activitiesInfo, trainingsinfo,meetingsInfo,FilesInfo] = await Promise.all([
+                findroleByid(profile.role),
+                getteamsInfo(profile.Teams),
+                getActivitiesInfo(profile.Activities),getTrainingInfo(profile.Activities),
+                getMeetingsInfo(profile.Activities),getFilesInfoByIds(profile.Images)
+            ]);
 
-        const id=req.params.id
-        const memberById=await FindMember(id)
-        if(memberById){
-            return res.json(memberById)
+            const info = {    Activities: [{"Events" : activitiesInfo,"Trainings":trainingsinfo,"Meetings":meetingsInfo}],
+                id: profile.id,
+                firstName: profile.firstName,
+                lastName: profile.lastName,
+                Images: FilesInfo,
+                phone: profile.phone,
+                email: profile.email,
+                cotisation: profile.cotisation,
+                role: role,
+                points: profile.Points,
+                is_validated: profile.is_validated,
+                teams: teamsInfo,
+            
+            };
+
+            
+            return res.status(200).json(info)
         }
-        return res.json({"message":"data not available"})
-    }}
+        return res.status(404).json({message:'member not found'})
+    }
 
 //? create role
     export const createRole=async (req:Request,res:Response,next:NextFunction) => {
@@ -114,3 +151,168 @@ export const searchByName = async (req: Request, res: Response,next:NextFunction
      return res.status(400).json({"message":" notfound"})
     }
 }
+export const validateMember =async (req:Request,res:Response,next:NextFunction)=>{
+    const admin=req.admin
+   
+        const id=req.params.id
+        const validateAction = plainToClass(ValidateMember, req.body);
+        const errors = await validate(validateAction, { validationError: { target: false } });
+        if (errors.length > 0) {
+          return res.status(400).json({ message: 'Input validation failed', errors });
+        }
+        const member=await Member.findById(id)
+        if (member){
+            member.is_validated=validateAction.action
+            const saved=await member.save()
+            if (saved){
+                //!send Email
+                return res.status(200).json(saved)
+            }
+            return res.status(400).json({message:'error with profile'})
+        }
+
+    
+    
+    }
+    export const UpdatePoints =async (req:Request,res:Response,next:NextFunction)=>{
+    const admin=req.admin
+   
+        const id=req.params.id
+        const validateAction = plainToClass(ValidatePoints, req.body);
+        const errors = await validate(validateAction, { validationError: { target: false } });
+        if (errors.length > 0) {
+          return res.status(400).json({ message: 'Input validation failed', errors });
+        }
+        const member=await Member.findById(id)
+        if (member){
+          if (validateAction.action==true){
+            member.Points+=validateAction.Points
+            }else{
+                member.Points-=validateAction.Points
+            }
+            
+            const saved=await member.save()
+            if (saved){
+                //send email
+                return res.status(200).json(saved)
+            }
+            return res.status(400).json({message:'error with profile'})
+          }
+          return res.status(404).json({message:'member not found'})
+        }
+
+    
+    
+        export const UpdateCotisation =async (req:Request,res:Response,next:NextFunction)=>{
+            const admin=req.admin
+           
+                const id=req.params.id
+                const validateAction = plainToClass(ValidateCotisation, req.body);
+                const errors = await validate(validateAction, { validationError: { target: false } });
+                if (errors.length > 0) {
+                  return res.status(400).json({ message: 'Input validation failed', errors });
+                }
+                const member=await Member.findById(id)
+                if (member){
+                  if (validateAction.type==1){
+                    member.cotisation[0]=validateAction.action
+                    }else{
+if (                      member.cotisation.length==1){
+    member.cotisation.push(validateAction.action)
+}
+else{
+    member.cotisation[1]=validateAction.action
+}
+                    }
+                    
+                    const saved=await member.save()
+                    if (saved){
+                        //send email
+                        return res.status(200).json(saved)
+                    }
+                    return res.status(400).json({message:'error with profile'})
+                  }
+                  return res.status(404).json({message:'member not found'})
+                }
+        
+            
+            
+        export    const GetPermissionsOfMember=async(req:Request,res:Response,next:NextFunction)=>{
+                const admin=req.admin
+                
+                    const id=req.params.id
+                    const member=await Member.findById(id)
+                    if (member){
+                        const    permission =await GetMemberPermission(member.Permissions)
+                        return res.status(200).json(permission)
+            
+        
+        
+        }}
+        export const GetAllPermissions = async (req: Request, res: Response, next: NextFunction) => {
+            try {
+                // Retrieve all permissions from the database
+                const permissions = await Permission.find();
+        
+                // Check if any permissions were found
+                if (!permissions || permissions.length === 0) {
+                    return res.status(404).json({ message: 'No permissions found' });
+                }
+        
+                // Return the permissions
+                return res.status(200).json(permissions);
+            } catch (error) {
+                console.log(error);
+                return res.status(500).json({ message: 'Error retrieving permissions' });
+            }
+        }
+                
+export const UpdateMemberPermissions = async (req: Request, res: Response, next: NextFunction) => {
+                        try {
+                            const memberId = req.params.id;
+                            const { permissionId, action } = req.body; // action should be either "add" or "remove"
+                    
+                            // Check if the member with the given ID exists
+                            const member = await Member.findById(memberId);
+                            if (!member) {
+                                return res.status(404).json({ message: 'Member not found' });
+                            }
+                    
+                            // Check if the permission with the given ID exists
+                            const permission = await Permission.findById(permissionId);
+                            if (!permission) {
+                                return res.status(404).json({ message: 'Permission not found' });
+                            }
+                    
+                            // Check if the action is valid (should be either "add" or "remove")
+                            if (action !== 'add' && action !== 'remove') {
+                                return res.status(400).json({ message: 'Invalid action. Action should be either "add" or "remove"' });
+                            }
+                    
+                            // Update the member's permissions based on the action
+                            if (action === 'add') {
+                                // Check if the permission is already in the member's permissions
+                                if (member.Permissions.includes(permissionId)) {
+                                    return res.status(400).json({ message: 'Permission already exists for this member' });
+                                }
+                                // Add the permission to the member's permissions
+                                member.Permissions.push(permissionId);
+                            } else { // action === 'remove'
+                                // Remove the permission from the member's permissions
+                                const index = member.Permissions.indexOf(permissionId);
+                                if (index !== -1) {
+                                    member.Permissions.splice(index, 1);
+                                } else {
+                                    return res.status(400).json({ message: 'Permission does not exist for this member' });
+                                }
+                            }
+                    
+                            // Save the updated member
+                            await member.save();
+                    
+                            return res.status(200).json({ permission:member.Permissions });
+                        } catch (error) {
+                            console.log(error);
+                            return res.status(500).json({ message: 'Error updating permissions for member' });
+                        }
+                    }

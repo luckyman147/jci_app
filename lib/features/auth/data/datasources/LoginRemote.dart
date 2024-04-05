@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:jci_app/core/config/env/urls.dart';
+import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/core/config/services/store.dart';
 import 'package:jci_app/core/error/Exception.dart';
 
@@ -17,7 +18,7 @@ import 'authRemote.dart';
 
 
 abstract class LoginRemoteDataSource {
-  Future<Unit> Login(MemberLogin memberModelLogin);
+  Future<Unit> Login(String email, String password);
 }
 
 
@@ -28,18 +29,18 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
 
   LoginRemoteDataSourceImpl({required this.client, required this.auth});
   @override
-  Future<Unit> Login(MemberLogin modelLogin) async {
+  Future<Unit> Login(String email,String password) async {
 
 
 
 
-    print(jsonEncode({"email":modelLogin.email,"password":modelLogin.password}), );
+
 
 
     final Response = await client.post(
       Uri.parse(LoginUrl),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"email":modelLogin.email,"password":modelLogin.password}),
+      body: jsonEncode({"email":email,"password":password}),
     );
     print("haha" + Response.statusCode.toString());
 
@@ -51,8 +52,9 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
 
 
         await Store.setTokens(response['refreshToken'],response['accessToken'] );
-
-await auth.getUserProfile();
+        await Store.setLoggedIn(true);
+        await Store.setPermissions(response['Permissions']);
+        //await MemberStore.saveModel(MemberModel.fromJson(response['member']));
         return Future.value(unit);
 
 

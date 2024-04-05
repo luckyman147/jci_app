@@ -8,6 +8,7 @@ import 'package:jci_app/core/config/env/urls.dart';
 
 
 import 'package:http/http.dart' as http;
+import 'package:jci_app/core/config/services/MemberStore.dart';
 
 
 import '../../../../../core/config/services/store.dart';
@@ -90,7 +91,7 @@ final body =event.toJson();
 
   @override
   Future<List<EventModel>> getAllEvents()async  {
-    final member = await Store.getModel();
+    final member = await MemberStore.getModel();
     final memberId = member!.id;
     final response = await client.post(
 
@@ -120,7 +121,7 @@ final body =event.toJson();
 
   @override
   Future<EventModel> getEventById(String id)async {
-    final member = await Store.getModel();
+    final member = await MemberStore.getModel();
 
  final response =  await client.post(
       Uri.parse(getEventsUrl + 'get/$id'),
@@ -144,7 +145,7 @@ final body =event.toJson();
 
   @override
   Future<List<EventModel>> getEventsOfTheMonth() async{
-    final member = await Store.getModel();
+    final member = await MemberStore.getModel();
     final memberId = member!.id;
     final response =  await client.post(
       Uri.parse(getEventByMonth),
@@ -174,7 +175,7 @@ throw EmptyDataException();
 
   @override
   Future<List<EventModel>> getEventsOfTheWeek()async  {
-    final member = await Store.getModel();
+    final member = await MemberStore.getModel();
     final memberId = member!.id;
     final response = await client.post(
       Uri.parse(getEventByWeek),

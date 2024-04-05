@@ -154,12 +154,9 @@ final mediaquery = MediaQuery.of(context);
             onTap: () {
 
               if (keyConr.currentState!.validate()) {
-                final member = Member(email: state.email.value,
-                  password: state.password.value, id: '', role: '', is_validated: false, cotisation: [], firstName: '', Images: [], lastName: '', phone: '', IsSelected: false, Activities: [],
-                );
 
 
-                context.read<LoginBloc>().add(LoginSubmitted(member));
+                context.read<LoginBloc>().add(LoginSubmitted(state.email.value, state.password.value));
                 resetform();
                 context.read<LoginBloc>().add(ResetForm());
 

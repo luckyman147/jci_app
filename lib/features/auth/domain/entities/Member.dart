@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:jci_app/features/auth/presentation/widgets/inputs.dart';
 
 import '../../../Home/domain/entities/Activity.dart';
+import '../../../Teams/domain/entities/TaskFile.dart';
 
 class Member extends Equatable {
   final String id;
@@ -13,15 +14,21 @@ class Member extends Equatable {
   final String password;
   final bool is_validated;
   final List<bool> cotisation;
-  final List<dynamic> Images;final List<String> Activities;
+  final List<dynamic> Images;
+  final List<dynamic> Activities;
+  final List<dynamic> teams;
  final bool IsSelected;
+ final int points;
 
   final String role;
 
   factory  Member.fromImages(Map<String, dynamic> data) {
     return Member(
+      points: data['points']??0.0,
+
       id: data['id']??data['_id'] ,
       email: data['email']??'',
+
       firstName: data['firstName'],
       lastName: data['lastName']??'',
       phone: data['phone']??'',
@@ -30,18 +37,27 @@ class Member extends Equatable {
       cotisation: data['cotisation']??[],
       Images: data['Images'] as List<dynamic>,
       Activities: data['Activities']??[],
+      teams: data['teams']??[],
       IsSelected: data['IsSelected']??false,
       role: data['role']??'',
     );
   }
 
+
+  static Member get memberTest=> const Member(
+
+      IsSelected: false, id: "id", role: "role", is_validated: false,
+      cotisation:[false] , Images: [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password", Activities: [], teams: [], points: 0);
+
   static Member toMember(Map<String, dynamic> json) {
     return Member(
+      points: json['points']??0.0,
       id: json['_id'] ==null?json['id'] as String:json['_id'] as String,
       firstName: json['firstName']as String,
       Images: json['Images'] as List<dynamic>,
       // null
       Activities: json['Activities']??[],
+      teams: json['teams']??[],
       IsSelected: json['IsSelected']??false,
       //null
       email: json['email']??'',
@@ -58,6 +74,8 @@ class Member extends Equatable {
   const Member(
 
       {
+        required this.points,
+        required this.teams,
         required this.Activities,
         required this.IsSelected,
         required this.id,
@@ -75,7 +93,7 @@ class Member extends Equatable {
 
   @override
   // TODO: implement props
-  List<Object?> get props => [email, password,
+  List<Object?> get props => [email, password,teams,points,
     id, role, is_validated, cotisation, Images, firstName, lastName, phone,
     IsSelected, Activities
 

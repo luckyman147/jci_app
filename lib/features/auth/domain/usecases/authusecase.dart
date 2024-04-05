@@ -7,13 +7,13 @@ import '../entities/Member.dart';
 import '../repositories/AuthRepo.dart';
 
 
-class RefreshTokenUseCase extends UseCase<bool, NoParams> {
+class RefreshTokenUseCase extends UseCase<Unit, NoParams> {
   final AuthRepo authRepository;
 
   RefreshTokenUseCase({required this.authRepository});
 
   @override
-  Future<Either<Failure, bool>> call(NoParams params) async {
+  Future<Either<Failure, Unit>> call(NoParams params) async {
     return await authRepository.refreshToken();
   }
 }
@@ -38,35 +38,25 @@ class UpdatePasswordUseCase extends UseCase<Unit, Member> {
   }
 
 }
-class GetUserProfile extends UseCase<Unit, NoParams>{
+class UpdateLoggedInUseCase extends UseCase<Unit, bool> {
   final AuthRepo authRepository;
 
-  GetUserProfile({required this.authRepository});
+  UpdateLoggedInUseCase({required this.authRepository});
 
   @override
-  Future<Either<Failure, Unit>> call(NoParams) async {
-    return await authRepository.GetUserProfile();
+  Future<Either<Failure, Unit>> call(bool value) async {
+    return await authRepository.updateLoggedIn(value);
   }
 
 }
-class GetAllMembersUseCase extends UseCase<List<Member>, NoParams>{
+class IsLoggedInUseCase extends UseCase<bool, NoParams> {
   final AuthRepo authRepository;
 
-  GetAllMembersUseCase({required this.authRepository});
+  IsLoggedInUseCase({required this.authRepository});
 
   @override
-  Future<Either<Failure, List<Member>>> call(NoParams) async {
-    return await authRepository.GetAllMembers();
-  }
-
-}class GetMemberByname extends UseCase<List<Member>, String >{
-  final AuthRepo authRepository;
-
-  GetMemberByname({required this.authRepository});
-
-  @override
-  Future<Either<Failure, List<Member>>> call(String params) async {
-    return await authRepository.GetMemberByName(params);
+  Future<Either<Failure, bool>> call(NoParams params) async {
+    return await authRepository.isLoggedIn();
   }
 
 }

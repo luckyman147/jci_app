@@ -15,8 +15,8 @@ class LoginUseCase{
 
   LoginUseCase  (this._loginRepo);
 
-  Future<Either<Failure, Unit>> LoginCredentials(Member loginMember) async {
-    return await _loginRepo.LogInWithCredentials(loginMember);
+  Future<Either<Failure, Unit>> LoginCredentials(String email,String password) async {
+    return await _loginRepo.LogInWithCredentials(email, password);
   }
   Future<Either<Failure, Map>> LoginGoogle() async {
     return await _loginRepo.LogInWithGoogle();

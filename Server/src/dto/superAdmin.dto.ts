@@ -10,3 +10,13 @@ export interface SuperAdminPayload{
     pincode:number
     
 }
+export class PermissionInput{
+    @IsNotEmpty()
+name:string
+description:string
+@IsNotEmpty()
+related:string[]
+
+Members:any[]
+roles:any[]
+}

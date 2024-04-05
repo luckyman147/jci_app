@@ -17,9 +17,9 @@ router.post('/get/:date',getEventByDate)
 router.get('/EventParticipants')
 
 //*post
-router.post('/add/',addEvent)
+router.post('/add/',Authenticate,addEvent)
 
-router.patch('/:id/edit',updateEvent)
+router.patch('/:id/edit',Authenticate,updateEvent)
 router.patch('/:id/UpdateImage',upload.array("CoverImages"),updateImage)
 router.post('/:id/uploadImage',upload.array("CoverImages"),uploadImage)
 router.post('/:idEvent/addParticipant',Authenticate ,AddParticipantToEvent)

@@ -27,10 +27,10 @@ import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visi
 
 
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
-import 'package:jci_app/features/auth/presentation/bloc/Members/members_bloc.dart';
 
 
 import '../../../../core/config/services/MemberStore.dart';
+import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../domain/entities/Activity.dart';
 import '../../domain/entities/Event.dart';
 
@@ -209,7 +209,7 @@ return      LoadingWidget();
     context.read<FormzBloc>().add(CategoryChanged(  category:Category.Comity));
     context.read<FormzBloc>().add(RegistraTimeChanged(date: DateTime.now().add(Duration(days: 1))));
     context.read<FormzBloc>().add(EndTimeChanged(date: DateTime.now().add(Duration(days: 1))));
-    context.read<FormzBloc>().add(MemberFormzChanged( memberFormz: memberTest));
+    context.read<FormzBloc>().add(MemberFormzChanged( memberFormz: Member.memberTest));
     context.read<TextFieldBloc>().add(ChangeTextFieldEvent([TextEditingController(),TextEditingController()]));
     context.read<FormzBloc>().add(ImageInputChanged(  imageInput: XFile("")));
     context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent( false));

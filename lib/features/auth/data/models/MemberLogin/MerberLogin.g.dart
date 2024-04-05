@@ -7,8 +7,11 @@ part of 'MerberLogin.dart';
 // **************************************************************************
 
 MemberLogin _$MemberLoginFromJson(Map<String, dynamic> json) => MemberLogin(
+
       id: json['id'],
+      points: json['points'],
       role: json['role'],
+      teams: json['teams'],
       is_validated: json['is_validated'],
       cotisation: json['cotisation'],
       Images: json['Images'],

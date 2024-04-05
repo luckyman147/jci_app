@@ -14,8 +14,9 @@ import '../../../../core/widgets/loading_widget.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../../../Home/presentation/widgets/ErrorDisplayMessage.dart';
 import '../../../Home/presentation/widgets/SearchWidget.dart';
+import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../auth/domain/entities/Member.dart';
-import '../../../auth/presentation/bloc/Members/members_bloc.dart';
+
 
 Widget MembersTeamContainer(mediaQuery, Member item,bool isExisted,
     Function(Member) onRemoveTap, Function(Member) onAddTap,
@@ -379,7 +380,10 @@ Widget photo(List<dynamic> item, double height, double circle) {
 
       borderRadius: BorderRadius.circular(circle),
       child: Image.memory(
-        base64Decode(item.first),
+        item.first is String
+            ? base64Decode(item.first)
+            :
+        base64Decode(item[0]["url"]),
         width: height,
         height: height,
         fit: BoxFit.cover,

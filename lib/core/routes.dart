@@ -8,6 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/features/Home/presentation/pages/CreateUpdateActivityPage.dart';
 import 'package:jci_app/features/Home/presentation/pages/detailsPage.dart';
 import 'package:jci_app/features/Home/presentation/widgets/SearchWidget.dart';
+import 'package:jci_app/features/MemberSection/presentation/pages/ModifyUser.dart';
+import 'package:jci_app/features/MemberSection/presentation/pages/memberProfilPage.dart';
 import 'package:jci_app/features/Teams/presentation/screens/DetailsTaskScreen.dart';
 import 'package:jci_app/features/Teams/presentation/screens/TeamDeatailsScreen.dart';
 import 'package:path_to_regexp/path_to_regexp.dart';
@@ -21,8 +23,10 @@ import 'package:jci_app/features/intro/presentation/bloc/index_bloc.dart';
 
 
 
+import '../features/MemberSection/presentation/pages/SettingsPage.dart';
 import '../features/Teams/domain/entities/Team.dart';
 import '../features/Teams/presentation/screens/CreateTeamScreen.dart';
+import '../features/auth/data/models/Member/AuthModel.dart';
 import '../features/auth/presentation/pages/SignUPPage.dart';
 import '../features/intro/presentation/pages/Introduction.dart';
 import '../features/intro/presentation/pages/Splash_screen.dart';
@@ -42,6 +46,15 @@ GoRoute(
 path: '/forget',
 builder: (BuildContext context, GoRouterState state) {
 return ForgetPasswordPage();
+},
+
+
+),GoRoute(
+path: '/Settings',
+builder: (BuildContext context, GoRouterState state) {
+  final userJson = state.uri.queryParameters['user'];
+  final user = MemberModel.fromJson(jsonDecode(userJson!));
+return SettingsPage(member: user,);
 },
 
 
@@ -97,6 +110,16 @@ builder: (BuildContext context, GoRouterState state) {
 },
 
 
+),GoRoute(
+path: '/memberSection',
+builder: (BuildContext context, GoRouterState state) {
+
+
+
+  return MemberSectionPage();
+},
+
+
 ),
 GoRoute(path: "/activity/:id/:activity/:index",
   builder: (BuildContext context,  state) {
@@ -117,6 +140,14 @@ return ResetPassword(email: email,);
 },
 ),
 GoRoute(
+path: '/modifyUser',
+builder: (BuildContext context,  state) {
+  final userJson = state.uri.queryParameters['user'];
+  final user = MemberModel.fromJson(jsonDecode(userJson!));
+  return ModifyUser(member: user,);
+},
+),
+GoRoute(
 path: '/TeamDetails/:id/:index',
 builder: (BuildContext context,  state) {
   final  id= state.pathParameters['id']! ;
@@ -134,7 +165,7 @@ GoRoute(
     ),GoRoute(
       path: '/screen',
       builder: (BuildContext context, GoRouterState state) {
-        return SettingsPage();
+        return LanguagePage();
 
       },
     ),

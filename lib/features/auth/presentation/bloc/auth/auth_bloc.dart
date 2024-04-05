@@ -20,7 +20,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RefreshTokenUseCase refreshTokenUseCase;
   final SignOutUseCase signoutUseCase;
 
+
   AuthBloc({required this.refreshTokenUseCase,required this.signoutUseCase,
+
 
 
   }) : super(AuthInitial()){
@@ -34,22 +36,23 @@ _onRefreshToken,
 
 
 
+
   Future <void> _onSignoutEvent(
       SignoutEvent event,
       Emitter<AuthState> emit,
       ) async {
-    if (event is SignoutEvent) {
-      emit(AuthLoading());
+
+
       final result = await signoutUseCase.call(NoParams());
       emit(_eitherDoneMessageOrErrorState(
           result, 'Signout Successfully'));
-emit(AuthLogoutState());
-
-  }
-
 
 
   }
+
+
+
+
 
 
 
@@ -58,17 +61,25 @@ emit(AuthLogoutState());
       RefreshTokenEvent event,
       Emitter<AuthState> emit,
       ) async {
-    if (event is RefreshTokenEvent) {
-      emit(AuthLoading());
+
+
       final result = await refreshTokenUseCase.call(NoParams());
-      emit(_eitherDoneMessageOrErrorState(
+      emit(_eitherDoneRefreshedOrErrorState(
           result, 'Token Refreshed Successfully'));
 
     
-  }}
+  }
 
   AuthState _eitherDoneMessageOrErrorState(
       Either<Failure, bool> either, String message) {
+    return either.fold(
+          (failure) => AuthFailureState(
+        message: mapFailureToMessage(failure),
+      ),
+          (_) => AuthSuccessState(),
+    );
+  }  AuthState _eitherDoneRefreshedOrErrorState(
+      Either<Failure, Unit> either, String message) {
     return either.fold(
           (failure) => AuthFailureState(
         message: mapFailureToMessage(failure),

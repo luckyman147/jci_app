@@ -12,11 +12,13 @@ export interface MemberDoc extends Document{
     refreshTokenRevoked:[string];
     accessTokenRevoked:[string]
     Activities:any[]
+    Teams:any[]
+    Points:number
+    Permissions:any[]
     
-    
-Images:[string];
+Images:any[];
 is_validated:boolean
-cotisation:[boolean]
+cotisation:boolean[]
     salt:string
    role:any
 }
@@ -28,15 +30,26 @@ export const MemberSchema=new Schema({
     firstName:{type:String},
     lastName:{type:String},
     address:{type:String,},
+
+    Points:{type:Number,default:0},
     phone:{type:String},
     is_validated:{type:Boolean},
-    cotisation:{type:[Boolean]},
-    Images:{type:[String]},
+    cotisation:{type:[Boolean],default:[false,false]},
+    Permissions:{
+        type:[Schema.Types.ObjectId],
+        ref:"Permission",default:[]
+    },
+    Images:{type:[Schema.Types.ObjectId],ref:'File'},
+
+
     refreshTokenRevoked:{type:[String],default:[]},
     accessTokenRevoked  :{type:[String],default:[]},
     Activities:{
         type:[Schema.Types.ObjectId],
         ref:"Activity"
+    },
+    Teams:{
+        type:[Schema.Types.ObjectId],ref:'Team'    
     },
     role: {
         type: mongoose.Schema.Types.ObjectId,

@@ -7,7 +7,7 @@ import { CreateMemberInputs, MemberLoginInputs } from '../dto/member.dto';
 import { TokenInput, forgetPasswordInputs } from '../dto/auth.dto';
 import { Member } from '../models/Member';
 import { GenerateSalt, HashPassword, ValidatePassword, VerifyrefreshToken, generateAccessToken, generateRefreshToken, revokeRefreshToken } from '../utility';
-import { findrole, findroleByid } from '../utility/role';
+import { findrole, findroleByid, GetMemberPermission } from '../utility/role';
 let refreshTokens:any = []
 //**  Sign Up*/
 export const MemberSignUp= async(req:Request,res:Response,next:NextFunction)=>{
@@ -93,7 +93,9 @@ export const MemberLogin= async(req:Request,res:Response,next:NextFunction)=>{
 
           })
         console.log("login")
-          return res.status(200).json({refreshToken:refreshToken,accessToken:accessToken,email:MemberInfo.email,role:await findroleByid(MemberInfo.role._id)})
+          return res.status(200).json({refreshToken:refreshToken,accessToken:accessToken,email:MemberInfo.email,role:await findroleByid(MemberInfo.role._id),
+            Permissions:
+            MemberInfo.Permissions})
          }
          else{
                 return res.status(400).json({message:'Invalid credentials'})

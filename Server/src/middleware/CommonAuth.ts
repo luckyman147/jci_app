@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthPayload } from "../dto/auth.dto";
 import { validateAdminSignature, validateSignature, validateSuperAdminSignature } from "../utility";
+import { ADminPayload } from "../dto/admin.dto";
+import { SuperAdminPayload } from "../dto/superAdmin.dto";
 
 
 
@@ -8,6 +10,8 @@ declare global{
     namespace Express {
         interface Request {
             member?: AuthPayload;
+            admin:ADminPayload;
+            superadmin:SuperAdminPayload;
         }
     }
 }
@@ -26,7 +30,10 @@ export const Authenticate=async (req:Request,res:Response,next:NextFunction)=>{
 }
 
 export const AuthenticateAdmin=async (req:Request,res:Response,next:NextFunction)=>{
+    console.log('admin')
     const validate=await validateAdminSignature(req)
+    console.log('admin')
+
     if(validate){
         next()
     }

@@ -6,6 +6,7 @@ import { Member } from '../../models/Member';
 
 
 import { Event } from '../../models/activities/eventModel';
+import { getPermissionIdsByRelated } from '../../utility/role';
 
 //&Public
 
@@ -143,7 +144,7 @@ export const addEvent = async (req: Request, res: Response, next: NextFunction) 
     // Extract data from the request body
     const eventInputs=plainToClass(EventInputs,req.body)
 
-    
+    const permission=await getPermissionIdsByRelated(["Events"])
     // Create an Event document
     const newEvent = new Event({
       
@@ -156,6 +157,7 @@ export const addEvent = async (req: Request, res: Response, next: NextFunction) 
       categorie: eventInputs.categorie,
       IsPaid: eventInputs.IsPaid,
       ActivityPoints:eventInputs.ActivityPoints,
+      Permissions:permission,
    
      Price:eventInputs.price, 
       Participants: [],

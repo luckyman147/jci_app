@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/features/auth/data/models/Member/AuthModel.dart';
 
 
@@ -20,18 +21,11 @@ abstract class  AuthRemote {
   Future<Either<Failure, MemberModel>> sendPasswordResetEmail(String email);
   Future<Either<Failure, MemberModel>> verifyEmail();
   Future<Unit> updatePassword(MemberModel member);
-  Future<bool> refreshToken();
+  Future<Unit> refreshToken();
 
-  Future<Unit> getUserProfile();
-  Future<List<MemberModel>> GetMembers();
-  Future<List<MemberModel>> GetmMemberByName(
-      String name
-      );
-    Future<MemberModel> GetmMemberById(
-      String id
-      );
 
-  Future<Either<Failure, MemberModel>> deleteAccount();
+
+
 
 }
 class AuthRemoteImpl implements AuthRemote {
@@ -44,7 +38,7 @@ final http.Client client;
 
 
 
-  Future<bool> refreshToken() async {
+  Future<Unit> refreshToken() async {
 
     final tokens=await Store.GetTokens();
     if (tokens[0] == null || tokens[0].toString().isEmpty ) {
@@ -53,7 +47,7 @@ throw EmptyCacheException();
 
     }
     final  refreshToken =  tokens[0]??""; // replace with your actual access token
-    if (isTokenExpired(refreshToken)){
+
 
 
 
@@ -75,7 +69,7 @@ print(Response.statusCode);
         // Request was successful
 
         Store.setTokens( response['refreshToken'],response['accessToken'] );
-        return true;
+        return Future.value(unit);
       } else {
         // Request failed
         print('Request failed with status: ${Response.statusCode}');
@@ -88,21 +82,7 @@ print(Response.statusCode);
       print('Exception during request: $e');
     throw ServerException();
     }}
-    else {
-      print('token not exopired');
-return true;
-  }}
-  @override
-  Future<Either<Failure, MemberModel>> deleteAccount() {
-    // TODO: implement deleteAccount
-    throw UnimplementedError();
-  }
 
-  @override
-  Future<Either<Failure, MemberModel>> sendPasswordResetEmail(String email) {
-    // TODO: implement sendPasswordResetEmail
-    throw UnimplementedError();
-  }
 
   @override
   Future<bool> signOut()async {
@@ -136,6 +116,7 @@ return true;
       if (Response.statusCode == 200) {
         final Map<String, dynamic> response = jsonDecode(Response.body);
         Store.clear();
+        MemberStore.clearModel();
         return true;
       } else  if (Response.statusCode == 400 ){
         final Map<String, dynamic> response = jsonDecode(Response.body);
@@ -203,167 +184,23 @@ if (response['message']=='Already logged out'){
   }
 
 
-@override
-Future<Unit> getUserProfile() async {
-
-  final tokens=await getTokens();
-
-
-  // replace with your API endpoint
-  final  AccessToken =  tokens[1]; // replace with your actual access token
-  print("Access token");
-  print(AccessToken);
-  try {
-    final Response = await client.get(
-      Uri.parse(getUserProfileUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $AccessToken',
-      },
-
-    );
-    print(" ya get ${Response.statusCode}");
-    if (Response.statusCode == 200) {
-      final Map<String, dynamic> response = jsonDecode(Response.body);
-      print("response ${response}");
-      final  MemberModel member=MemberModel.fromJson(response);
-      await  Store.saveModel(member);
-
-
-
-      return Future.value(unit);
-    }
-
-
-    else {
-      // Request failed
-      print('Request failed with status: ${Response.statusCode}');
-      print('Response body: ${Response.body}');
-      throw ServerException();
-    }
-  } catch (e) {
-    // Exception occurred during the request
-    print('Exception during request: $e');
-    throw ServerException();
-  }
-
-
-}
-
-  @override
-  Future<List<MemberModel>> GetMembers() async {
- final tokens=await getTokens();
-    // replace with your API endpoint
-    final  AccessToken =  tokens[1]; // replace with your actual access token
-    try {
-      final Response = await client.get(
-        Uri.parse(getallMembers),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $AccessToken',
-        },
-
-      );
-      print(" ya get ${Response.statusCode}");
-      if (Response.statusCode == 200) {
-        final decodedJson = json.decode(Response.body) as List<dynamic>;
-        final membermodels = decodedJson.map<MemberModel>((jsonMember) => MemberModel.fromJson(jsonMember)).toList();
-        return membermodels;
-
-
-
-
-
-
-
-
-      }
-      else  if (Response.statusCode==401){
-        throw UnauthorizedException();
-      }
-      else {
-        // Request failed
-        print('Request failed with status: ${Response.statusCode}');
-        print('Response body: ${Response.body}');
-        throw ServerException();
-      }
-
-
-
-
-    } catch (e) {
-      // Exception occurred during the request
-      print('Exception during request: $e');
-      throw ServerException();
-    }
-  }
-
-
-
-  @override
-  Future<List<MemberModel>> GetmMemberByName(String name)async  {
-
-    final tokens=await getTokens();
-    try {
-      if  ( name.isEmpty){
-GetMembers();
-      }
-      final Response = await client.get(
-        Uri.parse("$getMember/name/$name"),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${tokens[1]}',
-        },
-
-      );
-      print(" ya get ${Response.statusCode}");
-      if (Response.statusCode == 200) {
-        final decodedJson = json.decode(Response.body) as List<dynamic>;
-        final membermodels = decodedJson.map<MemberModel>((jsonMember) => MemberModel.fromJson(jsonMember)).toList();
-        return membermodels;
-
-
-
-
-
-
-
-
-      }
-      else  if (Response.statusCode==401){
-        throw UnauthorizedException();
-      }
-      else {
-        // Request failed
-        print('Request failed with status: ${Response.statusCode}');
-        print('Response body: ${Response.body}');
-        throw ServerException();
-      }
-
-
-
-
-    } catch (e) {
-      // Exception occurred during the request
-      print('Exception during request: $e');
-      throw ServerException();
-    }
-  }
-
-
-
-
-
-
-
-
 
 
 
 
   @override
-  Future<MemberModel> GetmMemberById(String id) {
-    // TODO: implement GetmMemberById
+  Future<Either<Failure, MemberModel>> sendPasswordResetEmail(String email) {
+    // TODO: implement sendPasswordResetEmail
     throw UnimplementedError();
   }
+
+
+
+
+
+
+
+
+
+
 }

@@ -22,12 +22,13 @@ class SignUpRepoImpl implements SignUpRepo {
 
 
         final MemberSignup memberModelSignUp=MemberSignup(
+          teams: member.teams,
           email: member.email,
           password: member.password,
           firstName: member.firstName,
           phone: member.phone,
           role: "user",
-          lastName: member.lastName, id: "", is_validated: false, cotisation: [false], Images: [], IsSelected: false, Activities: [],);
+          lastName: member.lastName, id: "", is_validated: false, cotisation: [false], Images: [], IsSelected: false, Activities: [], points: 0,);
   return    await  getMessage   (signUpRemoteDataSource.signUp(memberModelSignUp ) );
 
 

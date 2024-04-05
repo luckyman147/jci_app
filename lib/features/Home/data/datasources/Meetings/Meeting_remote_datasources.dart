@@ -7,6 +7,7 @@ import 'package:jci_app/core/config/env/urls.dart';
 
 
 import 'package:http/http.dart' as http;
+import 'package:jci_app/core/config/services/MemberStore.dart';
 
 
 import '../../../../../core/config/services/store.dart';
@@ -78,7 +79,7 @@ final body = Meeting.toJson();
 
   @override
   Future<List<MeetingModel>> getAllMeetings()async  {
-    final member = await Store.getModel();
+    final member = await MemberStore.getModel();
     final memberId = member!.id;
     final response = await client.post(
 
@@ -109,7 +110,7 @@ final body = Meeting.toJson();
   @override
   Future<MeetingModel> getMeetingById(String id)async {
 
-    final member = await Store.getModel();
+    final member = await MemberStore.getModel();
     final memberId = member!.id;
     final response =  await client.post(
       Uri.parse(getMeetingsUrl + 'get/$id'),
@@ -133,7 +134,7 @@ final body = Meeting.toJson();
 
   @override
   Future<List<MeetingModel>> getMeetingsOfTheWeek()async  {
-    final member = await Store.getModel();
+    final member = await MemberStore.getModel();
     final memberId = member!.id;
     final response = await client.post(
       Uri.parse(getMeetingByWeek),

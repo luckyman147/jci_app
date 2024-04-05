@@ -8,8 +8,8 @@ import 'package:jci_app/core/strings/app_strings.dart';
 
 import '../bloc/locale_cubit.dart';
 
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+class LanguagePage extends StatelessWidget {
+  const LanguagePage({super.key});
 
   @override
   Widget build(BuildContext context) {

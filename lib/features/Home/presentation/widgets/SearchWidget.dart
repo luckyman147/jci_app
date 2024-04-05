@@ -8,7 +8,7 @@ import 'package:jci_app/core/app_theme.dart';
 
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../auth/domain/entities/Member.dart';
-import '../../../auth/presentation/bloc/Members/members_bloc.dart';
+
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import 'ErrorDisplayMessage.dart';
 enum SearchType { All,Name }

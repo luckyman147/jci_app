@@ -16,10 +16,10 @@ import '../datasources/authLocal.dart';
 typedef Future<bool> Auth();
 typedef Future<Unit> ResetPassword();
 class AuthRepositoryImpl implements AuthRepo {
-  final MembersLocalDataSource membersLocalDataSource;
+final AuthLocalDataSources local;
   final AuthRemote api ;
 final NetworkInfo networkInfo;
-  AuthRepositoryImpl( {required this.api,required this.networkInfo, required this.membersLocalDataSource});
+  AuthRepositoryImpl( {required this.api,required this.networkInfo, required this.local});
 
   Future<Either<Failure, bool>> _getMessage(
       Future<bool> Auth) async {
@@ -65,14 +65,11 @@ final NetworkInfo networkInfo;
 
 
   @override
-  Future<Either<Failure,bool>> refreshToken() async {
-    return  await _getMessage( api.refreshToken());
+  Future<Either<Failure,Unit >> refreshToken() async {
+    return _getMessageReset(api.refreshToken());
   }
 
-  @override  Future<Either<Failure, MemberModel>> deleteAccount() {
-    // TODO: implement deleteAccount
-    throw UnimplementedError();
-  }
+
 
   @override
   Future<Either<Failure, MemberModel>> sendPasswordResetEmail(String email) {
@@ -87,11 +84,9 @@ return _getMessage(api.signOut());
 
   @override
   Future<Either<Failure, Unit>> updatePassword(Member member) {
-final MemberModel memberModel=MemberModel(email: member.email, password: member.password, id: member.id,
-    firstName: member.firstName, phone: member.phone, role: member.role, is_validated: member.is_validated, lastName: member.lastName, cotisation: member.cotisation, Images: member.Images, IsSelected: false, Activities: member.Activities,
+final MemberModel memberModel=MemberModel.fromEntity(member);
 
 
-);
 
       return _getMessageReset(api.updatePassword(memberModel));
   }
@@ -103,54 +98,32 @@ final MemberModel memberModel=MemberModel(email: member.email, password: member.
   }
 
   @override
-  Future<Either<Failure, Unit>> GetUserProfile() {
-
-      return _getMessageReset(api.
-          getUserProfile());
-
+  Future<Either<Failure, bool>> isFirstEntry()async  {
+    return _getMessage(local.isFirstEntry());
   }
 
   @override
-  Future<Either<Failure, List<Member>>> GetAllMembers() async {
-    if (await networkInfo.isConnected) {
-      try {
-        final members = await api.GetMembers();
-membersLocalDataSource.cacheMembers(members);
-        return Right(members);
-      } on ServerException {
-        return Left(ServerFailure());
-      }
-      on UnauthorizedException {
-        return Left(UnauthorizedFailure());
-      }
-    } else {
-      try {
-        final members = await membersLocalDataSource.getAllCachedmembers();
-        return Right(members);
-      } on EmptyCacheException {
-        return Left(EmptyCacheFailure());
-      }
-
-    }
+  Future<Either<Failure, bool>> isLoggedIn() {
+    return _getMessage(local.isLoggedIn());
   }
 
   @override
-  Future<Either<Failure, List<Member>>> GetMemberByName(String name)async {
-    if (await networkInfo.isConnected) {
-      try {
-        final members = await api.GetmMemberByName(name);
-
-        return Right(members);
-      } on ServerException {
-        return Left(ServerFailure());
-      }
-      on UnauthorizedException {
-        return Left(UnauthorizedFailure());
-      }
-    } else {
-      return Left(OfflineFailure());
-
-    }
+  Future<Either<Failure, Unit>> updateFirstEntry() {
+return _getMessageReset(local.updateFirstEntry());
   }
+
+  @override
+  Future<Either<Failure, Unit>> updateLoggedIn(bool value) {
+    return _getMessageReset(local.updateLoggedIn(value));
+  }
+
+  @override
+  Future<Either<Failure, Unit>> updateTokenFromStorage() {
+    // TODO: implement updateTokenFromStorage
+    throw UnimplementedError();
+  }
+
+
+
 
 }

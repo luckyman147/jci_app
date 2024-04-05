@@ -8,6 +8,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.
 import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/DescriptionBoolean/description_bool_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
+import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 
@@ -15,7 +16,7 @@ import 'package:jci_app/features/Teams/presentation/bloc/TaskFilter/taskfilter_b
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/Timeline/timeline_bloc.dart';
 
-import 'package:jci_app/features/auth/presentation/bloc/Members/members_bloc.dart';
+
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
@@ -28,6 +29,7 @@ import 'package:jci_app/features/intro/presentation/bloc/internet/internet_bloc.
 
 import '../../../features/Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
 import '../../../features/Home/presentation/bloc/textfield/textfield_bloc.dart';
+import '../../../features/MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../features/Teams/presentation/bloc/NumPages/num_pages_bloc.dart';
 import '../../../injection_container.dart' as di;
 
@@ -46,6 +48,7 @@ List<SingleChildWidget> providersList = [
   BlocProvider(create: (_)=> di.sl<VisibleBloc>()),
   BlocProvider(create: (_)=> di.sl<TextFieldBloc>()),
   BlocProvider(create: (_)=> di.sl<MembersBloc>()),
+  BlocProvider(create: (_)=> di.sl<ChangeSboolsCubit>()),
   BlocProvider(
       create: (_) => di.sl<AuthBloc>()..add(const RefreshTokenEvent())),
   BlocProvider(create: (_) => di.sl<SignUpBloc>()),

@@ -33,11 +33,18 @@ Members: Array.isArray(teamInputs.Members) ? [...teamInputs.Members, user!._id] 
 
       // Add the event to the database
       const savedTeam = await newTeam.save();
+
     const event =await Event.findById(teamInputs.event)
   if (event) {
 event.teams.push(newTeam._id)  
 }
 
+const leader=await Member.findById(user!._id)
+if (leader){
+  leader.Teams.push(newTeam.id)
+}
+await leader?.save()
+await event?.save()
 const show=await  showTeamDetails(savedTeam)
 res.json(show);
     } catch (error) {
@@ -297,6 +304,7 @@ const show=await  showTeamDetails(savedTeam)
       // Delete the Team
       await Team.deleteOne();
 
+
       res.status(204).json({message:"deleted successully"}); // 204 No Content indicates a successful deletion
     } catch (error) {
       console.error('Error deleting event:', error);
@@ -328,7 +336,7 @@ export const addMember=async (req:Request,res:Response,next:NextFunction)=>{
 
     // Add the member to the team's members array
     Team.Members.push(member._id);
-
+member.Teams.push(Team.id)
     // Save the updated team
     const updatedTeam = await Team.save();
 
@@ -389,7 +397,11 @@ if (membersInput.Status=="add"){
   await Team.Members.push(membersInput.Member)
 
     await Team.save()
-    
+    const member=await Member.findById(membersInput.Member)
+    if (member){
+member.Teams.push(Team._id)
+await member?.save()
+    }
       res.status(200).json({ message:"Completed" , Team });
 }
 //kick Member
@@ -399,14 +411,24 @@ else  if (membersInput.Status == "kick") {
   Team.Members = Team.Members.filter((member) => member._id.toString() !== membersInput.Member.toString());
 
 await Team.save()
-    res.status(200).json({ message:"Completed" , Team });
+const member=await Member.findById(membersInput.Member)
+    if (member){
+member.Teams=member.Teams.filter((mem)=>  mem.toString()!==Team._id.toString())
+await member?.save()
+    }    
+
+res.status(200).json({ message:"Completed" , Team });
   
 }
 else{
   //exit 
   
   Team.Members = Team.Members.filter((member) => member._id.toString() !== user);
-
+  const member=await Member.findById(user)
+  if (member){
+member.Teams=member.Teams.filter((team)=> team.toString()!=Team._id.toString())
+await member?.save()
+  }
 await Team.save()
     res.status(200).json({ message:"Completed" , Team });
 }

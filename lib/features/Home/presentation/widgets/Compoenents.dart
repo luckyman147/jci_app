@@ -12,7 +12,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ACtivityOfweek/activity_ofweek_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
-import 'package:jci_app/features/auth/presentation/bloc/Members/members_bloc.dart';
+//import 'package:jci_app/features/auth/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
 import '../../../../core/strings/app_strings.dart';

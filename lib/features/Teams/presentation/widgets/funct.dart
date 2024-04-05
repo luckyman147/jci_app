@@ -18,7 +18,8 @@ import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
-import '../../../auth/presentation/bloc/Members/members_bloc.dart';
+
+import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../domain/entities/Team.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/GetTeam/get_teams_bloc.dart';
