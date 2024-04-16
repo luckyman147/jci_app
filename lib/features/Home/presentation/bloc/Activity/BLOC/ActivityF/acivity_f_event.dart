@@ -27,13 +27,11 @@ class GetAllActivitiesEvent extends AcivityFEvent {
   List<Object> get props => [act];
 }
 class GetActivitiesByid extends AcivityFEvent {
-  final activity act;
-
-final String id;
-  const GetActivitiesByid({required this.act,required this.id});
+final activityParams params;
+  const GetActivitiesByid({required this.params});
 
   @override
-  List<Object> get props => [act];
+  List<Object> get props => [params];
 }
 
 class SearchTextChanged extends AcivityFEvent {

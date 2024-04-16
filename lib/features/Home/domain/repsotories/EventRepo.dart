@@ -16,6 +16,8 @@ abstract class EventRepo{
   Future<Either<Failure, Event>> getEventLikes(String id);
   Future<Either<Failure, Event>> getEventParticipants(String id);
   Future<Either<Failure, Event>> getEventReports(String id);
+  Future<Either<Failure, bool>> CheckPermissions();
+
 
 
 

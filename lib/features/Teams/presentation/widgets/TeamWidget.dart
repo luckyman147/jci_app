@@ -15,6 +15,7 @@ import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 import '../../../../core/app_theme.dart';
 import '../../domain/entities/Task.dart';
 import '../../domain/entities/Team.dart';
+import 'DetailTeamComponents.dart';
 import 'DetailTeamWidget.dart';
 import 'MembersTeamSelection.dart';
 
@@ -70,7 +71,7 @@ Widget body(List<Team> teams, int index, MediaQueryData mediaQuery,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: BackWidgetColor, width: 2),
+                border: Border.all(color: textColorBlack, width: 2),
               ),
               child: BlocBuilder<GetTaskBloc, GetTaskState>(
                 builder: (context, state) {
@@ -82,7 +83,7 @@ Widget body(List<Team> teams, int index, MediaQueryData mediaQuery,
 
                         Padding(
                           padding: paddingSemetricHorizontal(h: 10),
-                          child: ImageCard(mediaQuery, teams[index], mediaQuery.size.height / 12.5,),
+                          child: DeatailsTeamComponent.ImageCard(mediaQuery, teams[index].CoverImage, mediaQuery.size.height / 12.5,),
                         ),
 
                         SingleChildScrollView(
@@ -106,10 +107,14 @@ Widget details(List<Team> teams, int index,MediaQueryData mediaQuery) =>
 
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          teams[index].name,
-          style: PoppinsSemiBold(
-              18, textColorBlack, TextDecoration.none),
+        SizedBox(
+          width: mediaQuery.size.width / 2.5,
+          child: Text(
+            teams[index].name,
+            overflow: TextOverflow.ellipsis,
+            style: PoppinsSemiBold(
+                18, textColorBlack, TextDecoration.none),
+          ),
         ),
         SizedBox(
           width: mediaQuery.size.width / 1.8,
@@ -132,7 +137,10 @@ Widget details(List<Team> teams, int index,MediaQueryData mediaQuery) =>
                 TaskRow(teams, index),
                 Row(
                   children: [
-                    Images(teams, index),
+                    Padding(
+                      padding: paddingSemetricHorizontal(),
+                      child: Images(teams, index),
+                    ),
 
                     BlocBuilder<GetTeamsBloc, GetTeamsState>(
                       builder: (context, state) {
@@ -213,8 +221,8 @@ Widget Images(List<Team> teams, int index) =>
         i <
             (teams[index].Members
                 .length >
-                4
-                ? 3
+                3
+                ? 2
                 : teams[index].Members
                 .length);
         i++)
@@ -228,25 +236,24 @@ Widget Images(List<Team> teams, int index) =>
                     shape: BoxShape.circle,
                   ),
                   child: photo(
-                      teams[index].Members[i]
-                      ['Images'] as List<dynamic>,
-                      30, 100))),
-        if (teams[index].Members.length > 4)
+                      teams[index].Members[i]['Images'] as List<dynamic>,
+                      25, 100))),
+        if (teams[index].Members.length > 3)
           Container(
             height: 30,
             width: 30,
             decoration: BoxDecoration(
-              color: PrimaryColor,
+              color: backgroundColored,
               shape: BoxShape.circle,
             ),
             // Customize the container as needed
             child: Align(
-              widthFactor: .4,
+              widthFactor: .5,
               child: Center(
                 child: Text(
-                  '+ ${teams[index].Members.length - 4} ',
+                  '+ ${teams[index].Members.length - 3} ',
                   style: PoppinsLight(
-                      18, textColorWhite),
+                      15, textColorBlack),
                 ),
               ),
             ),
@@ -261,7 +268,7 @@ Widget CircleProgess(List<Team> teams, int index,
         ? Text(
       "By ${teams[index].TeamLeader[0]["firstName"]}",
       style: PoppinsSemiBold(
-        14,
+        17,
         textColor,
         TextDecoration.none,
       ),
@@ -380,13 +387,13 @@ class TeamHomeWidget extends StatelessWidget {
                 context.go('/TeamDetails/${teams[index].id}/$index');
               },
               child: Container(
-                width: mediaQuery.size.width /2,
-
+                width: mediaQuery.size.width /1.8,
+height: mediaQuery.size.height/6,
                 decoration: BoxDecoration(
                   color: textColorWhite,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: BackWidgetColor,
+                    color: textColorBlack,
                     width: 2,
                   ),
                 ),
@@ -394,35 +401,37 @@ class TeamHomeWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(12.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
 
                     children: [
-                      Text(
-                        teams[index].name,
-                        style: PoppinsSemiBold(
-                          18,
-                          textColorBlack,
-                          TextDecoration.none,
+                      SizedBox(
+                        width: mediaQuery.size.width / 2.4,
+                        child: Text(
+                          teams[index].name,
+                          overflow: TextOverflow.ellipsis,
+                          style: PoppinsSemiBold(
+                            16,
+                            textColorBlack,
+                            TextDecoration.none,
+                          ),
                         ),
                       ),
 
 
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+              Padding(
+                padding: paddingSemetricVertical(),
+                child: SizedBox(
+                  width: mediaQuery.size.width / 2,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment
+                        .spaceBetween,
+                    children: [
+                      TaskRow(teams, index),
+                      Images(teams, index),
 
-                          SizedBox(
-                            width: mediaQuery.size.width / 2,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment
-                                  .spaceBetween,
-                              children: [
-                                TaskRow(teams, index),
-                                Images(teams, index),
-
-                              ],
-                            ),
-                          ),
-                ],
+                    ],
+                  ),
+                ),
               ),
 
 

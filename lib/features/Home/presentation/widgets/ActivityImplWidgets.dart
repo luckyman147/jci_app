@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ACtivityOfweek/activity_ofweek_bloc.dart';
+//import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ACtivityOfweek/activity_ofweek_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Compoenents.dart';
@@ -16,22 +16,17 @@ import '../bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import '../bloc/Activity/activity_cubit.dart';
 
 import '../bloc/PageIndex/page_index_bloc.dart';
+import 'ActivityDetailsComponents.dart';
 import 'ActivityDetailsWidget.dart';
 import 'ErrorDisplayMessage.dart';
 import 'EventListWidget.dart';
 import 'EventOfweek.dart';
 import 'Functions.dart';
 
-Future<void> ACtivityDetailRefresh(BuildContext context, activity act,index,
 
-
-String id) async {
-//context.read<ParticpantsBloc>().add(initstateList(act: mapObjects(widget.Activities)));
-context.read<AcivityFBloc>().add(GetActivitiesByid(id: id, act: act));
-}
 
 Future<void> onRefresh(BuildContext context, activity act, List<Activity> actu) async {
-  context.read<ParticpantsBloc>().add(initstateList(act: mapObjects(actu)));
+  context.read<ParticpantsBloc>().add(initstateList(act: ActivityAction.mapObjects(actu)));
 
   context.read<AcivityFBloc>().add(GetActivitiesOfMonthEvent(act: act));
 
@@ -40,11 +35,8 @@ Future<void> onRefresh(BuildContext context, activity act, List<Activity> actu) 
 Future<void> onAllRefresh(BuildContext context, activity act,
     List<Activity> actu) async {
   context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: act));
-  context.read<ParticpantsBloc>().add(initstateList(act: mapObjects(actu)));
+  context.read<ParticpantsBloc>().add(initstateList(act: ActivityAction.mapObjects(actu)));
 
-
-
-  debugPrint('refreshed');
 }
 
 Widget BlocMonthlyWeeklyActivity(activity act,MediaQueryData mediaQuery) =>
@@ -97,15 +89,7 @@ Widget ActivityDetails(activity Act, String id,index) {
               print(ss.isParticipantAdded[index]);
               print(index);
 
-              return RefreshIndicator(
-                  onRefresh: () {
-                    print(state.activity);
-                    return
-
-                      ACtivityDetailRefresh(context, Act,index, id);
-                  },
-                  child: ActivityDetail(activitys: state.activity, bools: ss.isParticipantAdded[index]['isPart'], act: Act, index: index,)
-              );
+              return ActivityDetail(activitys: state.activity, bools: ss.isParticipantAdded[index]['isPart'], act: Act, index: index,);
             }
             else if (state is ErrorActivityState) {
               return MessageDisplayWidget(message: state.message);
@@ -130,7 +114,7 @@ Widget ALLActivities(activity act) =>
 
           return RefreshIndicator(
               onRefresh: () {
-                print(state.activitys.length);
+
 
                 return
 
@@ -145,7 +129,7 @@ Widget ALLActivities(activity act) =>
     return ActivityWidget(Activities: state.activitys, act: act,);
   }
     else{
-      context.read<ParticpantsBloc>().add(initstateList(act: mapObjects(state.activitys)));
+      context.read<ParticpantsBloc>().add(initstateList(act: ActivityAction.mapObjects(state.activitys)));
       return LoadingWidget();
     }
     },
@@ -164,7 +148,38 @@ Widget ALLActivities(activity act) =>
 
 
     );
+Widget AddButtonWi(Color color,Color IconColor, IconData ICON ,Function() onPressed){
+  return BlocBuilder<AddDeleteUpdateBloc, AddDeleteUpdateState>(
+    builder: (context, state) {
+      if (state is PermissionState) {
 
+        if (state.hasPermission) {
+
+          return AddButton(
+            color: color, IconColor: IconColor, icon: ICON, onPressed:onPressed,);
+        }
+        return SizedBox();
+      }
+      return Container();
+    },
+  );
+}
+Widget AddDots(Activity activitys,MediaQueryData mediaQuery){
+  return BlocBuilder<AddDeleteUpdateBloc, AddDeleteUpdateState>(
+    builder: (context, state) {
+      if (state is PermissionState) {
+
+        if (state.hasPermission) {
+
+          return             ActivityDetailsComponent.dots(context, mediaQuery, activitys);
+
+      }
+        return SizedBox();
+      }
+      return Container();
+    },
+  );
+}
 
 
 

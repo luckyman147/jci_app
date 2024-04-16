@@ -2,6 +2,7 @@ import 'dart:convert';
 
 
 
+import 'package:dartz/dartz.dart';
 import 'package:jci_app/features/Home/presentation/widgets/MemberSelection.dart';
 import 'package:secure_shared_preferences/secure_shared_pref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,6 +16,7 @@ class MemberStore{
   static const String _CachedMembersKey= 'CachedMembers';
 
   static const String  _UserInfo = 'UserInfo';
+  static String _memberID(String id)=> 'Member_$id';
   static Future<void> cacheMembers(List<MemberModel> Members) async{
     final pref = await SharedPreferences.getInstance();
     List MembersModelToJson=Members.map((e) => e.toJson()).toList();
@@ -63,4 +65,39 @@ class MemberStore{
 
     prefs.putString(_UserInfo, '');
   }
+  static Future<Unit> saveMemberBYID(MemberModel auth,String id) async {
+    final prefs = await SecureSharedPref.getInstance();
+
+    final value = auth.toJson();
+    prefs.putString(_memberID(id), jsonEncode(value));
+return Future.value(unit);
+
+}
+  static Future<MemberModel?> getMemberByID(String id) async {
+    final prefs = await SecureSharedPref.getInstance();
+
+    final value = await  prefs.getString(_memberID(id));
+
+    if (value == null) {
+      return null;
+    }
+    if (value.isEmpty) {
+      return null;
+    }
+
+    return MemberModel.fromJson(jsonDecode(value));
+  }
+
+  static Future<void> clearMemberByID(String id) async {
+    final prefs = await SecureSharedPref.getInstance();
+
+    prefs.putString(_memberID(id), '');
+  }
+  static Future<void> clearAll() async {
+    final prefs = await SecureSharedPref.getInstance();
+
+    prefs.putString(_UserInfo, '');
+    prefs.putString(_CachedMembersKey, '');
+  }
+
 }

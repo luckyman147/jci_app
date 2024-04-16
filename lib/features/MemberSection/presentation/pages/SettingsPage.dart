@@ -33,6 +33,8 @@ class _SettingsPageState extends State<SettingsPage> {
           BackButton(
             onPressed: () {
               GoRouter.of(context).go('/home');
+              context.read<MembersBloc>().add(GetUserProfileEvent(false));
+
 
 
             },
@@ -42,16 +44,18 @@ class _SettingsPageState extends State<SettingsPage> {
 
       ),
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: paddingSemetricVerticalHorizontal(),
-              child: Text("Settings",style: PoppinsSemiBold(24, textColorBlack, TextDecoration.none),),
-            ),
-SettingsComponent.ColumnActions(context,widget.member),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: paddingSemetricVerticalHorizontal(),
+                child: Text("Settings",style: PoppinsSemiBold(24, textColorBlack, TextDecoration.none),),
+              ),
+          SettingsComponent.ColumnActions(context,widget.member),
+            ],
+          ),
         ),
       ),
     );

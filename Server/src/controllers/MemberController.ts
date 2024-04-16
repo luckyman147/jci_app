@@ -8,6 +8,7 @@ import { EditMemberProfileInputs } from '../dto/member.dto';
 import { Member } from '../models/Member';
 import { findroleByid, getActivitiesInfo, getFilesInfoByIds, getMeetingsInfo, getteamsInfo, getTrainingInfo } from '../utility/role';
 import path from 'path';
+import { CheckObjectif } from '../utility/objectifcheck';
 
 
 //& Verify email
@@ -44,14 +45,14 @@ export const GetmemberProfile= async(req:Request,res:Response,next:NextFunction)
     if(member){
         const profile=await Member.findById(member?._id)
         if(profile){
-            const [role, teamsInfo, activitiesInfo, trainingsinfo,meetingsInfo,FilesInfo] = await Promise.all([
+            const [role, teamsInfo, activitiesInfo, trainingsinfo,meetingsInfo,FilesInfo,objectifs] = await Promise.all([
                 findroleByid(profile.role),
                 getteamsInfo(profile.Teams),
                 getActivitiesInfo(profile.Activities),getTrainingInfo(profile.Activities),
-                getMeetingsInfo(profile.Activities),getFilesInfoByIds(profile.Images)
+                getMeetingsInfo(profile.Activities),getFilesInfoByIds(profile.Images),CheckObjectif(profile.id)
             ]);
 
-            const info = {    Activities: [{"Events" : activitiesInfo,"Trainings":trainingsinfo,"Meetings":meetingsInfo}],
+            const info = {      teams: teamsInfo,  Activities: [{"Events" : activitiesInfo,"Trainings":trainingsinfo,"Meetings":meetingsInfo}],
                 id: profile.id,
                 firstName: profile.firstName,
                 lastName: profile.lastName,
@@ -62,11 +63,12 @@ export const GetmemberProfile= async(req:Request,res:Response,next:NextFunction)
                 role: role,
                 points: profile.Points,
                 is_validated: profile.is_validated,
-                teams: teamsInfo,
+
+                objectifs:objectifs
             
             };
 
-            
+            console.log(info)
             return res.status(200).json(info)
         }
         return res.status(404).json({message:'member not found'})

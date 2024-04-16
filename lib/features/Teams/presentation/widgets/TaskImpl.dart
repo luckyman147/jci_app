@@ -21,9 +21,9 @@ Widget GetTasksWidget(Team team, MediaQueryData mediaQuery,
     TextEditingController controller) {
   return BlocBuilder<GetTaskBloc, GetTaskState>(
       builder: (context, state) {
-        log(state.status.toString());
+
         if (state is AddTaskMessage) {
-          log("AddTaskMessage");
+
           context.read<TaskfilterBloc>().add(filterTask(state.tasks));
 
           return TaskWidget(tasks: state.tasks, team: team,);
@@ -42,7 +42,7 @@ Widget GetTasksWidget(Team team, MediaQueryData mediaQuery,
             case TaskStatus.Changed:
              // context.read<TaskfilterBloc>().add(filterTask(state.tasks));
 
-              log(state.tasks.length.toString());
+
               return TaskWidget(tasks: state.tasks, team: team,);
           default:
             return LoadingWidget();
@@ -56,7 +56,7 @@ Widget GetTaskByidWidget(Team team,String taskId,TextEditingController TaskName,
       if (state is GetTaskInitial || state is GetTaskLoading|| state.status==TaskStatus.Loading) {
         return LoadingWidget();
       }   else if (state is GetTaskByIdLoaded) {
-        log("zeeshan" + state.task.toString());
+
         return RefreshIndicator(
           onRefresh: () async {
             context.read<GetTaskBloc>().add(GetTaskById(ids:{'id': team.id, 'taskid': taskId}));
@@ -75,7 +75,7 @@ Widget GetTaskByidWidget(Team team,String taskId,TextEditingController TaskName,
 Widget AddTask(mediaQuery,) =>
     BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
       builder: (context, state) {
-        log("${!state.WillAdded}");
+
         return Padding(
           padding: paddingSemetricVerticalHorizontal(h: 18),
           child: Visibility(
@@ -125,7 +125,7 @@ Widget TaskAddField(TextEditingController controller, String id) =>
 
                 style: PoppinsRegular(18, textColorBlack),
                 onChanged: (value) {
-                  log(controller.text);
+
                 },
                 decoration: InputDecoration(
 
@@ -146,7 +146,7 @@ Widget TaskAddField(TextEditingController controller, String id) =>
                               message: "Empty Field", context: context);
                         }
                         else {
-                          log(id);
+
                           context.read<GetTaskBloc>().add(CreateTask({
                             "Teamid": id,
                             "name": controller.text

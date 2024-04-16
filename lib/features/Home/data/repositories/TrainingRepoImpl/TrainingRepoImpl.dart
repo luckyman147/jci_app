@@ -9,6 +9,9 @@ import 'package:jci_app/features/Home/data/model/TrainingModel/TrainingModel.dar
 
 
 
+import '../../../../../core/config/services/TrainingStore.dart';
+import '../../../../../core/config/services/store.dart';
+import '../../../../../core/config/services/verification.dart';
 import '../../../../../core/error/Exception.dart';
 import '../../../domain/entities/training.dart';
 import '../../../domain/repsotories/TrainingRepo.dart';
@@ -210,6 +213,19 @@ return await _getMessage(trainingRemoteDataSource.deleteTraining(id));
 
     else {
       return Left(OfflineFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> CheckPermissions() async {
+    final eventPermission=await TrainingStore.getTrainPer();
+    final userPermissions=await Store.getPermissions();
+    if(eventPermission .isEmpty || userPermissions.isEmpty){
+      return Right(false);
+    }
+    else{
+
+      return hasCommonElement(eventPermission, userPermissions)?Right(true):Right(false);
     }
   }
 }

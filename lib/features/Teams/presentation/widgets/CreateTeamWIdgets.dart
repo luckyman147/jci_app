@@ -40,21 +40,26 @@ Widget ActionsWidgets(mediaQuery,GlobalKey<FormState> key,TextEditingController 
   },
 );
   }, listener: (BuildContext context, GetTeamsState state) {
-    log(state.toString());
-    if (state.status ==  TeamStatus.error)
-    {SnackBarMessage.showErrorSnackBar(message: state.errorMessage, context: context);
-    }
-    if (state.status == TeamStatus.success) {
-      SnackBarMessage.showSuccessSnackBar(message: "Team Added", context: context);
-      context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
-      GoRouter.of(context).go('/home');
-
-
-    }
+    LIstenerAdd(state, context);
 
 
 },
 );
+
+void LIstenerAdd(GetTeamsState state, BuildContext context) {
+    log(state.toString());
+  if (state.status ==  TeamStatus.error)
+  {SnackBarMessage.showErrorSnackBar(message: state.errorMessage, context: context);
+  }
+  if (state.status == TeamStatus.success) {
+    SnackBarMessage.showSuccessSnackBar(message: "Team Added", context: context);
+    context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
+    GoRouter.of(context).go('/home');
+
+
+  }
+
+}
 Widget DoneActions(TextEditingController TeamName, TextEditingController description,GlobalKey<FormState> key,Team team)=>BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
   builder: (context, form) {
     return BlocBuilder<FormzBloc, FormzState>(
@@ -75,15 +80,15 @@ Widget DoneActions(TextEditingController TeamName, TextEditingController descrip
                             .eventFormz.value!.id,
                         id: '',
                         TeamLeader: '',
-                        status: Visstate.isVisible,
+                        status: Visstate.isPaid,
                         tasks: [],
-                        Members: getIds(state.membersTeamFormz.value ?? []));
+                        Members: TeamFunction. getIds(state.membersTeamFormz.value ?? []));
                     context.read<GetTeamsBloc>().add(AddTeam(team));
                   }
                   else {
 
 
-                    log(getIds(state.membersTeamFormz.value??[] ).toString());
+                    log(TeamFunction.getIds(state.membersTeamFormz.value??[] ).toString());
                     final Team ha = Team(
                         name: TeamName.text,
                         description: description.text,
@@ -92,9 +97,9 @@ Widget DoneActions(TextEditingController TeamName, TextEditingController descrip
                             .eventFormz.value!.id,
                         id: team.id,
                         TeamLeader: team.TeamLeader,
-                        status: Visstate.isVisible,
+                        status: Visstate.isPaid,
                         tasks: team.tasks,
-                        Members: getIds(state.membersTeamFormz.value ?? []));
+                        Members:TeamFunction. getIds(state.membersTeamFormz.value ?? []));
                    context.read<GetTeamsBloc>().add(UpdateTeam(ha));
                   }
                 }
@@ -336,7 +341,7 @@ Widget bottomMembersSheet(BuildContext context, MediaQueryData mediaQuery,
 
 
     ) {
-  log("mmmemememmeme"+members.toString());
+
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16.0,),
     child: InkWell(

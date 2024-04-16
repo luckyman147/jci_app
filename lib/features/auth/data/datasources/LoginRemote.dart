@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 
@@ -52,8 +53,14 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
 
 
         await Store.setTokens(response['refreshToken'],response['accessToken'] );
+        log("[access: ${response['accessToken']}]");
         await Store.setLoggedIn(true);
-        await Store.setPermissions(response['Permissions']);
+        log("refreshToken: ${response['accessToken']}");
+
+        List<String> stringList = (response['Permissions'] as List).map((element) => element.toString()).toList();
+        await Store.setPermissions(stringList);
+        log("refreshToken: ${response['accessToken']}");
+
         //await MemberStore.saveModel(MemberModel.fromJson(response['member']));
         return Future.value(unit);
 

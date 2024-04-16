@@ -8,6 +8,7 @@ import 'package:jci_app/core/app_theme.dart';
 
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/widgets/TeamComponent.dart';
 //import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/TeamImpl.dart';
 
@@ -32,7 +33,7 @@ class _AllTeamsScreenState extends State<AllTeamsScreen> {
 
      context.read<GetTaskBloc>().add(resetevent());
     context.read<GetTeamsBloc>().add(GetTeams(isPrivate: false));
-    // context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
+    context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
 
 
      _scrollController.addListener(_onScroll);
@@ -58,14 +59,14 @@ class _AllTeamsScreenState extends State<AllTeamsScreen> {
   @override
   Widget build(BuildContext context) {
     final mediaquery = MediaQuery.of(context);
-    return SafeArea(child: BlocConsumer<TaskVisibleBloc, TaskVisibleState>(
+    return SafeArea(child: BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
   builder: (context, state) {
     return Column(
        children: [
-       Header(context, state, mediaquery),
+      TeamComponent. Header(context, state, mediaquery),
  Padding(
   padding: paddingSemetricVerticalHorizontal(h: mediaquery.size.width/13),
-  child: Status(context, state),
+  child: TeamComponent.Status(context, state),
 )
 ,
            Expanded(
@@ -75,120 +76,12 @@ class _AllTeamsScreenState extends State<AllTeamsScreen> {
        ],
 
     );
-  }, listener: (BuildContext context, TaskVisibleState state) {
-
-    },
+  },
 ));
   }
 
 
 
-  Row Status(BuildContext context, TaskVisibleState state) {
-    return Row(
-  mainAxisAlignment: MainAxisAlignment.center,
-
-  children: [
-
-
-  StatusContainer((){
-    context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
-
-    // Dispatch event to initialize GetTeamsBloc and fetch teams with updated privacy
-    context.read<GetTeamsBloc>().add(initStatus());
-    context.read<GetTeamsBloc>().add(GetTeams(isPrivate: false,isUpdated: state.isUpdated));
-  },"Primary",state.privacy==Privacy.Primary,Privacy.Primary),
-  SizedBox(width: 10,),
-  StatusContainer((){
-    context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Private));
-
-    // Dispatch event to initialize GetTeamsBloc and fetch teams with updated privacy
-    context.read<GetTeamsBloc>().add(initStatus());
-    context.read<GetTeamsBloc>().add(GetTeams(isPrivate: true,isUpdated: state.isUpdated));
-    context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(false));
-
-  },"Private",state.privacy==Privacy.Private,Privacy.Private),
-
-
-],);
-  }
-
-
-
-  ElevatedButton StatusContainer(Function() onPressed, String text,bool isActive,Privacy privacy) {
-    return ElevatedButton(
-      style: styleFrom(isActive),
-      onPressed: onPressed, child: Text(text,style:PoppinsRegular(16, isActive?textColorWhite:textColorBlack),),);
-  }
-
-
-
-  Row Header(BuildContext context, TaskVisibleState state, MediaQueryData mediaquery) {
-    return Row(
-         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-         children: [
-           SizedBox(
-             height: 50,
-
-             child: SeachRow(context, state, mediaquery),
-           ),
-           SecondRowPart(state, context),
-
-         ],
-       );
-  }
-
-  Row SecondRowPart(TaskVisibleState state, BuildContext context) {
-    return Row(
-             children: [
-               state.willSearch==false?
-              IconButton(onPressed: () {
-                context.read<TaskVisibleBloc>().add(ChangeWillSearchEvent(true));
-              }, icon: Icon(Icons.search,color: textColorBlack,)):
-
-               IconButton(onPressed: (){
-                 context.read<TaskVisibleBloc>().add(ChangeWillSearchEvent(false));
-                 context.read<GetTeamsBloc>().add(GetTeams(isPrivate: state.privacy==Privacy.Private));
-
-               }, icon: Icon(Icons.cancel,color: textColorBlack,),),
-               AddButton(color: PrimaryColor, IconColor: textColorBlack, icon: Icons.add_rounded,
-                   onPressed: () {
-final team=jsonEncode(Team.empty().toJson());
-context.go('/CreateTeam?team=${team}');
-               }),
-
-
-             ],
-           );
-  }
-
-  Row SeachRow(BuildContext context, TaskVisibleState state, MediaQueryData mediaquery) {
-    return Row(
-               children: [
-                 BackButton(
-                     onPressed: () {
-                       context.read<PageIndexBloc>().add(SetIndexEvent(index: 0));
-                     }
-                 ),
-                 state.willSearch==false?
-                 Text("Teams ",style:PoppinsSemiBold(21, textColorBlack, TextDecoration.none)):
-                     SizedBox(
-                        width: mediaquery.size.width*0.6,
-                       height: 50,
-                       child: TextField(
-                         style: PoppinsRegular(16, textColorBlack) ,
-                         decoration: InputDecoration(
-                           hintText: "Search Teams",
-                           hintStyle: PoppinsRegular(16, textColor),
-                           border: InputBorder.none,
-                         ),
-                         onChanged: (value) {
-searchFunction(value, context,state.privacy==Privacy.Private);
-
-                         }),
-                     ),
-               ],
-             );
-  }
 
 
 }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/bool/toggle_bool_bloc.dart';
 import 'package:jci_app/features/intro/presentation/bloc/internet/internet_bloc.dart';
 
@@ -10,6 +11,7 @@ import 'package:jci_app/features/intro/presentation/bloc/internet/internet_bloc.
 import '../../../../core/util/snackbar_message.dart';
 import '../../../../core/widgets/loading_widget.dart';
 
+import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import '../bloc/login/login_bloc.dart';
 import '../widgets/Form.dart';
 
@@ -55,6 +57,10 @@ class _LoginPageState extends State<LoginPage> {
 
 
                   context.go('/home');
+
+                  context.read<PageIndexBloc>().add(SetIndexEvent(index:0));
+                  context.read<MembersBloc>().add(GetUserProfileEvent(true));
+
                 }
                 else if (state is ErrorLogin) {
                   print('success' + state.message.toString());

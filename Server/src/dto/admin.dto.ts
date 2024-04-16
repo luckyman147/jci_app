@@ -19,8 +19,7 @@ export interface ADminPayload{
 export class ValidatePoints{
     @IsNotEmpty()
     Points:number
-    @IsNotEmpty()
-    action:boolean //true=> increrase + false=>decrease -
+  
 }
 export class ValidateCotisation{
     @IsNotEmpty()
@@ -30,5 +29,5 @@ export class ValidateCotisation{
 }
 export class ValidateMember{
     @IsNotEmpty()
-    action:boolean;
+    Points:boolean;
 }

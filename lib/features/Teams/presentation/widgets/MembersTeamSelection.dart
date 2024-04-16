@@ -14,7 +14,9 @@ import '../../../../core/widgets/loading_widget.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../../../Home/presentation/widgets/ErrorDisplayMessage.dart';
 import '../../../Home/presentation/widgets/SearchWidget.dart';
+import '../../../MemberSection/domain/usecases/MemberUseCases.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
+import '../../../MemberSection/presentation/pages/memberProfilPage.dart';
 import '../../../auth/domain/entities/Member.dart';
 
 
@@ -72,10 +74,9 @@ Widget SelectionButton(mediaQuery, List<Member> ff, Member item, bool isExisted,
             ff.isEmpty ? bottondec(false) :
             bottondec(isExisted),
             onPressed: () {
-              log(isExisted.toString());
+
               if (isExisted) {
                 context.read<FormzBloc>().add(RemoveMember(member: item));
-                log("ssssssscdzfzedf"+ff.toString() + item.toString());
 
                 onRemoveTap(item);
               }
@@ -107,11 +108,10 @@ SizedBox SelectionAssignButton(mediaQuery, List<Member> ff, Member item,
     child: ElevatedButton(
         style:
         ff.isEmpty ? bottondec(false) :
-        bottondec(doesObjectExistInList(ff, item)),
+        bottondec(TeamFunction.doesObjectExistInList(ff, item)),
         onPressed: () {
-          log(doesObjectExistInList(ff, item).toString() + "  " +
-              ff.length.toString());
-          if (doesObjectExistInList(ff, item)) {
+
+          if (TeamFunction.doesObjectExistInList(ff, item)) {
             context.read<FormzBloc>().add(RemoveMember(member: item));
             onRemoveTap(item);
           }
@@ -120,11 +120,11 @@ SizedBox SelectionAssignButton(mediaQuery, List<Member> ff, Member item,
             onAddTap(item);
           }
         }, child: Text(
-      doesObjectExistInList(ff, item) ? "Selected" : "Select"
+      TeamFunction.   doesObjectExistInList(ff, item) ? "Selected" : "Select"
 
 
       , style: PoppinsSemiBold(17,
-        doesObjectExistInList(ff, item) ? textColorWhite : textColorBlack
+        TeamFunction.      doesObjectExistInList(ff, item) ? textColorWhite : textColorBlack
         , TextDecoration.none),)),
   );
 }
@@ -145,7 +145,7 @@ Widget MembersTeamBottomSheet(mediaQuery
                 textMemberz(mediaQuery),
                 SeachMemberWidget(mediaQuery, context, (value){
 
-                  SearchAction(context, value, state);
+                  TeamFunction.    SearchAction(context, value, state);
 
                 },state.memberName.displayError!= null),
                 ImportPieceOfAddMember(mediaQuery, state, onRemoveTap, onAddTap)
@@ -210,7 +210,7 @@ Padding AssignToPiece(mediaQuery, Function(Member) onRemoveTap,
               padding: const EdgeInsets.all(8.0),
               child: BlocBuilder<GetTaskBloc, GetTaskState>(
   builder: (context, state) {
-    log(state.status.toString());
+
     if (state.status==TaskStatus.success|| state.status==TaskStatus.Changed){
       return MembersDetails(
           members, mediaQuery, onRemoveTap, onAddTap, ff);}
@@ -330,10 +330,26 @@ Widget MembersDetails(List<Member> members, mediaQuery,
 
       itemCount: members.length,
       itemBuilder: (context, index) {
-        log("sssssdede"+members[index].toString());
-        log(ff.toString());
-        return MembersTeamContainer(
-            mediaQuery, members[index], doesObjectExistInList(ff, members[index]),onRemoveTap, onAddTap, context, ff);
+
+
+        return InkWell(
+          onTap: (){
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (BuildContext context) {
+                  return  MemberSectionPage(id:members[index].id);
+                },
+              ),);
+
+
+
+
+            context.read<MembersBloc>().add(GetMemberByIdEvent( MemberInfoParams(id: members[index].id,status: true)));
+
+          },
+          child: MembersTeamContainer(
+              mediaQuery, members[index],TeamFunction. doesObjectExistInList(ff, members[index]),onRemoveTap, onAddTap, context, ff),
+        );
       },
       separatorBuilder: (BuildContext context, int index) {
         return const SizedBox(height: 10,);
@@ -356,6 +372,7 @@ Widget imageWidget(Member item) {
 }
 
 Widget photo(List<dynamic> item, double height, double circle) {
+
   return
     item.isEmpty
         ? ClipRRect(

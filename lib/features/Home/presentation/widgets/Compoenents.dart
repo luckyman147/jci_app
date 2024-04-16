@@ -9,8 +9,10 @@ import 'package:jci_app/core/app_theme.dart';
 
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/widgets/loading_widget.dart';
-import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ACtivityOfweek/activity_ofweek_bloc.dart';
+import 'package:jci_app/features/Home/domain/usercases/ActivityUseCases.dart';
+
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 //import 'package:jci_app/features/auth/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
@@ -40,7 +42,14 @@ class MyDropdownButton extends StatefulWidget {
 }
 
 class _MyDropdownButtonState extends State<MyDropdownButton> {
-  String selectedValue = 'Event';
+  late String selectedValue="Event".tr(context);
+  @override
+  void initState() {
+
+
+    // TODO: implement initState
+    super.initState();
+  }
 
 
   @override
@@ -50,7 +59,7 @@ class _MyDropdownButtonState extends State<MyDropdownButton> {
     return BlocBuilder<ToggleBooleanBloc, ToggleBooleanState>(
       builder: (context, state) {
         return Container(
-            width: 155,
+            width: 170,
             height: 65,
 
             padding: EdgeInsets.all(12.0),
@@ -70,7 +79,7 @@ class _MyDropdownButtonState extends State<MyDropdownButton> {
                 dropdownStyleData:const  DropdownStyleData(
                   maxHeight: 200,
 
-                  width: 150,
+                  width: 170,
                   decoration: BoxDecoration(
                     color: textColorWhite,
                     borderRadius: BorderRadius.only(bottomLeft: Radius.circular(16),bottomRight: Radius.circular(16)),
@@ -120,7 +129,7 @@ class _MyDropdownButtonState extends State<MyDropdownButton> {
                   return DropdownMenuItem<activity>(
                     alignment: AlignmentDirectional.centerStart,
                     value: value,
-                    child: Text(value.name),
+                    child: Text(value.name.tr(context),style: PoppinsSemiBold(MediaQuery.of(context).devicePixelRatio*5, textColorBlack, TextDecoration.none),),
 
                   );
                 }).toList(),
@@ -189,7 +198,7 @@ class CalendarButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 40,
+      height: 60,
       width: 49,
       child: IconButton(
 
@@ -226,8 +235,7 @@ class MyActivityButtons extends StatelessWidget {
     return BlocBuilder<ActivityCubit, ActivityState>(
       builder: (context, state) {
         return Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: mediaQuery.size.width / 50),
+          padding:paddingSemetricHorizontal(),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: state.selectedActivity == act
@@ -237,7 +245,7 @@ class MyActivityButtons extends StatelessWidget {
                   ? textColorWhite
                   : Colors.black,
               shape: RoundedRectangleBorder(
-                side: BorderSide(color: backgroundColored, width:1.0),
+                side: BorderSide(color: textColorBlack, width:1.0),
                 borderRadius: BorderRadius.circular(10.0),
               ),
             ),
@@ -264,7 +272,7 @@ class MyActivityButtons extends StatelessWidget {
       BuildContext context, activity act) {
     context.read<ActivityCubit>().selectActivity(act);
     context.read<AcivityFBloc>().add(GetActivitiesOfMonthEvent( act: act));
-    context.read<ActivityOfweekBloc>().add(GetOfWeekActivitiesEvent(act: act));
+   // context.read<ActivityOfweekBloc>().add(GetOfWeekActivitiesEvent(act: act));
     // Add logic to handle the button press for the specific activity
     // You can dispatch events to other blocs or perform any other actions here.
   }
@@ -420,7 +428,7 @@ class MyCategoryButtons extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Text(
-                "Choose A category",
+                "Choose A category".tr(context),
                 style: PoppinsSemiBold(
                   mediaQuery.devicePixelRatio * 6,
                   PrimaryColor,
@@ -451,7 +459,7 @@ class MyCategoryButtons extends StatelessWidget {
                         Icons.search,
                         color: textColor,
                       ),
-                      hintText: "Search for a Category",
+                      hintText: "Search for a Category".tr(context),
                       hintStyle: PoppinsRegular(
                         mediaQuery.devicePixelRatio * 6,
                         textColor,
@@ -524,6 +532,7 @@ return ALLActivities(act);
 }
 
 
+
 class ParticipateButton extends StatefulWidget {
   final Activity acti;
 final double textSize;
@@ -552,13 +561,15 @@ class _ParticipateButtonState extends State<ParticipateButton> {
     return BlocBuilder<ParticpantsBloc, ParticpantsState>(
       builder: (context, state) {
 
-        debugPrint('isPartFromState ${widget.isPartFromState}');
+
         return InkWell(
           onTap: () {
+            final result=activityParams(act:  widget.acti, type: widget.act, id:  widget.acti.id);
             if (widget.isPartFromState) {
-              context.read<ParticpantsBloc>().add(RemoveParticipantEvent(id: widget.acti.id, index: widget.index, act: widget.act));
+              context.read<ParticpantsBloc>().add(RemoveParticipantEvent( index: widget.index, act: result));
             } else {
-              context.read<ParticpantsBloc>().add(AddParticipantEvent(id: widget.acti.id, index: widget.index, act: widget.act));
+
+              context.read<ParticpantsBloc>().add(AddParticipantEvent( index: widget.index, act:result));
             }
           },
           child: Container(
@@ -575,7 +586,7 @@ class _ParticipateButtonState extends State<ParticipateButton> {
                   Icon( widget.isPartFromState ? Icons.check : Icons.star,
                       color:  widget.isPartFromState ? textColorWhite : textColorBlack),
                   Text(
-                    widget.isPartFromState ? "Interested" : "Join",
+                    widget.isPartFromState ? "Interested".tr(context) : "Join".tr(context),
                     style: PoppinsSemiBold(widget.textSize,
                         widget.isPartFromState ? textColorWhite : textColorBlack,
                         TextDecoration.none),
@@ -605,7 +616,7 @@ Widget ButtonComponent({required List<Activity> Activities,required index,requir
 Widget MonthWeekBuild (activity act,ActivityLoadedMonthState state,MediaQueryData mediaQuery)=>  BlocBuilder<ParticpantsBloc, ParticpantsState>(
   builder: (context, ste) {
     if  ((ste.isParticipantAdded.length==state.activitys.length&&  (ste is ParticipantChanged || ste is ParticipantSuccessState )) ){
-      if (filterActivityByCurrentMonth(state.activitys).isEmpty){
+      if (ActivityAction.filterActivityByCurrentMonth(state.activitys).isEmpty){
         return Align(
             alignment: AlignmentDirectional.center,
             heightFactor: 3,
@@ -620,7 +631,7 @@ Widget MonthWeekBuild (activity act,ActivityLoadedMonthState state,MediaQueryDat
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Upcoming ${act.name}", style: PoppinsSemiBold(
+                  Text("${"Upcoming".tr(context)} ${act.name}", style: PoppinsSemiBold(
                       mediaQuery.devicePixelRatio*6, Colors.black,
                       TextDecoration.none),),
                   InkWell(
@@ -632,7 +643,7 @@ Widget MonthWeekBuild (activity act,ActivityLoadedMonthState state,MediaQueryDat
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: LinkedText(text: "See more", size: mediaQuery.size.width/23),
+                      child: LinkedText(text: "See more".tr(context), size: mediaQuery.size.width/23),
                     ),
                   )
                 ],
@@ -647,7 +658,7 @@ Widget MonthWeekBuild (activity act,ActivityLoadedMonthState state,MediaQueryDat
                   // adjust the height as needed
                   child:
 
-                  ActivityOfMonthListWidget( Activities: filterActivityByCurrentMonth(state.activitys,), act: act,)
+                  ActivityOfMonthListWidget( Activities: ActivityAction.filterActivityByCurrentMonth(state.activitys,), act: act,)
 
 
               ),
@@ -655,7 +666,7 @@ Widget MonthWeekBuild (activity act,ActivityLoadedMonthState state,MediaQueryDat
             SizedBox(height: 10,),
             Align(
               alignment: AlignmentDirectional.topStart,
-              child: Text(" This Weekend", style: PoppinBold(
+              child: Text(" This Weekend".tr(context), style: PoppinBold(
                   mediaQuery.size.width / 15, Colors.black,
                   TextDecoration.none),),
             ),
@@ -665,17 +676,17 @@ Widget MonthWeekBuild (activity act,ActivityLoadedMonthState state,MediaQueryDat
               child: SizedBox(
                   height: mediaQuery.size.height * 0.4, // adjust the height as needed
                   child:
-                  filterObjectsForCurrentWeekend(state.activitys).isNotEmpty?
+    ActivityAction.  filterObjectsForCurrentWeekend(state.activitys).isNotEmpty?
 
-                  ActivityOfWeekListWidget(activity: filterObjectsForCurrentWeekend(state.activitys),):
-                  MessageDisplayWidget(message: "No activity this weekend",)
+                  ActivityOfWeekListWidget(activity:ActivityAction. filterObjectsForCurrentWeekend(state.activitys),):
+                  MessageDisplayWidget(message: "No activity this weekend".tr(context),)
 
               ),
             ),
           ],
         );}}
     else {
-      context.read<ParticpantsBloc>().add(initstateList(act: mapObjects(state.activitys)));
+      context.read<ParticpantsBloc>().add(initstateList(act: ActivityAction.mapObjects(state.activitys)));
 
       return LoadingWidget();
     }

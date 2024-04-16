@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 import '../bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
@@ -22,10 +23,10 @@ class _BeginTimeWidgetState extends State<BeginTimeWidget> {
     return BlocBuilder<FormzBloc, FormzState>(
   builder: (context, state) {
     return DateFieldWidget(
-      labelText: "Begin Date",
-      sheetTitle: "Date and Hour of begin",
-      hintTextDate: "Begin Date",
-      hintTextTime: "Begin Time",
+      labelText: "Begin Date".tr(context),
+      sheetTitle: "Date and Hour of begin".tr(context),
+      hintTextDate: "Begin Date".tr(context),
+      hintTextTime: "Begin Time".tr(context),
       date: state.beginTimeInput.value ?? DateTime.now(),   mediaQuery: mediaQuery, timeType: TimeType.begin,);
   },
 );
@@ -96,10 +97,10 @@ class _RegistrationTimeState extends State<RegistrationTime> {
     return BlocBuilder<FormzBloc, FormzState>(
   builder: (context, state) {
     return DateFieldWidget(
-      labelText: "Registration Deadline",
-      sheetTitle: "Registration Date ",
-      hintTextDate: "End Date",
-      hintTextTime: "End Time",
+      labelText: "Registration Deadline".tr(context),
+      sheetTitle: "Registration Date".tr(context),
+      hintTextDate: "End Date".tr(context),
+      hintTextTime: "End Time".tr(context),
       date: state.registrationTimeInput.value ?? DateTime.now(),  mediaQuery: mediaQuery, timeType: TimeType.registration,);
   },
 );

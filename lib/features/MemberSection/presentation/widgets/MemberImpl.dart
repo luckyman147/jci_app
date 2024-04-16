@@ -17,6 +17,7 @@ class MemberImpl{
         } else if (state is MemberLoading) {
           return LoadingWidget();
         } else if (state is UserLoaded) {
+
           return MemberSectionWidget(member:state.user);
         } else if (state is MemberFailure) {
           return SettingsComponent.signoput(context);

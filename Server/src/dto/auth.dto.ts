@@ -4,7 +4,7 @@ import { SuperAdminPayload } from "./superAdmin.dto";
 import { ADminPayload } from "./admin.dto";
 import { EmailPayload, MemberPayload } from "./member.dto";
 
-export type AuthPayload=   SuperAdminPayload | MemberPayload | EmailPayload
+export type AuthPayload=   ADminPayload|SuperAdminPayload | MemberPayload 
 
 
 

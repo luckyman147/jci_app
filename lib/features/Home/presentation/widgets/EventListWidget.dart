@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/strings/app_strings.dart';
 
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
@@ -25,7 +26,6 @@ import 'Compoenents.dart';
 
 
 
-enum action { edit, Add }
 class ActivityWidget extends StatefulWidget {
   final List<Activity> Activities;
   final activity act;
@@ -47,21 +47,21 @@ class _ActivityWidgetState extends State<ActivityWidget> {
         return ListView.separated(itemBuilder: (ctx, index) {
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: Padding(
-              padding:  EdgeInsets.symmetric(horizontal: mediaQuery.size.width / 30),
-              child: Align(
-                alignment: Alignment.center,
-                child: Container(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Container(
 
 
-                  height: mediaQuery.size.height / 4.5,
+                height: mediaQuery.size.height / 4.4,
+              width: mediaQuery.size.width,
+                decoration: BoxDecoration(
+                  border: Border.symmetric(horizontal: BorderSide(color: textColor,width: 2)),
 
-                  decoration: BoxDecoration(
-                    border: Border.all(color: BackWidgetColor, width: 2),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.only(left:mediaQuery.size.width/30 ),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.only(left:mediaQuery.size.width/30 ),
+                  child: SizedBox(
+                    width: mediaQuery.size.width / 1.2,
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -97,14 +97,11 @@ class _ActivityWidgetState extends State<ActivityWidget> {
 
                               child: Container(
                                   height: mediaQuery.size.height / 5.8,
-                                  width: 130,
-                                  color: ThirdColor,
-                                  child: Center(
-                                      child: Text(widget.Activities[index].runtimeType
-                                          .toString()
-                                          .split('Model')
-                                          .first, style: PoppinsSemiBold(
-                                          20, textColorWhite, TextDecoration.none),))
+
+                                  color: backgroundColored,
+width: 130,
+                                child: Image.asset('assets/images/jci.png', fit: BoxFit.contain, scale: 0.1,),
+
                               ),
                             ),
                           ),
@@ -119,40 +116,56 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                                   children: [
                                     Text(DateFormat('EEE, MMM, d').format(
                                         widget.Activities[index].ActivityBeginDate),
-                                        style: PoppinsRegular(14, textColorBlack)),
+                                        style: PoppinsRegular(13, textColorBlack)),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8.0),
                                       child: Text(
-                                          "Start at ${DateFormat('h:mm').format(
+                                          "${"Start At".tr(context)} ${DateFormat('h:mm').format(
                                               widget.Activities[index]
                                                   .ActivityBeginDate)}",
-                                          style: PoppinsRegular(14, textColorBlack)
+                                          style: PoppinsRegular(13, textColorBlack)
                                       ),
                                     ),
                                   ],
-                                ),
-                                SizedBox(
-                                    width: mediaQuery.size.width / 2,
-                                    child: Text(widget.Activities[index].name,
-                                      style: PoppinsSemiBold(
-                                          widget.Activities[index].name.length < 10
-                                              ? mediaQuery.devicePixelRatio * 6
-                                              : mediaQuery.devicePixelRatio *4.5
+                                ), Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                        width: mediaQuery.size.width / 2,
+                                        child: Text(widget.Activities[index].name,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: PoppinsSemiBold(
+                                              widget.Activities[index].name.length < 10
+                                                  ? mediaQuery.devicePixelRatio * 6
+                                                  : mediaQuery.devicePixelRatio *5
 
-                                          , textColorBlack, TextDecoration.none),)),
-                                SizedBox(
-                                  width: mediaQuery.size.width / 2,
-                                  child: Text(widget.Activities[index].ActivityAdress,
-                                    style: PoppinsSemiBold(
-                                        widget.Activities[index].ActivityAdress
-                                            .length < 20 ? mediaQuery
-                                            .devicePixelRatio * 6 : mediaQuery
-                                            .devicePixelRatio * 5, PrimaryColor,
-                                        TextDecoration.none),
+                                              , textColorBlack, TextDecoration.none),)),
+                                  ],
+                                ),SizedBox(
 
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.location_on_outlined, color: textColorBlack, size: 20,),
+                                      SizedBox(
+                                        width: mediaQuery.size.width / 2,
+
+                                        child: Text(widget.Activities[index].ActivityAdress,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: PoppinsLight(
+                                              widget.Activities[index].ActivityAdress
+                                                  .length < 20 ? mediaQuery
+                                                  .devicePixelRatio * 4.5 : mediaQuery
+                                                  .devicePixelRatio * 4, textColorBlack,
+                                              ),
+
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
+
+
                                 BlocBuilder<ParticpantsBloc, ParticpantsState>(
                                     builder: (context, state) {
                     return Padding(
@@ -169,8 +182,8 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                         ]
                     ),
                   ),
-
                 ),
+
               ),
             ),
           );
@@ -248,7 +261,7 @@ class ActivityOfMonthListWidget extends StatelessWidget {
                 PosCard(mediaQuery, Activities, index),
 
 
-                    details(mediaQuery, Activities, index),
+                    details(mediaQuery, Activities, index,context),
     ButtonComponent(Activities: Activities, index: index, top:  mediaQuery.size.width /1.6, left: mediaQuery.size.height /4.3 , mediaQuery: mediaQuery, act: act)
 
               ]
@@ -288,7 +301,7 @@ ClipRRect images(mediaQuery,List<Activity> activity,int index,double height,doub
     );
 
 
-Positioned details(MediaQueryData mediaQuery, List<Activity> activity,int index)=>Positioned(
+Positioned details(MediaQueryData mediaQuery, List<Activity> activity,int index,BuildContext context)=>Positioned(
 
   top: mediaQuery.size.height / 3.7,
   child: Padding(
@@ -307,19 +320,29 @@ Positioned details(MediaQueryData mediaQuery, List<Activity> activity,int index)
               , textColorBlack, TextDecoration.none),)),
           Row(
             children: [
-              SvgPicture.string(PlaceSvg,color: textColor,),
+              SvgPicture.string(PlaceSvg,color: SecondaryColor,),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: SizedBox(
-                      child: Text(activity[index].ActivityAdress,style: PoppinsRegular(
+                      child: Text(activity[index].ActivityAdress,style: PoppinsLight(
                         activity[index].ActivityAdress.length<20?mediaQuery.devicePixelRatio*5:
 
-                mediaQuery.devicePixelRatio*4, textColor,),)),
+                mediaQuery.devicePixelRatio*4, textColorBlack,),)),
               ),
             ],
           ),
-          Text("Start At ${DateFormat('h:mm a').format(activity[index].ActivityBeginDate)}",
-            style: PoppinsRegular(mediaQuery.devicePixelRatio*4.5, textColor,),),
+          Padding(
+            padding:paddingSemetricVertical(),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.access_time_rounded,color: SecondaryColor, size:19,),
+                Text(" ${DateFormat('h:mm a').format(activity[index].ActivityBeginDate)}",
+                  style: PoppinsNorml(mediaQuery.devicePixelRatio*4.5, textColorBlack,),),
+              ],
+            ),
+          ),
         ],
       ),
     ),

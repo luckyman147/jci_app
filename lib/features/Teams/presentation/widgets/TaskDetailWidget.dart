@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskFilter/taskfilter_bloc.dart';
@@ -25,6 +27,7 @@ import '../../../Home/presentation/widgets/MemberSelection.dart';
 
 import '../../domain/entities/Team.dart';
 import 'CreateTeamWIdgets.dart';
+import 'DetailTeamComponents.dart';
 import 'MembersTeamSelection.dart';
 import 'TaskComponents.dart';
 
@@ -64,7 +67,7 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
   Widget build(BuildContext context) {
     final TextEditingController TaskName = TextEditingController(
         text: widget.task['name']);
-log('task name ${widget.task['attachedFile']}');
+
     final mediaQuery = MediaQuery.of(context);
     return SingleChildScrollView(
 
@@ -93,11 +96,11 @@ log('task name ${widget.task['attachedFile']}');
                     children: [
                      // buildSection(),
                       //   SizedBox(height: 10,),é
-                      buildAssignTo(context, mediaQuery),
+                      buildAssignTo(context, mediaQuery,widget.team,widget.task),
                       //  SizedBox(height: 10,),
-                      buildAttachedfile(context, mediaQuery),
+                      buildAttachedfile(context, mediaQuery,widget.team,widget.task),
                       //  SizedBox(height: 10,),
-                      buildTimeline(context, mediaQuery),
+                      buildTimeline(context, mediaQuery,widget.team,widget.task),
                     ],
                   ),
                 ),
@@ -138,36 +141,36 @@ log('task name ${widget.task['attachedFile']}');
           shrinkWrap: true, keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: [
 
-            Padding(
-              padding: paddingSemetricHorizontal(),
-              child: buildText("Task Checklist",mediaQuery),
-            ),
+
             Padding(
               padding: paddingSemetricVertical(),
               child: CheckListAddField(
-                  controller, widget.task['id'], checklistFocus, mediaQuery),
+                  controller, widget.task['id'], checklistFocus, mediaQuery,widget.team,widget.task,mounted),
             ),
             BlocBuilder<GetTaskBloc, GetTaskState>(
               builder: (context, state) {
                 final i = state.tasks[widget.index]['CheckLists'].length;
                 if (state.status == TaskStatus.Loading) {
-                  return SizedBox(
+                  return AnimatedContainer(
                       height: state.tasks[widget.index]['CheckLists'].length *
                           89,
 
+                      duration: Duration(milliseconds: 100),
                       child: CheckListWidget(
                         checkList: List<Map<String, dynamic>>.from(
                             state.tasks[widget.index]['CheckLists']),
-                        id: state.tasks[widget.index]["id"],));
+                        id: state.tasks[widget.index]["id"], tasks: state.tasks[widget.index], team: widget.team,));
                 }
                 else {
-                  return SizedBox(
+                  return  AnimatedContainer
+                    (
 
                       height: i * 89.6,
+                      duration: Duration(milliseconds: 100),
                       child: CheckListWidget(
                         checkList: List<Map<String, dynamic>>.from(
                             state.tasks[widget.index]['CheckLists']),
-                        id: state.tasks[widget.index]["id"],));
+                        id: state.tasks[widget.index]["id"], tasks: state.tasks[widget.index], team: widget.team,));
                 }
               },
             ),
@@ -177,7 +180,7 @@ log('task name ${widget.task['attachedFile']}');
     );
   }
 
-  Padding buildTimeline(BuildContext context, MediaQueryData mediaQuery) {
+  Padding buildTimeline(BuildContext context, MediaQueryData mediaQuery,Team team ,Map<String,dynamic> task) {
     return Padding(
       padding: paddingSemetricVerticalHorizontal(),
       child: Column(
@@ -185,20 +188,19 @@ log('task name ${widget.task['attachedFile']}');
         children: [
           buildText("Timeline",mediaQuery),
           InkWell(
-            onTap: () {
-
+            onTap: ()async  {
+if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])){
               context.read<TimelineBloc>().add(initTimeline({
-                'Start Date': widget.task['StartDate'],
+                'StartDate': widget.task['StartDate'],
                 'Deadline': widget.task['Deadline']
               }));
 
-              modeltimelinebottomsheetbody(context, mediaQuery);
+              modeltimelinebottomsheetbody(context, mediaQuery);}
             },
             child: BlocBuilder<GetTaskBloc, GetTaskState>(
               builder: (context, state)
               {
-                log(state.tasks[widget.index]['StartDate'].toString()+ "start");
-                log(state.tasks[widget.index]['Deadline'].toString()+ "deadline");
+
                 return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -226,8 +228,6 @@ log('task name ${widget.task['attachedFile']}');
           height: mediaQuery.size.height / 2.5,
           child: BlocBuilder<TimelineBloc, TimelineState>(
             builder: (context, ste) {
-              log(ste.timeline['Start Date'].toString() + "startss");
-              log(ste.timeline['Deadline'].toString() + "jjjj");
 
               return BlocBuilder<GetTaskBloc, GetTaskState>(
 
@@ -237,9 +237,9 @@ log('task name ${widget.task['attachedFile']}');
                       context,
                       mediaQuery,
                       "Timeline",
-                      ste.timeline['Start Date'],
+                      ste.timeline['StartDate'],
                       ste.timeline['Deadline'],
-                      "StartDate",
+                      "Start Date",
                       "Deadline",
                       widget.task['id'],),
                   );
@@ -282,11 +282,12 @@ log('task name ${widget.task['attachedFile']}');
             child: buildTextField(
                 taskNameFocusNode,
                 state.textFieldsTitle == TextFieldsTitle.Active,
-                TaskName, () {
-              log("message");
+                TaskName, ()async  {
+
+                  if (await FunctionMember.isAssignedOrLoyal(widget.team, widget.task['AssignTo'])){
               context.read<TaskVisibleBloc>().add(
                   ChangeTextFieldsTitle(TextFieldsTitle.Active));
-              FocusScope.of(context).requestFocus(taskNameFocusNode);
+              FocusScope.of(context).requestFocus(taskNameFocusNode);}
             },
                 "TaskName here",
                 mediaQuery,
@@ -338,7 +339,7 @@ log('task name ${widget.task['attachedFile']}');
     );
   }
 
-  Widget buildAssignTo(BuildContext context, MediaQueryData mediaQuery) {
+  Widget buildAssignTo(BuildContext context, MediaQueryData mediaQuery,Team team,Map<String, dynamic> task) {
     return Padding(
       padding: paddingSemetricVerticalHorizontal(),
       child: BlocBuilder<GetTaskBloc, GetTaskState>(
@@ -348,18 +349,7 @@ log('task name ${widget.task['attachedFile']}');
               children: [
                 Padding(
                   padding: paddingSemetricVertical(),
-                  child: Row(
-
-                    children: [
-                      buildText("Members",mediaQuery),
-                      Padding(
-                        padding:paddingSemetricHorizontal(),
-                        child: buildAddButton(() {
-                          buildAssignBottomSheetBuilderFunction(context, mediaQuery, state);
-                        }),
-                      )
-                    ],
-                  ),
+                  child: buildText("Members",mediaQuery),
                 ),
 
                 Row(
@@ -372,11 +362,11 @@ log('task name ${widget.task['attachedFile']}');
                         buildAssignBottomSheetBuilderFunction(context, mediaQuery, state);
 
                       },
-                      child: membersTeamImage(
+                      child: DeatailsTeamComponent.membersTeamImage(
                           context, mediaQuery, state.tasks[widget.index]['AssignTo'].length,
                           state.tasks[widget.index]['AssignTo'],30,40),
                     ),
-
+          ProfileComponents.buildFutureBuilder(AddAssignToWidget(context, mediaQuery, state), true, "", (p0) => FunctionMember.isAssignedOrLoyal(team,task["AssignTo"] ))
 
                   ],
                 ),
@@ -387,10 +377,19 @@ log('task name ${widget.task['attachedFile']}');
     );
   }
 
+  Padding AddAssignToWidget(BuildContext context, MediaQueryData mediaQuery, GetTaskState state) {
+    return Padding(
+                    padding:paddingSemetricHorizontal(),
+                    child: buildAddButton(() {
+                      buildAssignBottomSheetBuilderFunction(context, mediaQuery, state);
+                    }),
+                  );
+  }
+
   void buildAssignBottomSheetBuilderFunction(BuildContext context, MediaQueryData mediaQuery, GetTaskState state) {
     return AssignBottomSheetBuilder(context, mediaQuery, (member) {
                         //delete memberr
-                        log(member.id.toString());
+
                         context.read<GetTaskBloc>().add(
 
                             UpdateMember(
@@ -411,7 +410,7 @@ log('task name ${widget.task['attachedFile']}');
                       );
   }
 
-  Widget buildAttachedfile(BuildContext context, MediaQueryData mediaQuery) {
+  Widget buildAttachedfile(BuildContext context, MediaQueryData mediaQuery,Team  team,Map<String, dynamic> task) {
     return BlocBuilder<GetTaskBloc, GetTaskState>(
   builder: (context, state) {
     return Padding(
@@ -425,15 +424,17 @@ log('task name ${widget.task['attachedFile']}');
 
                 children: [
                   buildText('Attached Files',mediaQuery),
-                  Padding(
+                  ProfileComponents.buildFutureBuilder(   Padding(
                     padding: paddingSemetricHorizontal(),
                     child: buildAddButton(() async{
-                     FileStorage.pickFile(mounted, context, widget.task['id']);
-                     context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+                      FileStorage.pickFile(mounted, context, widget.task['id']);
+                      context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
 
                     }
                     ),
-                  )
+                  ), true, "", (p0) => FunctionMember.isAssignedOrLoyal(team,task["AssignTo"] ))
+
+
                 ],
               ),
             ),

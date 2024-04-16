@@ -44,12 +44,12 @@ class TaskVisibleBloc extends Bloc<TaskVisibleEvent, TaskVisibleState> {
   void _onToggleTaskVisible(ToggleTaskVisible event, Emitter<TaskVisibleState> emit) {
 
     emit(state.copyWith(WillAdded: !event.WillVisible));
-    log(state.WillAdded.toString());
+
   }
   void ondeleted(DeletedTaskedEvent event, Emitter<TaskVisibleState> emit) {
 
     emit(state.copyWith(WillDeleted: !event.deleted));
-    log(state.WillDeleted.toString());
+
   }
 
 void _changeTextFieldsTitle(ChangeTextFieldsTitle event, Emitter<TaskVisibleState> emit) {

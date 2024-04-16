@@ -145,17 +145,11 @@ final CacheStatus status=isPrivate?CacheStatus.Private:CacheStatus.Public;
     if (await networkInfo.isConnected) {
 
       try {
-        if (updated) {
+
         final remoteTeams = await teamRemoteDataSource.getAllTeams(page,limit,isPrivate);
         teamLocalDataSource.cacheTeams(remoteTeams,status);
-        return Right(remoteTeams);}
-        else{
+        return Right(remoteTeams);
 
-          final localTeams = await teamLocalDataSource.getAllCachedTeams(status);
-          return Right(localTeams);
-
-
-        }
       } on ServerException {
         return Left(ServerFailure());
       }

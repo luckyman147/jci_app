@@ -18,11 +18,19 @@ abstract class MemberRemote {
   Future<List<MemberModel>> GetmMemberByName(
       String name
       );
+
   Future<List<MemberModel>> GetMembers();
   Future<Unit> deleteAccount();
+  Future<MemberModel> getMemberByid(String id);
 
 Future<Unit> UpdateMember(MemberModel memberModel);
 
+Future<Unit> UpdatePoints(String memberid, double cotisation);
+Future<Unit> validateMember(String memberid);
+Future<Unit> ChangeToAdmin(String memberid);
+Future<Unit> ChangeToSuperAdmin(String memberid);
+Future<Unit> ChangeToMember(String memberid);
+Future<Unit> validateCotisation(String memberid,int type, bool cotisation);
 
 
 }
@@ -39,8 +47,7 @@ class MemberRemoteImpl implements MemberRemote {
 
     // replace with your API endpoint
     final  AccessToken =  tokens[1]; // replace with your actual access token
-    print("Access token");
-    print(AccessToken);
+
     try {
       final Response = await client.get(
         Uri.parse(getUserProfileUrl),
@@ -56,6 +63,7 @@ class MemberRemoteImpl implements MemberRemote {
         print("response ${response}");
         final  MemberModel member=MemberModel.fromJson(response);
         await  MemberStore.saveModel(member);
+
 
 
 
@@ -129,9 +137,12 @@ class MemberRemoteImpl implements MemberRemote {
 
   @override
   Future<List<MemberModel>> GetMembers() async {
+
     final tokens=await getTokens();
+
     // replace with your API endpoint
-    final  AccessToken =  tokens[1]; // replace with your actual access token
+    final  AccessToken =  tokens[1];
+    log("ss"+AccessToken.toString());// replace with your actual access token
     try {
       final Response = await client.get(
         Uri.parse(getallMembers),
@@ -141,10 +152,12 @@ class MemberRemoteImpl implements MemberRemote {
         },
 
       );
-      print(" ya get ${Response.statusCode}");
+      print(" ya gedededededet ${Response.statusCode}");
       if (Response.statusCode == 200) {
+        final model=await MemberStore.getModel();
         final decodedJson = json.decode(Response.body) as List<dynamic>;
         final membermodels = decodedJson.map<MemberModel>((jsonMember) => MemberModel.fromJson(jsonMember)).toList();
+        membermodels.removeWhere((element) => element.id==model!.id);
         return membermodels;
 
 
@@ -228,7 +241,128 @@ class MemberRemoteImpl implements MemberRemote {
     });
   }
 
+  @override
+  Future<MemberModel> getMemberByid(String id)async  {
+    final tokens=await getTokens();
 
 
+  // replace with your API endpoint
+  final  AccessToken =  tokens[1]; // replace with your actual access token
+
+  try {
+    final Response = await client.get(
+      Uri.parse(getMember+"/$id"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $AccessToken',
+      },
+
+    );
+    print(" ya get ${Response.statusCode}");
+    if (Response.statusCode == 200) {
+      final Map<String, dynamic> response = jsonDecode(Response.body);
+
+      final  MemberModel member=MemberModel.fromJson(response);
+
+
+
+
+      return Future.value(member);
+    }
+
+
+    else {
+      // Request failed
+      print('Request failed with status: ${Response.statusCode}');
+      print('Response body: ${Response.body}');
+      throw ServerException();
+    }
+  } catch (e) {
+    // Exception occurred during the request
+    print('Exception during request: $e');
+    throw ServerException();
+  }
+  }
+
+  @override
+  Future<Unit> UpdatePoints(String memberid, double cotisation) async {
+  return _mappatchrequest(PointsUrl(memberid), {
+    "Points": cotisation,
+
+  });
+  }
+
+  @override
+  Future<Unit> validateMember(String memberid) async {
+    return _mappatchrequest(validationUrl(memberid), {
+
+    });
+  }
+
+  @override
+  Future<Unit> validateCotisation(String memberid, int type, bool cotisation) {
+  return _mappatchrequest(CotisationUrl(memberid), {
+    "type":type,
+    "action":cotisation
+  });
+  }
+
+  Future<Unit>_mappatchrequest(String url,Object body )async {
+    final tokens=await getTokens();
+
+    final  AccessToken =  tokens[1]; // replace with your actual access token
+
+    try {
+      final Response = await client.patch(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $AccessToken',
+        },
+body: json.encode(body)
+
+      );
+
+      if (Response.statusCode == 200 || Response.statusCode == 201) {
+        return Future.value(unit);
+
+      }
+
+      else if (Response.statusCode==401){
+        throw UnauthorizedException();
+      }
+
+
+
+      else {
+        // Request failed
+        print('Request failed with status: ${Response.statusCode}');
+        print('Response body: ${Response.body}');
+        throw ServerException();
+      }
+    } catch (e) {
+      // Exception occurred during the request
+      print('Exception during request: $e');
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<Unit> ChangeToAdmin(String memberid) {
+    return _mappatchrequest(ChangeToAdminUrl(memberid), {
+    });
+  }
+
+  @override
+  Future<Unit> ChangeToMember(String memberid) {
+    return _mappatchrequest(ChangeToMemberUrl(memberid), {
+    });
+  }
+
+  @override
+  Future<Unit> ChangeToSuperAdmin(String memberid) {
+    return _mappatchrequest(ChangeToSuperUrl(memberid), {
+    });
+  }
 
 }

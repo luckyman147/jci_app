@@ -20,7 +20,7 @@ MemberSignup _$MemberSignupFromJson(Map<String, dynamic> json) => MemberSignup(
       email: json['email'],
       password: json['password'],
       IsSelected: json['IsSelected'],
-      Activities: json['Activities'],
+      Activities: json['Activities'], objectifs: json['objectifs'],
     );
 
 Map<String, dynamic> _$MemberSignupToJson(MemberSignup instance) =>

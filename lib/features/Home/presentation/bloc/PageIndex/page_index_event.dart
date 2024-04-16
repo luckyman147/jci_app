@@ -19,3 +19,4 @@ class resetIndex extends PageIndexEvent {
   List<Object?> get props => []
   ;
 }
+

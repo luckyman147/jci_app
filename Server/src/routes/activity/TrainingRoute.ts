@@ -5,7 +5,7 @@ import { AddParticipantToTraining, GetTrainingsOfMonth, GetTrainingsOfWeekend, R
  addTraining, getAllTrainings, getTrainingByDate, getTrainingById, getTrainingByName, uploadImage, 
  updateTraining,
  updateImage} from "../../controllers/activities/TrainingController";
-import { Authenticate } from "../../middleware/CommonAuth";
+import { Authenticate,AuthenticateAdmin } from "../../middleware/CommonAuth";
 
 const router=express.Router()
 const storage = multer.memoryStorage()
@@ -23,7 +23,7 @@ router.get('/TrainingParticipants')
 //*post
 router.post('/add',addTraining)
 router.post('/:idTraining/addParticipant',Authenticate ,AddParticipantToTraining)
-router.patch('/:id/edit',updateTraining)
+router.patch('/:id/edit',AuthenticateAdmin,updateTraining)
 router.patch('/:id/UpdateImage',upload.array("CoverImages"),updateImage)
 
 //?should be authenticated

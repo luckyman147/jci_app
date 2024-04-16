@@ -42,3 +42,9 @@ class DeletedActivityMessage extends AddDeleteUpdateState {
   @override
   List<Object> get props => [message];
 }
+class PermissionState extends AddDeleteUpdateState {
+  final bool hasPermission;
+  PermissionState({required this.hasPermission});
+  @override
+  List<Object> get props => [hasPermission];
+}

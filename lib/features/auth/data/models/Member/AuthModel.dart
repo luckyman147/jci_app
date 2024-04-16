@@ -20,12 +20,13 @@ factory MemberModel.fromEntity(Member member) {
       password: member.password,
       IsSelected: member.IsSelected,
       teams: member.teams,
-      Activities: member.Activities,
+      Activities: member.Activities, objectifs: member.objectifs,
     );
   }
 
   factory MemberModel.fromJson(Map<String, dynamic> json) =>
       MemberModel(
+        objectifs: json['objectifs'] == null ? [] :json['objectifs'] as List<dynamic>,
         points: json['points'] ?? 0,
         id: json['_id']!=null ? json['_id']as String : json['id'] as String,
         role: json['role'] != null ? json['role'] as String : "member" ,
@@ -34,7 +35,7 @@ factory MemberModel.fromEntity(Member member) {
         json['cotisation'] == null ? [false, ] :
         (json['cotisation'] as List<dynamic>).map((e) => e as bool).toList(),
         Images:
-        json['Images'] == null ? [] :json['Images'] as List<dynamic>,
+        json['Images'] == null ? [] :json['Images'] ,
         firstName: json['firstName'] as String,
         lastName: json['lastName']?? '' ,
         phone: json['phone'] ??"",
@@ -50,7 +51,7 @@ factory MemberModel.fromEntity(Member member) {
             .map((e) => e )
             .toList(),
       );
-  MemberModel({required super.id, required super.role, required super.is_validated, required super.cotisation, required super.Images, required super.firstName, required super.lastName, required super.phone, required super.email, required super.password, required super.IsSelected, required super.Activities, required super.teams, required super.points});
+  MemberModel({required super.id, required super.role, required super.is_validated, required super.cotisation, required super.Images, required super.firstName, required super.lastName, required super.phone, required super.email, required super.password, required super.IsSelected, required super.Activities, required super.teams, required super.points, required super.objectifs});
 
   Map<String, dynamic> toJson() => _$MemberModelToJson(this);
 

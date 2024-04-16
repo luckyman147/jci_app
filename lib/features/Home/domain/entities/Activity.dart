@@ -53,5 +53,11 @@ final String  categorie;
    ,IsPaid,price,
 
    Participants,CoverImages];
+Activity get ActivityTest=>Activity(name: "", id: "id", description: "description",
+    ActivityBeginDate: DateTime.now(), ActivityEndDate: DateTime.now(),
+    ActivityAdress: "ActivityAdress",
+    ActivityPoints:2, categorie: "", IsPaid: false,
+    price: 1, Participants: [], CoverImages: [], IsPart: false);
+
 
 }

@@ -7,7 +7,7 @@ import { CreateMemberInputs, MemberLoginInputs } from '../dto/member.dto';
 import { TokenInput, forgetPasswordInputs } from '../dto/auth.dto';
 import { Member } from '../models/Member';
 import { GenerateSalt, HashPassword, ValidatePassword, VerifyrefreshToken, generateAccessToken, generateRefreshToken, revokeRefreshToken } from '../utility';
-import { findrole, findroleByid, GetMemberPermission } from '../utility/role';
+import { findrole, findroleByid, GetMemberPermission, getPermissionsKeys, getPublicPermissions } from '../utility/role';
 let refreshTokens:any = []
 //**  Sign Up*/
 export const MemberSignUp= async(req:Request,res:Response,next:NextFunction)=>{
@@ -30,18 +30,20 @@ const role = await findrole('member')
 console.log(role)
     const salt=await GenerateSalt()
     const UserPassword=await HashPassword(password,salt)
-    
+    const Permissions=await getPublicPermissions()
     const result=await Member.create({
         email:email,
         password:UserPassword,
         salt:salt,
-        cotisation:[false],
+        cotisation:[false,false],
         firstName:firstName,
         is_validated:false,
         adress:'',
         phone:'',
+
         lastName:lastName,
         role:role,
+        Permissions:Permissions
 
     })
     if (result){
@@ -94,8 +96,8 @@ export const MemberLogin= async(req:Request,res:Response,next:NextFunction)=>{
           })
         console.log("login")
           return res.status(200).json({refreshToken:refreshToken,accessToken:accessToken,email:MemberInfo.email,role:await findroleByid(MemberInfo.role._id),
-            Permissions:
-            MemberInfo.Permissions})
+            Permissions: await getPermissionsKeys(
+            MemberInfo.Permissions,MemberInfo.role)})
          }
          else{
                 return res.status(400).json({message:'Invalid credentials'})

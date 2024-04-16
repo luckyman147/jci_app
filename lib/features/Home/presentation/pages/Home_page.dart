@@ -14,6 +14,7 @@ import 'package:jci_app/features/Teams/presentation/screens/AllTeamsScreen.dart'
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
+import '../../../MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import '../bloc/PageIndex/page_index_bloc.dart';
 
 
@@ -24,7 +25,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage > {
 
 
 
@@ -36,7 +37,7 @@ class _HomePageState extends State<HomePage> {
     return BlocBuilder<PageIndexBloc, PageIndexState>(
       builder: (context, state) {
         final widgets=[
-          HomeWidget(Activity: ste.selectedActivity,),ActivityPage(Activity:ste.selectedActivity ,),AllTeamsScreen(),MemberSectionPage(),
+          HomeWidget(Activity: ste.selectedActivity,),ActivityPage(Activity:ste.selectedActivity ,),AllTeamsScreen(),MemberSectionPage(id: 'id',),
         ];
         return Scaffold(
           bottomNavigationBar: Container(
@@ -75,6 +76,8 @@ class _HomePageState extends State<HomePage> {
                   context.read<PageIndexBloc>().add(SetIndexEvent(index:index));
                   if (index==3){
                     context.read<MembersBloc>().add(GetUserProfileEvent(true));
+                    context.read<ChangeSboolsCubit>().ChangePages("/home","/memberSection/id");
+
 
                   }
                 },

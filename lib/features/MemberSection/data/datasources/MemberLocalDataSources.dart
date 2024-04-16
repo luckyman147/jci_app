@@ -7,6 +7,8 @@ import '../../../auth/data/models/Member/AuthModel.dart';
 
 abstract class MemberLocalDatasoources{
   Future<MemberModel?> getUserProfile();
+  Future<MemberModel?> getMemberById(String id );
+  Future<Unit> saveMemberByID(MemberModel member,String id);
 
   Future<Unit> ChangeUserProfile(MemberModel member);
   Future<List<MemberModel>> GetmMemberByName(
@@ -51,6 +53,18 @@ final member=await MemberStore.getModel();
   @override
   Future<Unit> ChangeUserProfile(MemberModel member)  async {
  await MemberStore.saveModel(member);
+    return Future.value(unit);
+  }
+
+  @override
+  Future<MemberModel?> getMemberById(String id) {
+final member= MemberStore.getMemberByID(id);
+    return member;
+  }
+
+  @override
+  Future<Unit> saveMemberByID(MemberModel member, String id) {
+    MemberStore.saveMemberBYID(member,id);
     return Future.value(unit);
   }
 }

@@ -16,7 +16,13 @@ name:string
 description:string
 @IsNotEmpty()
 related:string[]
-
+isPublic:boolean
 Members:any[]
 roles:any[]
 }
+ export class PresidentsInut{
+        @IsNotEmpty()
+        name:string
+        @IsNotEmpty()
+        year:string
+ }

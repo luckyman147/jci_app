@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 
 import 'package:jci_app/core/error/Failure.dart';
@@ -11,6 +13,7 @@ import '../../../../core/network/network_info.dart';
 import '../../../auth/data/datasources/authLocal.dart';
 import '../../../auth/data/models/Member/AuthModel.dart';
 import '../../domain/repositories/MemberRepo.dart';
+import '../../presentation/bloc/memberBloc/member_management_bloc.dart';
 
 class MemberRepoImpl extends MemberRepo {
   final MemberRemote memberRemote;
@@ -20,15 +23,13 @@ class MemberRepoImpl extends MemberRepo {
   MemberRepoImpl({required this.memberRemote, required this.networkInfo, required this.membersLocalDataSource});
 
   @override
-  Future<Either<Failure, Unit>> UpdateCotisation(String memberid, List<bool> cotisation) {
-    // TODO: implement UpdateCotisation
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> UpdateCotisation(String memberid, int type, bool cotisation) {
+    return _getMessageReset(memberRemote.validateCotisation(memberid, type, cotisation));
   }
 
   @override
   Future<Either<Failure, Unit>> UpdatePoints(String memberid, double points) {
-    // TODO: implement UpdatePoints
-    throw UnimplementedError();
+ return _getMessageReset(memberRemote.UpdatePoints(memberid, points, ));
   }
 
   @override
@@ -66,6 +67,8 @@ class MemberRepoImpl extends MemberRepo {
           final members = await membersLocalDataSource.getUserProfile();
           if (members == null) {
             final members = await memberRemote.getUserProfile();
+            log("hhhhhhh"+members.Activities.toString());
+
             membersLocalDataSource.ChangeUserProfile(members);
             return Right(members);
           }
@@ -94,9 +97,40 @@ class MemberRepoImpl extends MemberRepo {
   }
 
   @override
-  Future<Either<Failure, Member>> getMember(String id) {
-    // TODO: implement getMember
-    throw UnimplementedError();
+  Future<Either<Failure, Member>> getMemberByid(String id,bool status)async  {
+    if (await networkInfo.isConnected) {
+      try {
+         if ( status==true ||(await membersLocalDataSource.getMemberById(id)==null && status==false)){
+           log("hahaha");
+
+           final members = await memberRemote.getMemberByid(id);
+        await membersLocalDataSource.saveMemberByID(members,id);
+        return Right(members);
+
+         }
+          else {
+            log("ddddssssssss");
+            final members = await membersLocalDataSource.getMemberById(id);
+            return Right(members!);
+          }
+
+
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+      on UnauthorizedException {
+        return Left(UnauthorizedFailure());
+      }
+    } else {
+      log("dddd");
+
+      final members = await membersLocalDataSource.getMemberById(id);
+      if (members==null){
+        return Left(EmptyCacheFailure());
+      }
+      return Right(members);
+    }
+
   }
 
   @override
@@ -144,6 +178,23 @@ class MemberRepoImpl extends MemberRepo {
       }
 
     }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> validateMember(String memberid) {
+     return _getMessageReset(memberRemote.validateMember(memberid));
+  }
+
+  @override
+  Future<Either<Failure, Unit>> ChangeToAdmin(String id,MemberType type) {
+    if (type==MemberType.admin){
+      return _getMessageReset(memberRemote.ChangeToAdmin(id));
+    }
+    else if (type==MemberType.member){
+      return _getMessageReset(memberRemote.ChangeToMember(id));
+    }
+    else{
+    return _getMessageReset(memberRemote.ChangeToSuperAdmin(id));}
   }
 
   }

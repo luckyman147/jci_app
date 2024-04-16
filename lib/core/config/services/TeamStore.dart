@@ -60,6 +60,12 @@ static Future<TeamModel?> getTeamByid(String id )async {
   }
   return null;
 }
+//clear
+static Future<void> clearCache() async {
+  final pref = await SharedPreferences.getInstance();
+  pref.remove(_CachedTeamsKey(CacheStatus.Private));
+  pref.remove(_CachedTeamsKey(CacheStatus.Public));
+}
 static Future<void> cacheTeamByid(TeamModel team) async {
   final pref = await SharedPreferences.getInstance();
   pref.setString(_cachedTeamByid(team.id), jsonEncode(team.toJson()));

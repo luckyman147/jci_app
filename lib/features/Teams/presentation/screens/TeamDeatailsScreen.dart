@@ -11,6 +11,7 @@ import 'package:jci_app/features/Teams/presentation/bloc/TaskFilter/taskfilter_b
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/DetailTeamWidget.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/TeamImpl.dart';
+import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 
 import '../../../../core/strings/app_strings.dart';
 
@@ -30,10 +31,9 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
   @override
   void initState() {
 
-    context.read<GetTeamsBloc>().add(GetTeamById({"id": widget.id,"isUpdated": false}));
-    context.read<GetTaskBloc>().add(GetTasks(id: widget.id, filter: TaskFilter.All));
-    context.read<TaskVisibleBloc>().add(ToggleTaskVisible(true));
-init(widget.id,context);
+
+
+TeamFunction.init(widget.id,context);
 
     // TODO: implement initState
     super.initState();
@@ -45,44 +45,27 @@ init(widget.id,context);
     return Scaffold(
 
 
-      body: SafeArea(child: Scrollbar(
+      body: SafeArea(child: BlocListener<GetTeamsBloc, GetTeamsState>(
+        listener: (context, state) {
+             TeamFunction. ListenerDelete(state, context,widget.id);
 
-        child: BlocListener<GetTeamsBloc, GetTeamsState>(
-          listener: (context, state) {
-        if (state.status == TeamStatus.Deleted) {
-        SnackBarMessage.showSuccessSnackBar(
-        message: "Deleted Succefully", context: context);
-        GoRouter.of(context).go('/home');
-        context.read<GetTaskBloc>().add(resetevent());
+        },
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
 
-        }
-        else if (state.status == TeamStatus.DeletedError) {
-        SnackBarMessage.showErrorSnackBar(
-        message: "Error Deleting", context: context);
-        context.read<GetTeamsBloc>().add(GetTeamById({"id": widget.id,"isUpdated": false}));
+            children: [
 
-        }
-          },
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
+              SizedBox(
+                  height: mediaQuery.size.height,
 
-              children: [
-
-                SizedBox(
-                    height: mediaQuery.size.height,
-
-                    child: GetTeamByid(widget.id, _taskController,widget.index)),
-              ],
-            ),
+                  child: GetTeamByid(widget.id, _taskController,widget.index)),
+            ],
           ),
         ),
       )),
     );
   }
-}
-void init(String id,BuildContext context)async{
-  final store=await TeamStore.getUpdated();
-  context.read<GetTeamsBloc>().add(GetTeamById({"id": id,"isUpdated": store}));
+
 
 }

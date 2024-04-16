@@ -3,6 +3,7 @@
 import 'package:jci_app/features/Home/presentation/widgets/EventListWidget.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../../domain/entities/Activity.dart';
 import '../../../domain/entities/Event.dart';
 
 
@@ -15,6 +16,26 @@ class EventModel extends Event{
     required super.categorie, required super.IsPaid, required super.price, required super.Participants,
     required super.CoverImages, required super.registrationDeadline, required super.IsPart,});
 // empty constructor
+
+  factory EventModel.fromEntity( Event event){
+    return EventModel(
+      id:event.id,
+      LeaderName: event.LeaderName,
+      name: event.name,
+      description: event.description,
+      ActivityBeginDate: event.ActivityBeginDate,
+      ActivityEndDate: event.ActivityEndDate,
+      ActivityAdress: event.ActivityAdress,
+      ActivityPoints: event.ActivityPoints,
+      categorie: event.categorie,
+      IsPaid: event.IsPaid,
+      price: event.price,
+      Participants: event.Participants,
+      CoverImages: event.CoverImages,
+      registrationDeadline: event.registrationDeadline,
+      IsPart: event.IsPart,
+    );
+  }
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
     return EventModel(

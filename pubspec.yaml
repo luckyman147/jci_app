@@ -33,6 +33,7 @@ dependencies:
   image:
   # Service locator
   get_it: ^7.6.0
+  
   # Remote API
   internet_connection_checker: ^1.0.0+1
   http:
@@ -87,6 +88,11 @@ flutter:
     - assets/images/us.png
     - assets/images/goal.png
     - assets/images/vision.png
+    - assets/images/HENRY.jpg
+    - assets/images/jciHammem.webp
+    - assets/images/jciTunisie.jpg
+    - assets/images/Person_Vip.png
+
     - assets/images/blankjci.jpeg
     - assets/json/
     - assets/lang/en.json

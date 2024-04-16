@@ -29,15 +29,13 @@ class TrainingLocalDataSourceImpl implements TrainingLocalDataSource{
 
   @override
   Future<Unit> cacheTrainingsOfTheMonth(List<TrainingModel> Training) async {
-    await TrainingStore.cacheTrainingsOfTheMonth(Training);
-    return Future.value(unit);
+    throw UnimplementedError();
+
   }
 
   @override
   Future<Unit> cacheTrainingsOfTheWeek(List<TrainingModel> Training) async {
-    await TrainingStore.cacheTrainingsOfTheWeek(Training);
-    return Future.value(unit);
-
+    throw UnimplementedError();
 
   }
 
@@ -59,24 +57,13 @@ class TrainingLocalDataSourceImpl implements TrainingLocalDataSource{
 
   @override
   Future<List<TrainingModel>> getCachedTrainingsOfTheMonth() async{
-    final Trainings=await TrainingStore.getCachedTrainingsOfTheMonth();
-    if (Trainings.isNotEmpty) {
-      return Trainings;
-    } else {
-      throw EmptyCacheException();
-    }
-
+    throw UnimplementedError();
 
   }
 
   @override
   Future<List<TrainingModel>> getCachedTrainingsOfTheWeek()async {
-    final Trainings=await TrainingStore.getCachedTrainingsOfTheWeek();
-    if (Trainings.isNotEmpty) {
-      return Trainings;
-    } else {
-      throw EmptyCacheException();
-    }
+    throw UnimplementedError();
 
 
   }

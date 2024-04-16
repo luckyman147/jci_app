@@ -1,6 +1,9 @@
 import 'dart:io';
 
-  final BaseUrl = "http://192.168.1.5:8080";
+  final BaseUrl = "http://192.168.1.2"
+      ":8080";
+  final SuperAdminUrl = "$BaseUrl/Super";
+
 final LoginUrl = "$BaseUrl/auth/login";
 final SignUpUrl = "$BaseUrl/auth/signup";
 final ForgetPasswordUrl = "$BaseUrl/auth/forgetPassword";
@@ -19,7 +22,16 @@ final getMeetingsUrl = "$BaseUrl/Meeting/";
 final getTrainingByWeek = "$BaseUrl/Training/Latestofweekend";
 final getTrainingsUrl = "$BaseUrl/Training/";
 final getTrainingByMonth= "$BaseUrl/Training/LatestofTheMonth";
-
+ String ChangeToAdminUrl(String id )=>"$SuperAdminUrl/ChangeToAdmin/$id";
+ String ChangeToSuperUrl(String id )=>"$SuperAdminUrl/ChangeToSuper/$id";
+ String ChangeToMemberUrl(String id )=>"$SuperAdminUrl/ChangeToMember/$id";
+ String CreatePresidents( )=>"$SuperAdminUrl/CreateLastPresident";
+ String UpdatePresidents(String id )=>"$SuperAdminUrl/UpdatePresident/$id";
+ String getAllPresidents( )=>"$SuperAdminUrl/getAllPresidents";
+ String DeletePresidents(String id )=>"$SuperAdminUrl/DeleteLastPresident/$id";
+ String CotisationUrl(String id )=>"$getMember/$id/UpdateCotisation";
+ String validationUrl(String memberid )=>"$getMember/$memberid/validate";
+ String PointsUrl(String memberid )=>"$getMember/$memberid/UpdatePoints";
 final getMeetingByWeek = "$BaseUrl/Meeting/Latestofweek";
 
 final getEventByWeek = "$BaseUrl/Event/Latestofweekend";

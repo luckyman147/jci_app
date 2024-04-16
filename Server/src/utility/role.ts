@@ -1,14 +1,14 @@
 import crypto from 'crypto';
 import { File } from '../models/FileModel';
 import { Member } from "../models/Member";
+import { Permission } from '../models/Pemission';
 import { Training } from '../models/activities/TrainingModel';
 import { Event } from "../models/activities/eventModel";
-import { Meeting  } from '../models/activities/meetingModel';
+import { Meeting } from '../models/activities/meetingModel';
 import { Role } from "../models/role";
 import { CheckList } from '../models/teams/CheckListModel';
 import { Task } from '../models/teams/TaskModel';
 import { team } from "../models/teams/team";
-import { Permission } from '../models/Pemission';
 export const findrole=async (name:string)=>{
     const role = await Role.findOne({ name: name });
     if (role){
@@ -78,13 +78,15 @@ export const getTeamByEvent= async () =>{
       // Query the database to find members by their IDs
       const members = await Member.find({ _id: { $in: memberIds } });
 
-      const membersInfo = members.map((member) => ({
+      const membersInfo =
+      Promise.all(
+      members.map(async  (member) => ({
         _id: member._id,
         firstName: member.firstName,
-        Images:member.Images
+        Images:await  getFilesInfoByIds(member.Images),
 
         // Add other fields you want to include
-      }));
+      })));
   console.log(membersInfo)
 
       return membersInfo;
@@ -316,11 +318,34 @@ else{
   }
   export const getPermissionIdsByRelated = async (searchStrings:string []) => {
     try {
-        const permissions = await Permission.find({ related: { $in: searchStrings } }, '_id');
-        const permissionIds = permissions.map(permission => permission._id.toString());
+        const permissions = await Permission.find({ related: { $in: searchStrings } },);
+        const permissionIds = permissions.map(permission => permission.key);
         return permissionIds;
     } catch (error) {
         console.error('Error retrieving permission IDs:', error);
         throw error;
     }
+}; export const getPermissionsKeys = async (searchStrings: string[], role: string) => {
+  try {
+      const permissions = await Permission.find({
+          $or: [
+              { _id: { $in: searchStrings } }, // Find by IDs
+              { roles: role } // Find by role
+          ]
+      });
+
+      return permissions.map(permission => permission.key);
+  } catch (error) {
+      console.error('Error retrieving permissions:', error);
+      throw error;
+  }
+};
+export const getPublicPermissions = async (): Promise<Permission[]> => {
+  try {
+    const permissions = await Permission.find({ isPublic: true });
+    return permissions;
+  } catch (error) {
+    console.error('Error retrieving public permissions:', error);
+    throw error;
+  }
 };

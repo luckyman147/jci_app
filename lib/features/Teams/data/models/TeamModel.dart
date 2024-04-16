@@ -12,9 +12,7 @@ class TeamModel extends Team{
       TeamModel(
         name: json['name'] as String,
         description: json['description'] != null ? json['description'] as String : "",
-        event: json['event']  != null
-            ? json['event'] as Map<String, dynamic>
-            : json["Event"],
+        event: json['event'] ?? json["Event"],
         Members: json['Members'] as List<dynamic>,
         CoverImage: json['CoverImage'] as String,
         tasks:  json['tasks'] == null ? [] : (json['tasks'] as List<dynamic>)

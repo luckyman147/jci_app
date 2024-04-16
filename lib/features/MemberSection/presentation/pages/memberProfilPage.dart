@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -12,8 +14,8 @@ import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileCompo
 import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
 
 class MemberSectionPage extends StatefulWidget {
-
-  const MemberSectionPage({Key? key}) : super(key: key);
+final String id;
+  const MemberSectionPage({Key? key, required this.id}) : super(key: key);
 
   @override
   State<MemberSectionPage> createState() => _MemberSectionPageState();
@@ -31,7 +33,7 @@ class _MemberSectionPageState extends State<MemberSectionPage> {
     return  Scaffold(
       body: SafeArea(
             child:
-                  MemberImpl.MemberWidget("id"),
+                  MemberImpl.MemberWidget(widget.id),
 
               ),
 

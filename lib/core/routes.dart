@@ -111,12 +111,13 @@ builder: (BuildContext context, GoRouterState state) {
 
 
 ),GoRoute(
-path: '/memberSection',
+path: '/memberSection/:id',
 builder: (BuildContext context, GoRouterState state) {
 
+  final  email = state.pathParameters['id']! ;
 
 
-  return MemberSectionPage();
+  return MemberSectionPage(id: email,);
 },
 
 

@@ -19,12 +19,14 @@ class Member extends Equatable {
   final List<dynamic> teams;
  final bool IsSelected;
  final int points;
+ final List<dynamic> objectifs;
 
   final String role;
 
   factory  Member.fromImages(Map<String, dynamic> data) {
     return Member(
-      points: data['points']??0.0,
+
+      points: data['points']??0,
 
       id: data['id']??data['_id'] ,
       email: data['email']??'',
@@ -39,7 +41,7 @@ class Member extends Equatable {
       Activities: data['Activities']??[],
       teams: data['teams']??[],
       IsSelected: data['IsSelected']??false,
-      role: data['role']??'',
+      role: data['role']??'', objectifs: [],
     );
   }
 
@@ -47,14 +49,15 @@ class Member extends Equatable {
   static Member get memberTest=> const Member(
 
       IsSelected: false, id: "id", role: "role", is_validated: false,
-      cotisation:[false] , Images: [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password", Activities: [], teams: [], points: 0);
+      cotisation:[false] , Images: [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password", Activities: [], teams: [], points: 0, objectifs: []);
 
   static Member toMember(Map<String, dynamic> json) {
     return Member(
-      points: json['points']??0.0,
+      objectifs: json['objectifs']??[],
+      points: json['points']??0,
       id: json['_id'] ==null?json['id'] as String:json['_id'] as String,
       firstName: json['firstName']as String,
-      Images: json['Images'] as List<dynamic>,
+      Images: json['Images'] ,
       // null
       Activities: json['Activities']??[],
       teams: json['teams']??[],
@@ -74,6 +77,7 @@ class Member extends Equatable {
   const Member(
 
       {
+        required this.objectifs,
         required this.points,
         required this.teams,
         required this.Activities,

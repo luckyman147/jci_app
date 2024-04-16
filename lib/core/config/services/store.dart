@@ -18,7 +18,7 @@ static const String _isLogged="isLoggedIn";
     final pref =await SecureSharedPref.getInstance();
     await pref.putString(_RefreshTokenKey, RefreshToke);
     await pref.putString(_AccessTokenKey, AccessToken);
-  print(pref.getString(_RefreshTokenKey));
+
   }
   static Future<void> setPermissions(List<String> permissions)async{
     final pref =await SecureSharedPref.getInstance();
@@ -26,7 +26,7 @@ static const String _isLogged="isLoggedIn";
   }
   static Future<List<String>> getPermissions()async{
     final pref =await SecureSharedPref.getInstance();
-  return pref.getStringList(_PermissionsKey )  as List<String>;
+  return pref.getStringList(_PermissionsKey );
   }
   static Future<List<String?>> GetTokens()async{
     final pref =await SecureSharedPref.getInstance();

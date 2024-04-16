@@ -5,30 +5,32 @@ abstract class AddDeleteUpdateEvent extends Equatable {
 }
 
 class AddACtivityEvent extends AddDeleteUpdateEvent {
-  final Activity act;
-  final activity type;
+  final activityParams params;
 
-  AddACtivityEvent({required this.act, required this.type});
+  AddACtivityEvent({required  this.params});
 
   @override
-  List<Object> get props => [act];
+  List<Object> get props => [params];
 }
 
 
 class UpdateActivityEvent extends AddDeleteUpdateEvent {
-  final activity act;
-
-  final Activity active;
-  const UpdateActivityEvent({required this.act,required this.active});
+final activityParams params;
+  const UpdateActivityEvent({required this.params});
 
   @override
-  List<Object> get props => [act,active];
+  List<Object> get props => [params];
 }
 class DeleteActivityEvent extends AddDeleteUpdateEvent {
-  final activity act;
-
-  final String id;
-  const DeleteActivityEvent({required this.act,required this.id});
+  final activityParams params;
+  const DeleteActivityEvent({required this.params});
 
   @override
-  List<Object> get props => [act,id];}
+  List<Object> get props => [params];}
+class CheckPermissions extends AddDeleteUpdateEvent {
+  final activity act;
+
+  const CheckPermissions({required this.act,});
+
+  @override
+  List<Object> get props => [act,];}

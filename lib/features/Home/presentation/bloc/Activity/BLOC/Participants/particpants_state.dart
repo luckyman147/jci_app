@@ -2,18 +2,19 @@ part of 'particpants_bloc.dart';
 
  class ParticpantsState extends Equatable {
   final List<Map<String, dynamic>> isParticipantAdded;
+final List<dynamic> particpants ;
 
+  const ParticpantsState({required this.isParticipantAdded, this.particpants = const []});
 
-  const ParticpantsState({required this.isParticipantAdded});
-
-  ParticpantsState copyWith({List<Map<String, dynamic>>? isParticipantAdded}) {
+  ParticpantsState copyWith({List<Map<String, dynamic>>? isParticipantAdded, List<dynamic>? particpants}) {
     return ParticpantsState(
       isParticipantAdded: isParticipantAdded ?? this.isParticipantAdded,
+      particpants: particpants ?? this.particpants,
     );
   }
 
   @override
-  List<Object> get props => [isParticipantAdded ];
+  List<Object> get props => [isParticipantAdded, particpants ];
 }
 
 class ParticpantsInitial extends ParticpantsState {

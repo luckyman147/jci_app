@@ -12,25 +12,22 @@ class GetParticipantsEvent extends ParticpantsEvent {
 }
 class AddParticipantEvent extends ParticpantsEvent {
   final int index;
-   final activity act;
-
-  final String id;
-  AddParticipantEvent( {required this.id,
+   final activityParams act;
+  AddParticipantEvent( {
     required this.act,
     required this.index});
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [act,index];
 }
 class RemoveParticipantEvent extends ParticpantsEvent {
-  final activity act;
-  final String id;
+ final activityParams act;
   final int index;
 
-  RemoveParticipantEvent(  {required this.id ,
+  RemoveParticipantEvent(  {
     required this.act,
     required this.index});
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [index,act];
 }
 class LoadIsParttipatedList extends ParticpantsEvent {
   final List<Activity> act;
@@ -53,6 +50,12 @@ class UpdateBoolValue extends ParticpantsEvent {
 class initstateList extends ParticpantsEvent {
   final List<Map<String, dynamic>> act;
   initstateList({required this.act});
+  @override
+  List<Object> get props => [act];
+}
+class initParticipantList extends ParticpantsEvent {
+  final List<dynamic> act;
+  initParticipantList({required this.act});
   @override
   List<Object> get props => [act];
 }

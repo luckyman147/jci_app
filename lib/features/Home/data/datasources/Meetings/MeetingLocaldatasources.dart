@@ -26,16 +26,13 @@ class MeetingLocalDataSourceImpl implements MeetingLocalDataSource{
 
   @override
   Future<Unit> cacheMeetingsOfTheMonth(List<MeetingModel> Meeting) async {
-    await MeetingStore.cacheMeetingsOfTheMonth(Meeting);
-    return Future.value(unit);
+    throw UnimplementedError();
+
   }
 
   @override
   Future<Unit> cacheMeetingsOfTheWeek(List<MeetingModel> Meeting) async {
-    await MeetingStore.cacheMeetingsOfTheWeek(Meeting);
-    return Future.value(unit);
-
-
+throw UnimplementedError();
   }
 
   @override
@@ -56,24 +53,14 @@ class MeetingLocalDataSourceImpl implements MeetingLocalDataSource{
 
   @override
   Future<List<MeetingModel>> getCachedMeetingsOfTheMonth() async{
-    final Meetings=await MeetingStore.getCachedMeetingsOfTheMonth();
-    if (Meetings.isNotEmpty) {
-      return Meetings;
-    } else {
-      throw EmptyCacheException();
-    }
+    throw UnimplementedError();
 
 
   }
 
   @override
   Future<List<MeetingModel>> getCachedMeetingsOfTheWeek()async {
-    final Meetings=await MeetingStore.getCachedMeetingsOfTheWeek();
-    if (Meetings.isNotEmpty) {
-      return Meetings;
-    } else {
-      throw EmptyCacheException();
-    }
+    throw UnimplementedError();
 
 
   }

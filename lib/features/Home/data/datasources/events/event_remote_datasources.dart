@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,7 @@ import 'package:jci_app/core/config/env/urls.dart';
 
 
 import 'package:http/http.dart' as http;
+import 'package:jci_app/core/config/services/EventStore.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
 
 
@@ -15,7 +17,9 @@ import '../../../../../core/config/services/store.dart';
 import '../../../../../core/config/services/uploadImage.dart';
 import '../../../../../core/config/services/verification.dart';
 import '../../../../../core/error/Exception.dart';
+import '../../../domain/entities/Activity.dart';
 import '../../model/events/EventModel.dart';
+import '../activities/ActivityRemote.dart';
 
 abstract class EventRemoteDataSource {
   Future<List<EventModel>> getAllEvents();
@@ -107,6 +111,7 @@ final body =event.toJson();
             .map<EventModel>((jsonPostModel) =>
             EventModel.fromJson(jsonPostModel))
             .toList();
+        EventStore.saveEventPermissions((decodedJson['Permissions'] as List).map((e) => e.toString()).toList());
 
         return eventModels;
       } else {
@@ -205,92 +210,22 @@ print(eventModels.first.name);
 
   @override
   Future<Unit> leaveEvent(String id)async  {
-    final tokens=await getTokens();
-    debugPrint(id);
-    try {
+    return leaveActivity(id, client, getEventsUrl);
 
-      final Response = await client.delete(
-        Uri.parse("$getEventsUrl/$id/deleteParticipant"),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${tokens[1]}',
-        },
-
-      );
-      print(" ya get ${Response.statusCode}");
-      if (Response.statusCode == 200) {
-        return Future.value(unit);
-      } else if (Response.statusCode == 400) {
-        throw AlreadyParticipateException();
-      } else {
-        throw EmptyDataException();
-      }}catch(e){
-      throw ServerException();
-    }
   }
 
   @override
   Future<Unit> participateEvent(String id)async {
-    final tokens=await getTokens();
-    debugPrint(id);
+    return await ParticiActivity(id, client, getEventsUrl);
 
-
-      final Response = await client.post(
-        Uri.parse("$getEventsUrl/$id/addParticipant"),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${tokens[1]}',
-        },
-
-      );
-      print(" ya get ${Response.statusCode}");
-      if (Response.statusCode == 200) {
-        return Future.value(unit);
-      } else if (Response.statusCode == 400) {
-        throw AlreadyParticipateException();
-
-      }
-      else if (Response.statusCode == 401) {
-        throw UnauthorizedException();
-      }
-      else {
-        throw EmptyDataException();
-      }
   }
 
   @override
-  Future<Unit> updateEvent(EventModel event) {
+  Future<Unit> updateEvent(EventModel event) async {
     final body =event.toJson();
-    debugPrint(body.toString());
-    return client.patch(
-      Uri.parse(getEventsUrl+event.id+"/edit"),
-      headers: {"Content-Type": "application/json"},
-      body: json.encode(body),
-    ).then((response) async {
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> decodedJson = json.decode(response.body) ;
 
-
-        final update_response=await UpdateImage(decodedJson['_id'], event.CoverImages.first,getEventsUrl);
-        if (update_response.statusCode==200){
-          return Future.value(unit);
-        }
-        else if (update_response.statusCode==400){
-
-          throw EmptyDataException();
-
-        }else {
-          throw ServerException();
-        }
-
-      }
-      else if (response.statusCode == 400) {
-        throw WrongCredentialsException();
-      }
-      else {
-        throw ServerException();
-      }
-    });
+    return await EditFunction(event, body,getEventsUrl+event.id+"/edit",getEventsUrl,client);
   }
+
 
 }

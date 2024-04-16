@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
@@ -6,54 +8,29 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/core/config/services/store.dart';
+import 'package:jci_app/core/config/services/uploadImage.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:http/http.dart' as http;
 import '../../../features/Home/domain/entities/Activity.dart';
 import '../../../features/auth/presentation/bloc/auth/auth_bloc.dart';
 import '../../error/Exception.dart';
 
-bool isTokenExpired(String token) {
-  try {
-    Map<String, dynamic> decodedToken = Jwt.parseJwt(token);
-    print("decodedToken");
-    if (decodedToken.containsKey('exp')) {
-      // 'exp' claim is present in the token
-      int expirationTimestamp = decodedToken['exp'];
 
-
-      // Get the current timestamp
-      int currentTimestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-
-      // Check if the token has expired
-      return expirationTimestamp < currentTimestamp;
-    } else {
-      print('token expired');
-      // If 'exp' claim is not present, consider the token as expired
-      return true;
-    }
-  } catch (e) {
-    // Handle decoding errors
-    print('Error decoding token: $e');
-    return true; // Consider the token as expired in case of errors
-  }
-}
 void check(BuildContext context)async {
   final authBloc = BlocProvider.of<AuthBloc>(context);
 
-  if (bool.fromEnvironment("dart.vm.product")) {
-    authBloc.add(RefreshTokenEvent());
-  }
 
   final authState = authBloc.state;
   final language = await Store.getLocaleLanguage();
   final token = await Store.GetTokens();
+  final islooged = await Store.isLoggedIn();
 
   if (language == null) {
     context.go('/screen');
-  } else if (authState is AuthSuccessState && token != null) {
+  } else if (islooged && token != null) {
     context.go('/home');
   }
-  else if (authState is AuthLogoutState || authState is AuthFailureState) {
+  else if (authState is AuthLogoutState || authState is AuthFailureState &&!islooged) {
     context.go('/login');
   }
   else  {
@@ -75,51 +52,68 @@ Future<List<String?>> getTokens() async {
   }
   return tokens;
 }
-Future<Unit> leaveActivity(String id,http.Client client ,String geturl) async{
-  final tokens=await getTokens();
-  try {
-    final Response = await client.delete(
-      Uri.parse("$geturl/$id/deleteParticipant"),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${tokens[1]}',
-      },
-    );
-    print(" ya get ${Response.statusCode}");
-    if (Response.statusCode == 200) {
-      return Future.value(unit);
-    } else if (Response.statusCode == 400) {
-      throw AlreadyParticipateException();
-    } else {
-      throw EmptyDataException();
-    }}catch(e){
-    throw ServerException();
+
+bool hasCommonElement(List<dynamic> list1, List<dynamic> list2) {
+  // Convert one list to a set for efficient lookup
+  Set<dynamic> set = list1.toSet();
+
+  // Track the count of common elements found
+  int commonCount = 0;
+
+  // Check if any element from the second list exists in the set
+  for (var element in list2) {
+    if (set.contains(element)) {
+      commonCount++;
+      // If at least two common elements are found, return true
+      if (commonCount >= 2) {
+        return true;
+      }
+    }
   }
+
+  // Return false if less than two common elements are found
+  return false;
 }
-Future<Unit> ParticiActivity(String id,http.Client client ,String geturl) async{
-  final tokens=await getTokens();
-  debugPrint(id);
 
+EditFunction(Activity event, Map<String, dynamic> body,String url ,String urlImage,http.Client client ) async {
+  final token = await getTokens();
 
-  final Response = await client.post(
-    Uri.parse("$geturl/$id/addParticipant"),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${tokens[1]}',
+  return client.patch(
+    Uri.parse(url),
+    headers: {"Content-Type": "application/json",
+      "Authorization":'Bearer ${token[1]}'
+
     },
 
-  );
-  print(" ya get ${Response.statusCode}");
-  if (Response.statusCode == 200) {
-    return Future.value(unit);
-  } else if (Response.statusCode == 400) {
-    throw AlreadyParticipateException();
+    body: json.encode(body),
+  ).then((response) async {
+    log(response.statusCode.toString());
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> decodedJson = json.decode(response.body) ;
 
-  }
-  else if (Response.statusCode == 401) {
-    throw UnauthorizedException();
-  }
-  else {
-    throw EmptyDataException();
-  }
+
+      final update_response=await UpdateImage(decodedJson['_id'], event.CoverImages.first,urlImage);
+      if (update_response.statusCode==200){
+        return Future.value(unit);
+      }
+      else if (update_response.statusCode==400){
+
+        throw EmptyDataException();
+
+      }else {
+        throw ServerException();
+      }
+
+    }
+    else if (response.statusCode == 400) {
+      throw WrongCredentialsException();
+    }
+    else if (response.statusCode==401){
+      throw UnauthorizedException();
+    }
+    else {
+      throw ServerException();
+    }
+
+  });
 }

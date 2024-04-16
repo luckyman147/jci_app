@@ -9,6 +9,14 @@ class GetAllMembersEvent extends MembersEvent {
   @override
   List<Object?> get props => [];
 }
+
+class GetMembersOfUser extends MembersEvent {
+
+
+
+  @override
+  List<Object?> get props => [];
+}
 class GetMemberByNameEvent extends MembersEvent {
   final String name;
 
@@ -41,4 +49,21 @@ class UpdateMemberProfileEvent extends MembersEvent {
 
   @override
   List<Object?> get props => [member];
+}
+class GetMemberByIdEvent extends MembersEvent {
+  final MemberInfoParams para;
+
+
+  GetMemberByIdEvent(this.para);
+
+  @override
+  List<Object?> get props => [para];
+}
+class ChangeToAdminEvent extends MembersEvent {
+  final String id;
+
+  ChangeToAdminEvent(this.id);
+
+  @override
+  List<Object?> get props => [id];
 }

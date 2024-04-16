@@ -1,5 +1,8 @@
 import 'package:dartz/dartz.dart';
+import 'package:jci_app/core/config/services/MeetingStore.dart';
 
+import '../../../../../core/config/services/store.dart';
+import '../../../../../core/config/services/verification.dart';
 import '../../../../../core/error/Exception.dart';
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/network/network_info.dart';
@@ -192,6 +195,19 @@ id: meeting.id,
 
     else {
       return Left(OfflineFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> CheckPermissions() async {
+    final eventPermission=await  MeetingStore.getmeetPermissions();
+    final userPermissions=await Store.getPermissions();
+    if(eventPermission .isEmpty || userPermissions.isEmpty){
+      return Right(false);
+    }
+    else{
+
+      return hasCommonElement(eventPermission, userPermissions)?Right(true):Right(false);
     }
   }
 }

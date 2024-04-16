@@ -9,7 +9,7 @@ import { SuperAdminPayload } from "../dto/superAdmin.dto";
 declare global{
     namespace Express {
         interface Request {
-            member?: AuthPayload;
+            member: AuthPayload;
             admin:ADminPayload;
             superadmin:SuperAdminPayload;
         }
@@ -30,9 +30,9 @@ export const Authenticate=async (req:Request,res:Response,next:NextFunction)=>{
 }
 
 export const AuthenticateAdmin=async (req:Request,res:Response,next:NextFunction)=>{
-    console.log('admin')
+  
     const validate=await validateAdminSignature(req)
-    console.log('admin')
+    console.log(validate)
 
     if(validate){
         next()

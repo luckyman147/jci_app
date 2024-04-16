@@ -7,7 +7,8 @@ export interface Permission extends Document{
     related:string[]
      roles:any[]
     key:string;
-    Members:any[]    
+    Members:any[]   
+    isPublic:boolean 
 }
 export const PermissionSchema=new Schema(
     {
@@ -23,7 +24,8 @@ export const PermissionSchema=new Schema(
         roles:[{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Role',default:[]
-          }]
+          }],
+          isPublic:{type:Boolean,default:true}   //if true the permission can be assigned to
 
 
     },

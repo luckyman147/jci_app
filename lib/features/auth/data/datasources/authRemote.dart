@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:jci_app/core/config/services/MemberStore.dart';
+import 'package:jci_app/core/config/services/TeamStore.dart';
 import 'package:jci_app/features/auth/data/models/Member/AuthModel.dart';
 
 
@@ -88,11 +89,7 @@ print(Response.statusCode);
   Future<bool> signOut()async {
 
     final tokens=await Store.GetTokens();
-    if (tokens[0] == null  || tokens[0].toString().isEmpty) {
-      print('famech token');
-      throw EmptyCacheException();
 
-    }
 
 
 
@@ -115,8 +112,10 @@ print(Response.statusCode);
       print(" ya bonay ${Response.statusCode}");
       if (Response.statusCode == 200) {
         final Map<String, dynamic> response = jsonDecode(Response.body);
-        Store.clear();
-        MemberStore.clearModel();
+       await  Store.clear();
+      await   MemberStore.clearModel();
+     await    Store.setLoggedIn(false);
+     await TeamStore.clearCache();
         return true;
       } else  if (Response.statusCode == 400 ){
         final Map<String, dynamic> response = jsonDecode(Response.body);
@@ -136,12 +135,18 @@ if (response['message']=='Already logged out'){
         // Request failed
         print('Request failed with status: ${Response.statusCode}');
         print('Response body: ${Response.body}');
+        await    Store.setLoggedIn(false);
+
         throw ServerException();
       }
     } catch (e) {
       // Exception occurred during the request
       print('Exception during request: $e');
-      throw ServerException();
+      await    Store.setLoggedIn(false);
+
+      throw UnauthorizedException()  ;
+
+
     }
 
   }

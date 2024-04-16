@@ -49,7 +49,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           return SingleChildScrollView(
             child: GetTaskByidWidget(
                 widget.team, widget.taskId, _taskNameController,
-                getIndexById(widget.taskId, state.tasks)),
+                TeamFunction.  getIndexById(widget.taskId, state.tasks)),
           );
         },
       

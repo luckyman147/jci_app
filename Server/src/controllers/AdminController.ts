@@ -6,6 +6,7 @@ import { Member } from "../models/Member";
 import { Permission } from "../models/Pemission";
 import { Role } from "../models/role";
 import { findrole, findroleByid, getActivitiesInfo, getFilesInfoByIds, getMeetingsInfo, GetMemberPermission, getteamsInfo, getTrainingInfo } from "../utility/role";
+import { CheckObjectif } from "../utility/objectifcheck";
 
 
 //& find member
@@ -31,40 +32,13 @@ if (admin){
 }
 
 }
-export const ChangeToMember=async(req:Request, res:Response,next:NextFunction)=>{
-    const Admin=req.admin
-    if (Admin){
-        const id=req.params.id
-        const member = await Member.findById(id);
 
-
-        if (!member) {
-          return res.status(404).json({ error: 'Member not found' });
-        }
-        const role=await findrole('member')
-        member.role=role
-        //Save
-        role?.Members.push(member.id)
-        const saved=await member.save()
-        if (saved) {
-            return res.status(201).json(saved);
-            
-            
-        }
-      
-
-    
-
-    }
-
-
-}
 
 //* get members
 
 export const GetMembers=async( req:Request,res:Response,nex:NextFunction)=>{
-    const admin=req.admin
-    if  (admin){
+
+    
 
         const members=await Member.find()
         
@@ -86,19 +60,19 @@ export const GetMembers=async( req:Request,res:Response,nex:NextFunction)=>{
         }
         return res.json({"message":"data not available"})
     }
-    }
+    
     export const GetMemberById=async( req:Request,res:Response,nex:NextFunction)=>{
-    const admin=req.admin
+
     
 
 const id=req.params.id
         const profile=await Member.findById(id)
         if(profile){
-            const [role, teamsInfo, activitiesInfo, trainingsinfo,meetingsInfo,FilesInfo] = await Promise.all([
+            const [role, teamsInfo, activitiesInfo, trainingsinfo,meetingsInfo,FilesInfo,objectifs] = await Promise.all([
                 findroleByid(profile.role),
                 getteamsInfo(profile.Teams),
                 getActivitiesInfo(profile.Activities),getTrainingInfo(profile.Activities),
-                getMeetingsInfo(profile.Activities),getFilesInfoByIds(profile.Images)
+                getMeetingsInfo(profile.Activities),getFilesInfoByIds(profile.Images),CheckObjectif(profile.id)
             ]);
 
             const info = {    Activities: [{"Events" : activitiesInfo,"Trainings":trainingsinfo,"Meetings":meetingsInfo}],
@@ -113,10 +87,11 @@ const id=req.params.id
                 points: profile.Points,
                 is_validated: profile.is_validated,
                 teams: teamsInfo,
+                objectifs:objectifs
             
             };
 
-            
+            console.log(info)
             return res.status(200).json(info)
         }
         return res.status(404).json({message:'member not found'})
@@ -152,20 +127,17 @@ export const searchByName = async (req: Request, res: Response,next:NextFunction
     }
 }
 export const validateMember =async (req:Request,res:Response,next:NextFunction)=>{
-    const admin=req.admin
+
    
         const id=req.params.id
-        const validateAction = plainToClass(ValidateMember, req.body);
-        const errors = await validate(validateAction, { validationError: { target: false } });
-        if (errors.length > 0) {
-          return res.status(400).json({ message: 'Input validation failed', errors });
-        }
+console.log(id)
         const member=await Member.findById(id)
         if (member){
-            member.is_validated=validateAction.action
+            member.is_validated=true
             const saved=await member.save()
             if (saved){
                 //!send Email
+                console.log(saved)
                 return res.status(200).json(saved)
             }
             return res.status(400).json({message:'error with profile'})
@@ -175,7 +147,7 @@ export const validateMember =async (req:Request,res:Response,next:NextFunction)=
     
     }
     export const UpdatePoints =async (req:Request,res:Response,next:NextFunction)=>{
-    const admin=req.admin
+
    
         const id=req.params.id
         const validateAction = plainToClass(ValidatePoints, req.body);
@@ -185,11 +157,11 @@ export const validateMember =async (req:Request,res:Response,next:NextFunction)=
         }
         const member=await Member.findById(id)
         if (member){
-          if (validateAction.action==true){
-            member.Points+=validateAction.Points
-            }else{
-                member.Points-=validateAction.Points
-            }
+        
+            member.Points=validateAction.Points
+       
+         
+            
             
             const saved=await member.save()
             if (saved){
@@ -204,7 +176,7 @@ export const validateMember =async (req:Request,res:Response,next:NextFunction)=
     
     
         export const UpdateCotisation =async (req:Request,res:Response,next:NextFunction)=>{
-            const admin=req.admin
+     
            
                 const id=req.params.id
                 const validateAction = plainToClass(ValidateCotisation, req.body);
@@ -238,7 +210,7 @@ else{
             
             
         export    const GetPermissionsOfMember=async(req:Request,res:Response,next:NextFunction)=>{
-                const admin=req.admin
+                const admin=req.member
                 
                     const id=req.params.id
                     const member=await Member.findById(id)

@@ -153,7 +153,7 @@ BlocConsumer<AcivityFBloc, AcivityFState>(
     } else if (state is ActivityLoadedState) {
       return RefreshIndicator(
           onRefresh: () {
-            log(state.activitys.length.toString());
+
             return
 
               RefreshEvents(context,SearchType.All,"");

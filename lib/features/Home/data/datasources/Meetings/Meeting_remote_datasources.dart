@@ -15,6 +15,7 @@ import '../../../../../core/config/services/uploadImage.dart';
 import '../../../../../core/config/services/verification.dart';
 import '../../../../../core/error/Exception.dart';
 import '../../model/meetingModel/MeetingModel.dart';
+import '../activities/ActivityRemote.dart';
 
 abstract class MeetingRemoteDataSource {
   Future<List<MeetingModel>> getAllMeetings();
@@ -164,28 +165,8 @@ final body = Meeting.toJson();
 
   @override
   Future<Unit> leaveMeeting(String id) async{
-    final tokens=await getTokens();
-    debugPrint(id);
-    try {
+    return leaveActivity(id, client, getMeetingsUrl);
 
-      final Response = await client.delete(
-        Uri.parse("$getMeetingsUrl/$id/deleteParticipant"),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${tokens[1]}',
-        },
-
-      );
-      print(" ya get ${Response.statusCode}");
-      if (Response.statusCode == 200) {
-        return Future.value(unit);
-      } else if (Response.statusCode == 400) {
-        throw AlreadyParticipateException();
-      } else {
-        throw EmptyDataException();
-      }}catch(e){
-      throw ServerException();
-    }
   }
 
 
@@ -195,11 +176,13 @@ final body = Meeting.toJson();
   }
 
   @override
-  Future<Unit> updateMeeting(MeetingModel Meeting) {
+  Future<Unit> updateMeeting(MeetingModel Meeting)async  {
+    final tokens= await getTokens();
     final body =Meeting.toJson();
     return client.patch(
       Uri.parse(getMeetingsUrl+Meeting.id+"/edit"),
-      headers: {"Content-Type": "application/json"},
+      headers: {"Content-Type": "application/json",
+        "Authorization": "Bearer ${tokens[1]}"},
       body: json.encode(body),
     ).then((response) async {
       if (response.statusCode == 200) {

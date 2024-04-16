@@ -12,6 +12,26 @@ class MeetingModel extends Meeting{
     required super.Director, required super.agenda, required super.IsPart,  });
 
 
+  factory MeetingModel.fromEntities(Meeting meeting){
+    return MeetingModel(
+      id:meeting.id,
+      name: meeting.name,
+      description: meeting.description,
+      ActivityBeginDate: meeting.ActivityBeginDate,
+      ActivityEndDate: meeting.ActivityEndDate,
+      ActivityAdress: meeting.ActivityAdress,
+      ActivityPoints: meeting.ActivityPoints,
+      categorie: meeting.categorie,
+      IsPaid: meeting.IsPaid,
+      price: meeting.price,
+      Participants: meeting.Participants,
+      CoverImages: meeting.CoverImages,
+      Director: meeting.Director,
+      agenda: meeting.agenda,
+      IsPart: meeting.IsPart,
+    );
+  }
+
 factory MeetingModel.fromJson(Map<String, dynamic> json) {
     return  MeetingModel(
       id: json['id'] ?? json['_id'], // Use _id if id is null
@@ -24,7 +44,7 @@ factory MeetingModel.fromJson(Map<String, dynamic> json) {
       categorie: json['categorie'] as String,
       IsPaid: false,
       price:0,
-      Participants: json['Participants'] != null ? (json['Participants'] as List<dynamic>).map((e) => e as String).toList() :(json['participants'] as List<dynamic>).map((e) => e as String).toList(),
+      Participants: json['Participants'] != null ? (json['Participants'] as List<dynamic>).map((e) => e as String).toList() :(json['participants'] as List<dynamic>).toList(),
 
       CoverImages: [],
       Director: json['Director'],

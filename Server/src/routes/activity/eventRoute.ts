@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import { AddParticipantToEvent, GetEventsOfMonth, GetEventsOfWeekend, RemoveParticipantFromEvent, addEvent, deleteEvent, getAllEvents, getEventByDate, getEventById, getEventByName, updateEvent, updateImage, uploadImage } from "../../controllers/activities/EventsController";
-import { Authenticate } from "../../middleware/CommonAuth";
+import { Authenticate,AuthenticateAdmin } from "../../middleware/CommonAuth";
 
 const router=express.Router()
 const storage = multer.memoryStorage()
@@ -19,7 +19,7 @@ router.get('/EventParticipants')
 //*post
 router.post('/add/',Authenticate,addEvent)
 
-router.patch('/:id/edit',Authenticate,updateEvent)
+router.patch('/:id/edit',AuthenticateAdmin,updateEvent)
 router.patch('/:id/UpdateImage',upload.array("CoverImages"),updateImage)
 router.post('/:id/uploadImage',upload.array("CoverImages"),uploadImage)
 router.post('/:idEvent/addParticipant',Authenticate ,AddParticipantToEvent)

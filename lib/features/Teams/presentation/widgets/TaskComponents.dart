@@ -158,7 +158,7 @@ Widget BottomShetTaskBody(
           mediaQuery,
           "MMM,dd,yyyy",
               ()async{
-            await DatePickerFun(
+            await TeamFunction. DatePickerFun(
                 context,Startdate,(value) {
 
               context.read<TimelineBloc>().add(onStartDateChanged(startdate: value));
@@ -175,7 +175,7 @@ Widget BottomShetTaskBody(
           mediaQuery,
           "MMM,dd,yyyy",
               ()async{
-            await DatePickerFun(
+            await TeamFunction.DatePickerFun(
                 context,Startdate,(value) {
               context.read<TimelineBloc>().add(onEndDateDateChanged(enddate: value));
 
@@ -199,7 +199,7 @@ Widget BottomShetTaskBody(
             ),
           ),
           onPressed: (){
-            log("Startdate $Startdate  Deadlinedate $Deadlinedate  taskid $taskid");
+
             context.read<GetTaskBloc>().add(UpdateTimeline({"StartDate":Startdate,"Deadline":Deadlinedate,"id":taskid}));
             context.pop();
             context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
@@ -233,7 +233,7 @@ void AssignBottomSheetBuilder(BuildContext context, MediaQueryData mediaQuery,
   builder: (context, state) {
     List<Map<String, dynamic>> members = List<Map<String, dynamic>>.from(team.Members);
     List<Map<String, dynamic>> ff = List<Map<String, dynamic>>.from(state.tasks[index]['AssignTo']);
-log(ff.toString());
+
     List<Member> membersList = members.map((e) => Member.fromImages(e)).toList();
     List<Member> ListAssignTo = ff.map((e) => Member.fromImages(e)).toList();
     if (state.status== TaskStatus.Loading || state.status== TaskStatus.error) {
@@ -288,7 +288,7 @@ class AttachedFileWidget extends StatelessWidget {
 
     return InkWell(
       onTap: ()async  {
-        await openFile(fileData, fileName);
+        await TeamFunction.openFile(fileData, fileName);
         // Open file
       },
       child: Row(

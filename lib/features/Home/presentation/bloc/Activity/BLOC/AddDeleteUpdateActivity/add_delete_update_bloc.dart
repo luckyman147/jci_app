@@ -5,10 +5,12 @@ import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:jci_app/core/usescases/usecase.dart';
 
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
 
 import 'package:jci_app/features/Home/domain/entities/training.dart';
+import 'package:jci_app/features/Home/domain/usercases/ActivityUseCases.dart';
 import 'package:jci_app/features/Home/domain/usercases/MeetingsUseCase.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Functions.dart';
@@ -21,33 +23,30 @@ import '../../../../../domain/entities/Event.dart';
 import '../../../../../domain/entities/Meeting.dart';
 import '../../../../../domain/usercases/EventUseCases.dart';
 import '../../../../../domain/usercases/TrainingUseCase.dart';
+import '../../../../widgets/AddUpdateFunctions.dart';
 
 part 'add_delete_update_event.dart';
 part 'add_delete_update_state.dart';
 
 class AddDeleteUpdateBloc
     extends Bloc<AddDeleteUpdateEvent, AddDeleteUpdateState> {
-  final CreateEventUseCase createEventUseCase;
-  final CreateTrainingUseCase creatTrainingUseCase;
-  final CreateMeetingUseCase createMeetingUseCase;  final DeleteEventUseCase deleteEventUseCase;
-  final UpdateMeetingUseCase updateMeetingUseCase;
-  final UpdateTrainingUseCase updateTrainingUseCase;
-  final UpdateEventUseCase updateEventUseCase;
-  final DeleteMeetingUseCase deleteMeetingUseCase;
-  final DeleteTrainingUseCase deleteTrainingUseCase;
+ final CreateActivityUseCases createActivityUseCase;
+ final DeleteActivityUseCases deleteActivityUseCases ;
+ final UpdateActivityUseCases updateActivityUseCases;
+final CheckPermissionsUseCase checkPermissionsUseCase;
+final CheckTrainingPermissionsUseCase checkTrainingPermissionsUseCase;
+final CheckMeetPermissionsUseCase checkMeetingPermissionsUseCase;
+
+  AddDeleteUpdateBloc({
+    required this.updateActivityUseCases,
+    required this.createActivityUseCase, required this.deleteActivityUseCases,
+
+    required this.checkTrainingPermissionsUseCase,
+    required this.checkMeetingPermissionsUseCase,
+    required this.checkPermissionsUseCase,
 
 
-  AddDeleteUpdateBloc({required this.createEventUseCase,
-    required this.deleteEventUseCase,
-    required this.updateEventUseCase,
-    required this.updateMeetingUseCase,
-    required this.deleteMeetingUseCase,
-    required this.updateTrainingUseCase,
-    required this.deleteTrainingUseCase,
-
-    required this.createMeetingUseCase,
-
-    required this.creatTrainingUseCase})
+  })
       : super(AddDeleteUpdateInitial(
 
   )) {
@@ -57,30 +56,22 @@ class AddDeleteUpdateBloc
     on<DeleteActivityEvent>(_deleteActivity);
     on<UpdateActivityEvent>(_UpdateActivity);
     on<AddACtivityEvent>(_addActivity);
+    on<CheckPermissions>(checkPermissions);
 
   }
 
   void _addActivity(
       AddACtivityEvent event, Emitter<AddDeleteUpdateState> emit) async {
     emit(LoadingAddDeleteUpdateState());
-    if (!validateTime(event.act.ActivityBeginDate, event.act.ActivityEndDate)){
+    if (!AddUpdateFunctions.validateTime(event.params.act!.ActivityBeginDate, event.params.act!.ActivityEndDate)){
       emit(ErrorAddDeleteUpdateState(message: 'End Time must be greater than Start '));
 
     }  else {
-      log(event.act.toString());
-      if (event.type == activity.Events) {
-        final result = await createEventUseCase((event.act) as Event);
-        emit(_eitherDoneMessageOrErrorState(result, 'Event Added'));
-      } else if (event.type == activity.Trainings) {
-        debugPrint("coverimagzefro ");
-        debugPrint(event.act.CoverImages.first);
-        final result = await creatTrainingUseCase((event.act) as Training);
-        emit(_eitherDoneMessageOrErrorState(result, 'Training Added'));
-      }
-      else if (event.type == activity.Meetings) {
-        final result = await createMeetingUseCase((event.act) as Meeting);
-        emit(_eitherDoneMessageOrErrorState(result, 'Meeting Added'));
-      }
+
+
+        final result = await createActivityUseCase(event.params);
+        emit(_eitherDoneMessageOrErrorState(result, ' Added Succefully'));
+
     }
   }
   void _deleteActivity(
@@ -89,60 +80,58 @@ class AddDeleteUpdateBloc
 
       )async {
 
-    if (event.act==activity.Events){
-      final failureOrEvents= await deleteEventUseCase(event.id);
-      emit(_deletedActivityOrFailure(failureOrEvents));
-    }
-    else if (event.act==activity.Trainings){
-      final failureOrEvents= await deleteTrainingUseCase(event.id);
-      emit(_deletedActivityOrFailure(failureOrEvents));
-    }
-    else if (event.act==activity.Meetings){
-      final failureOrEvents= await deleteMeetingUseCase(event.id);
+
+      final failureOrEvents= await deleteActivityUseCases(event.params);
       emit(_deletedActivityOrFailure(failureOrEvents));
 
-    }
 
   }
 
 
+void checkPermissions(
+      CheckPermissions event,
+      Emitter<AddDeleteUpdateState> emit
 
+      )async {
+    switch (event.act){
+      case activity.Events:
+        final failureOrEvents= await checkPermissionsUseCase(NoParams());
+        emit(_checkPermissionsOrFailure(failureOrEvents));
+
+      case activity.Trainings:
+        final failureOrEvents= await checkPermissionsUseCase(NoParams());
+        emit(_checkPermissionsOrFailure(failureOrEvents));
+
+      case activity.Meetings:
+        final failureOrEvents= await checkPermissionsUseCase(NoParams());
+        emit(_checkPermissionsOrFailure(failureOrEvents));
+
+    }
+
+  }
 
   void _UpdateActivity(
       UpdateActivityEvent event,
       Emitter<AddDeleteUpdateState> emit
 
       )async {
-    if (event.act==activity.Events){
-      if (!validateTime(event.active.ActivityBeginDate, event.active.ActivityEndDate)){
-        emit(ErrorAddDeleteUpdateState(message: 'End Time must be greater than Start Time'));
-
+    try {
+      if (!AddUpdateFunctions.validateTime(event.params.act!.ActivityBeginDate,
+          event.params.act!.ActivityEndDate)) {
+        emit(ErrorAddDeleteUpdateState(
+            message: 'End Time must be greater than Start Time'));
       }
-      else{
-      final failureOrEvents= await updateEventUseCase((event.active) as Event);
-      emit(_UpdatedActivityOrFailure(failureOrEvents));}
+
+      final failureOrEvents = await updateActivityUseCases(event.params);
+      emit(_UpdatedActivityOrFailure(failureOrEvents));
     }
-    else if (event.act==activity.Trainings){
-      if (!validateTime(event.active.ActivityBeginDate, event.active.ActivityEndDate)){
-        emit(ErrorAddDeleteUpdateState(message: 'End Time must be greater than Start Time'));
-
-      }
-      else{
-      final failureOrEvents= await updateTrainingUseCase((event.active) as Training);
-      emit(_UpdatedActivityOrFailure(failureOrEvents));}
-
+    catch(e){
+      emit(ErrorAddDeleteUpdateState(
+          message: '$e'));
     }
-    else if (event.act==activity.Meetings){
-      if (!validateTime(event.active.ActivityBeginDate, event.active.ActivityEndDate)){
-        emit(ErrorAddDeleteUpdateState(message: 'End Time must be greater than Start Time'));
-
-      }
-      else{
-      final failureOrEvents= await updateMeetingUseCase((event.active) as Meeting);
-      emit(_UpdatedActivityOrFailure(failureOrEvents));}
-    }
-
   }
+
+
 
 
   AddDeleteUpdateState _eitherDoneMessageOrErrorState(
@@ -161,8 +150,13 @@ class AddDeleteUpdateBloc
     );
   } AddDeleteUpdateState _UpdatedActivityOrFailure(Either<Failure, Unit> either) {
     return either.fold(
-          (failure) => ErrorAddDeleteUpdateState(message: mapFailureToMessage(failure)),
+          (failure) => ErrorAddDeleteUpdateState(message: failure.toString()),
           (act) => ActivityUpdatedState(message: 'Updated With Success'),
+    );
+  }AddDeleteUpdateState _checkPermissionsOrFailure(Either<Failure, bool> either) {
+    return either.fold(
+          (failure) => ErrorAddDeleteUpdateState(message: mapFailureToMessage(failure)),
+          (act) => PermissionState(hasPermission: act),
     );
   }
 

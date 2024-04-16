@@ -6,7 +6,7 @@ import { Member } from '../../models/Member';
 
 
 import { Event } from '../../models/activities/eventModel';
-import { getPermissionIdsByRelated } from '../../utility/role';
+import { getMembersInfo, getPermissionIdsByRelated } from '../../utility/role';
 
 //&Public
 
@@ -17,6 +17,8 @@ export const getAllEvents = async (req: Request, res: Response, next: NextFuncti
     // Fetch all events and sort them by ActivityBeginDate in ascending order
     const events = await Event.find().sort({ ActivityBeginDate: -1 }).limit(3);
 if (events.length>0) {
+  const permission=await getPermissionIdsByRelated(["Events"])
+
     // Format and send the events in the response
     const formattedEvents = events.map<EventOftheMonthField>((event) => ({
       _id: event._id,
@@ -38,7 +40,8 @@ if (events.length>0) {
       CoverImages: event.CoverImages,
     }));
 
-    res.status(200).json({ events: formattedEvents });}
+    res.status(200).json({         Permissions:permission
+      ,events: formattedEvents });}
     else{
       res.status(400).json({message:"No events found"})
     }
@@ -59,6 +62,7 @@ console.log(currentDate)
     const eventsOfWeekend = await Event.find({
       ActivityBeginDate: { $gte: firstDayOfWeekend, $lte: lastDayOfWeekend },
     }).sort({ ActivityBeginDate: -1 });
+    const permission=await getPermissionIdsByRelated(["Events"])
 
     if (eventsOfWeekend.length > 0) {
       const formattedEvents = eventsOfWeekend.map<EventOftheMonthField>((event) => ({
@@ -80,7 +84,10 @@ console.log(currentDate)
         participants: event.Participants,
         CoverImages: event.CoverImages,
       }));
-      res.status(200).json({ events: formattedEvents });
+      res.status(200).json({Permissions:permission, events: formattedEvents ,
+        
+      
+      });
     } else {
       res.status(400).json({ message: "No events found for this weekend" });
     }
@@ -215,6 +222,7 @@ export const addEvent = async (req: Request, res: Response, next: NextFunction) 
     }
   }
 export const getEventById = async (req: Request, res: Response, next: NextFunction) => {
+  const Permissions=await getPermissionIdsByRelated(["Events"])
   try {
     const id = req.params.id;
     const event = await Event.findById(id);
@@ -237,8 +245,9 @@ export const getEventById = async (req: Request, res: Response, next: NextFuncti
         ActivityEnddate: event.ActivityEndDate,
         ActivityAdress: event.ActivityAdress,
    
-        participants: event.Participants,
+        participants: await getMembersInfo(event.Participants),
         CoverImages: event.CoverImages,
+        Permissions:Permissions
 
         
 

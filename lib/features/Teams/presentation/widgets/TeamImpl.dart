@@ -67,7 +67,7 @@ Widget GetTeamByid(String id,TextEditingController taskController,int index) {
       if (state is GetTeamsInitial || state is GetTeamsLoading) {
         return LoadingWidget();
       }   else if (state.status ==TeamStatus.success ) {
-              log("zeeshan" + state.teamById.toString());
+
               return RefreshIndicator(
                 onRefresh: () async {
                   context.read<GetTeamsBloc>().add(GetTeamById({"id": id,"isUpdated":false}));

@@ -6,14 +6,18 @@ import { Member } from '../../models/Member';
 
 import { validate } from 'class-validator';
 import { Meeting, } from '../../models/activities/meetingModel';
+import { getMembersInfo, getPermissionIdsByRelated } from '../../utility/role';
 
 //&Public
 
 
 export const getAllmeetings = async (req: Request, res: Response, next: NextFunction) => {
+  
+  
   try {
     // Fetch all meetings and sort them by ActivityBeginDate in ascending order
     const meetings = await Meeting.find().sort({ ActivityBeginDate: -1 });
+    const permission=await getPermissionIdsByRelated(["Meetings"])
 
     // Format and send the meetings in the response
     const formattedmeetings = meetings.map<MeetingField>((meeting) => ({
@@ -37,7 +41,8 @@ Agenda:meeting.Agenda,
       
     }));
 
-    res.json({ meetings: formattedmeetings });
+    res.json({         Permissions:permission,
+      meetings: formattedmeetings });
   } catch (error) {
     console.error('Error retrieving all meetings:', error);
     next(error);
@@ -126,6 +131,8 @@ ActivityPoints: meetingInputs.ActivityPoints,
 export const getmeetingById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
+  const Permissions=await getPermissionIdsByRelated(["Meetings"])
+
     const meeting = await Meeting.findById(id);
     if (meeting) {
       res.json({
@@ -142,9 +149,10 @@ export const getmeetingById = async (req: Request, res: Response, next: NextFunc
   
         ActivityPoints: meeting.ActivityPoints,
         categorie: meeting.categorie,
+        Permissions:Permissions,
        
       
-        participants: meeting.Participants,
+        participants: await getMembersInfo(meeting.Participants),
         
       });
     } else {

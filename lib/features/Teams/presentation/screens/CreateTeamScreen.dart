@@ -20,6 +20,7 @@ import '../../../Home/presentation/widgets/Functions.dart';
 import '../../../Home/presentation/widgets/MemberSelection.dart';
 
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
+import '../../../auth/data/models/Member/AuthModel.dart';
 import '../../domain/entities/Team.dart';
 import '../widgets/funct.dart';
 
@@ -42,11 +43,11 @@ if (!widget.team .isEmpty) {
 
 else{
   context.read<TaskVisibleBloc>().add(ChangeImageEvent("assets/images/jci.png",));
-
+  context.read<MembersBloc>().add(GetAllMembersEvent());
   context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: activity.Events));
   context.read<FormzBloc>().add(EventChanged( eventChanged: EventTest));
 
-  context.read<MembersBloc>().add(GetAllMembersEvent());
+
   context.read<FormzBloc>().add(InitMembers(members: []));
 }
 
@@ -85,7 +86,6 @@ else{
     padding: const EdgeInsets.symmetric(vertical: 8.0),
     child: BlocBuilder<FormzBloc, FormzState>(
       builder: (context, state) {
-        log("sss: ${state.memberFormz.value}");
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,14 +136,9 @@ else{
 
 teamNameController.text = widget.team.name;
 teamDescriptionController.text = widget.team.description;
-//log(EventModel.fromJson(widget.team.event).toString());
+
     context.read<FormzBloc>().add(EventChanged( eventChanged:Event.fromJson(widget.team.event)));
 
-
-
-log("ddddddd"+widget.team.Members.map((e) => Member.toMember(e)).toList().toString());
-log("ddddddd"+widget.team.Members.toString());
-    context.read<FormzBloc>().add(InitMembers(members: widget.team.Members.map((e) => Member.toMember(e)).toList()));
     context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent(widget.team.status));
     context.read<MembersBloc>().add(GetAllMembersEvent());
     context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: activity.Events));

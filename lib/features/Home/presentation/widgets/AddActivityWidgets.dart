@@ -11,6 +11,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
@@ -19,16 +20,66 @@ import 'package:jci_app/features/Teams/presentation/widgets/CreateTeamWIdgets.da
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/strings/app_strings.dart';
+import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../../auth/domain/entities/Member.dart';
+import '../bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../bloc/Activity/activity_cubit.dart';
 import '../bloc/IsVisible/bloc/visible_bloc.dart';
 import '../bloc/textfield/textfield_bloc.dart';
 import '../pages/CreateUpdateActivityPage.dart';
+import 'AddUpdateFunctions.dart';
 import 'Compoenents.dart';
 import 'Functions.dart';
 import 'MemberSelection.dart';
+Widget firstLine({required String work,required mediaQuery,
+  required List<String>part,required GlobalKey<FormState> formKey,
+  required   String id, required TextEditingController namecontroller,required TextEditingController descriptionController,required BuildContext context,
+  required TextEditingController LeaderName, required TextEditingController prof,required TextEditingController price,required TextEditingController location,required TextEditingController points,
 
+
+}
+    ) => BlocBuilder<PageIndexBloc, PageIndexState>(
+  builder: (context, state) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        BackButton(
+          onPressed: () {
+            AddUpdateFunctions. PopFunctions(work, context,id);     },
+        ),
+        Row(
+          children: [
+            work!="edit"?
+            Text("Add".tr(context),
+                style:
+                PoppinsSemiBold(16, textColorBlack, TextDecoration.none)):  Text("Edit".tr(context),style:PoppinsSemiBold(16, textColorBlack, TextDecoration.none)),
+            work!="edit"? Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: MyDropdownButton(),
+            ):SizedBox(),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Add(formKey: formKey,
+              namecontroller: namecontroller,
+              descriptionController: descriptionController,
+              LeaderController: LeaderName,
+              ProfesseurName: prof,
+              LocationController:location,
+              Points: points,
+              mediaQuery: mediaQuery,
+              Price: price,
+              action:work,
+              id: id,
+              part: part),
+        )
+
+      ],
+    );
+  },
+);
 
 Widget AddEndDateButton(mediaQuery,String text) => BlocBuilder<VisibleBloc, VisibleState>(
       builder: (context, state) {
@@ -132,7 +183,7 @@ class _DateFieldWidgetState extends State<DateFieldWidget> {
               widget.hintTextDate,
               widget.hintTextTime,
               ()async {
-                  debugPrint("updated time: ${state.jokertime.value }");
+                  debugPrint("${"updated time".tr(context)}: ${state.jokertime.value }");
 
                   final TimeOfDay? selectedTime = await showTimePicker(
                     context: context,
@@ -157,7 +208,7 @@ class _DateFieldWidgetState extends State<DateFieldWidget> {
                  currentDate: time,
                  lastDate: DateTime.now().add(Duration(days: 365)),
                  onDatePickerModeChange: (mode) {
-                   print("mode$mode");
+
                  },
                );
 
@@ -172,15 +223,15 @@ class _DateFieldWidgetState extends State<DateFieldWidget> {
              },
                 (){
                 if (widget.timeType == TimeType.begin) {
-                  context.read<FormzBloc>().add(BeginTimeChanged(date: combineTimeAndDate(selectedDate, time)));
+                  context.read<FormzBloc>().add(BeginTimeChanged(date: ActivityAction.combineTimeAndDate(selectedDate, time)));
                   context.pop();
                 } else if (widget.timeType == TimeType.end) {
-                  context.read<FormzBloc>().add(EndTimeChanged(date: combineTimeAndDate(selectedDate, time)));
+                  context.read<FormzBloc>().add(EndTimeChanged(date:ActivityAction. combineTimeAndDate(selectedDate, time)));
                   context.pop();
 
                 }
                 else{
-                  context.read<FormzBloc>().add(RegistraTimeChanged(date: combineTimeAndDate(selectedDate, time)));
+                  context.read<FormzBloc>().add(RegistraTimeChanged(date:ActivityAction. combineTimeAndDate(selectedDate, time)));
                   context.pop();
 
                 }
@@ -196,7 +247,7 @@ class _DateFieldWidgetState extends State<DateFieldWidget> {
     );
     if (temp != null) {
       if(!mounted) return;
-      debugPrint("updated time: ${temp.toString()}");
+
       setState(() {
         context.read<FormzBloc>().add(jokerTimeChanged(joketimer: temp));
       });
@@ -252,7 +303,7 @@ Widget imagePicker(mediaQuery) {
                                   color: PrimaryColor,
                                 ),
                                 Text(
-                                  "Add Image",
+                                  "Add Image".tr(context),
                                   style: PoppinsRegular(19, PrimaryColor),
                                 )
                               ],
@@ -266,7 +317,8 @@ Widget imagePicker(mediaQuery) {
                     right: 0,
 
                     child:Padding(
-                      padding:  EdgeInsets.symmetric(vertical: mediaQuery.size.height/15,horizontal: 5),
+                      padding: paddingSemetricVerticalHorizontal(v:mediaQuery.size.height/15,h: 5),
+
                       child: InkWell(
                         onTap: () async{
       final XFile? picked =
@@ -287,7 +339,7 @@ Widget imagePicker(mediaQuery) {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text("Edit", style: PoppinsRegular(18, textColorBlack)),
+                            Text("Edit".tr(context), style: PoppinsRegular(18, textColorBlack)),
                             Icon(
                               Icons.edit,
                               color: textColorBlack,
@@ -307,7 +359,7 @@ Widget imagePicker(mediaQuery) {
   );
 }
 
-Widget TextfieldNormal(String name, String HintText,
+Widget TextfieldNormal(BuildContext context,String name, String HintText,
         TextEditingController controller, Function(String) onchanged) =>
     Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
@@ -331,7 +383,7 @@ Widget TextfieldNormal(String name, String HintText,
             },
             validator: (value) {
               if (value!.isEmpty) {
-                return 'Please enter some text';
+                return 'Please enter some text'.tr(context);
               }
               return null;
             },
@@ -350,7 +402,7 @@ Widget TextfieldNormal(String name, String HintText,
         ],
       ),
     );
-Widget TextfieldDescription(String name, String HintText,
+Widget TextfieldDescription(BuildContext context,String name, String HintText,
         TextEditingController controller, Function(String) onChanged) =>
     Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
@@ -368,7 +420,7 @@ Widget TextfieldDescription(String name, String HintText,
             textInputAction: TextInputAction.done,
             validator: (value) {
               if (value!.isEmpty) {
-                return 'Please enter some text';
+                return 'Please enter some text'.tr(context);
               }
               return null;
             },
@@ -399,6 +451,7 @@ Widget chooseDate(DateTime todayDate, MediaQueryData mediaQuery, String Format,
       onTap: () async {
         onTap();
       },
+
       child: BlocBuilder<FormzBloc, FormzState>(
   builder: (context, state) {
     return Container(
@@ -422,7 +475,7 @@ Widget chooseDate(DateTime todayDate, MediaQueryData mediaQuery, String Format,
               Text(
                 DateFormat(Format).format(todayDate),
                 style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 5,
-                    textColor, TextDecoration.none),
+                    textColorBlack, TextDecoration.none),
               ),
             ],
           ),
@@ -480,7 +533,7 @@ Widget PriceWidget(mediaQuery,TextEditingController controller) => BlocBuilder<V
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Is Paid",
+                    "Is Paid".tr(context),
                     style: PoppinsRegular(
                         mediaQuery.devicePixelRatio * 6, textColorBlack),
                   ),
@@ -514,7 +567,7 @@ onChanged: (value) {
                         focusedBorder: border(PrimaryColor),
                         enabledBorder: border(ThirdColor),
                         hintStyle: PoppinsNorml(18, ThirdColor),
-                        hintText: "Price"),
+                        hintText: "Price".tr(context)),
                   ))
             ],
           ),
@@ -538,7 +591,7 @@ InkWell bottomSheet(BuildContext context, MediaQueryData mediaQuery,
             builder: (context, state) {
               return SingleChildScrollView(
                 child: BottomShetBody(mediaQuery, sheetTitle, state.joker.value??DateTime.now(), hintTextDate,
-                    hintTextTime, timePickerFunction, datePickerFunction,saveMethod ,state.jokertime.value??TimeOfDay.now() )
+                    hintTextTime, timePickerFunction, datePickerFunction,saveMethod ,state.jokertime.value??TimeOfDay.now() ,context)
               );
             },
           );
@@ -577,7 +630,8 @@ Widget BottomShetBody(
     Function() timePickerFunction,
     Function() datePickerFunction,
     Function() saveMethod,
-    TimeOfDay time
+    TimeOfDay time,
+    BuildContext context,
     )=>SizedBox(
   height: mediaQuery.size.height / 2.5,
   width: double.infinity,
@@ -625,7 +679,7 @@ time,
           onPressed: saveMethod,
           child: Center(
             child: Text(
-              "Save",
+              "Save".tr(context),
               style: PoppinsSemiBold(
                 18,
                 textColorWhite,
@@ -684,7 +738,7 @@ if (widget.text.isEmpty){
 style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),
                     validator:  (value) {
                       if (value!.isEmpty) {
-                        return 'Please enter some text';
+                        return 'Please enter some text'.tr(context);
                       }
                       return null;
                     },
@@ -721,7 +775,7 @@ style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please  text';
+                        return 'Please enter some text'.tr(context);
                       }
                       return null;
                     },
@@ -753,21 +807,21 @@ Widget showLeader(activity act,mediaQuery,BuildContext context,TextEditingContro
   return
     act==activity.Trainings
         ?
-    TextfieldNormal(
-        "Professeur Name", "Professeur name here ", ProfesseurName,
+    TextfieldNormal(context,
+        "Professeur Name".tr(context), "Professeur Name here".tr(context), ProfesseurName,
             (value){
           context.read<FormzBloc>().add(ProfesseurNameChanged(profName: value));
         }):
     act==activity.Events?
-    TextfieldNormal(
-        "Leader Name", "Leader name here ", LeaderController,
+    TextfieldNormal(context,
+        "Leader Name".tr(context), "Leader name here".tr(context), LeaderController,
             (value){
           context.read<FormzBloc>().add(LeaderNameChanged(leaderName: value));
         }):
 
     BlocBuilder<FormzBloc, FormzState>(
       builder: (context, state) {
-        debugPrint("state: ${state.memberFormz.value}");
+
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -776,7 +830,7 @@ Widget showLeader(activity act,mediaQuery,BuildContext context,TextEditingContro
               padding: const EdgeInsets.symmetric(horizontal: 18.0),
 
               child: Text(
-                "Director Name",
+                "Director Name".tr(context),
                 style: PoppinsRegular(18, textColorBlack),
               ),
             ),
@@ -806,6 +860,77 @@ Widget showImagePicker(activity act ,mediaQuery)=>
     );
 
 
+Widget Add({
+  required GlobalKey<FormState> formKey,
+  required TextEditingController namecontroller,
+  required TextEditingController descriptionController,
+  required TextEditingController LeaderController,
+  required TextEditingController ProfesseurName,
+  required TextEditingController LocationController,
+  required TextEditingController Points,
+  required TextEditingController Price,
+  required MediaQueryData mediaQuery,
+  required List<String> part,
+  required String action,
+  required String id,
+
+
+}) =>
+    BlocBuilder<FormzBloc, FormzState>(
+      builder: (context, ste) {
+        return BlocBuilder<TextFieldBloc, TextFieldState>(
+          builder: (context, statef) {
+            return BlocBuilder<VisibleBloc, VisibleState>(
+              builder: (context, vis) {
+                return BlocConsumer<AddDeleteUpdateBloc,
+                    AddDeleteUpdateState>(
+                  listener: (ctx, ste) {
+                    AddUpdateFunctions.    Listener(ste, context);
+                  },
+                  builder: (context, state) {
+                    return BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
+                      builder: (context, state) {
+                        return BlocBuilder<ActivityCubit, ActivityState>(
+                          builder: (context, acti) {
+                            return GestureDetector(
+                              onTap: () {
+                                AddUpdateFunctions.      SaveActionFunction(acti, formKey, state, Price, ste, LeaderController, namecontroller, descriptionController, LocationController, Points, vis, part, action, id, context, ProfesseurName, statef);
+
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Center(
+                                    child: Text(
+                                      "Save",
+                                      style: PoppinsSemiBold(
+                                          mediaQuery.devicePixelRatio * 6,
+                                          PrimaryColor, TextDecoration.none),
+                                    )),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+
+
+
+
+
+
+
+
+
+
+
 Widget showDetails(mediaQuery,activity act,DateTime time,BuildContext context ,TextEditingController _price,TextEditingController _LocationController)=>
     act==activity.Meetings?
     Column(
@@ -819,7 +944,7 @@ Widget showDetails(mediaQuery,activity act,DateTime time,BuildContext context ,T
             padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
 
             child: Text(
-              "Agenda",
+              "Agenda".tr(context),
               style: PoppinsRegular(18, textColorBlack),
             ),
           ),
@@ -827,7 +952,7 @@ Widget showDetails(mediaQuery,activity act,DateTime time,BuildContext context ,T
 
             builder: (context, state) {
               if (state is TextfieldChanged) {
-                debugPrint("state: ${state.textFieldControllers}");
+
                 return
                   SizedBox(child: TextFieldGenerator(text: state.textFieldControllers,));
               }
@@ -848,7 +973,7 @@ Widget showDetails(mediaQuery,activity act,DateTime time,BuildContext context ,T
 
 
         showRegistration(act, time,),
-        TextfieldNormal("Location", "Location Here", _LocationController,
+        TextfieldNormal(context,"Location", "Location Here".tr(context), _LocationController,
                 (value){
               context.read<FormzBloc>().add(LocationChanged(location: value));
             }

@@ -6,7 +6,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/formzBloc/
 
 const PrimaryColor = Color.fromRGBO(0, 150, 215, 1);
 const SecondaryColor = Color.fromRGBO(248, 189, 0, 1);
-const backgroundColored = Color.fromRGBO(244, 252, 255, 1);
+const backgroundColored = Color.fromRGBO(255, 252, 255, 1);
 const dotscolor= Color.fromRGBO(210, 210, 210, 1);
 const ThirdColor= Color.fromRGBO(125, 125, 125, 1);
 const textColorBlack = Color.fromRGBO(0, 0, 0, 1);
@@ -25,9 +25,10 @@ OutlineInputBorder border(Color color)=> OutlineInputBorder(
 );
 final   taskdex=BoxDecoration(
   color: Colors.white,
+  borderRadius: BorderRadius.circular(16.0),
   border: Border.all(
-    color: BackWidgetColor,
-    width: 1,
+    color: textColor,
+    width: 2,
   ),
 
 
@@ -150,10 +151,10 @@ final decoration=BoxDecoration(
 );
 
 ThemeData themeData = ThemeData(
+
   primaryColor: PrimaryColor,
-scaffoldBackgroundColor:textColorWhite ,
-
-
+scaffoldBackgroundColor:backgroundColored ,
+canvasColor: backgroundColored,
   textTheme: TextTheme(
 
   ),

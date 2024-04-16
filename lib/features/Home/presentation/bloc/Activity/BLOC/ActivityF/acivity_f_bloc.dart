@@ -18,6 +18,7 @@ import '../../../../../../../core/usescases/usecase.dart';
 import '../../../../../domain/entities/Event.dart';
 import '../../../../../domain/entities/Meeting.dart';
 import '../../../../../domain/entities/training.dart';
+import '../../../../../domain/usercases/ActivityUseCases.dart';
 import '../../../../../domain/usercases/EventUseCases.dart';
 import '../../../../../domain/usercases/TrainingUseCase.dart';
 import '../formzBloc/formz_bloc.dart';
@@ -29,26 +30,21 @@ part 'acivity_f_event.dart';
 part 'acivity_f_state.dart';
 
 class AcivityFBloc extends Bloc<AcivityFEvent, AcivityFState> {
-  final GetALlEventsUseCase getALlEventsUseCase;
-final GetALlMeetingsUseCase getALlMeetingsUseCase;
-final GetEventByIdUseCase getEventByIdUseCase;
-final GetMeetingByIdUseCase getMeetingByIdUseCase;
-final GetTrainingByIdUseCase getTrainingByIdUseCase;
+
+final GetActivityByIdUseCases getActivityByIdUseCases;
   final GetEventsOfTheMonthUseCase getEventsOfTheMonthUseCase;
   final GetTrainingsOfTheMonthUseCase getTrainingsOfTheMonthUseCase;
-  final GetALlTrainingsUseCase getALlTrainingsUseCase;
+
   final ParticpantsBloc participantBloc;
+  final GetAllActivitiesUseCases getAllActivitiesUseCases;
 
   AcivityFBloc({required  this.getTrainingsOfTheMonthUseCase,
-    required  this.getALlTrainingsUseCase,
-    required  this.participantBloc,
 
-    required  this.getTrainingByIdUseCase,
-    required  this.getMeetingByIdUseCase,
+    required  this.participantBloc,
+    required this.getActivityByIdUseCases,
     required  this.getEventsOfTheMonthUseCase,
-    required  this.getALlEventsUseCase,
-    required  this.getALlMeetingsUseCase,
-    required  this.getEventByIdUseCase,
+
+    required this.getAllActivitiesUseCases
 
 
 
@@ -82,17 +78,9 @@ on<SearchTextChanged>(SearchCat);
 
       )async {
     emit(ActivityLoadingState());
-     if (event.act==activity.Events){
-    final failureOrEvents= await getEventByIdUseCase(event.id);
-    emit(_mapFailureActivityId(failureOrEvents));}
-    else if (event.act==activity.Trainings){
-      final failureOrEvents= await getTrainingByIdUseCase(event.id);
-      emit(_mapFailureActivityId(failureOrEvents));
-    }
-    else if (event.act==activity.Meetings){
-      final failureOrEvents= await getMeetingByIdUseCase(event.id);
-      emit(_mapFailureActivityId(failureOrEvents));
-    }
+
+    final failureOrEvents= await getActivityByIdUseCases(event.params);
+    emit(_mapFailureActivityId(failureOrEvents));
   }
 
   void _getAllActivities(
@@ -101,19 +89,13 @@ on<SearchTextChanged>(SearchCat);
 
       )async {
     emit(ActivityLoadingState());
-    if (event.act==activity.Events){
-      final failureOrEvents= await getALlEventsUseCase(NoParams());
+
+      final failureOrEvents= await getAllActivitiesUseCases(event.act);
 
       emit(_mapFailureOrActivityToState(failureOrEvents));
-    }
-    else if (event.act==activity.Trainings){
-      final failureOrEvents= await getALlTrainingsUseCase(NoParams());
-      emit(_mapFailureOrActivityToState(failureOrEvents));
-    }
-    else if (event.act==activity.Meetings){
-      final failureOrEvents= await getALlMeetingsUseCase(NoParams());
-      emit(_mapFailureOrActivityToState(failureOrEvents));
-    }
+
+
+
   }
 
 
@@ -140,7 +122,7 @@ void _getActivityOfMonth(
     else if (event.act==activity.Meetings){
       emit(ActivityLoadingState());
 
-      final failureOrEvents= await getALlMeetingsUseCase(NoParams());
+      final failureOrEvents= await getAllActivitiesUseCases(event.act);
       emit(_mapFailureOrActivityMonthToState(failureOrEvents));
     }
 }
@@ -158,7 +140,7 @@ AcivityFState _mapFailureOrActivityToState(Either<Failure, List<Activity>> eithe
           (failure) => ErrorActivityState(message: mapFailureToMessage(failure)),
           (act) {
 
-            participantBloc.add(initstateList(act: mapObjects(act))); log("eee"+participantBloc.state.toString());
+            participantBloc.add(initstateList(act: ActivityAction.mapObjects(act))); log("eee"+participantBloc.state.toString());
             return ActivityLoadedState(
        activitys: act,
       );}

@@ -20,8 +20,9 @@ class MembersBloc extends Bloc<MembersEvent, MembersState> {
   final GetMemberByname getMemberByNameUseCase;
   final GetUserProfile getUserProfileUseCase;
   final UpdateMemberUseCase updateMemberUseCase;
+  final GetMemberByIdUseCase getMemberByIdUseCase;
 
-  MembersBloc(this.getAllMembersUseCase, this.getMemberByNameUseCase, this.getUserProfileUseCase, this.updateMemberUseCase) : super(MembersInitial()) {
+  MembersBloc(this.getAllMembersUseCase, this.getMemberByNameUseCase, this.getUserProfileUseCase, this.updateMemberUseCase, this.getMemberByIdUseCase, ) : super(MembersInitial()) {
     on<MembersEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -30,7 +31,10 @@ on<GetUserProfileEvent>(getUserPrfile);
     on<GetAllMembersEvent>(_getAllMembers);
     on<GetMemberByNameEvent>(_getMemberByName);
     on<UpdateMemberProfileEvent>(_updateuser);
+    on<GetMemberByIdEvent>(getMemberByid);
+
   }
+
 void _updateuser(UpdateMemberProfileEvent event ,Emitter<MembersState> emit)async{
     emit(MemberLoading());
     try {
@@ -41,6 +45,12 @@ void _updateuser(UpdateMemberProfileEvent event ,Emitter<MembersState> emit)asyn
       emit(MemberFailure(message: 'Failed to update user profile'));
     }
 }
+void getMemberByid(GetMemberByIdEvent event, Emitter<MembersState> emit)async{
+    emit(MemberLoading());
+    final result= await getMemberByIdUseCase(event.para);
+    emit(_eitherDoneUserState(
+        result, 'User Profile Loaded Successfully'));
+  }
 
 void getUserPrfile(GetUserProfileEvent event, Emitter<MembersState> emit)async {
     emit(MemberLoading());

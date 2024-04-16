@@ -81,4 +81,13 @@ class LeaveMeetingUseCase {
     return await MeetingRepository.participateMeeting(id);
   }
 }
+class CheckMeetPermissionsUseCase {
+  final MeetingRepo MeetingRepository;
+
+  CheckMeetPermissionsUseCase(this.MeetingRepository);
+
+  Future<Either<Failure,bool>> call() async {
+    return await MeetingRepository.CheckPermissions();
+  }
+}
 

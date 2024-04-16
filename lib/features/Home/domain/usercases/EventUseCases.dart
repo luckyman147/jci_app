@@ -90,3 +90,12 @@ class ParticipateEventUseCase  extends UseCase<Unit,String>{
     return await eventRepository.participateEvent(params);
   }
 }
+class CheckPermissionsUseCase extends UseCase<bool,NoParams>{
+  final EventRepo eventRepository;
+
+  CheckPermissionsUseCase(this.eventRepository);
+
+  Future<Either<Failure,bool>> call(NoParams params) async {
+    return await eventRepository.CheckPermissions();
+  }
+}

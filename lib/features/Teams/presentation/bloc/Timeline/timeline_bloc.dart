@@ -23,13 +23,14 @@ class TimelineBloc extends Bloc<TimelineEvent, TimelineState> {
     Map<String, dynamic> clonedMap = Map<String, dynamic>.from(state.timeline);
     clonedMap['StartDate'] = event.startdate;
     int comparisonResult = event.startdate.compareTo(clonedMap['Deadline']);
-    log(comparisonResult.toString() + " " + event.startdate.toString() + " " + clonedMap['Deadline'].toString());
+
     if(comparisonResult > 0)
     {
       clonedMap['Deadline'] = event.startdate.add(const Duration(days: 1));
+      emit(state.copyWith(timeline: clonedMap));
     }
 
-    emit(state.copyWith(timeline: clonedMap));
+
   }
   void _initTimeline(initTimeline event, Emitter<TimelineState> emit)
   {

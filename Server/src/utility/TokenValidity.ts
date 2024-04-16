@@ -8,6 +8,7 @@ import { SuperAdminPayload } from '../dto/superAdmin.dto';
 import { Member } from '../models/Member';
 import { Role } from '../models/role';
 import { isAccessTokenValid, isRefreshTokenValid } from './verification';
+import { AuthPayload } from '../dto/auth.dto';
 
 require('dotenv').config();
 
@@ -74,9 +75,9 @@ await generateAccessToken({
     const payload = jwt.verify(signature.split(' ')[1], process.env.APP_SECRET as string) as MemberPayload;
           const check=await isAccessTokenValid(payload._id,signature)
           console.log("check",check)
-      const role= await Role.findById(payload.role)
 
-      if (check &&(role?.name === 'member' || role?.name === 'admin' || role?.name === 'superadmin')){
+
+      if (check ){
         req.member = payload;
           return true;
       }return false 
@@ -93,14 +94,16 @@ await generateAccessToken({
   export const validateAdminSignature = async (req: Request) => {
     const signature = req.get('Authorization');
     if (signature) {
-      const payload = jwt.verify(signature.split(' ')[1], process.env.APP_SECRET as string) as ADminPayload;
-      const role= await Role.findById(payload.role)
-      const check=await isAccessTokenValid(payload._id,signature)
+    console.log('signature',signature)
+      const payload = jwt.verify(signature.split(' ')[1], process.env.APP_SECRET as string) as AuthPayload;
+        console.log('payload',payload)
 
-      if ((role?.name === 'admin' || role?.name === 'superadmin')&& check) {
-        req.admin = payload;
+
+
+
+        req.member = payload;
+
         return true;
-      }
     }
     return false;
   };
@@ -108,13 +111,11 @@ await generateAccessToken({
     const signature = req.get('Authorization');
     if (signature) {
       const payload = jwt.verify(signature.split(' ')[1], process.env.APP_SECRET as string) as SuperAdminPayload;
-  
-      const role= await Role.findById(payload.role)
-      const check=await isAccessTokenValid(payload._id,signature)
-      if (role?.name == 'superadmin' && check) {
+
+
         req.superadmin = payload;
         return true;
-      }
+
     }
     return false;
   };

@@ -8,6 +8,7 @@ import '../../model/events/EventModel.dart';
 
           abstract class EventLocalDataSource {
   Future<List<EventModel>> getAllCachedEvents();
+  Future<List<String>> getPermissions();
 
   Future<List<EventModel>> getCachedEventsOfTheWeek();
   Future<List<EventModel>> getCachedEventsOfTheMonth();
@@ -28,15 +29,12 @@ class EventLocalDataSourceImpl implements EventLocalDataSource{
 
   @override
   Future<Unit> cacheEventsOfTheMonth(List<EventModel> event) async {
-    await EventStore.cacheEventsOfTheMonth(event);
-    return Future.value(unit);
+    throw UnimplementedError();
   }
 
   @override
   Future<Unit> cacheEventsOfTheWeek(List<EventModel> event) async {
-    await EventStore.cacheEventsOfTheWeek(event);
-    return Future.value(unit);
-
+throw UnimplementedError();
 
   }
 
@@ -54,25 +52,23 @@ class EventLocalDataSourceImpl implements EventLocalDataSource{
 
   @override
   Future<List<EventModel>> getCachedEventsOfTheMonth() async{
-    final events=await EventStore.getCachedEventsOfTheMonth();
-    if (events.isNotEmpty) {
-      return events;
-    } else {
-      throw EmptyCacheException();
-    }
+    throw UnimplementedError();
+
 
 
   }
 
   @override
   Future<List<EventModel>> getCachedEventsOfTheWeek()async {
-    final events=await EventStore.getCachedEventsOfTheWeek();
-    if (events.isNotEmpty) {
-      return events;
-    } else {
-      throw EmptyCacheException();
-    }
-
-
+throw UnimplementedError();
   }
+
+  @override
+  Future<List<String>> getPermissions() async {
+  final permissions=await EventStore.getEventPermissions();
+  if (permissions.isNotEmpty) {
+    return permissions;
+  } else {
+    throw EmptyCacheException();
+  }}
 }

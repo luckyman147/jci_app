@@ -90,4 +90,13 @@ class LeaveTrainingUseCase  extends UseCase<Unit,String>{
     return await TrainingRepository.participateTraining(id);
   }
 }
+class CheckTrainingPermissionsUseCase  extends UseCase<bool,NoParams>{
+  final TrainingRepo TrainingRepository;
+
+  CheckTrainingPermissionsUseCase(this.TrainingRepository);
+
+  Future<Either<Failure,bool>> call(NoParams params) async {
+    return await TrainingRepository.CheckPermissions();
+  }
+}
 

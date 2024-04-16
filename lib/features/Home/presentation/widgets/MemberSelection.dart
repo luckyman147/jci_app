@@ -3,10 +3,15 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/widgets/loading_widget.dart';
+import '../../../MemberSection/domain/usecases/MemberUseCases.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
+import '../../../MemberSection/presentation/pages/memberProfilPage.dart';
 import '../../../auth/domain/entities/Member.dart';
 //import '../../../auth/presentation/bloc/Members/members_bloc.dart';
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
@@ -21,7 +26,7 @@ Widget MemberContainer(mediaQuery,Member item)=>BlocBuilder<FormzBloc, FormzStat
       return  Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          imageWidget(item),
+          imageWidget(item,50,23),
           SizedBox(
             width: mediaQuery.size.width / 3,
             child: ElevatedButton(
@@ -32,7 +37,7 @@ Widget MemberContainer(mediaQuery,Member item)=>BlocBuilder<FormzBloc, FormzStat
 
                   Navigator.pop(context);
 
-                }, child: Text(ff.id==item.id? "Selected":"Select",
+                }, child: Text(ff.id==item.id? "Selected".tr(context):"Select".tr(context),
 
               style:PoppinsSemiBold(17,
 
@@ -72,7 +77,7 @@ Widget bottomMemberSheet(BuildContext context, MediaQueryData mediaQuery,
             child: Padding(
               padding: paddingSemetricHorizontal(),
               child:
-              member!=null&& member.firstName.isNotEmpty?imageWidget(member):
+              member!=null&& member.firstName.isNotEmpty?imageWidget(member,40,23):
               Text("$text",style: PoppinsNorml(18, ThirdColor),),
             ),
           )),
@@ -104,7 +109,7 @@ Widget MembersBottomSheet(String text,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(
-              "Choose $text",
+              "${"Choose".tr(context)} $text",
               style: PoppinsSemiBold(
                 mediaQuery.devicePixelRatio * 6,
                 PrimaryColor,
@@ -139,7 +144,7 @@ Widget MembersBottomSheet(String text,
                       Icons.search,
                       color: textColor,
                     ),
-                    hintText: "Search for a $text",
+                    hintText: "${"Search for a".tr(context)} $text",
                     hintStyle: PoppinsRegular(
                       mediaQuery.devicePixelRatio * 6,
                       textColor,
@@ -198,8 +203,8 @@ Widget MembersWidget(MediaQueryData mediaQuery,String name)=>BlocConsumer<Member
 
     }
     else if (state is MemberByNameLoadedState){
-      debugPrint(state.toString());
-      debugPrint("name is ${name.isEmpty}");
+
+
       if (name.isNotEmpty){
         return RefreshIndicator(
             onRefresh: () {
@@ -243,13 +248,38 @@ Widget MembersDetails(List<Member> members,mediaQuery)=>ListView.separated(
 
   itemCount: members.length,
   itemBuilder: (context, index) {
-    return MemberContainer(mediaQuery, members[index]);
+    return BlocBuilder<ChangeSboolsCubit, ChangeSboolsState>(
+  builder: (context, state) {
+    return InkWell(
+        onTap: (){
+        Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (BuildContext context) {
+                return  MemberSectionPage(id:members[index].id);
+              },
+            ),);
+
+
+
+
+          context.read<MembersBloc>().add(GetMemberByIdEvent( MemberInfoParams(id: members[index].id,status: true)));
+        },
+
+        child: MemberContainer(mediaQuery, members[index]));
+  },
+);
   },
   separatorBuilder: (BuildContext context, int index) { return const SizedBox(height: 10,);  },
 
-);Widget imageWidget(Member item){
+);
+
+
+
+
+
+Widget imageWidget(Member item,double height , double size){
 if (item.Images.isNotEmpty){
-  log("image is ${item.Images[0]['url']}");
+
 }
   return Row(
     children: [
@@ -257,8 +287,8 @@ if (item.Images.isNotEmpty){
           ?  ClipRRect(
         borderRadius: BorderRadius.circular(100),
         child: Container(
-          height: 50,
-          width: 50,
+          height: height,
+          width: height,
           color: textColor,
         ),
 
@@ -270,13 +300,13 @@ if (item.Images.isNotEmpty){
         borderRadius: BorderRadius.circular(100),
         child: Image.memory(
           base64Decode(item.Images[0]['url']),
-          width: 50,
-          height: 40,
+          width: height,
+          height: height,
           fit: BoxFit.cover,
         ),
       ),
       const SizedBox(width: 8),
-      Text(item.firstName, style: PoppinsSemiBold(23, textColorBlack, TextDecoration.none)),]);}
+      Text(item.firstName, style: PoppinsSemiBold(size, textColorBlack, TextDecoration.none)),]);}
 
 
 

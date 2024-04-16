@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 
 import 'package:jci_app/core/error/Failure.dart';
@@ -8,6 +10,8 @@ import 'package:jci_app/features/Home/data/datasources/events/event_remote_datas
 
 import 'package:jci_app/features/Home/domain/entities/Event.dart';
 
+import '../../../../../core/config/services/store.dart';
+import '../../../../../core/config/services/verification.dart';
 import '../../../../../core/error/Exception.dart';
 import '../../../domain/repsotories/EventRepo.dart';
 import '../../model/events/EventModel.dart';
@@ -93,7 +97,7 @@ if (await networkInfo.isConnected) {
 if (await networkInfo.isConnected) {
       try {
         final remoteEvents = await eventRemoteDataSource.getEventsOfTheMonth();
-        eventLocalDataSource.cacheEventsOfTheMonth(remoteEvents);
+
         return Right(remoteEvents);
       } on ServerException {
         return Left(ServerFailure());
@@ -244,6 +248,20 @@ on EmptyDataException {
     else {
       return Left(OfflineFailure());
     }
+  }
+
+  @override
+  Future<Either<Failure, bool>> CheckPermissions() async{
+   final eventPermission=await  eventLocalDataSource.getPermissions();
+  final userPermissions=await Store.getPermissions();
+if(eventPermission .isEmpty || userPermissions.isEmpty){
+    return Right(false);
+  }
+  else{
+    log(eventPermission.toString());
+  return hasCommonElement(eventPermission, userPermissions)?Right(true):Right(false);
+  }
+
   }
 
 }

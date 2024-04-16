@@ -4,6 +4,7 @@ import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Compoenents.dart';
 
+import '../../domain/usercases/ActivityUseCases.dart';
 import '../bloc/Activity/activity_cubit.dart';
 
 class ActivityDetailsPage extends StatefulWidget {
@@ -21,17 +22,17 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
   @override
   void initState() {
     if (widget.Activity == 'Meetings') {
-   act=activity.Meetings;
-      context.read<AcivityFBloc>().add(GetActivitiesByid( id: widget.id, act: activity.Meetings));
+      final result=        activityParams(type: activity.Meetings, act: null,id: widget.id);
+      context.read<AcivityFBloc>().add(GetActivitiesByid(params: result));
     }
     else if (widget.Activity == 'Trainings') {
-      act=activity.Trainings;
-      context.read<AcivityFBloc>().add(GetActivitiesByid( id: widget.id, act: activity.Trainings));
+      final result=        activityParams(type: activity.Trainings, act: null,id: widget.id);
+      context.read<AcivityFBloc>().add(GetActivitiesByid(params: result));
 
     }
     else if (widget.Activity == 'Events') {
-      act=activity.Events;
-      context.read<AcivityFBloc>().add(GetActivitiesByid( id: widget.id, act: activity.Events));
+      final result=        activityParams(type: activity.Events, act: null,id: widget.id);
+      context.read<AcivityFBloc>().add(GetActivitiesByid(params: result));
     }
    // if (widget.Activity == 'Events') {
    //context.read<AcivityFBloc>().add(GetActivitiesByid( id: widget.id, act: activity.Events));

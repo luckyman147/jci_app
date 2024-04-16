@@ -146,6 +146,7 @@ final tokens= await Store.GetTokens();
       final Map<String, dynamic> decodedJson = json.decode(response.body) ;
 
       final TeamModel teamModel = TeamModel.fromJson(decodedJson);
+
       return teamModel;
 
     } else if (response.statusCode == 400) {
@@ -159,9 +160,9 @@ final tokens= await Store.GetTokens();
 
   @override
   Future<Unit> updateTeam(TeamModel Team) {
-log("Team"+Team.toString());
+
     final body =Team.toUpdatejson();
-log("sbody"+body.toString() );
+
     debugPrint(body.toString());
     return client.put(
       Uri.parse(TeamUrl+Team.id),
@@ -215,7 +216,7 @@ log("sbody"+body.toString() );
         final List<dynamic> decodedJson = json.decode(response.body) ;
 
 
-        log("message");
+
         final List<TeamModel> teams = decodedJson.map((e) => TeamModel.fromJson(e)).toList();
 
         return teams;
@@ -243,7 +244,7 @@ body: json.encode({"Member":memberid,"Status":Status}),
     return response.then((response) async {
       log( response.statusCode.toString());
       if (response.statusCode == 200) {
-        final List<dynamic> decodedJson = json.decode(response.body) ;
+
         return Future.value(unit);
       } else if (response.statusCode == 400) {
         throw EmptyDataException();

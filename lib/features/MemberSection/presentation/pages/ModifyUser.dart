@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/util/DialogWidget.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
@@ -78,6 +80,7 @@ class _ModifyUserState extends State<ModifyUser> {
       SnackBarMessage.showSuccessSnackBar(message: "Updated Succefully", context: context);
 
       context.go('/home');
+      context.read<MembersBloc>().add(GetUserProfileEvent(true));
     }
     else if(state is MemberFailure){
       SnackBarMessage.showErrorSnackBar(message: state.message, context: context);
@@ -92,11 +95,11 @@ class _ModifyUserState extends State<ModifyUser> {
 
        ProfileComponents.imagezChanged(state.image,med,context)
     ,
-              TextfieldNormal("First Name", "Enter your first name",firstNameController,(poo){}),
-              TextfieldNormal("Last Name", "Enter your Last name",lastNameController,(poo){}),
+              TextfieldNormal(context,"First Name".tr(context), "Enter your first name",firstNameController,(poo){}),
+              TextfieldNormal(context,"Last Name".tr(context), "Enter your Last name",lastNameController,(poo){}),
               ProfileComponents.TextfieldNum("Phone Number", "Enter your Phone Number",NumberController,(poo){}),
-              ProfileComponents.SaveChangesButton(widget.member,firstNameController,lastNameController,NumberController,
-                  state.image,context,_formKey),
+              ProfileComponents.SaveChangesButton(()async{  FunctionMember.saveMember(  widget.member,firstNameController,lastNameController,NumberController,
+                  state.image,context,_formKey);}),
           ]),
   ),
 );

@@ -11,6 +11,7 @@ import '../../../features/Home/data/model/events/EventModel.dart';
 class EventStore{
   const EventStore._();
   static const String _CachedEventsKey= 'CachedEvents';
+  static const String _eventPermissionsKey= 'eventPermissions';
   static const String _CachedEventsOfTheWeekKey= 'CachedEventsOfTheWeek';
   static const String _CachedEventsOfTheMonthKey= 'CachedEventsOfTheMonth';
   static Future<void> cacheEvents(List<EventModel> events) async{
@@ -19,16 +20,7 @@ class EventStore{
     pref.setString(_CachedEventsKey, jsonEncode(EventsModelToJson));
   }
 
-  static Future<void> cacheEventsOfTheWeek(List<EventModel> events) async{
-    final pref = await SharedPreferences.getInstance();
-    List EventsModelToJson=events.map((e) => e.toJson()).toList();
-    pref.setString(_CachedEventsOfTheWeekKey, jsonEncode(EventsModelToJson));
-  }
-  static Future<void> cacheEventsOfTheMonth(List<EventModel> events) async{
-    final pref = await SharedPreferences.getInstance();
-    List EventsModelToJson=events.map((e) => e.toJson()).toList();
-    pref.setString(_CachedEventsOfTheMonthKey, jsonEncode(EventsModelToJson));
-  }
+
   static Future<List<EventModel>> getCachedEvents() async{
     final pref = await SharedPreferences.getInstance();
     final cachedEvents=pref.getString(_CachedEventsKey);
@@ -38,22 +30,22 @@ class EventStore{
     }
     return [];
   }
-  static Future<List<EventModel>> getCachedEventsOfTheWeek() async{
+  static Future<void> clearCache() async{
     final pref = await SharedPreferences.getInstance();
-    final cachedEvents=pref.getString(_CachedEventsOfTheWeekKey);
-    if(cachedEvents!=null){
-      List<dynamic> eventsJson=jsonDecode(cachedEvents);
-      return  eventsJson.map<EventModel>((e) => EventModel.fromJson(e)).toList();
+    pref.remove(_CachedEventsKey);
+    pref.remove(_eventPermissionsKey);
+  }
+  static Future<void> saveEventPermissions(List<String> eventPermissions) async{
+    final pref = await SharedPreferences.getInstance();
+    pref.setStringList(_eventPermissionsKey, eventPermissions);
+  }
+  static Future<List<String>> getEventPermissions() async{
+    final pref = await SharedPreferences.getInstance();
+    final eventPermissions=pref.getStringList(_eventPermissionsKey);
+    if(eventPermissions!=null){
+      return eventPermissions;
     }
     return [];
   }
-  static Future<List<EventModel>> getCachedEventsOfTheMonth() async{
-    final pref = await SharedPreferences.getInstance();
-    final cachedEvents=pref.getString(_CachedEventsOfTheMonthKey);
-    if(cachedEvents!=null){
-      List<dynamic> eventsJson=jsonDecode(cachedEvents);
-      return  eventsJson.map<EventModel>((e) => EventModel.fromJson(e)).toList();
-    }
-    return [];
-  }
+
 }

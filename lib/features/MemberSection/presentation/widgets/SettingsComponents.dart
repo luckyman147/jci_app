@@ -5,8 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
@@ -20,6 +22,8 @@ import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
 class SettingsComponent {
   static isProfile(SettingsBools state) {
     return state == SettingsBools.Profile;
+  }static isMem(SettingsBools state) {
+    return state == SettingsBools.Members;
   }
   static isLanguage(SettingsBools state) {
     return state == SettingsBools.Language;
@@ -88,23 +92,16 @@ static isMode(SettingsBools state) {
       padding: const EdgeInsets.all(8.0),
       child: BlocBuilder<ChangeSboolsCubit, ChangeSboolsState>(
   builder: (context, state) {
+
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           rowAction(context, "Profile", Icons.person,isProfile(state.settings),Profile(context,member),MediaQuery.of(context),SettingsBools.Profile),
+          MembersAdmin(state),
 
-              FutureBuilder(future: context.read<localeCubit>().cachedLanguageCode(),
-                 builder: (contex,snat) {
-                    if(snat.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    }
+              Language(context, state),
 
-                   return rowAction(context, "Language (${snat.data})", Icons.language,
-                       isLanguage(state.settings),WidgetChangeLanguageWidget(context,MediaQuery.of(context)),MediaQuery.of(context),SettingsBools.Language);
-                 }
-               ),
-
-          rowAction(context, "Dark Mode", Icons.dark_mode,  isMode(state.settings),Container(),MediaQuery.of(context),SettingsBools.Mode),
+          rowAction(context, "Dark Mode".tr(context), Icons.dark_mode,  isMode(state.settings),Container(),MediaQuery.of(context),SettingsBools.Mode),
           rowAction(context, "Enable Notifications", Icons.notification_important_rounded, isNotification(state.settings),Container(),MediaQuery.of(context),SettingsBools.Notifications),
           Padding(
             padding: paddingSemetricVertical(),
@@ -120,13 +117,52 @@ static isMode(SettingsBools state) {
                       padding: paddingSemetricHorizontal(),
                       child: IconAndTextInfo(Icons.cached, "Clear Cache"),
                     ))),
-          ),signoput(context)
+          ),signoput(context),
 
         ],
       );
   },
 ),
     );
+  }
+
+  static FutureBuilder<String?> Language(BuildContext context, ChangeSboolsState state) {
+    return FutureBuilder(future: context.read<localeCubit>().cachedLanguageCode(),
+               builder: (contex,snat) {
+                  if(snat.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+
+                 return rowAction(context, "Language (${snat.data})", Icons.language,
+                     isLanguage(state.settings),WidgetChangeLanguageWidget(context,MediaQuery.of(context)),MediaQuery.of(context),SettingsBools.Language);
+               }
+             );
+  }
+
+  static FutureBuilder<bool> MembersAdmin(ChangeSboolsState state) {
+    return FutureBuilder(
+          builder: (context,snap) {
+            if(snap.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            }
+          else if (snap.data != null) {
+            if (snap.data==true) {
+              return rowAction(
+                  context,
+                  "Members",
+                  Icons.people,
+                  isMem(state.settings),
+                  ProfileComponents.MembersWidgetOnlyName(
+                      MediaQuery.of(context)),
+                  MediaQuery.of(context),
+                  SettingsBools.Members);
+            }
+          else{return SizedBox();}
+          }
+          else{return SizedBox();}
+
+          }, future: FunctionMember.isAdminAndSuperAdmin(),
+        );
   }
 
   static Padding signoput(BuildContext context) {
@@ -186,16 +222,26 @@ static   Widget LanguageButton(BuildContext context,String language,String langu
       onTap: (){
         context.read<localeCubit>().changeLanguage(languageCode);
       },
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Padding(
-            padding: paddingSemetricHorizontal(),
-            child: SvgPicture.string(flag),
+      child: BlocBuilder<localeCubit, LocaleState>(
+  builder: (context, state) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: paddingSemetricHorizontal(),
+                child: SvgPicture.string(flag),
+              ),
+              Center(child: Text(language,style:  PoppinsNorml(20, textColorBlack),)),
+            ],
           ),
-          Center(child: Text(language,style:  PoppinsNorml(20, textColorBlack),)),
-        ],
-      ),
+        state.locale == Locale(languageCode) ? Icon(Icons.check_circle,color: PrimaryColor,) : SizedBox(),
+      ],
+    );
+  },
+),
     );
   }
 

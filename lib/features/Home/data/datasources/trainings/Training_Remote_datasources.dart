@@ -16,6 +16,7 @@ import '../../../../../core/config/services/uploadImage.dart';
 import '../../../../../core/error/Exception.dart';
 
 import '../../model/TrainingModel/TrainingModel.dart';
+import '../activities/ActivityRemote.dart';
 
 abstract class TrainingRemoteDataSource {
   Future<List<TrainingModel>> getAllTraining();
@@ -216,36 +217,7 @@ return await ParticiActivity(id, client, getTrainingsUrl);
   }
 
   @override
-  Future<Unit> updateTraining(TrainingModel Training) {
+  Future<Unit> updateTraining(TrainingModel Training) async {
     final body =Training.toJson();
-    return client.patch(
-      Uri.parse(getTrainingsUrl+Training.id+"/edit"),
-      headers: {"Content-Type": "application/json"},
-      body: json.encode(body),
-    ).then((response) async {
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> decodedJson = json.decode(response.body) ;
-
-
-        final Update_response=await UpdateImage(decodedJson['_id'], Training.CoverImages.first,getTrainingsUrl);
-        if (Update_response.statusCode==200){
-          return Future.value(unit);
-        }
-        else if (Update_response.statusCode==400){
-
-          throw EmptyDataException();
-
-        }else {
-          throw ServerException();
-        }
-
-      }
-      else if (response.statusCode == 400) {
-        throw WrongCredentialsException();
-      }
-      else {
-        throw ServerException();
-      }
-    });
-  }
+   return await  EditFunction(Training, body, getTrainingsUrl+Training.id+"/edit", getTrainingsUrl, client);}
 }

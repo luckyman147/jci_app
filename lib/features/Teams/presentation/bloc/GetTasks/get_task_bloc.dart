@@ -131,7 +131,7 @@ void _updateFiles(UpdateFile event, Emitter<GetTaskState> emit) async {
       }, (r) {
         log('message +$r');
         List<Map<String, dynamic>> updatedTasks = AddSousFieldAction(event.fields['taskid']!,
-            toMapFile(r), "attachedFile");
+            TeamFunction.toMapFile(r), "attachedFile");
 
         checkState(emit, updatedTasks);
 
@@ -150,17 +150,16 @@ log( "ddddddddddddddddddddd");
 
 
         List<Map<String, dynamic>> updatedTasks = AddSousFieldAction(event.fields['taskid']!,
-            toMapMember(event.fields['member']as Member), "AssignTo");
+            TeamFunction.toMapMember(event.fields['member']as Member), "AssignTo");
 
 checkState(emit, updatedTasks);
 
-log(state.tasks.toString());
       }else{
         final updatedTasks=[...state.tasks.map((task) {
           if (task['id'] == event.fields['taskid']) {
             // Remove the checklist with the matching ID
             task['AssignTo'] = UnmodifiableListView(task['AssignTo'].where((member) => member['id'] != event.fields['memberId'] && member['_id'] != event.fields['memberId']).toList());
-            log(task['AssignTo'].toString()+"ddd");
+
           }
           return task;
         })];
@@ -218,7 +217,7 @@ void reset(resetevent event, Emitter<GetTaskState> emit) {
         if (state.status == TaskStatus.initial || state.status == TaskStatus.error|| state.status == TaskStatus.Changed){
         final result = await getTasksOfTeamUseCase(event.id);
         final r= result.getOrElse(() => []);
-            emit(state.copyWith(tasks: r.map((e) => toMap(e)).toList(),status: TaskStatus.success,
+            emit(state.copyWith(tasks: r.map((e) => TeamFunction.toMap(e)).toList(),status: TaskStatus.success,
 
 
 
@@ -273,7 +272,7 @@ void _taskUpdateTime(UpdateTimeline event, Emitter<GetTaskState> emit) async {
 }
 
 void UpdateTaskField(GetTaskEvent event, Emitter<GetTaskState> emit,String field,dynamic value,String id) {
-     final act = findTaskById(state.tasks, id);
+     final act =TeamFunction. findTaskById(state.tasks, id);
   act[field] = value;
   List<Map<String, dynamic>> updatedTasks = List.from(state.tasks);
   updatedTasks[updatedTasks.indexOf(act)] = act;
@@ -282,7 +281,7 @@ void UpdateTaskField(GetTaskEvent event, Emitter<GetTaskState> emit,String field
 
 
 void                        UpdateTimelineFun(UpdateTimeline event, Emitter<GetTaskState> emit,) {
-     final act = findTaskById(state.tasks, event.timeline['id']);
+     final act =TeamFunction. findTaskById(state.tasks, event.timeline['id']);
   act["StartDate"] = event.timeline['StartDate'];
   act["Deadline"] = event.timeline['Deadline'];
   List<Map<String, dynamic>> updatedTasks = List.from(state.tasks);
@@ -362,7 +361,7 @@ void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
             (act) {
         return      state.copyWith(tasks: UnmodifiableListView(
                 [
-                  toMap(act),...state.tasks
+                  TeamFunction.      toMap(act),...state.tasks
                 ],),
           status: TaskStatus.success,
 
@@ -377,7 +376,7 @@ void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
     return either.fold(
             (failure) => AddTaskError(message: 'No task found ',),
             (act) {
-              List<Map<String, dynamic>> updatedTasks = AddSousFieldAction(id, toMapChecklist(act),"CheckLists");
+              List<Map<String, dynamic>> updatedTasks = AddSousFieldAction(id, TeamFunction.toMapChecklist(act),"CheckLists");
 
               return state.copyWith(tasks: updatedTasks, status: TaskStatus.Changed,);
           }
@@ -385,7 +384,7 @@ void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
   }
 
   List<Map<String, dynamic>> AddSousFieldAction(String id, dynamic act,String field) {
-    Map<String, dynamic> updatedTask = findTaskById(state.tasks, id);
+    Map<String, dynamic> updatedTask = TeamFunction.findTaskById(state.tasks, id);
 
     List<Map<String, dynamic>> updatedCheckLists = List.from(updatedTask[field]);
     updatedCheckLists.insert(0, act);
@@ -403,7 +402,7 @@ void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
               return state.copyWith(status: TaskStatus.error,errorMessage: mapFailureToMessage(failure),);
             },
             (act) {
-          Map<String, dynamic> updatedTask = findTaskById(state.tasks, id);
+          Map<String, dynamic> updatedTask = TeamFunction.findTaskById(state.tasks, id);
             List<Map<String, dynamic>> updatedCheckLists = List.from(updatedTask['CheckLists']);
             int index = updatedCheckLists.indexWhere((checklist) => checklist['id'] == checkid);
 

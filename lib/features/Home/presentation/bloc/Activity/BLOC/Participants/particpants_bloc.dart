@@ -10,6 +10,7 @@ import '../../../../../../../core/config/services/verification.dart';
 import '../../../../../../../core/error/Failure.dart';
 import '../../../../../../../core/strings/failures.dart';
 import '../../../../../domain/entities/Activity.dart';
+import '../../../../../domain/usercases/ActivityUseCases.dart';
 import '../../../../../domain/usercases/EventUseCases.dart';
 import '../../../../../domain/usercases/MeetingsUseCase.dart';
 import '../../../../../domain/usercases/TrainingUseCase.dart';
@@ -18,14 +19,11 @@ part 'particpants_event.dart';
 part 'particpants_state.dart';
 
 class ParticpantsBloc extends Bloc<ParticpantsEvent, ParticpantsState> {
-final   ParticipateEventUseCase participateEventUseCase;
-final LeaveEventUseCase leaveEventUseCase;
-final ParticipateTrainingUseCase participateTrainingUseCase;
-final LeaveTrainingUseCase leaveTrainingUseCase;
-final ParticipateMeetingUseCase participateUseCase;
-final LeaveMeetingUseCase leaveMeetingUseCase;
+  final ParticipateActivityUseCases participateActivityUseCases;
+  final LeaveActivityUseCases leaveActivityUseCases;
 
-  ParticpantsBloc(this.participateEventUseCase, this.leaveEventUseCase, this.participateTrainingUseCase, this.leaveTrainingUseCase, this.participateUseCase, this.leaveMeetingUseCase)
+
+  ParticpantsBloc({required this.leaveActivityUseCases, required this.participateActivityUseCases})
       : super(ParticpantsInitial( isParticipantAdded: [])) {
     on<ParticpantsEvent>((event, emit) {
       // TODO: implement event handler
@@ -41,41 +39,20 @@ void _AddParticipent(
       AddParticipantEvent event,
       Emitter<ParticpantsState> emit
       ) async {
-if(event.act ==activity.Events){
 
-    final result = await participateEventUseCase(event.id);
-    emit(_eitherDoneMessageOrErrorState(result, 'Participated Successfully',event.index));
-}
 
-else if(event.act ==activity.Trainings){
-  final result = await participateTrainingUseCase(event.id);
-  emit(_eitherDoneMessageOrErrorState(result, 'Participated Successfully',event.index));
-}
-else if(event.act ==activity.Meetings) {
-  final result = await participateUseCase(event.id);
-  emit(_eitherDoneMessageOrErrorState(
-      result, 'Participated Successfully', event.index));
-}
+    final result = await participateActivityUseCases(event.act);
+    emit(_eitherDoneMessageOrErrorState(result, 'Participated Successfully',event.index,emit));
+
 }void _RemoveParticipent(
     RemoveParticipantEvent event,
       Emitter<ParticpantsState> emit
       ) async {
 
-if (event.act == activity.Events) {
-  final result = await leaveEventUseCase(event.id);
+  final result = await leaveActivityUseCases(event.act);
   emit(_eitherDoneMessageOrErrorState(
-      result, 'Removed Participant Successfully', event.index));
-} else if (event.act == activity.Trainings) {
-  final result = await leaveTrainingUseCase(event.id);
-  emit(_eitherDoneMessageOrErrorState(
-      result, 'Removed Participant Successfully', event.index));
-} else if (event.act == activity.Meetings) {
-  final result = await leaveMeetingUseCase(event.id);
-  emit(_eitherDoneMessageOrErrorState(
-      result, 'Removed Participant Successfully', event.index));
-
-
-}}
+      result, 'Removed Participant Successfully', event.index,emit));
+}
 void init(initstateList event, Emitter<ParticpantsState> emit) {
 
 
@@ -88,7 +65,7 @@ void init(initstateList event, Emitter<ParticpantsState> emit) {
 }
 
   ParticpantsState _eitherDoneMessageOrErrorState(
-    Either<Failure, Unit> either, String message,int index) {
+    Either<Failure, Unit> either, String message,int index,Emitter<ParticpantsState> emit) {
   return either.fold(
         (failure) => ParticipantFailedState(
 

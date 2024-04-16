@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../auth/domain/entities/Member.dart';
@@ -45,7 +46,7 @@ class _SearchPageState extends State<SearchPage> {
                 suffixIcon: Icon(Icons.search, color: textColorBlack,),
                 hintStyle: PoppinsSemiBold(17, textColorBlack, TextDecoration.none),
 
-                hintText: 'Search Activity Name',
+                hintText: 'Search Activity Name'.tr(context),
               ),
             ),
           )
@@ -55,7 +56,7 @@ class _SearchPageState extends State<SearchPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                'Search Page',
+                'Search Page'.tr(context),
               ),
             ],
           ),

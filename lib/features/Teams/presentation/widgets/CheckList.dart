@@ -4,17 +4,22 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 
 import '../../../../core/util/snackbar_message.dart';
 import '../../domain/entities/Checklist.dart';
+import '../../domain/entities/Team.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/TaskIsVisible/task_visible_bloc.dart';
 
 class CheckListWidget extends StatelessWidget {
   final List<Map<String,dynamic>> checkList;
+  final Map<String,dynamic> tasks;
+  final Team team;
   final String id ;
 
-  const CheckListWidget({Key? key, required this.checkList, required this.id}) : super(key: key);
+  const CheckListWidget({Key? key, required this.checkList, required this.id, required this.tasks, required this.team}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,18 +39,14 @@ class CheckListWidget extends StatelessWidget {
                       side: BorderSide(color:textColor, width: 1.5)),
 
                   leading:
-                  buildCheckbox(index, context),
+              ProfileComponents.buildFutureBuilder(buildCheckbox(index, context), true, id, (p0) => FunctionMember.isAssignedOrLoyal(team, tasks['AssignTo'])),
                   title: buildTextField(index,id,context),
 
 
-                  trailing: InkWell(
-                    onTap: () {
-                        context.read<GetTaskBloc>().add(DeleteChecklist(id,checkList[index]['id']));
-                        context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+                  trailing:
+                  ProfileComponents.buildFutureBuilder(                  buildIconButton(context, index),
+                      true, id, (p0) => FunctionMember.isAssignedOrLoyal(team, tasks['AssignTo'])),
 
-                    },
-                    child: Icon(Icons.delete, color: Colors.red, size: 20,),
-                  ),
                 ),
               );
             },
@@ -53,6 +54,17 @@ class CheckListWidget extends StatelessWidget {
         ),
         separatorBuilder: (context, index) => SizedBox(height: 10,),
         itemCount: checkList.length);
+  }
+
+  IconButton buildIconButton(BuildContext context, int index) {
+    return IconButton(
+                  onPressed: () {
+                      context.read<GetTaskBloc>().add(DeleteChecklist(id,checkList[index]['id']));
+                      context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+
+                  },
+                  icon: Icon(Icons.delete, color: Colors.red, size: 20,),
+                );
   }
 
   BoxDecoration buildBoxDecoration() {
@@ -102,7 +114,7 @@ class CheckListWidget extends StatelessWidget {
 
                   },
         onChanged: (value){
-                    log(value);
+
         },
                   enabled: true,
                   controller: TextEditingController(
@@ -116,15 +128,17 @@ class CheckListWidget extends StatelessWidget {
   }
 }
 
-Widget CheckListAddField(TextEditingController controller, String id,FocusNode focus,mediaQuery) =>
+Widget CheckListAddField(TextEditingController controller, String id,FocusNode focus,mediaQuery,Team team,Map<String, dynamic> task,bool mounted ) =>
     BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
       builder: (context, state) {
         return Padding(
           padding: paddingSemetricVerticalHorizontal(h: 18),
           child: InkWell(
-            onTap: () {
+            onTap: () async {
+              if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])){
+                if (!mounted) return ;
               context.read<TaskVisibleBloc>().add(ToggleTaskVisible(false));
-            FocusScope.of(context).requestFocus(focus);
+            FocusScope.of(context).requestFocus(focus);}
             },
             child: Container(
 
@@ -180,7 +194,7 @@ focusNode: focus ,
                             message: "Empty Field", context: context);
                       }
                       else {
-                        log(id);
+
                         context.read<TaskVisibleBloc>().add(
                             ToggleTaskVisible(true));
                         context.read<GetTaskBloc>().add(AddCheckList(

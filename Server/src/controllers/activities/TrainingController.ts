@@ -6,6 +6,7 @@ import { validate } from 'class-validator';
 import { TrainingField, TrainingInputs } from '../../dto/activity.dto';
 import { Member } from '../../models/Member';
 import { Training } from '../../models/activities/TrainingModel';
+import { getMembersInfo, getPermissionIdsByRelated } from '../../utility/role';
 
 //&Public
 
@@ -15,6 +16,8 @@ export const getAllTrainings = async (req: Request, res: Response, next: NextFun
     // Fetch all Trainings and sort them by ActivityBeginDate in ascending order
     const Trainings = await Training.find().sort({ ActivityBeginDate: -1 });
 if (Trainings.length>0) {
+  const permission=await getPermissionIdsByRelated(["Trainings"])
+
     // Format and send the Trainings in the response
     const formattedTrainings = Trainings.map<TrainingField>((Training) => ({
       _id: Training._id,
@@ -38,7 +41,8 @@ if (Trainings.length>0) {
       CoverImages: Training.CoverImages,
     }));
 
-    res.status(200).json({ Trainings: formattedTrainings });}
+    res.status(200).json({        Permissions:permission,
+      Trainings: formattedTrainings });}
     else{
       res.status(400).json({message:"No Trainings found"})
     }
@@ -253,6 +257,8 @@ if (endDate.getTime() <= beginDate.getTime()) {
   
 export const getTrainingById = async (req: Request, res: Response, next: NextFunction) => {
   try {
+  const Permissions=await getPermissionIdsByRelated(["Trainings"])
+
     const id = req.params.id;
     const training = await Training.findById(id);
     if (training) {
@@ -275,8 +281,9 @@ export const getTrainingById = async (req: Request, res: Response, next: NextFun
         ActivityEnddate: training.ActivityEndDate,
         ActivityAdress: training.ActivityAdress,
    
-        participants: training.Participants,
+        participants: await getMembersInfo(training.Participants),
         CoverImages: training.CoverImages,
+        Permissions:Permissions
 
       });
     } else {

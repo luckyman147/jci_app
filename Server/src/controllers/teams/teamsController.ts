@@ -117,6 +117,7 @@ else{
         const teams = await team.find({status:false,Members:memberid}).sort({ createdAt: 'desc' }) .limit(limit).skip(startIndex).exec();
 
    if (teams.length > 0) {
+   console.log(memberid)
         const teamsWithEvent = await Promise.all(
             
           teams.map(async (team) => ({
