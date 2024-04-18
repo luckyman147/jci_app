@@ -5,6 +5,7 @@ import 'package:jci_app/features/about_jci/Domain/useCases/PresidentUseCAses.dar
 import 'package:jci_app/features/about_jci/data/datasources/LocalPresidentsDataSources.dart';
 import 'package:jci_app/features/about_jci/data/datasources/RemotePresidentsDataSources.dart';
 
+import 'Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import 'Presentations/bloc/presidents_bloc.dart';
 import 'data/repository/PresidentRepoImpl.dart';
 
@@ -18,6 +19,7 @@ Future<void> initJci() async {
       sl(),
         sl(),
       ));
+  sl.registerFactory(()=>ActionJciCubit());
   sl.registerLazySingleton<LocalPresidentsDataSources>(()=>LocalPresidentsDataSourcesImpl());
   sl.registerLazySingleton<RemotePresidentsDataSources>(()=>RemotePresidentsDataSourcesImpl(client: sl()));
   sl.registerLazySingleton(()=>GetPresidentsUseCases( repo: sl()));

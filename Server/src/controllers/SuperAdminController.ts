@@ -228,7 +228,7 @@ export const getAllPresidents=async(req:Request, res:Response,next:NextFunction)
             limit: limit
         };
     }
-    const presidents=await LastPresidents.find().limit(limit).skip(startIndex).exec();
+    const presidents=await LastPresidents.find().sort({ createdAt: 'desc' }) .limit(limit).skip(startIndex).exec();
     if (presidents) {
         return res.status(200).json(presidents);
     }else{

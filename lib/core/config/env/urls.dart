@@ -27,7 +27,7 @@ final getTrainingByMonth= "$BaseUrl/Training/LatestofTheMonth";
  String ChangeToMemberUrl(String id )=>"$SuperAdminUrl/ChangeToMember/$id";
  String CreatePresidents( )=>"$SuperAdminUrl/CreateLastPresident";
  String UpdatePresidents(String id )=>"$SuperAdminUrl/UpdatePresident/$id";
- String getAllPresidents( )=>"$SuperAdminUrl/getAllPresidents";
+ String getAllPresidents( String start,String limit)=>"$SuperAdminUrl/getAllPresidents?start=$start&limit=$limit";
  String DeletePresidents(String id )=>"$SuperAdminUrl/DeleteLastPresident/$id";
  String CotisationUrl(String id )=>"$getMember/$id/UpdateCotisation";
  String validationUrl(String memberid )=>"$getMember/$memberid/validate";

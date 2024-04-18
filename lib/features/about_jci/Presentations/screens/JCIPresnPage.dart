@@ -25,6 +25,13 @@ class _PresentationsPageState extends State<PresentationsPage> {
         ),
         backgroundColor: textColorWhite,
       ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          child: SizedBox(),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+
+
       body:SafeArea(child: SingleChildScrollView(child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,

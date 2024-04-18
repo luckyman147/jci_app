@@ -371,7 +371,7 @@ Widget TextfieldNormal(BuildContext context,String name, String HintText,
             style: PoppinsRegular(18, textColorBlack),
           ),
           TextFormField(
-            keyboardType:  name == "Points"
+            keyboardType:  name == "Points"||name.contains("Year")
                 ? TextInputType.number
                 : TextInputType.text,
             textInputAction: TextInputAction.next,

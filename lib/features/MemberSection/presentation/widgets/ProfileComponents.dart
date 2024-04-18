@@ -122,21 +122,21 @@ static     var boxDecoration = BoxDecoration(
         foregroundColor: PrimaryColor,
         backgroundColor: textColorWhite,
         value: FunctionMember.calculateObjectifs(member.objectifs)/member.objectifs.length,
-        child: phot(member.Images[0]['url'],context),
+        child: phot(member.Images[0]['url'],context,80),
       ),
     ):
     NoPHoto();
   }
 
-  static Container phot(String member,BuildContext context) {
+  static Container phot(String member,BuildContext context,double height) {
     final imageBytes = base64Decode(member);
     final image = Image.memory(imageBytes,fit: BoxFit.contain);
     final screenSize = MediaQuery.of(context).size;
     final avatarSize = (screenSize.width / 3).round();
 
     return Container(
-      width: 80,
-      height: 80,
+      width: height,
+      height: height,
 
 
         child:CircleAvatar(
@@ -147,8 +147,8 @@ static     var boxDecoration = BoxDecoration(
       child: ClipOval(
         child: Image.memory(
          imageBytes,
-          width: 80,
-          height: 80,
+          width: height,
+          height: height,
           fit: BoxFit.contain, // Set the fit property of the Image widget to cover the entire CircleAvatar widget
         ),
       ),

@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void _navigateAfterDelay() async {
     await Future.delayed(const Duration(seconds: 3));
     if (mounted) {
-      check(context);
+      check(context,mounted);
     }
   }
 

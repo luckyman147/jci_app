@@ -16,38 +16,45 @@ class PresidentRepoImpl implements PresidentsRepo  {
 
   PresidentRepoImpl({required this.localPresidentsDataSources, required this.remotePresidentsDataSources, required this.networkInfo});
   @override
-  Future<Either<Failure, Unit>> CreatePresident(President president) async{
-    return await _getMessage(remotePresidentsDataSources.CreatePresident(PresidentModel.fromEntity(president)));
+  Future<Either<Failure, President>> CreatePresident(President president) async{
+    await localPresidentsDataSources.CacheUpdated(true);
+
+    return await _getMessagePresident(remotePresidentsDataSources.CreatePresident(PresidentModel.fromEntity(president)));
   }
 
   @override
   Future<Either<Failure, Unit>> DeletePresident(String id) async{
+    await localPresidentsDataSources.CacheUpdated(true);
+
     return await _getMessage(remotePresidentsDataSources.DeletePresident(id));
 
   }
 
   @override
-  Future<Either<Failure, Unit>> UpdateImagePresident(President president) async{
+  Future<Either<Failure, President>> UpdateImagePresident(President president) async{
     final presidentmodel= PresidentModel.fromEntity(president);
-    return await _getMessage(remotePresidentsDataSources.UpdateImagePresident(presidentmodel));
+    await localPresidentsDataSources.CacheUpdated(true);
+    return await _getMessagePresident(remotePresidentsDataSources.UpdateImagePresident(presidentmodel));
 
   }
 
   @override
-  Future<Either<Failure, Unit>> UpdatePresident(President president)async  {
+  Future<Either<Failure, President>> UpdatePresident(President president)async  {
     final presidentmodel= PresidentModel.fromEntity(president);
-    return await _getMessage(remotePresidentsDataSources.UpdatePresident(presidentmodel));
+    await localPresidentsDataSources.CacheUpdated(true);
+
+    return await _getMessagePresident(remotePresidentsDataSources.UpdatePresident(presidentmodel));
 
   }
 
   @override
-  Future<Either<Failure, List<President>>> getPresidents() async{
+  Future<Either<Failure, List<President>>> getPresidents(String start,String limit) async{
     if (await networkInfo.isConnected) {
 
       try {
 
-        final remoteTeams = await remotePresidentsDataSources.getPresidents();
-        localPresidentsDataSources.CachePresidents(remoteTeams);
+        final remoteTeams = await remotePresidentsDataSources.getPresidents(start,limit);
+        localPresidentsDataSources.CachePresidents(remoteTeams, start, limit);
         return Right(remoteTeams);
 
       } on ServerException {
@@ -55,7 +62,7 @@ class PresidentRepoImpl implements PresidentsRepo  {
       }
     } else {
       try {
-        final localTeams = await remotePresidentsDataSources.getPresidents();
+        final localTeams = await localPresidentsDataSources.getPresidents(start,limit);
         return Right(localTeams);
       } on EmptyCacheException {
         return Left(EmptyCacheFailure());
@@ -89,4 +96,33 @@ class PresidentRepoImpl implements PresidentsRepo  {
     else {
       return Left(OfflineFailure());
     }
-}}
+}
+  Future<Either<Failure, President>> _getMessagePresident(
+      Future<PresidentModel> presidents) async {
+    if (await networkInfo.isConnected) {
+      try {
+    final pre=    await presidents;
+        return  Right(pre);
+      }
+
+      on EmptyDataException {
+        return Left(EmptyDataFailure());
+      } on WrongCredentialsException {
+        return Left(WrongCredentialsFailure());
+      }
+      on UnauthorizedException {
+
+        return Left(UnauthorizedFailure());
+      }
+      on ServerException {
+        return Left(ServerFailure());
+      }
+    }
+
+
+    else {
+      return Left(OfflineFailure());
+    }
+}
+
+}

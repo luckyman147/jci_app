@@ -8,7 +8,7 @@ import 'LastPresidentsWidget.dart';
 
 class PresidentsImpl{
 
-  static Widget GetAllPresidents(){
+  static Widget GetAllPresidents(ScrollController controller,bool mountde){
     return BlocBuilder<PresidentsBloc,PresidentsState>(builder: (context,state){
 switch(state.state){
   case presidentsStates.Initial:
@@ -19,9 +19,9 @@ switch(state.state){
     return Center(child: LoadingWidget
     (),);
     case presidentsStates.Changed:
-    return LastPresidentsWidget(presidents: state.presidents,);
+    return LastPresidentsWidget(presidents: state.presidents, hasReachedMax: state.hasReachedMax, controller: controller, mounted: mountde,);
   case presidentsStates.Loaded:
-return LastPresidentsWidget(presidents: state.presidents,);
+return LastPresidentsWidget(presidents: state.presidents, hasReachedMax: state.hasReachedMax,controller: controller,mounted: mountde,);
   case presidentsStates.Error:
     return Center(child: MessageDisplayWidget(message: state.message,),);
   default:

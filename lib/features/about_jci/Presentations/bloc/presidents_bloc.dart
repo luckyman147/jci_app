@@ -1,10 +1,14 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:jci_app/core/config/services/PresidentsStore.dart';
 import 'package:jci_app/core/strings/failures.dart';
+import 'package:jci_app/core/strings/messages.dart';
 import 'package:jci_app/features/about_jci/Domain/entities/President.dart';
+import 'package:stream_transform/stream_transform.dart';
 
 import '../../../../core/error/Failure.dart';
 import '../../../../core/usescases/usecase.dart';
@@ -13,6 +17,13 @@ import '../../Domain/useCases/PresidentUseCAses.dart';
 part 'presidents_event.dart';
 part 'presidents_state.dart';
 
+const throttleDuration = Duration(milliseconds: 100);
+
+EventTransformer<E> throttleDroppable<E>(Duration duration) {
+  return (events, mapper) {
+    return droppable<E>().call(events.throttle(duration), mapper);
+  };
+}
 class PresidentsBloc extends Bloc<PresidentsEvent, PresidentsState> {
   final CreatePresidentUseCases createPresidentUseCases;
   final DeletePresidentUseCases deletePresidentUseCases;
@@ -25,15 +36,31 @@ class PresidentsBloc extends Bloc<PresidentsEvent, PresidentsState> {
     });
     on<CreatePresident>(_onCreatePresident);
     on<DeletePresident>(_onDeletePresident);
-    on<GetAllPresidentsEvent>(_onGetAllPresidents);
+    on<GetAllPresidentsEvent>(_onGetAllPresidents,transformer: throttleDroppable(throttleDuration));
     on<UpdateImagePresident>(_onUpdateImagePresident);
     on<UpdatePresident>(_onUpdatePresident);
   }
-  void _onGetAllPresidents(GetAllPresidentsEvent event,Emitter<PresidentsState> emit)async {
+  Future<void> _onGetAllPresidents(GetAllPresidentsEvent event,Emitter<PresidentsState> emit)async {
+    if (state.hasReachedMax) return;
     try {
-      emit(state.copyWith(state: presidentsStates.Loading));
-      final result = await getPresidentsUseCases(NoParams());
-      emit(_getAllOrFailure(state, result));
+      if (state.state== presidentsStates.Initial) {
+        final result = await getPresidentsUseCases();
+        return emit(state.copyWith(state: presidentsStates.Loaded,presidents:
+        result.getOrElse(() => []),hasReachedMax: false)
+        );
+      }
+      final result = await getPresidentsUseCases(start: state.presidents.length.toString());
+      final pres=result.getOrElse(() => []);
+     if (pres.isEmpty) {
+     await PresidentStore.setUpdated(false);
+     }
+      emit(pres.isEmpty?state.copyWith(hasReachedMax: true):
+      state.copyWith(
+        state: presidentsStates.Loaded,presidents: List.of(state.presidents)..addAll(pres),
+        hasReachedMax: false
+      )
+      );
+
     }
     catch(e){
       emit(state.copyWith(state: presidentsStates.Error,message: e.toString()));
@@ -53,7 +80,7 @@ class PresidentsBloc extends Bloc<PresidentsEvent, PresidentsState> {
     try {
       emit(state.copyWith(state: presidentsStates.Loading));
       final result = await updatePresidentUseCases(event.president);
-      emit(_createOrFailure(state, result));
+      emit(_UpdateOrFailure(state, result));
 
     }
     catch(e){
@@ -64,7 +91,7 @@ class PresidentsBloc extends Bloc<PresidentsEvent, PresidentsState> {
     try {
       emit(state.copyWith(state: presidentsStates.Loading));
       final result = await updateImagePresidentUseCases(event.president);
-      emit(_createOrFailure(state, result));
+      emit(_UpdateOrFailure(state, result));
 
     }
     catch(e){
@@ -77,7 +104,7 @@ class PresidentsBloc extends Bloc<PresidentsEvent, PresidentsState> {
     try {
       emit(state.copyWith(state: presidentsStates.Loading));
       final result = await deletePresidentUseCases(event.id);
-      emit(_createOrFailure(state, result));
+      emit(_DeleteOrFailure(state, result,event.id));
 
     }
     catch(e){
@@ -88,8 +115,28 @@ class PresidentsBloc extends Bloc<PresidentsEvent, PresidentsState> {
     return result.fold((l) => state.copyWith(state: presidentsStates.Error, message: mapFailureToMessage(l)),
             (r) => state.copyWith(state: presidentsStates.Loaded, presidents: r));
   }
-  PresidentsState _createOrFailure(PresidentsState state, Either<Failure, Unit> result) {
+  PresidentsState _createOrFailure(PresidentsState state, Either<Failure, President> result,) {
     return result.fold((l) => state.copyWith(state: presidentsStates.Error, message: mapFailureToMessage(l)),
-            (r) => state.copyWith(state: presidentsStates.Changed));
+            (r) {
+     final list=List.of(state.presidents)..insert(1,r);
+      return state.copyWith(state: presidentsStates.Changed, message: Added_Successfully,presidents: state.presidents);});
+  } PresidentsState _UpdateOrFailure(PresidentsState state, Either<Failure, President> result,) {
+    return result.fold((l) => state.copyWith(state: presidentsStates.Error, message: mapFailureToMessage(l)),
+            (r) {
+      //index of the item to be updated
+      final index=state.presidents.indexWhere((element) => element.id==r.id);
+      final list=List.of(state.presidents)..removeWhere((element) => element.id==r.id);
+      list.insert(index, r);
+
+
+      return state.copyWith(state: presidentsStates.Changed, message: Added_Successfully,presidents: list);});
+  } PresidentsState _DeleteOrFailure(PresidentsState state, Either<Failure, Unit> result,String id ) {
+    return result.fold((l) => state.copyWith(state: presidentsStates.Error, message: mapFailureToMessage(l)),
+            (r) {
+final list =List.of(state.presidents)..removeWhere((element) => element.id==id);
+    return   state.copyWith(state: presidentsStates.Changed,presidents: list,message: Deleted_Successfully);
+
+
+    });
   }
 }

@@ -16,7 +16,7 @@ import '../../../features/auth/presentation/bloc/auth/auth_bloc.dart';
 import '../../error/Exception.dart';
 
 
-void check(BuildContext context)async {
+void check(BuildContext context,bool mounted)async {
   final authBloc = BlocProvider.of<AuthBloc>(context);
 
 
@@ -24,14 +24,16 @@ void check(BuildContext context)async {
   final language = await Store.getLocaleLanguage();
   final token = await Store.GetTokens();
   final islooged = await Store.isLoggedIn();
+  if (!mounted) return;
+  if (authState is AuthLogoutState || authState is AuthFailureState &&!islooged) {
 
-  if (language == null) {
+    context.go('/login');
+  }
+
+  else  if (language == null) {
     context.go('/screen');
   } else if (islooged && token != null) {
     context.go('/home');
-  }
-  else if (authState is AuthLogoutState || authState is AuthFailureState &&!islooged) {
-    context.go('/login');
   }
   else  {
 

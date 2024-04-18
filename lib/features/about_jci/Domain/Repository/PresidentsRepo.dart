@@ -4,10 +4,10 @@ import '../../../../core/error/Failure.dart';
 import '../entities/President.dart';
 
 abstract class PresidentsRepo {
-  Future<Either<Failure,List<President>>> getPresidents();
-  Future<Either<Failure,Unit> > CreatePresident(President president);
+  Future<Either<Failure,List<President>>> getPresidents(String start,String limit);
+  Future<Either<Failure,President> > CreatePresident(President president);
   Future<Either<Failure,Unit> > DeletePresident(String id);
-  Future<Either<Failure,Unit> > UpdatePresident(President president);
-  Future<Either<Failure,Unit> > UpdateImagePresident(President president);
+  Future<Either<Failure,President> > UpdatePresident(President president);
+  Future<Either<Failure,President> > UpdateImagePresident(President president);
 
 }

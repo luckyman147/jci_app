@@ -33,6 +33,7 @@ import '../../../features/Home/presentation/bloc/IsVisible/bloc/visible_bloc.dar
 import '../../../features/Home/presentation/bloc/textfield/textfield_bloc.dart';
 import '../../../features/MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../features/Teams/presentation/bloc/NumPages/num_pages_bloc.dart';
+import '../../../features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import '../../../injection_container.dart' as di;
 
 // ignore: depend_on_referenced_packages
@@ -49,6 +50,7 @@ List<SingleChildWidget> providersList = [
   BlocProvider(create: (_)=> di.sl<TextFieldBloc>()),
   BlocProvider(create: (_)=> di.sl<MembersBloc>()),
   BlocProvider(create: (_)=> di.sl<ChangeSboolsCubit>()),
+  BlocProvider(create: (_)=> di.sl<ActionJciCubit>()),
   BlocProvider(
       create: (_) => di.sl<AuthBloc>()..add(const RefreshTokenEvent())),
   BlocProvider(create: (_) => di.sl<SignUpBloc>()),
