@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:equatable/equatable.dart';
 import 'package:jci_app/features/auth/presentation/widgets/inputs.dart';
 
@@ -24,14 +26,15 @@ class Member extends Equatable {
   final String role;
 
   factory  Member.fromImages(Map<String, dynamic> data) {
+    log('hey');
     return Member(
 
       points: data['points']??0,
 
-      id: data['id']??data['_id'] ,
+      id: data['id']??data['_id']??"",
       email: data['email']??'',
 
-      firstName: data['firstName'],
+      firstName: data['firstName']??'',
       lastName: data['lastName']??'',
       phone: data['phone']??'',
       password: data['password']??'',

@@ -76,6 +76,7 @@ class PresidentsBloc extends Bloc<PresidentsEvent, PresidentsState> {
       emit(state.copyWith(state: presidentsStates.Error,message: e.toString()));
     }
   }
+  //update or failure
   void _onUpdatePresident(UpdatePresident event,Emitter<PresidentsState> emit)async {
     try {
       emit(state.copyWith(state: presidentsStates.Loading));

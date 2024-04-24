@@ -3,7 +3,18 @@ import 'dart:io';
   final BaseUrl = "http://192.168.1.2"
       ":8080";
   final SuperAdminUrl = "$BaseUrl/Super";
-
+  final BoardUrl = "$BaseUrl/Board";
+  final BoardRoleUrl = "$BaseUrl/BoardRole";
+  final PositionUrl = "$BaseUrl/PositionOfMember";
+  final getYearsUrl= "$BoardUrl/years";
+  final addBoardUrl= "$BoardUrl/AddBoard";
+  final addPosiUrl= "$PositionUrl/AddPosition";
+   String getBoardByYearUrl(String year)=> "$BoardUrl/get/$year";
+   String removeBoardUrl(String year)=> "$BoardUrl/$year";
+   String AddMemberBoardUrl(String id)=> "$PositionUrl/$id/AddMember";
+   String RemoveMemberBoardUrl(String id)=> "$PositionUrl/$id/RemoveMember";
+   String getBoardRoleUrl(int Priority)=> "$BoardRoleUrl/$Priority";
+String RemovePostUrl(String id,String year)=> "$PositionUrl/$id/$year";
 final LoginUrl = "$BaseUrl/auth/login";
 final SignUpUrl = "$BaseUrl/auth/signup";
 final ForgetPasswordUrl = "$BaseUrl/auth/forgetPassword";
@@ -32,6 +43,7 @@ final getTrainingByMonth= "$BaseUrl/Training/LatestofTheMonth";
  String CotisationUrl(String id )=>"$getMember/$id/UpdateCotisation";
  String validationUrl(String memberid )=>"$getMember/$memberid/validate";
  String PointsUrl(String memberid )=>"$getMember/$memberid/UpdatePoints";
+
 final getMeetingByWeek = "$BaseUrl/Meeting/Latestofweek";
 
 final getEventByWeek = "$BaseUrl/Event/Latestofweekend";

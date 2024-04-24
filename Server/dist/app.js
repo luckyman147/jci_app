@@ -20,8 +20,8 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     const app = express();
     yield (0, ConnectDatabase_1.default)();
     yield (0, Express_1.default)(app);
-    app.listen(8000, () => {
-        console.log('server started');
+    app.listen(8080, () => {
+        console.log('server started 8000');
     });
 });
 startServer();

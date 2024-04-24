@@ -16,34 +16,26 @@ __decorate([
 ], CreateMemberInputs.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.Length)(6, 12)
+    (0, class_validator_1.Length)(6, 20)
 ], CreateMemberInputs.prototype, "password", void 0);
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.Length)(6, 16)
+    (0, class_validator_1.IsNotEmpty)()
 ], CreateMemberInputs.prototype, "firstName", void 0);
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.Length)(6, 16)
+    (0, class_validator_1.IsNotEmpty)()
 ], CreateMemberInputs.prototype, "lastName", void 0);
 class EditMemberProfileInputs {
 }
 exports.EditMemberProfileInputs = EditMemberProfileInputs;
 __decorate([
-    (0, class_validator_1.Length)(6, 16)
-], EditMemberProfileInputs.prototype, "firstname", void 0);
+    (0, class_validator_1.IsNotEmpty)()
+], EditMemberProfileInputs.prototype, "firstName", void 0);
 __decorate([
-    (0, class_validator_1.Length)(6, 16)
-], EditMemberProfileInputs.prototype, "lastname", void 0);
+    (0, class_validator_1.IsNotEmpty)()
+], EditMemberProfileInputs.prototype, "lastName", void 0);
 __decorate([
-    (0, class_validator_1.Length)(6, 16)
-], EditMemberProfileInputs.prototype, "address", void 0);
-__decorate([
-    (0, class_validator_1.Length)(8, 12)
+    (0, class_validator_1.IsNotEmpty)()
 ], EditMemberProfileInputs.prototype, "phone", void 0);
-__decorate([
-    (0, class_validator_1.Length)(10, 100)
-], EditMemberProfileInputs.prototype, "description", void 0);
 class MemberLoginInputs {
 }
 exports.MemberLoginInputs = MemberLoginInputs;

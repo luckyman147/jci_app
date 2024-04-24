@@ -18,6 +18,14 @@ import '../bloc/Timeline/timeline_bloc.dart';
 import 'MembersTeamSelection.dart';
 import 'funct.dart';
 import 'package:path_provider/path_provider.dart';
+Widget BuildActions(Function( )act1,Function()act2)=>Row(
+  mainAxisAlignment: MainAxisAlignment.spaceAround,
+  children: [
+    IconButton.outlined(onPressed: act2, icon: Icon(Icons.edit),),
+    IconButton.outlined(onPressed: act1, icon: Icon(Icons.add),),
+  ],
+);
+
 Widget buildAddButton(Function() onadd) {
   return SizedBox(
     height: 30,

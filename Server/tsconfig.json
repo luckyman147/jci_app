@@ -8,6 +8,7 @@
       ,"esModuleInterop": true,   
       "experimentalDecorators": true  ,
       "strictPropertyInitialization": false,      
+      "emitDecoratorMetadata": true,
 
     },
     "include": ["src/**/*.ts", "src/routes/activity/TrainingRoute"],

@@ -1,10 +1,25 @@
 import express from "express";
 import { ChangeToMember, GetAllPermissions, GetMemberById, GetMembers, UpdateCotisation, UpdateMemberPermissions, UpdatePoints, createRole, searchByName, validateMember } from "../controllers";
-import { Authenticate, AuthenticateAdmin } from "../middleware/CommonAuth";
+import { AuthenticateAdmin } from "../middleware/CommonAuth";
 
 
 
 const router =express.Router()
+/**
+ * @swagger
+ * /hello/{name}:
+ *   get:
+ *     summary: Returns a personalized hello message
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: A personalized hello message
+ */
  router.use(AuthenticateAdmin)
  router.get('/Members',GetMembers)
  router.get('/Member/:id',GetMemberById)

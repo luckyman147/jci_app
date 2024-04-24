@@ -24,6 +24,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/formzBloc/
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/textfield/textfield_bloc.dart';
+import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
 
 import 'domain/usercases/ActivityUseCases.dart';
 import 'domain/usercases/MeetingsUseCase.dart';
@@ -35,7 +36,6 @@ Future<void> initActivities() async {
     getTrainingsOfTheMonthUseCase: sl(),
 
     getEventsOfTheMonthUseCase: sl(),
-
  participantBloc: sl(), getAllActivitiesUseCases: sl(), getActivityByIdUseCases: sl(), ));
   sl.registerFactory(() => ParticpantsBloc(leaveActivityUseCases: sl(), participateActivityUseCases: sl()));
 

@@ -164,7 +164,7 @@ final mediaquery = MediaQuery.of(context);
             },
 
             child: Center(child: Text('Login'.tr(context),
-              style: PoppinsSemiBold(24, textColorWhite, TextDecoration.none),)),
+              style: PoppinsSemiBold(18, textColorWhite, TextDecoration.none),)),
           ),
         );
       },

@@ -4,6 +4,8 @@ interface RoleDoc extends Document{
 
    name:string;
     description:string;
+    priority:number;
+
    Members:any[]
 }
 const RoleSchema=new Schema({

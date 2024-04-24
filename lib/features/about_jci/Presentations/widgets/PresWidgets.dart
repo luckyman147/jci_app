@@ -148,34 +148,6 @@ static Widget sheetbody(BoxDecoration boxDecoration, President? president, TextE
 
 }
 
-static  Widget yearForm(String year,BuildContext context,bool m,ScrollController con){
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
-
-    child: InkWell(
-      onTap:()async{
-        context.read<ActionJciCubit>().changeCloneYear(DateTime.now().year.toString());
-        JCIFunctions.showYearPickerDialog(context,con);
-      },
-      child: Container(
-
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          color: textColorWhite,
-          borderRadius: BorderRadius.circular(16),
-
-          border: Border.all(color:PrimaryColor, width: 3.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            year.isEmpty?" Tap to select the Year":
-            "$year - ${int.parse(year)+1}",style: PoppinsNorml(18, ThirdColor, ),),
-        ),
-      ),
-    ),
-  );
-}
 
 static  Padding ButtonActions(BuildContext context, BoxDecoration boxDecoration,IconData icon,String text,Function() onpressed) {
   return Padding(

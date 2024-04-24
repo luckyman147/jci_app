@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/features/about_jci/Presentations/screens/BoardPage.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/widgets/loading_widget.dart';
@@ -61,12 +62,14 @@ class HomeComponents{
                         },
                         child: BlocBuilder<ChangeSboolsCubit, ChangeSboolsState>(
                           builder: (context, state) {
-                            return ProfileComponents.ExpandedContainer(context, ProfileComponents.isJCI(state.state), SizedBox(
+                            return
+                                SizedBox(
                               width: mediaQuery.size.width/1.2,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  Text("Who are we",style: PoppinsSemiBold(18, Colors.black, TextDecoration.none)),
                                   BuildPres(
                                         (){
 
@@ -77,7 +80,11 @@ class HomeComponents{
 
                                   ),
                                   BuildPres(
-                                          (){},'Board'
+                                          (){
+
+                                            Navigator.push(context, MaterialPageRoute(builder: (context)=>BoardPage()));
+
+                                          },'Board'
                                   ), BuildPres(
                                           (){
                                             context.read<PresidentsBloc>().add(GetAllPresidentsEvent());
@@ -90,7 +97,7 @@ class HomeComponents{
 
 
                               ),
-                            ), "Who we are", StatesBool.JCI, mediaQuery,mediaQuery.size.width/1.5,mediaQuery.size.height/5.5);
+                            );
                           },
                         ),
                       ),
@@ -99,7 +106,7 @@ class HomeComponents{
                     Container(
                       width: mediaQuery.size.width/1.5,
                       height: 60,
-                      decoration: ProfileComponents.boxDecoration,
+
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: Text(
@@ -131,18 +138,21 @@ class HomeComponents{
   }
 
 static   Widget BuildPres(Function() onTap,String text,   ) {
-    return InkWell(
-      onTap:onTap,
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
+    return Padding(
+      padding: paddingSemetricVerticalHorizontal(),
+      child: InkWell(
+        onTap:onTap,
+        child: Container(
 
-        decoration: BoxDecoration(
-          color: textColorWhite,
-          borderRadius: BorderRadius.circular(4.0),
-        ),
-        child: Text(
-            text,
-            style: PoppinsRegular(18, textColor)
+
+          decoration: BoxDecoration(
+
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+          child: Text(
+              text,
+              style: PoppinsRegular(18, textColor)
+          ),
         ),
       ),
     );

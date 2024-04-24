@@ -125,7 +125,7 @@ static     var boxDecoration = BoxDecoration(
         child: phot(member.Images[0]['url'],context,80),
       ),
     ):
-    NoPHoto();
+    NoPHoto(80,FunctionMember.calculateObjectifs(member.objectifs)/member.objectifs.length);
   }
 
   static Container phot(String member,BuildContext context,double height) {
@@ -144,28 +144,32 @@ static     var boxDecoration = BoxDecoration(
 
     child: SizedBox(
 
-      child: ClipOval(
-        child: Image.memory(
-         imageBytes,
-          width: height,
-          height: height,
-          fit: BoxFit.contain, // Set the fit property of the Image widget to cover the entire CircleAvatar widget
-        ),
-      ),
+      child: SHAPE(imageBytes, height),
     ),
         )
         );
   }
 
-  static SizedBox NoPHoto() {
+  static ClipOval SHAPE(Uint8List imageBytes, double height) {
+    return ClipOval(
+      child: Image.memory(
+       imageBytes,
+        width: height,
+        height: height,
+        fit: BoxFit.contain, // Set the fit property of the Image widget to cover the entire CircleAvatar widget
+      ),
+    );
+  }
+
+  static SizedBox NoPHoto(double height,double value) {
     return SizedBox(
 
-    width: 80,
-    height: 80,
+    width: height,
+    height: height,
     child: CircleProgressBar(
       backgroundColor: textColorWhite,
       foregroundColor: PrimaryColor,
-      value: 0.2
+      value: value
       ,
       child: Container(
 
@@ -588,7 +592,7 @@ static  Stack imagezChanged(String member,MediaQueryData mediaQuery,BuildContext
     return Padding(
       padding: paddingSemetricHorizontal(h: 20),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+
         children: [
           ElevatedButton(
               style: ElevatedButton.styleFrom(

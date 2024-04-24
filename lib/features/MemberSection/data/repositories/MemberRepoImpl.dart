@@ -160,9 +160,13 @@ class MemberRepoImpl extends MemberRepo {
   Future<Either<Failure, List<Member>>> GetMembers() async {
     if (await networkInfo.isConnected) {
       try {
-        final members = await memberRemote.GetMembers();
-        membersLocalDataSource.CacheMembers(members);
-        return Right(members);
+        final members = await membersLocalDataSource.GetMembers();
+        if (members.isEmpty) {
+          final members = await memberRemote.GetMembers();
+          membersLocalDataSource.CacheMembers(members);
+          return Right(members);
+        }
+         return Right(members);
       } on ServerException {
         return Left(ServerFailure());
       }

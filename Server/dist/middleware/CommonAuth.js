@@ -10,9 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthenticateSuperAdmin = exports.AuthenticateAdmin = exports.Authenticate = void 0;
-const PasswordUtility_1 = require("../utility/PasswordUtility");
+const utility_1 = require("../utility");
 const Authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const validate = yield (0, PasswordUtility_1.validateSignature)(req);
+    const validate = yield (0, utility_1.validateSignature)(req);
     if (validate) {
         next();
     }
@@ -24,7 +24,8 @@ const Authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.Authenticate = Authenticate;
 const AuthenticateAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const validate = yield (0, PasswordUtility_1.validateAdminSignature)(req);
+    const validate = yield (0, utility_1.validateAdminSignature)(req);
+    console.log(validate);
     if (validate) {
         next();
     }
@@ -36,7 +37,7 @@ const AuthenticateAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, 
 });
 exports.AuthenticateAdmin = AuthenticateAdmin;
 const AuthenticateSuperAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const validate = yield (0, PasswordUtility_1.validateSuperAdminSignature)(req);
+    const validate = yield (0, utility_1.validateSuperAdminSignature)(req);
     if (validate) {
         next();
     }

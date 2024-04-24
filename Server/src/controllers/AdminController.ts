@@ -1,12 +1,12 @@
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
-import { CreateRoleInput, ValidateCotisation, ValidateMember, ValidatePoints } from "../dto/admin.dto";
+import { CreateRoleInput, ValidateCotisation, ValidatePoints } from "../dto/admin.dto";
 import { Member } from "../models/Member";
 import { Permission } from "../models/Pemission";
 import { Role } from "../models/role";
-import { findrole, findroleByid, getActivitiesInfo, getFilesInfoByIds, getMeetingsInfo, GetMemberPermission, getteamsInfo, getTrainingInfo } from "../utility/role";
 import { CheckObjectif } from "../utility/objectifcheck";
+import { findrole, findroleByid, getActivitiesInfo, getFilesInfoByIds, getMeetingsInfo, GetMemberPermission, getteamsInfo, getTrainingInfo } from "../utility/role";
 
 
 //& find member
@@ -116,12 +116,22 @@ export const searchByName = async (req: Request, res: Response,next:NextFunction
     if  (admin){
     const firstName = req.params.name
     const result = await Member.find({ firstName: { $regex: new RegExp(firstName, 'i') } })
-  .select(['email', 'firstName', 'Images']).sort({firstName:1});
+  .sort({firstName:1});
 
     if(result.length >0){
-       
+        const ALlmembers = await Promise.all(
+            result// Filtering teams with status true
+                .map(async (member) => ({
+                    id: member._id,
+                    firstName: member.firstName,
+                    email: member.email,
+                    Images:await getFilesInfoByIds(member.Images),
+              
+
+                }))
+        );
      
-          return res.status(200).json(result)
+          return res.status(200).json(ALlmembers)
      }
      return res.status(400).json({"message":" notfound"})
     }

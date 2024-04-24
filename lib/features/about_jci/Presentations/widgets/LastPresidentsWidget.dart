@@ -32,7 +32,7 @@ class LastPresidentsWidget extends StatelessWidget {
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
 
 childAspectRatio: .8,
-          mainAxisSpacing: 20.0,
+          mainAxisSpacing: 10.0,
           crossAxisSpacing: 10.0, maxCrossAxisExtent:380.0,
         ),
         itemBuilder: (BuildContext context, int index) {
@@ -49,11 +49,7 @@ childAspectRatio: .8,
     var boxDecoration = BoxDecoration(
               border: Border.all(color: textColorBlack,width: 2),
     borderRadius: BorderRadius.circular(20),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [textColorWhite,textColorWhite],
-              ),
+
             );
     return InkWell(
       onLongPress: ()async{

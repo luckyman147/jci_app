@@ -30,7 +30,7 @@ const RoleSchema = new mongoose_1.Schema({
     description: {
         type: String
     },
-    members: [{
+    Members: [{
             type: mongoose_1.default.Schema.Types.ObjectId,
             ref: 'Member'
         }]

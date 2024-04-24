@@ -3,8 +3,17 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
+import 'package:jci_app/features/about_jci/Domain/entities/BoardRole.dart';
+import 'package:jci_app/features/about_jci/Domain/useCases/BoardUseCases.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
+import 'package:jci_app/features/about_jci/Presentations/bloc/Board/BoardBloc/boord_bloc.dart';
+import 'package:jci_app/features/about_jci/Presentations/bloc/Board/BoardBloc/boord_bloc.dart';
+import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
+import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/screens/AddUpdatePresidentsPage.dart';
+import 'package:jci_app/features/about_jci/Presentations/widgets/BoardComponents.dart';
+import 'package:jci_app/features/about_jci/Presentations/widgets/BoardImpl.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/PresWidgets.dart';
 
 import '../../../../core/strings/app_strings.dart';
@@ -12,6 +21,8 @@ import '../../../../core/util/snackbar_message.dart';
 import '../../../Home/presentation/widgets/Functions.dart';
 import '../../../MemberSection/presentation/widgets/functionMember.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
+import '../../../auth/domain/entities/Member.dart';
+import '../../Domain/entities/Post.dart';
 import '../../Domain/entities/President.dart';
 import '../bloc/presidents_bloc.dart';
 import 'LastPresidentsWidget.dart';
@@ -40,6 +51,82 @@ class JCIFunctions {
       SnackBarMessage.showErrorSnackBar(message: state.message, context: context);
     }
   }
+
+  static bool stringExistsOrselectedInList(List<String> list, String value) {
+    return list.contains(value);
+  }
+  static void showYearSelectionDialog(BuildContext context) {
+    List<String> yearsList = List.generate(30, (index) => (2022 + index).toString());
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return BoardComponents. AlertAddBoard(yearsList);},
+    );
+  }
+  static void showDeleteBoard(BuildContext context ,String year) {
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return BoardComponents. alertDialogDelete(year, context);
+
+
+
+  });}
+static void showPosAction(BuildContext context,Post post , TextEditingController _SearchController) {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      context: context,
+      builder: (BuildContext context) {
+        return BoardComponents. showPosWidget(context,post,_SearchController);
+      },
+    );
+  }
+  static void showAddNewRole(BuildContext context,Post post) {
+    showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return SizedBox();
+    },
+  );
+  }
+
+
+  static void showAddPosition(BuildContext context,PageController controller) {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      context: context,
+      builder: (BuildContext context) {
+        return BoardComponents. AddPositionWidget(controller);
+      },
+    );
+
+  }
+  static  void ChangeRoleFunction(YearsState state, BoardRole role, BuildContext context) {
+    if (state.newrole['role'] != role) {
+      context.read<YearsBloc>().add(ChangeRoleEvent(role: role));
+    }
+    else{
+      context.read<YearsBloc>().add(ChangeRoleEvent(role: null));
+    }
+  }
+  static   bool isSelected(YearsState state, BoardRole role) => state.newrole['role']!=null&& state.newrole['role'] .id == role.id;
+
+
+
+
+
+
+
+
+
+
+
+
   static Future<void> SHowActionSheet(bool mounted, BuildContext context,
       President? president, TextEditingController name,
       BoxDecoration boxDecoration) async {
@@ -64,7 +151,24 @@ class JCIFunctions {
       log('ffffff');
     }
   }
+  static List<String> insertSorted(List<String> sortedList, String number) {
+    int? numberValue = int.tryParse(number) ?? double.tryParse(number)?.toInt();
+    if (numberValue == null) {
+      throw ArgumentError('The number should be a valid integer or double string.');
+    }
 
+    int index = sortedList.indexWhere((element) {
+      int? elementValue = int.tryParse(element) ?? double.tryParse(element)?.toInt();
+      return elementValue != null && elementValue > numberValue;
+    });
+
+    if (index < 0) {
+      index = sortedList.length;
+    }
+
+    sortedList.insert(index, number);
+    return sortedList;
+  }
 
 static   void update( TaskVisibleState state, BuildContext context, TextEditingController name, President? presidents, PresidentsAction action,GlobalKey<FormState> form,TextEditingController year) {
   if (state.image.isEmpty || !form.currentState!.validate() ){
@@ -83,66 +187,63 @@ static   void update( TaskVisibleState state, BuildContext context, TextEditingC
     context.read<PresidentsBloc>().add(UpdatePresident(president));
   }}
 }
-  static showYearPickerDialog(BuildContext context,ScrollController con) async {
-    final List<double> years = List.generate(
-        (2100 - 1983 + 1), (index) => 1983.0 + index).reversed.toList();
 
-    int yearIndex = years.indexOf(double.parse(context.read<ActionJciCubit>().state.cloneYear));
 
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          constraints: BoxConstraints(
-            minWidth: MediaQuery.of(context).size.width * 0.8,
-            minHeight: MediaQuery.of(context).size.height * 0.6,
-          ),
-          child: BlocBuilder<ActionJciCubit, ActionJciState>(
-            builder: (BuildContext context, state) {
-              return AlertDialog(
-                title: Text('Select Year'),
-                content: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.5,
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  child: Slider(value: yearIndex.toDouble(),
-                  max: years.length.toDouble()-1,
-                    min: 0,
-                    label: years[yearIndex].toString(),
-                    activeColor: PrimaryColor,
-                    inactiveColor: Colors.grey,
-                    onChanged: (value) {
-                       yearIndex = years.indexOf(double.parse(context.read<ActionJciCubit>().state.cloneYear));
 
-                      context.read<ActionJciCubit>().changeCloneYear(
-                          value.toString());
-                    },
-                  )
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text('CANCEL', style: PoppinsRegular(16, textColor)),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  TextButton(
-                    child: Text('SAVE', style: PoppinsRegular(16, PrimaryColor)),
-                    onPressed: () {
-                      context.read<ActionJciCubit>().changeYear(state.cloneYear);
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            },
-          ),
-        );
-      },
-    );
 
+static ListenerBoard(BuildContext context, YearsState state, BoordState ste){
+  if (ste.state == BoardStatus.Changed) {
+
+    context.read<YearsBloc>().add(ChangeBoardYears(year: state.years[0]));
+
+    context.read<YearsBloc>().add(GerBoardYearsEvent());
+
+
+    SnackBarMessage.showSuccessSnackBar(
+        message: ste.message, context: context);
+    context.read<YearsBloc>().add(ChangeCloneYear(year:""));
 
   }
+  else if (ste.state == BoardStatus.Removed) {
 
-  static bool isFormVisible(PresidentsAction action) =>
+    context.read<YearsBloc>().add(GerBoardYearsEvent());
+    context.read<YearsBloc>().add(ChangeBoardYears(year: state.years[0]));
+
+
+
+
+    SnackBarMessage.showSuccessSnackBar(
+        message: ste.message, context: context);
+  }
+
+  else if (ste.state == BoardStatus.Error) {
+
+    SnackBarMessage.showErrorSnackBar(
+        message: ste.message, context: context);
+  }
+
+}
+static bool isExist(Member member,Map<String, dynamic> map){
+    if (map['member'] == null || map['member'] is! Member || member.id == null) {
+      return false;
+    }
+    return member.id == (map['member'] as Member).id;
+}static bool IsNotEmpty(Map<String, dynamic> map){
+    if (map['member'] == null || map['member'] is! Member ) {
+      return false;
+    }
+    return true;
+}
+  static void AddMemberFun(YearsState ste, ActionJciState state, BuildContext context,String postId) {
+    final postField = PostField(year: ste.year,
+        role: '',
+        assignTo: (state.member['member'] as Member)
+            .id,
+        id: postId);
+    context.read<BoordBloc>().add(AddMemberEvent(postField: postField));
+    Navigator.pop(context);
+  }
+
+static bool isFormVisible(PresidentsAction action) =>
       action == PresidentsAction.Add || action == PresidentsAction.Update;
 }

@@ -13,7 +13,11 @@ declare global{
             admin:ADminPayload;
             superadmin:SuperAdminPayload;
         }
+        interface database{
+            gfs:any
+        }
     }
+   
 }
 export const Authenticate=async (req:Request,res:Response,next:NextFunction)=>{
     const validate=await validateSignature(req)

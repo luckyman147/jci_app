@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateRoleInput = void 0;
+exports.ValidateMember = exports.ValidateCotisation = exports.ValidatePoints = exports.CreateRoleInput = void 0;
 const class_validator_1 = require("class-validator");
 class CreateRoleInput {
 }
@@ -15,3 +15,24 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.Length)(5, 10)
 ], CreateRoleInput.prototype, "name", void 0);
+class ValidatePoints {
+}
+exports.ValidatePoints = ValidatePoints;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)()
+], ValidatePoints.prototype, "Points", void 0);
+class ValidateCotisation {
+}
+exports.ValidateCotisation = ValidateCotisation;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)()
+], ValidateCotisation.prototype, "type", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)()
+], ValidateCotisation.prototype, "action", void 0);
+class ValidateMember {
+}
+exports.ValidateMember = ValidateMember;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)()
+], ValidateMember.prototype, "Points", void 0);

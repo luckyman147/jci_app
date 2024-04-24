@@ -1,12 +1,19 @@
 import mongoose, { ConnectOptions } from 'mongoose';
-
-require('dotenv') .config({path:'Server\\src\\.env'})
+import { GridFSBucket } from 'mongodb';
+require('dotenv') .config({path:'Server\\src\\.env'}) 
+let gfs;
 const database= async ()=>{
     try {
-        const MongoURI = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/jci';
+        const MongoURI = process.env.MONGO_URL ;
       
-        await mongoose.connect(MongoURI)
+        await mongoose.connect(MongoURI!)
+        const conn = mongoose.connection;
+       
+        
+
+            
         console.log('database connected')
+        
     } catch (error) {
 
         console.log(error)
@@ -14,4 +21,4 @@ const database= async ()=>{
     }
 
 }
-export default  database
+export   {database}

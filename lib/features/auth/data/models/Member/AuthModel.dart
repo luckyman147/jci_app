@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'AuthModel.g.dart';
@@ -24,8 +26,10 @@ factory MemberModel.fromEntity(Member member) {
     );
   }
 
-  factory MemberModel.fromJson(Map<String, dynamic> json) =>
-      MemberModel(
+  factory MemberModel.fromJson(Map<String, dynamic> json) {
+  log('message');
+
+  return    MemberModel(
         objectifs: json['objectifs'] == null ? [] :json['objectifs'] as List<dynamic>,
         points: json['points'] ?? 0,
         id: json['_id']!=null ? json['_id']as String : json['id'] as String,
@@ -35,7 +39,7 @@ factory MemberModel.fromEntity(Member member) {
         json['cotisation'] == null ? [false, ] :
         (json['cotisation'] as List<dynamic>).map((e) => e as bool).toList(),
         Images:
-        json['Images'] == null ? [] :json['Images'] ,
+        json['Images'] ?? [] ,
         firstName: json['firstName'] as String,
         lastName: json['lastName']?? '' ,
         phone: json['phone'] ??"",
@@ -50,7 +54,7 @@ factory MemberModel.fromEntity(Member member) {
         (json['Activities'] as List<dynamic>)
             .map((e) => e )
             .toList(),
-      );
+      );}
   MemberModel({required super.id, required super.role, required super.is_validated, required super.cotisation, required super.Images, required super.firstName, required super.lastName, required super.phone, required super.email, required super.password, required super.IsSelected, required super.Activities, required super.teams, required super.points, required super.objectifs});
 
   Map<String, dynamic> toJson() => _$MemberModelToJson(this);

@@ -16,6 +16,8 @@ import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.
 import 'package:jci_app/features/Teams/presentation/bloc/TaskFilter/taskfilter_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/Timeline/timeline_bloc.dart';
+import 'package:jci_app/features/about_jci/Presentations/bloc/Board/BoardBloc/boord_bloc.dart';
+import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/presidents_bloc.dart';
 
 
@@ -51,11 +53,13 @@ List<SingleChildWidget> providersList = [
   BlocProvider(create: (_)=> di.sl<MembersBloc>()),
   BlocProvider(create: (_)=> di.sl<ChangeSboolsCubit>()),
   BlocProvider(create: (_)=> di.sl<ActionJciCubit>()),
+  BlocProvider(create: (_)=> di.sl<YearsBloc>()),
   BlocProvider(
       create: (_) => di.sl<AuthBloc>()..add(const RefreshTokenEvent())),
   BlocProvider(create: (_) => di.sl<SignUpBloc>()),
   BlocProvider(create: (_) => di.sl<LoginBloc>()),
   BlocProvider(create: (_) => di.sl<ParticpantsBloc>()),
+  BlocProvider(create: (_) => di.sl<BoordBloc>()),
 
   BlocProvider(create: (_) => localeCubit()..getSavedLanguage()),
   BlocProvider(create: (_) => ActivityCubit()),

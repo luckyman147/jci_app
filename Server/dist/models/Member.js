@@ -33,11 +33,24 @@ exports.MemberSchema = new mongoose_1.Schema({
     firstName: { type: String },
     lastName: { type: String },
     address: { type: String, },
+    Points: { type: Number, default: 0 },
     phone: { type: String },
     is_validated: { type: Boolean },
-    cotisation: { type: [Boolean] },
-    Images: { type: [String] },
-    refreshToken: { type: String },
+    cotisation: { type: [Boolean], default: [false, false] },
+    Permissions: {
+        type: [mongoose_1.Schema.Types.ObjectId],
+        ref: "Permission", default: []
+    },
+    Images: { type: [mongoose_1.Schema.Types.ObjectId], ref: 'File' },
+    refreshTokenRevoked: { type: [String], default: [] },
+    accessTokenRevoked: { type: [String], default: [] },
+    Activities: {
+        type: [mongoose_1.Schema.Types.ObjectId],
+        ref: "Activity"
+    },
+    Teams: {
+        type: [mongoose_1.Schema.Types.ObjectId], ref: 'Team'
+    },
     role: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: 'Role',

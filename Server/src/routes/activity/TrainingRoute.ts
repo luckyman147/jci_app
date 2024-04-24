@@ -1,15 +1,19 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import multer from "multer";
-import { AddParticipantToTraining, GetTrainingsOfMonth, GetTrainingsOfWeekend, RemoveParticipantFromTraining,deleteTrain,
-
- addTraining, getAllTrainings, getTrainingByDate, getTrainingById, getTrainingByName, uploadImage, 
- updateTraining,
- updateImage} from "../../controllers/activities/TrainingController";
-import { Authenticate,AuthenticateAdmin } from "../../middleware/CommonAuth";
-
+import {
+    AddParticipantToTraining, GetTrainingsOfMonth, GetTrainingsOfWeekend, RemoveParticipantFromTraining,
+    addTraining,
+    deleteTrain,
+    getAllTrainings, getTrainingByDate, getTrainingById, getTrainingByName,
+    updateImage,
+    updateTraining,
+    uploadImage
+} from "../../controllers/activities/TrainingController";
+import { Authenticate, AuthenticateAdmin } from "../../middleware/CommonAuth";
 const router=express.Router()
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
+
 router.post('/LatestofTheMonth',GetTrainingsOfMonth)
 router.post('/',getAllTrainings)
 router.post('/LatestOfweekend',GetTrainingsOfWeekend)
@@ -18,9 +22,31 @@ router.post('/get/:name',getTrainingByName)
 router.post('/get/:date',getTrainingByDate)
 
 //!require authentication
-router.get('/TrainingParticipants')
 
+router.get('/TrainingParticipants')
+/**
+ * @swagger
+ * /hello:
+ *   get:
+ *     summary: Returns a hello message
+ *     responses:
+ *       200:
+ *         description: A hello message
+ */
+router.get('/hello', (req:Request, res:Response) => {
+    res.json({ message: 'Hello, World!' });
+  });
 //*post
+
+/**
+ * @swagger
+ * /add/:
+ *   post:
+ *     summary: Returns a personalized hello message
+ 
+ */
+
+
 router.post('/add',addTraining)
 router.post('/:idTraining/addParticipant',Authenticate ,AddParticipantToTraining)
 router.patch('/:id/edit',AuthenticateAdmin,updateTraining)

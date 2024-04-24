@@ -10,6 +10,7 @@ import { Permission } from '../models/Pemission';
 import { Role } from '../models/role';
 import { generateSecureKey } from '../utility';
 import { findrole } from '../utility/role';
+import { test } from '../models/points';
 
 export const ChangeToAdmin=async(req:Request, res:Response,next:NextFunction)=>{
     const superAdmin=req. superadmin
@@ -268,9 +269,10 @@ export const  CreateLastPresid=async(req:Request, res:Response,next:NextFunction
 
 }
 export const  UpdateLastPresImage=async(req:Request, res:Response,next:NextFunction)=>{
-    const superAdmin=req. superadmin
-    const id=req.params.id
+try {
+     const id=req.params.id
     const presid=await LastPresidents.findById(id)
+    console.log(("hey"))
     if (!presid) {
         return res.status(404).json({ message: 'Permission not found' });
     }
@@ -279,17 +281,27 @@ export const  UpdateLastPresImage=async(req:Request, res:Response,next:NextFunct
     if (!image) {
       return res.status(400).send("Invalid or missing image file");
     }
-
+    const newtest = new test({
+        filename: image.filename,
+        contentType: image.mimetype,
+        length: image.size,
+   
+      });
+      await newtest.save();
     // Convert the image to base64
     const base64Image = image.buffer.toString('base64');
     presid.CoverImage=base64Image
 
     const saved=await presid.save()
     if (saved) {
-        return res.status(201).json(saved);
+        return res.status(201).json(test);
     }else{
         return res.status(400).json({ message: 'Error creating permission' });
     }
+} catch (error) {
+    
+}
+   
 }
 export const  UpdateLastPres=async(req:Request, res:Response,next:NextFunction)=>{
     const superAdmin=req. superadmin

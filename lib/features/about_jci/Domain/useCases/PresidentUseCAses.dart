@@ -27,7 +27,7 @@ class GetPresidentsUseCases {
 
   GetPresidentsUseCases({required this.repo});
   @override
-  Future<Either<Failure, List<President>>> call({String start="0",String limit="8"}){
+  Future<Either<Failure, List<President>>> call({String start="0",String limit="6"}){
     return repo.getPresidents(start, limit);
   }
 }
