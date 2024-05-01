@@ -2,6 +2,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
+import 'package:jci_app/features/about_jci/Presentations/widgets/dialogs.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../Domain/entities/BoardRole.dart';
@@ -44,13 +45,11 @@ class _BoardRolesDropButtonState extends State<BoardRolesDropButton> {
               crossAxisCount: 1, // Display one item in a row
               childAspectRatio: 1.5, // Aspect ratio of the grid items
             ),
-            itemCount: widget.items.length,
+            itemCount: widget.items.length+1,
             itemBuilder: (context, index) {
-              final role = widget.items[index];
               if (index == 0) {
-
-                return   InkWell(
-
+                // Your code for the "add" button at the beginning
+                return InkWell(
                   onTap: () {
                     context.read<ActionJciCubit>().changePageNum(1);
                   },
@@ -58,19 +57,22 @@ class _BoardRolesDropButtonState extends State<BoardRolesDropButton> {
                     padding: const EdgeInsets.all(8.0),
                     child: DottedBorder(
                       radius: Radius.circular(10),
-                      dashPattern:const  [21,17,21,17],
+                      dashPattern: const [21, 17, 21, 17],
                       color: textColor,
                       strokeWidth: 1,
                       borderType: BorderType.RRect,
                       child: Center(
-                        child:  Icon(Icons.add,color: textColor,size: 50,),
+                        child: Icon(Icons.add, color: textColor, size: 50,),
                       ),
                     ),
                   ),
                 );
+              } else {
+                // Adjusted index for accessing items from widget.items
+                final adjustedIndex = index - 1;
+                final role = widget.items[adjustedIndex];
+                return Body(context, role, state);
               }
-
-              return Body(context, role, state);
             },
           );
         },
@@ -82,6 +84,11 @@ class _BoardRolesDropButtonState extends State<BoardRolesDropButton> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
+        onLongPress: () {
+          Dialogs.showDelete(context,"",TypeDelete.Role,role.id);
+
+        },
+
         onTap: () {
         JCIFunctions.  ChangeRoleFunction(state, role, context);
           ;

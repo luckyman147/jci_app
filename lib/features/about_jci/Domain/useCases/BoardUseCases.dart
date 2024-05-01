@@ -91,6 +91,23 @@ class RemovePositionUseCase extends UseCase<Unit, PostField> {
     return await boardRepo.RemovePositionInBoard(post.id!, post.year);
   }
 }
+class AddRoleUseCase extends UseCase<Unit, BoardRole> {
+  final BoardRepo boardRepo;
+
+  AddRoleUseCase({required this.boardRepo});
+  @override
+  Future<Either<Failure, Unit>> call(BoardRole role)async {
+    return await boardRepo.AddBoardRole(role);
+  }
+}
+ class RemoveRoleUseCase extends UseCase<Unit, String> {
+  final BoardRepo boardRepo;
+
+  RemoveRoleUseCase({required this.boardRepo});
+  @override
+  Future<Either<Failure, Unit>> call(String roleId)async {
+    return await boardRepo.RemoveBoardRole(roleId);
+  }}
 
 
 class PostField {

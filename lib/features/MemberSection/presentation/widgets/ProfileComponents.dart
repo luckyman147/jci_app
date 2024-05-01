@@ -25,6 +25,7 @@ import 'package:jci_app/features/Teams/presentation/widgets/TeamWidget.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/config/services/verification.dart';
+import '../../../../core/strings/app_strings.dart';
 import '../../../../core/util/DialogWidget.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../Home/domain/entities/Activity.dart';
@@ -536,9 +537,9 @@ static  Stack imagezChanged(String member,MediaQueryData mediaQuery,BuildContext
     children: [
       Positioned(child:
       ClipOval(
-        child: member.isEmpty || member == "assets/images/jci.png"
-            ? Image.asset(
-          "assets/images/jci.png",
+        child: member.isEmpty || member == "assets/images/jci.png" ||member == vip
+            ? Image.asset(vip
+          ,
           fit: BoxFit.contain,
           width: 120,
           height: 120,
@@ -569,7 +570,7 @@ static  Stack imagezChanged(String member,MediaQueryData mediaQuery,BuildContext
         width: 30,
         child: IconButton(
           style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(PrimaryColor)),
-          icon: Center(child: Icon(Icons.edit,color: textColorWhite,size: 15,)), onPressed: () async {
+          icon: Center(child: Icon(Icons.camera_enhance,color: textColorWhite,size: 15,)), onPressed: () async {
   final XFile? picked =
   await picker.pickImage(source: ImageSource.gallery);
   if (picked != null) {

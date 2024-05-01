@@ -7,6 +7,7 @@ import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
+import 'package:jci_app/features/auth/presentation/widgets/SubmitFunctions.dart';
 
 import 'package:jci_app/features/auth/presentation/widgets/Text.dart';
 import 'package:jci_app/features/auth/presentation/widgets/button_auth.dart';
@@ -150,17 +151,13 @@ final mediaquery = MediaQuery.of(context);
           ),
           child: InkWell(
 
-            key: const Key('loginForm_continue_raisedButton'),
+
             onTap: () {
+SubmitFunctions.Login(context, state, keyConr, () {
+  resetform();
 
-              if (keyConr.currentState!.validate()) {
+});
 
-
-                context.read<LoginBloc>().add(LoginSubmitted(state.email.value, state.password.value));
-                resetform();
-                context.read<LoginBloc>().add(ResetForm());
-
-              }
             },
 
             child: Center(child: Text('Login'.tr(context),

@@ -15,6 +15,60 @@ const upload = multer({
 });
 
 const router=express.Router()
+/**
+ * @swagger
+ * /Super/getAllPresidents:
+ *   get:
+ *     summary: Get presidents
+ *     parameters:
+ *       - in: query
+ *         name: start
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Start
+ *       - in: query
+ *         name: format
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Format of the uploaded file
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the success of the operation
+ *                 presidents:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         description: The ID of the president
+ *                       name:
+ *                         type: string
+ *                         description: The name of the president
+ *                       country:
+ *                         type: string
+ *                         description: The country of the president
+ *         example:
+ *           message: Success
+ *           presidents:
+ *             - id: 1
+ *               name: John Doe
+ *               country: USA
+ *             - id: 2
+ *               name: Jane Smith
+ *               country: Canada
+ */
+
 
 router.get("/getAllPresidents",getAllPresidents)
 /**

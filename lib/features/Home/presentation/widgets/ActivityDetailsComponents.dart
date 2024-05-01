@@ -42,7 +42,7 @@ class ActivityDetailsComponent{
         builder: (context, state) {
           var boxDecoration = BoxDecoration(
                     color: textColorWhite,
-                    border: Border.all(color: BackWidgetColor,width: 2),
+                    border: Border.all(color: textColorBlack,),
                     borderRadius: BorderRadius.circular(10),
                   );
           return Column(
@@ -51,31 +51,6 @@ class ActivityDetailsComponent{
             children: [
               if (activitys.runtimeType == MeetingModel)
                 AgendaWidget(boxDecoration, context, mediaQuery, activitys),
-
-
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  width: mediaQuery.size.width ,
-                  decoration: boxDecoration,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Category".tr(context),
-                          style: PoppinsNorml(mediaQuery.devicePixelRatio * 6,
-                            textColorBlack, ),
-                        ),
-                        Text("#${activitys.categorie} ", style: PoppinsRegular(mediaQuery.devicePixelRatio * 5, PrimaryColor),),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
               Container(
                 width: mediaQuery.size.width ,
                 decoration: boxDecoration,
@@ -355,73 +330,37 @@ border: Border.all(color: Colors.grey),
 
 
 
- static  Widget rowName(mediaQuery,BuildContext context,Activity activitys) => Padding(
-    padding:  EdgeInsets.symmetric(vertical: mediaQuery.size.height / 40),
+ static  Widget rowName(mediaQuery,BuildContext context,Activity activitys,bool bools,activity act, int index) => Padding(
+    padding:  EdgeInsets.symmetric(vertical: mediaQuery.size.height / 40,horizontal: 10),
     child: Align(
       alignment: Alignment.center,
       child: Container(
-        width: mediaQuery.size.width / 1.2,
-        decoration: const BoxDecoration(
+        width: mediaQuery.size.width ,
+        decoration:  BoxDecoration(
+          border: Border.all(color: textColorBlack),
             color: textColorWhite,
             borderRadius: BorderRadius.all(Radius.circular(10)),
-            boxShadow: [
-              BoxShadow(
-                color: ThirdColor,
-                blurRadius: 2,
 
-                offset: Offset(0, 0),
-              )
-            ]
         ),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    activitys.name,
-                    style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 5,
-                        textColorBlack, TextDecoration.none),
-                  ),
-                  if (activitys.runtimeType == EventModel)
-                    Text(
-                      "${"By".tr(context)} ${(activitys as EventModel).LeaderName}",
-                      style: PoppinsNorml(
-                          mediaQuery.devicePixelRatio * 5, textColorBlack),
-                    ),
-                  if (activitys.runtimeType == MeetingModel)
-                    Text(
-                      "${"By".tr(context)} ${(activitys as MeetingModel).Director}",
-                      style: PoppinsRegular(
-                          mediaQuery.devicePixelRatio * 5, textColorBlack),
-                    ),
-                  if (activitys.runtimeType == TrainingModel)
-                    Text(
-                      "${"By".tr(context)} ${(activitys as TrainingModel).ProfesseurName}",
-                      style: PoppinsLight(
-                          mediaQuery.devicePixelRatio * 5, textColorBlack),
-                    )
-                ],
+              SizedBox(
+                width: mediaQuery.size.width / 2.7,
+                child: Text(
+                  activitys.name,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 5,
+                      textColorBlack, TextDecoration.none),
+                ),
               ),
-              Container(
-                  width: mediaQuery.size.width / 5,
-                  height: mediaQuery.size.height / 15,
-                  decoration: BoxDecoration(
-                      color: PrimaryColor.withOpacity(.2),
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                      child: Text(activitys.price.toString()=="0"? "Free".tr(context):"${activitys.price.toString()} dt" ,
-                          style: PoppinsSemiBold(
-                              mediaQuery.devicePixelRatio * 4, PrimaryColor, TextDecoration.none)),
-                    ),
-                  )),
+            //  PriceWidget(mediaQuery, activitys, context),
 
+              ActivityDetailsComponent.PartipantsRow(
+                  mediaQuery, context, activitys, bools, act, index),
 
             ],
           ),
@@ -429,6 +368,23 @@ border: Border.all(color: Colors.grey),
       ),
     ),
   );
+
+ static Container PriceWidget(mediaQuery, Activity activitys, BuildContext context) {
+   return Container(
+                width: mediaQuery.size.width / 5,
+                height: mediaQuery.size.height / 15,
+                decoration: BoxDecoration(
+                    color: PrimaryColor.withOpacity(.2),
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: Text(activitys.price.toString()=="0"? "Free".tr(context):"${activitys.price.toString()} dt" ,
+                        style: PoppinsSemiBold(
+                            mediaQuery.devicePixelRatio * 4, PrimaryColor, TextDecoration.none)),
+                  ),
+                ));
+ }
  static  Widget Back(mediaQuery, context) => Positioned(
       top: mediaQuery.size.height / 20,
       left: 10,
@@ -478,65 +434,49 @@ border: Border.all(color: Colors.grey),
                   style: PoppinsRegular(
                       mediaQuery.devicePixelRatio * 6, textColorWhite)))));
 
- static  Widget PartipantsRow(MediaQueryData mediaQuery,BuildContext context,Activity activitys,bools,activity act,int index) => Padding(
-    padding: paddingSemetricVerticalHorizontal(h:20 ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+ static  Widget PartipantsRow(MediaQueryData mediaQuery,BuildContext context,Activity activitys,bools,activity act,int index) => Row(
+   mainAxisAlignment: MainAxisAlignment.end,
+   children: [
+     DeatailsTeamComponent.membersTeamImage(context,mediaQuery,activitys.Participants.length,activitys.Participants,20,30),
+     Padding(
+       padding: paddingSemetricHorizontal(h:20),
+       child: ParticipateButton(acti: activitys,index: index,
+         isPartFromState: bools, act: act, textSize: mediaQuery.devicePixelRatio*4, containerWidth: mediaQuery.size.width/3                                                 ,),
+     )
+
+   ],
+ );
+
+ static  Widget kk(mediaQuery,Activity activitys)=>Padding(
+   padding: paddingSemetricVerticalHorizontal(h: 20),
+   child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+
       children: [
-        Row(
+        IconInfo(Icons.place),
+
+
+
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            DeatailsTeamComponent.membersTeamImage(context,mediaQuery,activitys.Participants.length,activitys.Participants,20,30),
             Padding(
-              padding: paddingSemetricHorizontal(h:20),
+              padding:paddingSemetricVerticalHorizontal(),
               child: Text(
-                "${activitys.Participants.length}  ${"joined".tr(context)}",
-                style:
-                PoppinsRegular(mediaQuery.devicePixelRatio * 5, textColorBlack),
+                activitys.ActivityAdress,
+              overflow: TextOverflow.ellipsis,
+                style: PoppinsSemiBold(
+                    mediaQuery.devicePixelRatio * 6, textColorBlack,TextDecoration.none),
               ),
             ),
           ],
         ),
-        Padding(
-          padding: paddingSemetricHorizontal(h:20),
-          child: ParticipateButton(acti: activitys,index: index,
-            isPartFromState: bools, act: act, textSize: mediaQuery.devicePixelRatio*4, containerWidth: mediaQuery.size.width/3                                                 ,),
-        )
 
       ],
     ),
-  );
-
- static  Widget kk(mediaQuery,Activity activitys)=>Column(
-    mainAxisAlignment: MainAxisAlignment.start,
-    crossAxisAlignment: CrossAxisAlignment.center,
-
-    children: [
-      Container(
-        width: 50,
-        height:50,
-        decoration: BoxDecoration(
-            color: PrimaryColor.withOpacity(.2), shape: BoxShape.circle),
-        child: Icon(Icons.place, color: PrimaryColor),
-
-      ),
-
-
-
-      Align(
-        alignment: Alignment.center,
-        child: Padding(
-          padding:const  EdgeInsets.only(left: 27.0,top: 10),
-          child: Text(
-            activitys.ActivityAdress,
-
-            style: PoppinsSemiBold(
-                mediaQuery.devicePixelRatio * 3.7, textColorBlack,TextDecoration.none),
-          ),
-        ),
-      ),
-
-    ],
-  );
+ );
 
 
 
@@ -549,61 +489,65 @@ border: Border.all(color: Colors.grey),
 
  static  Widget infoCircle(mediaQuery,Activity activitys) => SizedBox(
    height: mediaQuery.size.height/6.5,
-   child: Row(
-      mainAxisAlignment: MainAxisAlignment.start,
 
+   child: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+crossAxisAlignment: CrossAxisAlignment.start,
 
       children: [
-        SizedBox(
-          width:mediaQuery.size.width/2.2,
-          child: Column(
-
+        Padding(
+          padding: paddingSemetricHorizontal(h:20),
+          child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
 
             children: [
-              Container(
-                width: 50,
-                height:50,
-                decoration: BoxDecoration(
-                    color: PrimaryColor.withOpacity(.2), shape: BoxShape.circle),
-                child: Icon(Icons.calendar_month, color: PrimaryColor),
+              IconInfo(Icons.calendar_month),
 
-              ),
+              Padding(
+                padding: paddingSemetricHorizontal(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      DateFormat('EEE MMM yyyy').format(activitys.ActivityBeginDate),
+                      style: PoppinsSemiBold(
+                          mediaQuery.devicePixelRatio * 4.5, textColorBlack,TextDecoration.none),
+                    ),
+                    Row(
+                      children: [
 
-              Text(
-                DateFormat('dd MMM yyyy').format(activitys.ActivityBeginDate),
-                style: PoppinsSemiBold(
-                    mediaQuery.devicePixelRatio * 4.5, textColorBlack,TextDecoration.none),
+                        Text(
+                            ActivityAction. calculateDurationhour(activitys.ActivityBeginDate, activitys.ActivityEndDate),
+                          style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 3.5,
+                              textColor, TextDecoration.none),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              Center(
-                  child: Text(
-                    ActivityAction.calculateDurationDays(activitys.ActivityBeginDate, activitys.ActivityEndDate),
-                    style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 3.5,
-                        ThirdColor, TextDecoration.none),
-                  )),Center(
-                  child: Text(
-                      ActivityAction. calculateDurationhour(activitys.ActivityBeginDate, activitys.ActivityEndDate),
-                    style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 3.5,
-                        textColor, TextDecoration.none),
-                  )),
             ],
           ),
         ),
 
-        SizedBox(
-            height: 100,
-            child:const  VerticalDivider(
-              color: BackWidgetColor,
-              thickness: 2,
-              indent: 0,
-              endIndent: 7,
-            )),
-       SizedBox(
-           width: mediaQuery.size.width / 2.5,
-           child: kk(mediaQuery,activitys)),
+
+       kk(mediaQuery,activitys),
 
       ],
     ),
  );
+
+ static Container IconInfo(IconData icon) {
+   return Container(
+              width: 50,
+              height:50,
+              decoration: BoxDecoration(
+                 border: Border.all(color: textColorBlack), shape: BoxShape.circle),
+              child: Icon(icon, color: textColorBlack),
+
+            );
+ }
 }
 
 class DescriptionToggle extends StatelessWidget {

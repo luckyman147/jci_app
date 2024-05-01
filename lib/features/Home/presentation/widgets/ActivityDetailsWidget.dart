@@ -37,16 +37,14 @@ AddDots(activitys, mediaQuery)
             padding: EdgeInsets.symmetric(vertical: mediaQuery.size.height / 3),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ActivityDetailsComponent.rowName(
-                    mediaQuery, context, activitys),
+                    mediaQuery, context, activitys,bools, act, index),
 
-                ActivityDetailsComponent.PartipantsRow(
-                    mediaQuery, context, activitys, bools, act, index),
 
-                SizedBox(
-                  height: mediaQuery.size.height / 40,
-                ),
+
+
                 ActivityDetailsComponent.infoCircle(mediaQuery, activitys),
                 SizedBox(
                   height: mediaQuery.size.height / 40,

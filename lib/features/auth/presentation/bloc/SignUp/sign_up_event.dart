@@ -49,11 +49,20 @@ final class LastNameChanged extends SignUpEvent {
 
 
 final class SignUpSubmitted extends SignUpEvent{
-final Member member;
-  const SignUpSubmitted({required this.member});
+final SignField signField;
+
+  const SignUpSubmitted({required this.signField});
   @override
-  List<Object> get props => [member];
+  List<Object> get props => [signField];
 }
 class ResetForm extends SignUpEvent {
   const ResetForm();
+}
+class SendVerificationEmailEvent extends SignUpEvent{
+  final String email;
+
+  SendVerificationEmailEvent({required this.email});
+  @override
+  List<Object> get props => [email];
+
 }

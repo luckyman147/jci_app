@@ -5,7 +5,7 @@ import { ADminPayload } from "./admin.dto";
 import { EmailPayload, MemberPayload } from "./member.dto";
 
 export type AuthPayload=   ADminPayload|SuperAdminPayload | MemberPayload 
-
+export type adminsPayload=ADminPayload|SuperAdminPayload
 
 
 export class TokenInput {

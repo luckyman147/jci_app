@@ -3,7 +3,7 @@ import { Activity } from "./activitieModel";
 
 export interface Meeting extends Activity {
   Director:any
-Agenda:[string]
+Agenda:string[]
 
 
 

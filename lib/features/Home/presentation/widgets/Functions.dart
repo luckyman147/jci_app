@@ -11,9 +11,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'dart:ui' as ui;
 import 'dart:typed_data';
@@ -69,7 +71,39 @@ static   List<String> combineTextFields(List<TextEditingController> controllers)
 
     return combinedControllers;
   }
+static Future<void> launchURL(BuildContext context, String url) async {
+  // Show an AlertDialog to confirm before launching the URL
+  bool confirm = await showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Confirmation',style:PoppinsSemiBold(18, textColorBlack, TextDecoration.none)),
+      content: Text('You are about to open a link in your browser. Do you want to continue?',style:PoppinsRegular(14, textColorBlack, )),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(false); // Return false if canceled
+          },
+          child: Text('Cancel',style: PoppinsRegular(16, textColorBlack),),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(true); // Return true if confirmed
+          },
+          child: Text('Open',style: PoppinsRegular(16, PrimaryColor),),
+        ),
+      ],
+    ),
+  );
 
+  // If user confirms, launch the URL
+  if (confirm == true) {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url), webViewConfiguration: WebViewConfiguration());
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+}
  static  Category getCategoryFromString(String categoryString) {
     switch (categoryString.toLowerCase()) {
       case 'technology':

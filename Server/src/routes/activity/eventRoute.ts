@@ -1,7 +1,8 @@
 import express from "express";
 import multer from "multer";
-import { AddParticipantToEvent, GetEventsOfMonth, GetEventsOfWeekend, RemoveParticipantFromEvent, addEvent, deleteEvent, getAllEvents, getEventByDate, getEventById, getEventByName, updateEvent, updateImage, uploadImage } from "../../controllers/activities/EventsController";
+import {  GetEventsOfMonth, GetEventsOfWeekend,  addEvent, getAllEvents, getEventByDate, getEventById, getEventByName, updateEvent, updateImage, uploadImage } from "../../controllers/activities/EventsController";
 import { Authenticate,AuthenticateAdmin } from "../../middleware/CommonAuth";
+import { AddParticipantToActivity, deleteActivity, RemoveParticipant } from "../../controllers/activities/activityController";
 
 const router=express.Router()
 const storage = multer.memoryStorage()
@@ -17,16 +18,16 @@ router.post('/get/:date',getEventByDate)
 router.get('/EventParticipants')
 
 //*post
-router.post('/add/',Authenticate,addEvent)
+router.post('/add/',AuthenticateAdmin,addEvent)
 
 router.patch('/:id/edit',AuthenticateAdmin,updateEvent)
 router.patch('/:id/UpdateImage',upload.array("CoverImages"),updateImage)
 router.post('/:id/uploadImage',upload.array("CoverImages"),uploadImage)
-router.post('/:idEvent/addParticipant',Authenticate ,AddParticipantToEvent)
+router.post('/:id/addParticipant',Authenticate ,AddParticipantToActivity)
 //?should be authenticated
 
-router.delete("/:id",deleteEvent)  //?should be authenticated
-router.delete('/:id/deleteParticipant',Authenticate,RemoveParticipantFromEvent  )
+router.delete("/:id",AuthenticateAdmin,deleteActivity)  //?should be authenticated
+router.delete('/:id/deleteParticipant',Authenticate,RemoveParticipant  )
 export { router as EventRoute };
 
 

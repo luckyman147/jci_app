@@ -43,3 +43,19 @@ final Member member;
   @override
   List<Object> get props => [member];
 }
+final class CheckOtpEvent extends ResetEvent {
+  final String otp;
+
+  const CheckOtpEvent({required this.otp});
+
+  @override
+  List<Object> get props => [otp];
+}
+final class sendResetPasswordEmailEvent extends ResetEvent {
+  final String email;
+
+  const sendResetPasswordEmailEvent({required this.email});
+
+  @override
+  List<Object> get props => [email];
+}

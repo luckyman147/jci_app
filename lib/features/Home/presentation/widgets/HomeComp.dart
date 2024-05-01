@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/core/strings/app_strings.dart';
 import 'package:jci_app/features/about_jci/Presentations/screens/BoardPage.dart';
 
 import '../../../../core/app_theme.dart';
@@ -20,7 +22,7 @@ class HomeComponents{
  static Drawer buildDrawer(BuildContext context,MediaQueryData mediaQuery) {
     return Drawer(
 
-      shape: RoundedRectangleBorder(
+      shape:const  RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomRight: Radius.circular(20),
           topRight: Radius.circular(20),
@@ -34,92 +36,16 @@ class HomeComponents{
 
 
             SafeArea(
-              child: Padding(
-                padding: paddingSemetricVertical(),
-                child: Column(
-                  children: [
-                    Center(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: backgroundColored,
-                        ),
-                        child: Image.asset(
-                          "assets/images/jci.png",
-                          height: 100,
-                          width: 100,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: InkWell(
-                        splashColor: Colors.transparent,
-                        hoverColor: Colors.transparent,
-                        onTap: (){
-                          context.read<ChangeSboolsCubit>().changeState(StatesBool.JCI);
-                        },
-                        child: BlocBuilder<ChangeSboolsCubit, ChangeSboolsState>(
-                          builder: (context, state) {
-                            return
-                                SizedBox(
-                              width: mediaQuery.size.width/1.2,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Who are we",style: PoppinsSemiBold(18, Colors.black, TextDecoration.none)),
-                                  BuildPres(
-                                        (){
+              child: Column(
+                children: [
+                  builderDrawerheader(context),
+                  const SizedBox(height: 10),
+                  drawerbody(mediaQuery),
 
 
-                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>PresentationsPage()));
+TextButton( onPressed: () {  }, child: Text("View Terms of use",style: PoppinsRegular(16, textColorBlack),),)
 
-                                    },'Presentation',
-
-                                  ),
-                                  BuildPres(
-                                          (){
-
-                                            Navigator.push(context, MaterialPageRoute(builder: (context)=>BoardPage()));
-
-                                          },'Board'
-                                  ), BuildPres(
-                                          (){
-                                            context.read<PresidentsBloc>().add(GetAllPresidentsEvent());
-                                            Navigator.push(context, MaterialPageRoute(builder: (context)=>PresidentsPage()));
-
-
-                                          },'Last Presidants')
-
-                                ],
-
-
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-
-                    Container(
-                      width: mediaQuery.size.width/1.5,
-                      height: 60,
-
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Text(
-                          "Contact Us",
-                          style: PoppinsSemiBold(
-                              18, Colors.black, TextDecoration.none),
-                        ),
-                      ),
-                    ),
-
-
-                  ],
-                ),
+                ],
               ),
             ),
             // You can add more items or sections as needed
@@ -137,22 +63,146 @@ class HomeComponents{
     );
   }
 
-static   Widget BuildPres(Function() onTap,String text,   ) {
+ static Padding drawerbody(MediaQueryData mediaQuery) {
+   return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: BlocBuilder<ChangeSboolsCubit, ChangeSboolsState>(
+                    builder: (context, state) {
+                      return
+                          SizedBox(
+                        width: mediaQuery.size.width,
+                        height: MediaQuery.of(context).size.height/2,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+
+                            BuildPres(
+                                  (){
+
+
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>PresentationsPage()));
+
+                              },'Presentation',context,null
+
+                            ),
+                            BuildPres(
+                                    (){
+
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>BoardPage()));
+
+                                    },'Board',context,null
+                            ), BuildPres(
+                                    (){
+                                      context.read<PresidentsBloc>().add(GetAllPresidentsEvent());
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>PresidentsPage()));
+
+
+                                    },'Last Presidants',context,null),
+
+
+                            SizedBox(
+                              width: mediaQuery.size.width/1.2,
+                              height: 60,
+
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Text(
+                                  "Contact Us",
+                                  style: PoppinsSemiBold(
+                                      20, Colors.black, TextDecoration.none),
+                                ),
+                              ),
+                            ),
+                            BuildPres(()async => await ActivityAction.launchURL(context,facebookURl), "Facebook", context, BlackFacebook),
+                            BuildPres(()async => await ActivityAction.launchURL(context,InstagramURl), "Instagram", context, instagram),
+                            BuildPres(() async=> await ActivityAction.launchURL(context,TiktokURl), "Tiktok", context, tiktok)
+                        //    BuildPres(() => null, "Facebook", context, Icons.yoo)
+
+
+                          ],
+
+
+                        ),
+                      );
+                    },
+                  ),
+                );
+ }
+
+ static Container builderDrawerheader(BuildContext context) {
+   return Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 120,
+                  decoration:  BoxDecoration(
+              gradient: LinearGrdi(),
+
+                  ),
+                  child: Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: backgroundColored,
+                      ),
+                      child: Image.asset(
+                        "assets/images/jci.png",
+                        height: 100,
+                        width: 100,
+                      ),
+                    ),
+                  ),
+                );
+ }
+
+ static LinearGradient LinearGrdi() {
+   return LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+
+                  textColorWhite,
+                  PrimaryColor
+
+                ],
+              );
+ }
+
+static   Widget BuildPres(Function() onTap,String text, BuildContext context  ,String? icon) {
     return Padding(
-      padding: paddingSemetricVerticalHorizontal(),
+      padding: paddingSemetricVerticalHorizontal(h: 15),
       child: InkWell(
         onTap:onTap,
-        child: Container(
+        //colors
+        splashColor: Colors.blue,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Row(
 
+                children: [
+                  icon!=null?Padding(
+                    padding: paddingSemetricHorizontal(),
+                    child: SvgPicture.string(icon,height: 30,width: 30,),
+                  ):SizedBox(),
+                  Text(
 
-          decoration: BoxDecoration(
+                      text,
+                      textAlign: TextAlign.start,
+                      style: PoppinsRegular(18, textColorBlack)
+                  ),
+                ],
+              ),
+            ),
+            
+            Container(
 
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-          child: Text(
-              text,
-              style: PoppinsRegular(18, textColor)
-          ),
+height: 2,
+decoration:  BoxDecoration(
+gradient: LinearGrdi()
+            )
+            )],
         ),
       ),
     );

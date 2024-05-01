@@ -19,10 +19,12 @@ part 'years_state.dart';
 class YearsBloc extends Bloc<YearsEvent, YearsState> {
   final getYearsUseCase getYears;
   final getBoardRolesUseCase getBoardRoles;
+  final AddRoleUseCase addRoleUseCase;
+  final RemoveRoleUseCase removeRoleUseCase;
   final AddPositionUseCase addPositionUseCase;
 final RemovePositionUseCase removePositionUseCase;
 
-  YearsBloc(this.getYears, this.getBoardRoles, this.addPositionUseCase, this.removePositionUseCase) : super(YearsInitial()) {
+  YearsBloc(this.getYears, this.getBoardRoles, this.addPositionUseCase, this.removePositionUseCase, this.addRoleUseCase, this.removeRoleUseCase) : super(YearsInitial()) {
     on<GerBoardYearsEvent>(getYearsEvent);
     on<ChangeBoardYears>(_ChangeBoardYea);
     on<AddYear>(_addYearsEvent);
@@ -33,10 +35,29 @@ final RemovePositionUseCase removePositionUseCase;
     on<RemovePosition>(_RemovePosition);
 
     on<ChangeRoleEvent>(ChangeRole);
+    on<AddRoleEvent>(_AddRole);
+    on<RemoveRole>(_RemoveRole);
 
     on<YearsEvent>((event, emit) {
       // TODO: implement event handler
     });
+  }
+  void _AddRole(AddRoleEvent event,Emitter<YearsState> emit)async{
+    try {
+      emit(state.copyWith(state: yearsStates.Loading));
+      final result = await addRoleUseCase(event.role);
+      _mapAddRoleorFailure(result, emit,"Role Added Successfully");
+    } catch (e) {
+      // TODO
+    }
+  }  void _RemoveRole(RemoveRole event,Emitter<YearsState> emit)async{
+    try {
+      emit(state.copyWith(state: yearsStates.Loading));
+      final result = await removeRoleUseCase(event.roleid);
+      _mapAddRoleorFailure(result, emit,"Role Deleted Successfully");
+    } catch (e) {
+      // TODO
+    }
   }
 
 
@@ -158,6 +179,13 @@ final RemovePositionUseCase removePositionUseCase;
     return result.fold((l) => emit(state.copyWith(state: yearsStates.ErrorChanged,message: mapFailureToMessage(l))),
             (r) {
       emit(state.copyWith(state: yearsStates.ChangedPosition,message: "Position Removed Successfully"));
+    });
+  }
+
+  void _mapAddRoleorFailure(Either<Failure, Unit> result, Emitter<YearsState> emit,String message) {
+    return result.fold((l) => emit(state.copyWith(state: yearsStates.ErrorChanged,message: mapFailureToMessage(l))),
+            (r) {
+      emit(state.copyWith(state: yearsStates.Changed,message: message));
     });
   }
 }

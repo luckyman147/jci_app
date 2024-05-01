@@ -84,6 +84,7 @@ return _getMessage(api.signOut());
 
   @override
   Future<Either<Failure, Unit>> updatePassword(Member member) {
+
 final MemberModel memberModel=MemberModel.fromEntity(member);
 
 
@@ -91,11 +92,6 @@ final MemberModel memberModel=MemberModel.fromEntity(member);
       return _getMessageReset(api.updatePassword(memberModel));
   }
 
-  @override
-  Future<Either<Failure, Member>> verifyEmail() {
-    // TODO: implement verifyEmail
-    throw UnimplementedError();
-  }
 
   @override
   Future<Either<Failure, bool>> isFirstEntry()async  {
@@ -116,13 +112,56 @@ return _getMessageReset(local.updateFirstEntry());
   Future<Either<Failure, Unit>> updateLoggedIn(bool value) {
     return _getMessageReset(local.updateLoggedIn(value));
   }
+@override
+Future<Either<Failure, Unit>> LogInWithCredentials(String email ,String password) async {
 
+
+
+  final message= api.Login(email, password );
+
+  return  await _getMessageReset(message);
+}
   @override
   Future<Either<Failure, Unit>> updateTokenFromStorage() {
     // TODO: implement updateTokenFromStorage
     throw UnimplementedError();
   }
 
+
+Future<Either<Failure, Unit>> signUpWithCredentials(Member member,String otp)async {
+  final otpModel=await local.getOtp();
+  if (otpModel==otp){
+    final MemberModel memberModelSignUp = MemberModel.fromEntity(member);
+    return await _getMessageReset(api.signUp(memberModelSignUp));
+  }
+  else{
+    return Left(WrongVerificationCodeFailure());
+  }
+
+}
+
+  @override
+  Future<Either<Failure, Unit>> SendVerificationEmail(String email)async {
+    return await _getMessageReset(api.SendVerificationEmail(email,false));
+
+
+  }
+
+  @override
+  Future<Either<Failure, Unit>> SendResetPasswordEmail(String email) async {
+    return await _getMessageReset(api.SendVerificationEmail(email,true));
+  }
+
+  @override
+  Future<Either<Failure, bool>> checkOtp(String otp) async{
+    final otpModel=await local.getOtp();
+    if (otpModel==otp){
+      return Right(true);
+    }
+    else{
+      return Left(WrongVerificationCodeFailure());
+    }
+  }
 
 
 

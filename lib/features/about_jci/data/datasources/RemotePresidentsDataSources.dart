@@ -43,20 +43,8 @@ class RemotePresidentsDataSourcesImpl implements RemotePresidentsDataSources {
         final Map<String, dynamic> decodedJson = json.decode(response.body) ;
         final presidents = PresidentModel.fromJson(decodedJson);
 
-log(decodedJson.toString());
-        final upload_response=await uploadImages(decodedJson['_id'], president.CoverImage,SuperAdminUrl+'/',"CoverImage");
-        log(upload_response.statusCode.toString());
-        if (upload_response.statusCode==201){
-         return presidents;
-        }
-        else if (upload_response.statusCode==400){
-          debugPrint(upload_response.reasonPhrase.toString());
-          DeletePresident(decodedJson["_id"]);
-          throw EmptyDataException();
 
-        }else {
-          throw ServerException();
-        }
+        return presidents;
 
       }
       else if (response.statusCode == 400) {
@@ -70,6 +58,22 @@ log(decodedJson.toString());
         throw ServerException();
       }
     });
+  }
+
+  Future<PresidentModel> uploadimagefunct(Map<String, dynamic> decodedJson, PresidentModel president, PresidentModel presidents) async {
+         final upload_response=await uploadImages(decodedJson['_id'], president.CoverImage,SuperAdminUrl+'/',"CoverImage");
+
+    if (upload_response.statusCode==201){
+     return presidents;
+    }
+    else if (upload_response.statusCode==400){
+      debugPrint(upload_response.reasonPhrase.toString());
+      DeletePresident(decodedJson["_id"]);
+      throw EmptyDataException();
+
+    }else {
+      throw ServerException();
+    }
   }
 
   @override
@@ -100,9 +104,11 @@ log(decodedJson.toString());
 
   @override
   Future<PresidentModel> UpdateImagePresident(PresidentModel presidentModel)async {
-    final upload_response=await uploadImages(presidentModel.id, presidentModel.CoverImage,SuperAdminUrl,"CoverImage");
+    final upload_response=await uploadImages(presidentModel.id, presidentModel.CoverImage,SuperAdminUrl+"/","CoverImage");
     if (upload_response.statusCode==201){
-      return presidentModel;
+      final decodedJson = json.decode(await upload_response.stream.bytesToString());
+      return //display the image// ;
+PresidentModel.fromJson(decodedJson);
     }
     else if (upload_response.statusCode==400){
 

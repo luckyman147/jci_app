@@ -6,6 +6,7 @@ import { Member } from '../../models/Member';
 
 
 import { Event } from '../../models/activities/eventModel';
+import { participationEmail, sendNewEventEmail } from '../../utility/NotificationEmailUtility';
 import { getMembersInfo, getPermissionIdsByRelated } from '../../utility/role';
 
 //&Public
@@ -150,8 +151,18 @@ export const addEvent = async (req: Request, res: Response, next: NextFunction) 
   try {
     // Extract data from the request body
     const eventInputs=plainToClass(EventInputs,req.body)
-
-    const permission=await getPermissionIdsByRelated(["Events"])
+//compare end date 
+    if (eventInputs.ActivityEndDate<eventInputs.ActivityBeginDate){
+      return res.status(400).json({message:"End date should be greater than begin date"})
+    }
+    // Compare registration deadline with activity begin date
+    //TODO - check if the event already existed
+    // Check if the event already exists
+    const existingEvent = await Event.findOne({ name: eventInputs.name });
+    if (existingEvent) {
+      return res.status(409).json({ message: 'Event already exists' });
+    }
+   // const permission=await getPermissionIdsByRelated(["Events"])
     // Create an Event document
     const newEvent = new Event({
       
@@ -164,7 +175,7 @@ export const addEvent = async (req: Request, res: Response, next: NextFunction) 
       categorie: eventInputs.categorie,
       IsPaid: eventInputs.IsPaid,
       ActivityPoints:eventInputs.ActivityPoints,
-      Permissions:permission,
+      Permissions:[],
    
      Price:eventInputs.price, 
       Participants: [],
@@ -175,10 +186,16 @@ export const addEvent = async (req: Request, res: Response, next: NextFunction) 
       
       CoverImages: [], // Convert images to base64
     });
+    const members=await Member.find().select(["email","language"])
+     const savedEvent = await newEvent.save();
+
+members.forEach((member)=>{
+
+  sendNewEventEmail(newEvent.name,newEvent.ActivityBeginDate,newEvent.ActivityAdress,member.language,member.email,"event",[],"")
+})
 
     // Add the event to the database
-    const savedEvent = await newEvent.save();
-
+   
     res.json(savedEvent);
   } catch (error) {
     console.log('Error adding event:', error);
@@ -373,99 +390,6 @@ export const getEventByDate = async (req: Request, res: Response, next: NextFunc
       next(error);
     }
   }
-  export const AddParticipantToEvent = async (req: Request, res: Response, next: NextFunction) => {
-    const member=req.member
-    if (member){
-    try {
-      const eventId = req.params.idEvent;
-   
-  
-      console.log(eventId)
-      // Find the event by ID
-      const event = await Event.findById(eventId);
-      console.log(event)
-  
-      if (!event) {
-        return res.status(404).json({ message: 'Event not found' });
-      }
-const FoundedMember=await Member.findById(member._id)
-      // Check if the participant is already added
-      if (event.Participants.includes(member._id)) {
-        return res.status(400).json({ message: 'Participant is already added to the event' });
-      }
-await FoundedMember?.Activities.push(event)
-      // Add the participant to the Participants array
-      await event.Participants.push(member);
 
-      // Save the updated event
-      const updatedEvent = await event.save();
-      const updatedMember = await FoundedMember!.save();
-  
-      // Respond with the updated event
-      res.status(200).json({ message: 'Participant added to the event', event: updatedEvent,FoundedMember:updatedMember?.Activities });
-    } catch (error) {
-     res.status(500).json({ message: 'Error adding participant to the event' });
-    }}
-  };
  // Import your Member model
 
-export const RemoveParticipantFromEvent = async (req: Request, res: Response, next: NextFunction) => {
-  const member=req.member
-  if (member){
-  try {
-    const eventId = req.params.id;
-    const participantId = member._id;
-
-    // Find the event by ID
-    const event = await Event.findById(eventId);
-
-    if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
-    }
-
-    // Find the participant by ID
-    const participant = await Member.findById(participantId);
-
-    if (!participant) {
-      return res.status(404).json({ message: 'Participant not found' });
-    }
-
-    // Check if the participant is added to the event
-    const isParticipantAdded = event.Participants.some((member) => member._id.equals(participantId));
-
-    if (!isParticipantAdded) {
-      return res.status(400).json({ message: 'Participant is not added to the event' });
-    }
-participant.Activities=participant.Activities.filter((activity)=>activity._id.equals(eventId))
-    // Remove the participant from the Participants array
-    event.Participants = event.Participants.filter((member) => !member._id.equals(participantId));
-
-    // Save the updated event
-    const updatedEvent = await event.save();
-await participant.save()
-    // Respond with the updated event
-    res.json({ message: 'Participant removed from the event', event: updatedEvent });
-  } catch (error) {
-     res.status(500).json({message:'Error removing participant from event:', error});
-    next(error);
-   } }
-};
-export const deleteEvent= async (req:Request, res:Response, next:NextFunction) => {
-                           try {
-                             const eventId = req.params.id;
-
-                             // Check if the event exists
-                             const event = await Event.findById(eventId);
-                             if (!event) {
-                               return res.status(404).json({ error: 'Event not found' });
-                             }
-
-                             // Delete the event
-                             await event.deleteOne();
-
-                             res.status(204).json({message:"deleted successully"}); // 204 No Content indicates a successful deletion
-                           } catch (error) {
-                             console.error('Error deleting event:', error);
-                             next(error);
-                           }
-                         };

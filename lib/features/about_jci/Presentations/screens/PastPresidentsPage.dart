@@ -7,6 +7,8 @@ import 'package:jci_app/features/Teams/presentation/widgets/TaskComponents.dart'
 import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/presidents_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/screens/AddUpdatePresidentsPage.dart';
+import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
+import 'package:jci_app/features/about_jci/Presentations/widgets/dialogs.dart';
 
 import '../widgets/PresidentsImpl.dart';
 
@@ -53,7 +55,7 @@ class _PresidentsPageState extends State<PresidentsPage> {
             Text('Past Presidents',style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),),
             ProfileComponents.buildFutureBuilder(buildAddButton(() {
 
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddUpdatePage(action: PresidentsAction.Add,)));
+Dialogs.ShoUpdateAddPresident(context, null, PresidentsAction.Add);
             }), true, "", (p0) => FunctionMember.isSuper())
           ],
         ),

@@ -8,6 +8,7 @@ import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc
 
 
 import '../../../../core/app_theme.dart';
+import '../../../../core/config/services/store.dart';
 import '../../../../core/util/snackbar_message.dart';
 import '../bloc/SignUp/sign_up_bloc.dart';
 import '../bloc/bool/toggle_bool_bloc.dart';
@@ -41,19 +42,24 @@ final Passwordcontroller=TextEditingController();
   @override
   Widget build(BuildContext context) {
     final mediaquery=MediaQuery.of(context);
-    print ("email from reset ${widget.email}");
+
     return Scaffold(
       body: BlocConsumer<ResetBloc, ResetPasswordState>(
-  listener: (context, state) {
-    if(state is ErrorReset){
+  listener: (context, state)async{
+    if(state.status== ResetPasswordStatus.error){
 
       SnackBarMessage.showErrorSnackBar(
           message: state.message, context: context);
     }
-else if(state is MessageReset){
+else if(state.status== ResetPasswordStatus. Updated){
       SnackBarMessage.showSuccessSnackBar(
           message: state.message, context: context);
-      context.go('/login');
+      final islooged = await Store.isLoggedIn();
+      if (!mounted) return;
+      if (islooged) {
+        context.go('/home');
+      } else {
+      context.go('/login');}
     }
     // TODO: implement listener
   },

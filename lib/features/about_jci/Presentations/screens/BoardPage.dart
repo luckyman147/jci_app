@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/BoardImpl.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
+import 'package:jci_app/features/about_jci/Presentations/widgets/dialogs.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/util/snackbar_message.dart';
@@ -63,7 +64,7 @@ class _BoardPageState extends State<BoardPage> {
                   Text('Board', style: PoppinsSemiBold(
                       18, textColorBlack, TextDecoration.none),),
                   ProfileComponents.buildFutureBuilder(buildAddButton(() {
-                    JCIFunctions.showYearSelectionDialog(context,);
+                    Dialogs.showYearSelectionDialog(context,);
                   }), true, "", (p0) => FunctionMember.isSuper())
                 ],
               ),

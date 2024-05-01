@@ -30,7 +30,7 @@ registrationDeadline: Date
 
 ActivityBegindate: Date
 
-Agenda:[string]
+Agenda:string[]
 
 description:string
 
@@ -75,7 +75,7 @@ LeaderName:string
     @IsNotEmpty()
 description:string
 @IsNotEmpty()
-agenda:[string]
+agenda:string[]
 @IsNotEmpty()
 ActivityBeginDate:Date
 

@@ -12,15 +12,9 @@ import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart
 
 
 import '../../core/network/network_info.dart';
-import 'data/datasources/LoginRemote.dart';
+
 import 'data/datasources/authLocal.dart';
-import 'data/datasources/signUpRemote.dart';
-import 'data/repositories/LoginRepoImpl.dart';
-import 'data/repositories/signUpRepoImpl.dart';
-import 'domain/repositories/LoginRepo.dart';
-import 'domain/repositories/SignUpRepo.dart';
-import 'domain/usecases/SIgnIn.dart';
-import 'domain/usecases/SignUp.dart';
+
 import 'package:http/http.dart' as http;
 
 import 'domain/usecases/authusecase.dart';
@@ -28,24 +22,20 @@ import 'domain/usecases/authusecase.dart';
 final sl = GetIt.instance;
 
 Future <void > initAuth()async{
-  sl.registerFactory(() => ResetBloc(sl()));
+  sl.registerFactory(() => ResetBloc(sl(),sl(),sl()));
 
 sl.registerFactory(() => AuthBloc(
      refreshTokenUseCase: sl(), signoutUseCase: sl(),
   ));
 
   sl.registerFactory(() => SignUpBloc(
-    signUpUseCase: sl(),
+    signUpUseCase: sl(), sendVerificationEmailUseCase: sl(),
   ));
   sl.registerFactory(
           () => LoginBloc(loginUseCase: sl(),));
 
 
-  sl.registerLazySingleton<LoginRemoteDataSource>(
-          () => LoginRemoteDataSourceImpl(
 
-        client: sl(), auth: sl(),
-      ));
 sl.registerLazySingleton<AuthRemote>(() => AuthRemoteImpl(client: sl()));
 sl.registerLazySingleton<AuthLocalDataSources>(() => AuthLocalImpl());
 
@@ -55,19 +45,18 @@ sl.registerLazySingleton<AuthLocalDataSources>(() => AuthLocalImpl());
 //use cases
 
   sl.registerLazySingleton(() => UpdatePasswordUseCase(authRepository: sl()));
+  sl.registerLazySingleton(() => SendVerifyCodeUseCases( sl()));
+  sl.registerLazySingleton(() => SendResetPasswordEmailUseCase( sl()));
+  sl.registerLazySingleton(() => CheckOtpUseCase( sl()));
   sl.registerLazySingleton(() => SignOutUseCase(authRepository: sl()));
   sl.registerLazySingleton(() => RefreshTokenUseCase( authRepository: sl()));
-  sl.registerLazySingleton(() => SignUpUseCase(authRepo: sl()));
+  sl.registerLazySingleton(() => SignUpUseCase( authRepository: sl  ()));
   sl.registerLazySingleton(() => LoginUseCase(sl()));
 
   // Repositories
 
 sl.registerLazySingleton<AuthRepo>(() => AuthRepositoryImpl(api: sl(), networkInfo: sl(), local: sl(), ));
-  sl.registerLazySingleton<SignUpRepo>(() => SignUpRepoImpl(sl(), sl()));
-  sl.registerLazySingleton<LoginRepo>(() => LoginRepoImpl(
-    loginRemoteDataSource: sl(),
-    networkInfo: sl(),
-  ));
+
   //datasources
   // Register http.Client first
 
@@ -78,8 +67,6 @@ sl.registerLazySingleton<AuthRepo>(() => AuthRepositoryImpl(api: sl(), networkIn
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
 
   // Register SignUpRemoteDataSource with http.Client as a parameter
-  sl.registerLazySingleton<SignUpRemoteDataSource>(
-          () => SignUpRemoteDataSourceImpl(client: sl()));
 
   // Register repositories
 }

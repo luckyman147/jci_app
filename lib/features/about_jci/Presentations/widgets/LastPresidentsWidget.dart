@@ -9,10 +9,12 @@ import 'package:jci_app/features/MemberSection/presentation/widgets/functionMemb
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
+import 'package:jci_app/features/about_jci/Presentations/widgets/ShimmerEffects.dart';
 
 import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
 import '../../../Home/presentation/widgets/Functions.dart';
 import '../../Domain/entities/President.dart';
+import 'dialogs.dart';
 
 class LastPresidentsWidget extends StatelessWidget {
 
@@ -37,23 +39,25 @@ childAspectRatio: .8,
         ),
         itemBuilder: (BuildContext context, int index) {
           return
-            index>=presidents.length?const LoadingWidget():
+            index>=presidents.length?ShimmerEffects.PresidensShimmer(false):
             body(index, context,mounted,presidents[index],TextEditingController());
         },
       ),
     );
   }
 
-  Widget body(int index, BuildContext context,bool mounted,President? president,TextEditingController name) {
+  Widget body(int index, BuildContext context,bool mounted,President? president,TextEditingController name,) {
     PersistentBottomSheetController? _bottomSheetController;
     var boxDecoration = BoxDecoration(
               border: Border.all(color: textColorBlack,width: 2),
     borderRadius: BorderRadius.circular(20),
 
             );
+    return BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
+  builder: (context, state) {
     return InkWell(
       onLongPress: ()async{
-      await JCIFunctions.SHowActionSheet(mounted, context,president, name,boxDecoration);
+      await Dialogs.SHowActionSheet(mounted, context,president, name,boxDecoration,state);
       },
       child: Container(
 
@@ -64,6 +68,8 @@ childAspectRatio: .8,
                 child: Center(child: getPresidentWidget(presidents[index], context)),
               )),
     );
+  },
+);
   }
 
 

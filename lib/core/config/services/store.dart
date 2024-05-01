@@ -13,7 +13,7 @@ class Store{
   static const _PermissionsKey="permissions";
 static const String _FirstEntryKey="firstEntry";
 static const String _isLogged="isLoggedIn";
-
+static const String Otp="Otp";
   static Future<void> setTokens(String RefreshToke,String AccessToken)async{
     final pref =await SecureSharedPref.getInstance();
     await pref.putString(_RefreshTokenKey, RefreshToke);
@@ -36,8 +36,13 @@ static const String _isLogged="isLoggedIn";
     print([access,refresh]);
     return [refresh,access];
   }
-
-
+static Future<void> setOtp(String otp)async {
+  final pref = await SecureSharedPref.getInstance();
+  await pref.putString(Otp, otp);
+}
+static Future<String?> getOtp()async {
+  final pref = await SecureSharedPref.getInstance();
+  return pref.getString(Otp);}
  static Future<void> clear() async{
    final pref =await SecureSharedPref.getInstance();
 await pref.putString(_RefreshTokenKey, "");

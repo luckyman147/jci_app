@@ -1,15 +1,17 @@
 import express, { Request, Response } from "express";
 import multer from "multer";
 import {
-    AddParticipantToTraining, GetTrainingsOfMonth, GetTrainingsOfWeekend, RemoveParticipantFromTraining,
+    GetTrainingsOfMonth, GetTrainingsOfWeekend, 
     addTraining,
-    deleteTrain,
+  
     getAllTrainings, getTrainingByDate, getTrainingById, getTrainingByName,
     updateImage,
     updateTraining,
     uploadImage
 } from "../../controllers/activities/TrainingController";
 import { Authenticate, AuthenticateAdmin } from "../../middleware/CommonAuth";
+import { AddParticipantToActivity, deleteActivity, RemoveParticipant } from "../../controllers/activities/activityController";
+import { authenticate } from "passport";
 const router=express.Router()
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
@@ -47,15 +49,15 @@ router.get('/hello', (req:Request, res:Response) => {
  */
 
 
-router.post('/add',addTraining)
-router.post('/:idTraining/addParticipant',Authenticate ,AddParticipantToTraining)
+router.post('/add',AuthenticateAdmin,addTraining)
+router.post('/:id/addParticipant',Authenticate ,AddParticipantToActivity)
 router.patch('/:id/edit',AuthenticateAdmin,updateTraining)
 router.patch('/:id/UpdateImage',upload.array("CoverImages"),updateImage)
 
 //?should be authenticated
 router.post('/:id/uploadImage',upload.array("CoverImages"),uploadImage)
-router.delete("/:id",deleteTrain)  //?should be authenticated
-router.delete('/:id/deleteParticipant',Authenticate,RemoveParticipantFromTraining  )
+router.delete("/:id",AuthenticateAdmin,deleteActivity)  //?should be authenticated
+router.delete('/:id/deleteParticipant',Authenticate,RemoveParticipant  )
 export { router as trainingRoute };
 
 

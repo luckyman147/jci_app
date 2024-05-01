@@ -52,3 +52,7 @@ class AlreadyParticipatedFailure extends Failure {
   @override
   List<Object?> get props => [];
 }
+class WrongVerificationCodeFailure extends Failure {
+  @override
+  List<Object?> get props => [];
+}

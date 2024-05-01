@@ -25,11 +25,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
 
 
+
   }) : super(AuthInitial()){
     on<RefreshTokenEvent>(
 _onRefreshToken,
 
     );
+
     on<SignoutEvent>(_onSignoutEvent);
 
   }
@@ -87,6 +89,8 @@ _onRefreshToken,
           (_) => AuthSuccessState(),
     );
   }
+
+
 
 }
 

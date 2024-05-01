@@ -8,9 +8,6 @@ import 'package:formz/formz.dart';
 import 'package:jci_app/core/strings/messages.dart';
 
 
-import 'package:jci_app/features/auth/domain/usecases/SignUp.dart';
-
-
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
 import '../../../data/models/formz/Email.dart';
@@ -19,6 +16,7 @@ import '../../../data/models/formz/firstname.dart';
 import '../../../data/models/formz/lastname.dart';
 import '../../../data/models/formz/password.dart';
 import '../../../domain/entities/Member.dart';
+import '../../../domain/usecases/authusecase.dart';
 
 
 
@@ -29,6 +27,7 @@ part 'sign_up_state.dart';
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   SignUpBloc( {
 
+required  this.sendVerificationEmailUseCase,
     required this.signUpUseCase,
 
   })  :
@@ -38,7 +37,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     on<LastNameChanged>(_onLastnameChanged);
     on<ConfirmPasswordChanged>(_onCPasswordChanged);
 
-
+    on<SendVerificationEmailEvent>(_sendVerificationCode);
 
 on <ResetForm>(_reset_form);
 
@@ -46,18 +45,35 @@ on <ResetForm>(_reset_form);
     on<SignUpSubmitted>(_onSubmitted);
   }
 
+  final SendVerifyCodeUseCases sendVerificationEmailUseCase;
 
 final SignUpUseCase signUpUseCase;
+
+
+
+  void _sendVerificationCode(SendVerificationEmailEvent event , Emitter<SignUpState> emit) async {
+
+    try {
+      final result = await sendVerificationEmailUseCase( event.email);
+      emit(_eitherSentOrFailure(result, 'Verification Email Sent Successfully'));
+      emit(state.copyWith(signUpStatus: SignUpStatus.Initial));
+    } catch (e) {
+      emit(state.copyWith(message: e.toString(),signUpStatus: SignUpStatus.ErrorSignUp),);
+    }
+  }
+
+  SignUpState _eitherSentOrFailure(Either<Failure, Unit> result, String s) {
+    return result.fold(
+          (l) => state.copyWith(message: mapFailureToMessage(l),signUpStatus: SignUpStatus.ErrorSignUp),
+          (r) => state.copyWith(signUpStatus: SignUpStatus.EmailSuccessState,message:s),
+    );
+  }
   void _onEmailChanged(
       SignUpEmailnameChanged  event,
       Emitter<SignUpState> emit,
       ) {
     final email = Email.dirty(event.email);
 
-    print('email is $email.');
-    print('pass is ${state.password.isValid}.');
-    print('first is ${state.firstname.isValid}');
-    print('last is ${state.firstname.isValid}');
 
     emit(
       state.copyWith(
@@ -146,54 +162,27 @@ void _reset_form(
       ) async {
 
 
-   //     print("sqtatet ${state}");
-     //   print("sqtatet ${state.isValid}");
-        if (state.isValid) {
-          emit(LoadingSignUp());
-          final failureOrDoneMessage = await signUpUseCase.SignUpCred(
-              event.member);
-         print("sign" + failureOrDoneMessage.toString());
+
+          emit(state.copyWith(
+        signUpStatus: SignUpStatus.Loading
+          ));
+          final failureOrDoneMessage = await signUpUseCase(
+              event.signField);
 
           emit(_eitherDoneMessageOrErrorState(
               failureOrDoneMessage, SIGNUP_SUCCESS_MESS));
 
 
-          emit(const SignUpState(status: FormzSubmissionStatus.success));
-        } else {
 
-          if (!state.email.isValid) {
-            emit(ErrorSignUp(message: "Email is invalid"));
-          }
-          else if (!state.password.isValid) {
-            emit(ErrorSignUp(message: "Password is invalid"));
-          }
-          else if (!state.firstname.isValid) {
-            emit(ErrorSignUp(message: "First name is invalid"));
-          }
-          else if (!state.lastname.isValid) {
-            emit(ErrorSignUp(message: "Last name is invalid"));
-          }
-          else if (state.confirmPassword.value != state.password.value) {
-            emit(ErrorSignUp(message: "Password does not match"));
-          }
-          else if (!state.confirmPassword.isValid) {
-            emit(ErrorSignUp(message: "Password is invalid"));
-          }
-          else {
-            emit(ErrorSignUp(message: "Something invalid"));
-          }
-          emit(const SignUpState(status: FormzSubmissionStatus.canceled));
-        }
+
 
 
   }
   SignUpState _eitherDoneMessageOrErrorState(
       Either<Failure,  Unit> either, String message) {
     return either.fold(
-          (failure) => ErrorSignUp(
-        message: mapFailureToMessage(failure),
-      ),
-          (_) => MessageSignUp(message: message),
+          (failure) => state.copyWith(message: mapFailureToMessage(failure),signUpStatus: SignUpStatus.ErrorSignUp),
+          (_) => state.copyWith(message: message,signUpStatus: SignUpStatus.MessageSignUp),
     );
   }
 }

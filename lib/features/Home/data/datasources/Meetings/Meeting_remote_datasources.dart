@@ -38,11 +38,14 @@ class MeetingRemoteDataSourceImpl implements MeetingRemoteDataSource{
 
   MeetingRemoteDataSourceImpl({required this.client});
   @override
-  Future<Unit> createMeeting(MeetingModel Meeting) {
+  Future<Unit> createMeeting(MeetingModel Meeting)async {
+    final token = await getTokens();
 final body = Meeting.toJson();
     return client.post(
       Uri.parse(createMeetingUrl),
-      headers: {"Content-Type": "application/json"},
+      headers: {"Content-Type": "application/json",
+        "Authorization": "Bearer ${token[1]}"
+      },
       body: json.encode(body),
     ).then((response) async {
       if (response.statusCode == 200) {
@@ -65,10 +68,14 @@ final body = Meeting.toJson();
 
   @override
   Future<Unit> deleteMeeting(String id)async {
+    final token = await getTokens();
     final response = await client.delete(
 
       Uri.parse(getMeetingsUrl+"$id"),
-      headers: {"Content-Type": "application/json"},
+      headers: {"Content-Type": "application/json",
+        "Authorization": "Bearer ${token[1]}"
+
+      },
     );
     if (response.statusCode==204){
       return Future.value(unit);

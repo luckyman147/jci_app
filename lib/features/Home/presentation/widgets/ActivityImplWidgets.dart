@@ -22,6 +22,7 @@ import 'ErrorDisplayMessage.dart';
 import 'EventListWidget.dart';
 import 'EventOfweek.dart';
 import 'Functions.dart';
+import 'ShimmerEffects.dart';
 
 
 
@@ -84,7 +85,7 @@ Widget ActivityDetails(activity Act, String id,index) {
       return BlocBuilder<AcivityFBloc, AcivityFState>(
           builder: (context, state) {
             if (state is ActivityLoadingState) {
-              return LoadingWidget();
+              return ReloadDetailsPage();
             } else if (state is ACtivityByIdLoadedState) {
               print(ss.isParticipantAdded[index]);
               print(index);
@@ -92,10 +93,10 @@ Widget ActivityDetails(activity Act, String id,index) {
               return ActivityDetail(activitys: state.activity, bools: ss.isParticipantAdded[index]['isPart'], act: Act, index: index,);
             }
             else if (state is ErrorActivityState) {
-              return MessageDisplayWidget(message: state.message);
+              return ReloadDetailsPage();
             }
             else {
-              return LoadingWidget();
+              return ReloadDetailsPage();
             }
           }
       );

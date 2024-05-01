@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/core/config/services/TeamStore.dart';
@@ -16,6 +17,8 @@ import 'package:http/http.dart' as http;
 
 import '../../../../core/config/services/verification.dart';
 import '../../../../core/error/Failure.dart';
+import '../../domain/entities/Member.dart';
+import '../models/MemberSIgnUP/MerberSignUp.dart';
 
 abstract class  AuthRemote {
   Future<bool>  signOut();
@@ -24,15 +27,16 @@ abstract class  AuthRemote {
   Future<Unit> updatePassword(MemberModel member);
   Future<Unit> refreshToken();
 
+  Future<Unit> Login(String email,String password);
+  Future<Unit> SendVerificationEmail(String email,bool isReset);
 
-
-
+  Future<Unit> signUp(MemberModel memberModelSignUp);
 
 }
 class AuthRemoteImpl implements AuthRemote {
 
 final http.Client client;
-  String? accessToken;
+
 
   AuthRemoteImpl({required this.client});
 
@@ -43,15 +47,11 @@ final http.Client client;
 
     final tokens=await Store.GetTokens();
     if (tokens[0] == null || tokens[0].toString().isEmpty ) {
-      print('famech token');
+
 throw EmptyCacheException();
 
     }
-    final  refreshToken =  tokens[0]??""; // replace with your actual access token
-
-
-
-
+    // replace with your actual access token
 
     try {
       final Response = await client.post(
@@ -63,24 +63,23 @@ throw EmptyCacheException();
         },
 
       );
-print(Response.statusCode);
+
       if (Response.statusCode == 200) {
         final Map<String, dynamic> response = jsonDecode(Response.body);
 
-        // Request was successful
+
 
         Store.setTokens( response['refreshToken'],response['accessToken'] );
         return Future.value(unit);
       } else {
         // Request failed
-        print('Request failed with status: ${Response.statusCode}');
+      //  print('Request failed with status: ${Response.statusCode}');
 
         throw ExpiredException();
       }
     } catch (e) {
 
-      // Exception occurred during the request
-      print('Exception during request: $e');
+
     throw ServerException();
     }}
 
@@ -109,7 +108,7 @@ print(Response.statusCode);
           'refreshToken': '${tokens[0]}', // replace with your actual refresh token
         }),
       );
-      print(" ya bonay ${Response.statusCode}");
+
       if (Response.statusCode == 200) {
         final Map<String, dynamic> response = jsonDecode(Response.body);
        await  Store.clear();
@@ -126,15 +125,11 @@ if (response['message']=='Already logged out'){
       throw UnauthorizedException()  ;
       }
       else {
-        // Request failed
-        print('Request failed with status: ${Response.statusCode}');
-        print('Response body: ${Response.body}');
+
         throw ServerException();}
       }
       else {
-        // Request failed
-        print('Request failed with status: ${Response.statusCode}');
-        print('Response body: ${Response.body}');
+
         await    Store.setLoggedIn(false);
 
         throw ServerException();
@@ -155,8 +150,7 @@ if (response['message']=='Already logged out'){
   Future<Unit> updatePassword(MemberModel member)async {
 
   final body=jsonEncode(member.toJson());
-  print("body");
-  print(body);
+
     final Response = await client.patch(
       Uri.parse(ForgetPasswordUrl),
       headers: {
@@ -167,7 +161,7 @@ if (response['message']=='Already logged out'){
 
     if (Response.statusCode == 200) {
       final Map<String, dynamic> response = jsonDecode(Response.body);
-      print(response);
+
       return Future.value(unit);
     }
     else if (Response.statusCode==401){
@@ -175,9 +169,7 @@ if (response['message']=='Already logged out'){
     }
 
     else {
-      // Request failed
-      print('Request failed with status: ${Response.statusCode}');
-      print('Response body: ${Response.body}');
+
       throw ServerException();
     }
   }
@@ -201,11 +193,124 @@ if (response['message']=='Already logged out'){
 
 
 
+Future<Unit> Login(String email,String password) async {
 
 
 
 
 
 
+
+  final Response = await client.post(
+    Uri.parse(LoginUrl),
+    headers: {"Content-Type": "application/json"},
+    body: jsonEncode({"email":email,"password":password}),
+  );
+
+
+  final response = jsonDecode(Response.body);
+
+  if (Response.statusCode == 200) {
+
+
+
+
+    await Store.setTokens(response['refreshToken'],response['accessToken'] );
+
+    await Store.setLoggedIn(true);
+
+    List<String> stringList = (response['Permissions'] as List).map((element) => element.toString()).toList();
+    await Store.setPermissions(stringList);
+
+
+    //await MemberStore.saveModel(MemberModel.fromJson(response['member']));
+    return Future.value(unit);
+
+
+
+
+
+
+
+
+
+  } else if (Response.statusCode == 400) {
+    throw WrongCredentialsException();
+  } else {
+    throw ServerException();
+  }
+}
+
+@override
+Future<Unit> signUp(MemberModel memberModelSignUp)async {
+
+  final body = jsonEncode(memberModelSignUp.toJson());
+  final Response=await client.post(
+    Uri.parse(SignUpUrl),
+
+    headers: {"Content-Type": "application/json"},
+
+    body: body,);
+
+
+
+  if (Response.statusCode == 201) {
+
+    return Future.value(unit);
+  } else if (Response.statusCode==400){
+
+
+    throw ServerException();
+  }
+  else if (Response.statusCode==409){
+
+
+    throw IsEmailException();
+  }
+  else{
+
+    throw ServerException();
+  }
+
+}
+Map<String, dynamic> filterMap(Map<String, dynamic> user) {
+  return user.containsKey('constraints')  ? user : {};
+}
+
+  @override
+  Future<Unit> SendVerificationEmail(String email,bool isReset) async {
+    try{
+    final Response = await client.post(
+      Uri.parse(isReset?Urls.ResetPassword: Urls.mailVerify),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"email": email,}),
+    );
+
+
+    final Map<String,dynamic> response  = jsonDecode(Response.body);
+
+    if (Response.statusCode == 200) {
+      log(response.toString());
+      final  otp = response['otp'];
+      log(otp.toString());
+      await Store.setOtp(otp.toString());
+      return Future.value(unit);
+    }
+    else if (Response.statusCode == 400) {
+      throw WrongCredentialsException();
+    }
+    else if (Response.statusCode == 404) {
+      throw WrongCredentialsException();
+    }
+
+
+    else {
+      throw ServerException();
+    }
+  }
+  catch(e){
+    log(e.toString());
+    throw ServerException();
+    }}
 
 }

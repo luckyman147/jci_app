@@ -38,8 +38,9 @@ class TaskVisibleBloc extends Bloc<TaskVisibleEvent, TaskVisibleState> {
   void _changeWillSearch(ChangeWillSearchEvent event, Emitter<TaskVisibleState> emit) {
     emit(state.copyWith(willSearch: event.willSearch));
   }
-  void _ChangeImageEvent(ChangeImageEvent event, Emitter<TaskVisibleState> emit) {
-    emit(state.copyWith(image: event.image));
+  void
+  _ChangeImageEvent(ChangeImageEvent event, Emitter<TaskVisibleState> emit) {
+    emit(state.copyWith(image: event.image, status: Status.Changed));
   }
   void _onToggleTaskVisible(ToggleTaskVisible event, Emitter<TaskVisibleState> emit) {
 

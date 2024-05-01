@@ -1,5 +1,5 @@
 part of 'presidents_bloc.dart';
-enum presidentsStates{Initial,Loading,Loaded,Error,Changed}
+enum presidentsStates{Initial,Loading,Loaded,Error,Changed,ErrorCrete}
  class PresidentsState extends Equatable {
   final presidentsStates state;
   final List<President> presidents;

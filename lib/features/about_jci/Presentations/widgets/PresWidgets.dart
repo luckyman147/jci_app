@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
@@ -11,6 +13,7 @@ import '../../Domain/entities/President.dart';
 import '../bloc/ActionJci/action_jci_cubit.dart';
 import '../screens/AddUpdatePresidentsPage.dart';
 import 'Fubnctions.dart';
+import 'dialogs.dart';
 
 class PresWidgets{
 
@@ -74,27 +77,20 @@ static   Container BorderGradients() {
     );
   }
 
-  static SizedBox buildSlider(BuildContext context, List<double> heights, List<String> images) {
+  static SizedBox buildSlider(BuildContext context, List<double> heights, List<String> images,ScrollController controller) {
     List<Color> colors = [PrimaryColor, Colors.green,SecondaryColor];
+    log(heights[1].toString());
     return SizedBox(
       width: MediaQuery.of(context).size.width / 3,
       height: heights.reduce((a, b) => a + b),
       child: ListView.builder(
+        controller: controller,
         itemCount: heights.length * 2 , // Number of circles and dividers
         itemBuilder: (context, index) {
           if (index.isEven ) {
             // Circle
             int imageIndex = index ~/ 2;
-            return Center(
-              child: Container(
-                width: 100.0,
-                height: 100.0,
-                child: CircleAvatar(
-                  radius: 100.0,
-                  backgroundImage: AssetImage(images[imageIndex]),
-                ),
-              ),
-            );
+            return avatarImage(images[imageIndex]);
           } else {
             // Divider
             int dividerIndex = (index - 1) ~/ 2;
@@ -111,7 +107,22 @@ static   Container BorderGradients() {
     );
   }
 
-static Widget sheetbody(BoxDecoration boxDecoration, President? president, TextEditingController name,bool mounted,BuildContext context) {
+  static Center avatarImage(String images) {
+    return Center(
+            child: Container(
+              width: 100.0,
+              height: 100.0,
+              child: CircleAvatar(
+                radius: 100.0,
+                backgroundImage: AssetImage(images),
+              ),
+            ),
+          );
+  }
+
+static Widget sheetbody(BoxDecoration boxDecoration, President? president, TextEditingController name,bool mounted,
+    TaskVisibleState ste,
+    BuildContext context) {
   return
   BlocListener<PresidentsBloc, PresidentsState>(
   listener: (context, state) {
@@ -123,21 +134,38 @@ static Widget sheetbody(BoxDecoration boxDecoration, President? president, TextE
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ButtonActions(context, boxDecoration,Icons.edit,"Edit",()
+                  ButtonActions(context, boxDecoration,Icons.edit,"Edit President",()
 
                   async{
-                    final  image=  await  ActivityAction.convertBase64ToXFile(president!.CoverImage);
+
                     if (!mounted) return;
-                    context.read<TaskVisibleBloc>().add(
-                        ChangeImageEvent(
-                            image!.path??vip));
+
 
                     context.read<ActionJciCubit>().changeAction(PresidentsAction.Update);
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>AddUpdatePage(president:president, action: PresidentsAction.Update ,)));
+                    Dialogs.ShoUpdateAddPresident(context, president, PresidentsAction.Update );
+
 
 
                   }),
-                  ButtonActions(context, boxDecoration,Icons.delete,"Delete",(){
+
+
+                  ButtonActions(context, boxDecoration,Icons.photo,"Change  Image",()async{
+                    log(president!.CoverImage.toString()      );
+                    log(president!.name.toString()      );
+                    final  image=  await  ActivityAction.convertBase64ToXFile(president!.CoverImage);
+if (!mounted) return;
+if (image!=null){
+  context.read<TaskVisibleBloc>().add(
+      ChangeImageEvent(image.path));
+}
+else{
+  context.read<TaskVisibleBloc>().add(
+      ChangeImageEvent(vip));
+
+}
+
+JCIFunctions.UpdatePresidentsImage(context,president!);
+                  }),   ButtonActions(context, boxDecoration,Icons.delete,"Delete",(){
                     context.read<ActionJciCubit>().changeAction(PresidentsAction.Delete);
                     context.read<PresidentsBloc>().add(DeletePresident(president!.id));
                   }),
@@ -155,27 +183,32 @@ static  Padding ButtonActions(BuildContext context, BoxDecoration boxDecoration,
     child: InkWell(
       onTap: onpressed,
       child: Container(
-          height: 100,
-          width: MediaQuery.of(context).size.width/2.5,
+          height: 120,
+          width: MediaQuery.of(context).size.width/4,
           decoration: boxDecoration,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                  decoration: BoxDecoration(
-                    color: textColorWhite,
-                    shape: BoxShape.circle,
+          child: Padding(
+            padding: paddingSemetricVertical(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                    decoration: BoxDecoration(
+                      color: textColorWhite,
+                      shape: BoxShape.circle,
 
-                    border: Border.all(color: textColorBlack, width: 1.0),
+                      border: Border.all(color: textColorBlack, width: 1.0),
 
-                  ),
+                    ),
 
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(icon),
-                  )),
-              Text(text.tr(context),style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),),
-            ],)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(icon),
+                    )),
+                Text(text.tr(context),
+                  textAlign: TextAlign.center,
+                  style: PoppinsSemiBold(MediaQuery.of(context).devicePixelRatio*4, textColorBlack, TextDecoration.none),),
+              ],),
+          )),
     ),
   );
 }

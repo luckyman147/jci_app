@@ -12,7 +12,7 @@ Future<http.StreamedResponse> uploadImages(String id, String? imagePath,String g
 
     // Create a File object from the file path
     File image = File(imagePath!);
-    debugPrint("image $image");
+
 
     var multiport = http.MultipartFile(
         text,

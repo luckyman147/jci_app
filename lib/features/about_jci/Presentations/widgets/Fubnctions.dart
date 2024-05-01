@@ -8,24 +8,26 @@ import 'package:jci_app/features/about_jci/Domain/entities/BoardRole.dart';
 import 'package:jci_app/features/about_jci/Domain/useCases/BoardUseCases.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/BoardBloc/boord_bloc.dart';
-import 'package:jci_app/features/about_jci/Presentations/bloc/Board/BoardBloc/boord_bloc.dart';
+
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
-import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
-import 'package:jci_app/features/about_jci/Presentations/screens/AddUpdatePresidentsPage.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/BoardComponents.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/BoardImpl.dart';
+import 'package:jci_app/features/about_jci/Presentations/widgets/PresComponents.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/PresWidgets.dart';
+import 'package:jci_app/features/about_jci/Presentations/widgets/PresidentsImpl.dart';
 
-import '../../../../core/strings/app_strings.dart';
+
+
 import '../../../../core/util/snackbar_message.dart';
-import '../../../Home/presentation/widgets/Functions.dart';
+
 import '../../../MemberSection/presentation/widgets/functionMember.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../../auth/domain/entities/Member.dart';
 import '../../Domain/entities/Post.dart';
 import '../../Domain/entities/President.dart';
 import '../bloc/presidents_bloc.dart';
-import 'LastPresidentsWidget.dart';
+import '../screens/AddUpdatePresidentsPage.dart';
+
 
 class JCIFunctions {
   static double getHeight(String text, double fontSize, double width) {
@@ -43,7 +45,7 @@ class JCIFunctions {
   }
   static void ListenerIsAdded(PresidentsState state, BuildContext context) {
     if (state.state== presidentsStates.Changed) {
-      // context.read<PresidentsBloc>().add(GetAllPresidentsEvent());
+       context.read<PresidentsBloc>().add(GetAllPresidentsEvent());
 
       SnackBarMessage.showSuccessSnackBar(message: state.message, context: context);
       Navigator.pop(context);
@@ -55,59 +57,56 @@ class JCIFunctions {
   static bool stringExistsOrselectedInList(List<String> list, String value) {
     return list.contains(value);
   }
-  static void showYearSelectionDialog(BuildContext context) {
-    List<String> yearsList = List.generate(30, (index) => (2022 + index).toString());
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return BoardComponents. AlertAddBoard(yearsList);},
-    );
-  }
-  static void showDeleteBoard(BuildContext context ,String year) {
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return BoardComponents. alertDialogDelete(year, context);
+ static List<double> countNumbersGreaterThan(double value, List<double> list) {
+    list=list.map((e) => e+200).toList();
+    log(list.toString());
+    double count = 0;
+    double height=0;
 
+    for (int i = 0; i < 1; i++) {
+      if (list[i] <= value) {
+        count++;
+        height+=list[0]-200;
+      }
+    }
+    log('count $count');
 
-
-  });}
-static void showPosAction(BuildContext context,Post post , TextEditingController _SearchController) {
-    showModalBottomSheet(
-      isScrollControlled: true,
-      useSafeArea: true,
-      showDragHandle: true,
-      context: context,
-      builder: (BuildContext context) {
-        return BoardComponents. showPosWidget(context,post,_SearchController);
-      },
-    );
-  }
-  static void showAddNewRole(BuildContext context,Post post) {
-    showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return SizedBox();
-    },
-  );
+    return [count,height];
   }
 
 
-  static void showAddPosition(BuildContext context,PageController controller) {
-    showModalBottomSheet(
-      isScrollControlled: true,
-      useSafeArea: true,
-      showDragHandle: true,
-      context: context,
-      builder: (BuildContext context) {
-        return BoardComponents. AddPositionWidget(controller);
-      },
+
+  static void UpdatePresidentsImage(BuildContext context,President president){
+    showDialog(context: context, builder:(context)=>PresidentsImpl.PhotoImpl(president)
+
     );
 
+
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   static  void ChangeRoleFunction(YearsState state, BoardRole role, BuildContext context) {
     if (state.newrole['role'] != role) {
+      log(role.name.toString());
       context.read<YearsBloc>().add(ChangeRoleEvent(role: role));
     }
     else{
@@ -127,30 +126,7 @@ static void showPosAction(BuildContext context,Post post , TextEditingController
 
 
 
-  static Future<void> SHowActionSheet(bool mounted, BuildContext context,
-      President? president, TextEditingController name,
-      BoxDecoration boxDecoration) async {
-    if (await FunctionMember.isSuper()) {
-      if (!mounted) return;
-      await showModalBottomSheet(
 
-
-          showDragHandle: true,
-          context: context, builder: (context) {
-        return
-          PresWidgets.sheetbody(
-              boxDecoration, president, name, mounted, context);
-      });
-    }
-  }
-
-  static Future<void> uPdateAction(President president,
-      bool mounted,
-      BuildContext context) async {
-    {
-      log('ffffff');
-    }
-  }
   static List<String> insertSorted(List<String> sortedList, String number) {
     int? numberValue = int.tryParse(number) ?? double.tryParse(number)?.toInt();
     if (numberValue == null) {
@@ -170,8 +146,8 @@ static void showPosAction(BuildContext context,Post post , TextEditingController
     return sortedList;
   }
 
-static   void update( TaskVisibleState state, BuildContext context, TextEditingController name, President? presidents, PresidentsAction action,GlobalKey<FormState> form,TextEditingController year) {
-  if (state.image.isEmpty || !form.currentState!.validate() ){
+static   void update( TaskVisibleState state, BuildContext context, TextEditingController name, President? presidents, PresidentsAction action,GlobalKey<FormState> form,ActionJciState ste) {
+  if ( !form.currentState!.validate() || ste.year == null || ste.year.isEmpty){
     SnackBarMessage.showErrorSnackBar(message: "Something  Empty", context: context);
 
   }
@@ -179,10 +155,10 @@ static   void update( TaskVisibleState state, BuildContext context, TextEditingC
   if (action == PresidentsAction.Add) {
 
 
-    final President president = President(name: name.text, year: year.text, CoverImage: state.image, id: '');
+    final President president = President(name: name.text, year: ste.year, CoverImage: state.image, id: '');
     context.read<PresidentsBloc>().add(CreatePresident(president));
   } else if (action == PresidentsAction.Update) {
-    final President president = President(name: name.text, year: year.text, CoverImage: state.image, id: presidents!.id);
+    final President president = President(name: name.text, year: ste.year, CoverImage: state.image, id: presidents!.id);
 
     context.read<PresidentsBloc>().add(UpdatePresident(president));
   }}
@@ -243,7 +219,18 @@ static bool isExist(Member member,Map<String, dynamic> map){
     context.read<BoordBloc>().add(AddMemberEvent(postField: postField));
     Navigator.pop(context);
   }
+static bool objectExistsInList(List<BoardRole> list, BoardRole? board) {
+    if (list.isEmpty) {
+      return false;
+    }
+    if (board == null) {
+      return false;
+    }
+    else{
+      return list.any((element) => element.id == board.id);
+    }
 
+}
 static bool isFormVisible(PresidentsAction action) =>
       action == PresidentsAction.Add || action == PresidentsAction.Update;
 }

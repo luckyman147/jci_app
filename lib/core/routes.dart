@@ -101,16 +101,8 @@ builder: (BuildContext context, GoRouterState state) {
 
 
 
-    GoRoute(
-path: '/pin/:email',
-builder: (BuildContext context, GoRouterState state) {
-  final  email = state.pathParameters['email']! ;
 
-  return Pincode(email: email,);
-},
-
-
-),GoRoute(
+GoRoute(
 path: '/memberSection/:id',
 builder: (BuildContext context, GoRouterState state) {
 

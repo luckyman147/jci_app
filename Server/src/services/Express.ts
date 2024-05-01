@@ -11,6 +11,7 @@ import { AdminRoute } from '../routes/adminRoute';
 import { BoardRoleRouter } from '../routes/board/BoardRoleRoute';
 import { PosRouter } from '../routes/board/PosRoute';
 import { TeamRoute } from '../routes/team/TeamRoute';
+import { mailRoute } from '../routes/mailRoute';
 
 
 const appli= async (app:Application)=>{
@@ -20,7 +21,9 @@ const maxRequestBodySize = '100mb';
 app.use(express.json({limit: maxRequestBodySize}));
 app.use(express.urlencoded({limit: maxRequestBodySize,extended:true}));
 app.use(morgan("tiny"));
+
 app.use(express.static("public"));
+app.use('/mails',mailRoute)
 app.use("/Board",BoardRouter)
 app.use("/BoardRole",BoardRoleRouter)
 app.use("/PositionOfMember",PosRouter)

@@ -14,10 +14,13 @@ Future<Either<Failure,bool>> isFirstEntry();
   Future<Either<Failure,Unit>> updateTokenFromStorage();
   Future<Either<Failure,Unit>> updateFirstEntry();
   Future<Either<Failure,bool>> isLoggedIn();
-  Future<Either<Failure, Member>> sendPasswordResetEmail(String email);
-  Future<Either<Failure, Member>> verifyEmail();
+
+
   Future<Either<Failure, Unit>> updatePassword(Member member);
-
+  Future<Either<Failure, Unit>> signUpWithCredentials(Member member,String otp);
+  Future<Either<Failure, Unit>> LogInWithCredentials(String email ,String password);
   Future<Either<Failure,Unit>> refreshToken();
-
+Future<Either<Failure,Unit>> SendVerificationEmail(String email);
+Future<Either<Failure,Unit>> SendResetPasswordEmail(String email);
+Future<Either<Failure,bool>> checkOtp(String otp);
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
@@ -73,7 +74,7 @@ class PresidentsBloc extends Bloc<PresidentsEvent, PresidentsState> {
       emit(_createOrFailure(state, result));
     }
     catch(e){
-      emit(state.copyWith(state: presidentsStates.Error,message: e.toString()));
+      emit(state.copyWith(state: presidentsStates.ErrorCrete,message: e.toString()));
     }
   }
   //update or failure
@@ -85,7 +86,7 @@ class PresidentsBloc extends Bloc<PresidentsEvent, PresidentsState> {
 
     }
     catch(e){
-      emit(state.copyWith(state: presidentsStates.Error,message: e.toString()));
+      emit(state.copyWith(state: presidentsStates.ErrorCrete,message: e.toString()));
     }
   }
   void _onUpdateImagePresident(UpdateImagePresident event,Emitter<PresidentsState> emit)async {
@@ -96,7 +97,8 @@ class PresidentsBloc extends Bloc<PresidentsEvent, PresidentsState> {
 
     }
     catch(e){
-      emit(state.copyWith(state: presidentsStates.Error,message: e.toString()));
+      log(e.toString());
+      emit(state.copyWith(state: presidentsStates.ErrorCrete,message: e.toString()));
 
 
     }
@@ -117,12 +119,24 @@ class PresidentsBloc extends Bloc<PresidentsEvent, PresidentsState> {
             (r) => state.copyWith(state: presidentsStates.Loaded, presidents: r));
   }
   PresidentsState _createOrFailure(PresidentsState state, Either<Failure, President> result,) {
-    return result.fold((l) => state.copyWith(state: presidentsStates.Error, message: mapFailureToMessage(l)),
+    return result.fold((l) => state.copyWith(state: presidentsStates.ErrorCrete, message: mapFailureToMessage(l)),
             (r) {
      final list=List.of(state.presidents)..insert(1,r);
-      return state.copyWith(state: presidentsStates.Changed, message: Added_Successfully,presidents: state.presidents);});
-  } PresidentsState _UpdateOrFailure(PresidentsState state, Either<Failure, President> result,) {
-    return result.fold((l) => state.copyWith(state: presidentsStates.Error, message: mapFailureToMessage(l)),
+      return state.copyWith(state: presidentsStates.Changed, message: Added_Successfully,presidents: list);});
+  }
+
+
+
+
+
+
+
+
+
+
+
+  PresidentsState _UpdateOrFailure(PresidentsState state, Either<Failure, President> result,) {
+    return result.fold((l) => state.copyWith(state: presidentsStates.ErrorCrete, message: mapFailureToMessage(l)),
             (r) {
       //index of the item to be updated
       final index=state.presidents.indexWhere((element) => element.id==r.id);

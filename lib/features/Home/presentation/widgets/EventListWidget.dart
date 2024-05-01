@@ -45,146 +45,145 @@ class _ActivityWidgetState extends State<ActivityWidget> {
     return BlocBuilder<ActivityCubit, ActivityState>(
       builder: (context, state) {
         return ListView.separated(itemBuilder: (ctx, index) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Container(
+          return InkWell(
+            onTap: () {
+              context.go('/activity/${widget.Activities[index].id}/${state.selectedActivity.name}/$index');
+            },
+            child: Container(
 
+            margin: paddingSemetricHorizontal(),
+              height: mediaQuery.size.height / 4.4,
+            width: mediaQuery.size.width/1.1,
+              decoration: BoxDecoration(
+                border: Border.all(color: textColor),
 
-                height: mediaQuery.size.height / 4.4,
-              width: mediaQuery.size.width,
-                decoration: BoxDecoration(
-                  border: Border.symmetric(horizontal: BorderSide(color: textColor,width: 2)),
+              ),
+              child: Padding(
+                padding:paddingSemetricHorizontal(),
+                child: SizedBox(
+                  width: mediaQuery.size.width / 4,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        widget.Activities[index].CoverImages.isNotEmpty ?
+                        InkWell(
+                          highlightColor: Colors.transparent,
 
-                ),
-                child: Padding(
-                  padding: EdgeInsets.only(left:mediaQuery.size.width/30 ),
-                  child: SizedBox(
-                    width: mediaQuery.size.width / 1.2,
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          widget.Activities[index].CoverImages.isNotEmpty ?
-                          InkWell(
-                            highlightColor: Colors.transparent,
+                          onTap: () {
+                            context.go(
+                                '/activity/${ widget.Activities[index].id}/${state
+                                    .selectedActivity.name}/${index}');
+                          },
+                          child: ClipRRect(
 
-                            onTap: () {
-                              context.go(
-                                  '/activity/${ widget.Activities[index].id}/${state
-                                      .selectedActivity.name}/${index}');
-                            },
-                            child: ClipRRect(
-
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.memory(base64Decode(
-                                    widget.Activities[index].CoverImages[0]!),
-                                  fit: BoxFit.cover,
-                                  height: mediaQuery.size.height / 6,
-                                  width: 130,
-                                  scale: 0.1,)),
-                          ) :
-                          InkWell(
-                            highlightColor: Colors.transparent,
-                            onTap: () {
-                              context.go(
-                                  '/activity/${ widget.Activities[index].id}/${state
-                                      .selectedActivity.name}/$index');
-                            },
-
-                            child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
+                              child: Image.memory(base64Decode(
+                                  widget.Activities[index].CoverImages[0]!),
+                                fit: BoxFit.cover,
+                                height: mediaQuery.size.height / 6,
+                                width: 130,
+                                scale: 0.1,)),
+                        ) :
+                        InkWell(
+                          highlightColor: Colors.transparent,
+                          onLongPress: () {
+                            context.go(
+                                '/activity/${ widget.Activities[index].id}/${state
+                                    .selectedActivity.name}/$index');
+                          },
 
-                              child: Container(
-                                  height: mediaQuery.size.height / 5.8,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
 
-                                  color: backgroundColored,
-width: 130,
-                                child: Image.asset('assets/images/jci.png', fit: BoxFit.contain, scale: 0.1,),
+                            child: Container(
+                                height: mediaQuery.size.height / 5.8,
 
-                              ),
+                                color: backgroundColored,
+                      width: 130,
+                              child: Image.asset('assets/images/jci.png', fit: BoxFit.contain, scale: 0.1,),
+
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(DateFormat('EEE, MMM, d').format(
+                                      widget.Activities[index].ActivityBeginDate),
+                                      style: PoppinsRegular(13, textColorBlack)),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: Text(
+                                        "${"Start At".tr(context)} ${DateFormat('h:mm').format(
+                                            widget.Activities[index]
+                                                .ActivityBeginDate)}",
+                                        style: PoppinsRegular(13, textColorBlack)
+                                    ),
+                                  ),
+                                ],
+                              ), Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                      width: mediaQuery.size.width / 3,
+                                      child: Text(widget.Activities[index].name,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: PoppinsSemiBold(
+                                            widget.Activities[index].name.length < 10
+                                                ? mediaQuery.devicePixelRatio * 6
+                                                : mediaQuery.devicePixelRatio *5
+
+                                            , textColorBlack, TextDecoration.none),)),
+                                ],
+                              ),SizedBox(
+
+                                child: Row(
                                   children: [
-                                    Text(DateFormat('EEE, MMM, d').format(
-                                        widget.Activities[index].ActivityBeginDate),
-                                        style: PoppinsRegular(13, textColorBlack)),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0),
-                                      child: Text(
-                                          "${"Start At".tr(context)} ${DateFormat('h:mm').format(
-                                              widget.Activities[index]
-                                                  .ActivityBeginDate)}",
-                                          style: PoppinsRegular(13, textColorBlack)
+                                    Icon(Icons.location_on_outlined, color: textColorBlack, size: 20,),
+                                    SizedBox(
+                                      width: mediaQuery.size.width / 3,
+
+                                      child: Text(widget.Activities[index].ActivityAdress,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: PoppinsLight(
+                                            widget.Activities[index].ActivityAdress
+                                                .length < 20 ? mediaQuery
+                                                .devicePixelRatio * 4.5 : mediaQuery
+                                                .devicePixelRatio * 4, textColorBlack,
+                                            ),
+
                                       ),
                                     ),
                                   ],
-                                ), Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                        width: mediaQuery.size.width / 2,
-                                        child: Text(widget.Activities[index].name,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: PoppinsSemiBold(
-                                              widget.Activities[index].name.length < 10
-                                                  ? mediaQuery.devicePixelRatio * 6
-                                                  : mediaQuery.devicePixelRatio *5
-
-                                              , textColorBlack, TextDecoration.none),)),
-                                  ],
-                                ),SizedBox(
-
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.location_on_outlined, color: textColorBlack, size: 20,),
-                                      SizedBox(
-                                        width: mediaQuery.size.width / 2,
-
-                                        child: Text(widget.Activities[index].ActivityAdress,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: PoppinsLight(
-                                              widget.Activities[index].ActivityAdress
-                                                  .length < 20 ? mediaQuery
-                                                  .devicePixelRatio * 4.5 : mediaQuery
-                                                  .devicePixelRatio * 4, textColorBlack,
-                                              ),
-
-                                        ),
-                                      ),
-                                    ],
-                                  ),
                                 ),
+                              ),
 
 
-                                BlocBuilder<ParticpantsBloc, ParticpantsState>(
-                                    builder: (context, state) {
-                    return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: button(Activities: widget.Activities, mediaQuery: mediaQuery, index: index, act: widget.act, context: context),
+                              BlocBuilder<ParticpantsBloc, ParticpantsState>(
+                                  builder: (context, state) {
+                  return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: button(Activities: widget.Activities, mediaQuery: mediaQuery, index: index, act: widget.act, context: context),
 
-                                );
-                                    },
-                                  )
+                              );
+                                  },
+                                )
 
-                              ],
-                            ),
-                          )
-                        ]
-                    ),
+                            ],
+                          ),
+                        )
+                      ]
                   ),
                 ),
-
               ),
+
             ),
           );
         },

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AuthPayload } from "../dto/auth.dto";
+import { adminsPayload, AuthPayload } from "../dto/auth.dto";
 import { validateAdminSignature, validateSignature, validateSuperAdminSignature } from "../utility";
 import { ADminPayload } from "../dto/admin.dto";
 import { SuperAdminPayload } from "../dto/superAdmin.dto";
@@ -10,11 +10,16 @@ declare global{
     namespace Express {
         interface Request {
             member: AuthPayload;
-            admin:ADminPayload;
+            admin:adminsPayload;
             superadmin:SuperAdminPayload;
+            otp:number
+            expiry:Date
         }
         interface database{
             gfs:any
+        }
+        interface Verify{
+            otp:string
         }
     }
    

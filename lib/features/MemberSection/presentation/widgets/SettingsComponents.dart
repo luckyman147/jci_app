@@ -101,8 +101,8 @@ static isMode(SettingsBools state) {
 
               Language(context, state),
 
-          rowAction(context, "Dark Mode".tr(context), Icons.dark_mode,  isMode(state.settings),Container(),MediaQuery.of(context),SettingsBools.Mode),
-          rowAction(context, "Enable Notifications", Icons.notification_important_rounded, isNotification(state.settings),Container(),MediaQuery.of(context),SettingsBools.Notifications),
+          //rowAction(context, "Dark Mode".tr(context), Icons.dark_mode,  isMode(state.settings),Container(),MediaQuery.of(context),SettingsBools.Mode),
+         // rowAction(context, "Enable Notifications", Icons.notification_important_rounded, isNotification(state.settings),Container(),MediaQuery.of(context),SettingsBools.Notifications),
           Padding(
             padding: paddingSemetricVertical(),
             child: InkWell(

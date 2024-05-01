@@ -12,10 +12,18 @@ class BoardStore {
   static const String getYears = 'Years';
 static String getBoard(String year)=>"Board/$year";
 static String getBoardRole(int Priority)=>"Board/$Priority";
-
+static String isUpdated(int prio)=>"isUpdated/$prio";
 static Future<List<String>> getCachedYears() async {
   final pref = await SharedPreferences.getInstance();
   return pref.getStringList(getYears) ?? [];
+  }
+  static Future<bool> getIsUpdated(int priority) async {
+    final pref = await SharedPreferences.getInstance();
+    return pref.getBool(isUpdated(priority)) ?? true;
+  }
+  static Future<void> cacheIsUpdated(bool isbool,int prio) async {
+    final pref = await SharedPreferences.getInstance();
+    await pref.setBool(isUpdated(prio), isbool);
   }
 
   static Future<void> cacheYears(List<String> years) async {

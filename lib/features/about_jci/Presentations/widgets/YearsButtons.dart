@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
+import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../bloc/Board/BoardBloc/boord_bloc.dart';
+import 'dialogs.dart';
 
 class YearsButtons extends StatefulWidget {
   final ScrollController _scrollController;
@@ -47,9 +49,10 @@ class _YearsButtonsState extends State<YearsButtons> {
                   return InkWell(
                     onLongPress: ()async{
                       if (await FunctionMember.isSuper()){
+                        if (!mounted) return;
                         context.read<YearsBloc>().add(ChangeCloneYear(year:widget.years[index]));
 
-                        JCIFunctions.showDeleteBoard(context, widget.years[index]);
+                        Dialogs.showDelete(context, widget.years[index],TypeDelete.Board,"");
                       }
 
                     },

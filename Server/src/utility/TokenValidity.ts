@@ -8,7 +8,7 @@ import { SuperAdminPayload } from '../dto/superAdmin.dto';
 import { Member } from '../models/Member';
 import { Role } from '../models/role';
 import { isAccessTokenValid, isRefreshTokenValid } from './verification';
-import { AuthPayload } from '../dto/auth.dto';
+import { adminsPayload, AuthPayload } from '../dto/auth.dto';
 
 require('dotenv').config();
 
@@ -92,10 +92,11 @@ await generateAccessToken({
   };
   
   export const validateAdminSignature = async (req: Request) => {
+    try{
     const signature = req.get('Authorization');
     if (signature) {
     console.log('signature',signature)
-      const payload = jwt.verify(signature.split(' ')[1], process.env.APP_SECRET as string) as AuthPayload;
+      const payload = jwt.verify(signature.split(' ')[1], process.env.APP_SECRET as string) as adminsPayload;
         console.log('payload',payload)
 
 
@@ -105,7 +106,10 @@ await generateAccessToken({
 
         return true;
     }
-    return false;
+    return false;}
+    catch(e){
+      console.log(e)
+    }
   };
   export const validateSuperAdminSignature = async (req: Request) => {
     const signature = req.get('Authorization');

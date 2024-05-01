@@ -13,7 +13,8 @@ import '../../../../../core/strings/failures.dart';
 import '../../../../../core/usescases/usecase.dart';
 import '../../../data/models/formz/Email.dart';
 import '../../../data/models/formz/password.dart';
-import '../../../domain/usecases/SIgnIn.dart';
+import '../../../domain/usecases/authusecase.dart';
+
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -25,12 +26,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LoginPasswordChanged>(_onPasswordChanged);
     on<LoginSubmitted>(_onSubmitted);
 
-    on<ResetForm>(_reset_form);
+    on<ResetFormLogin>(_reset_form);
   }
 
   final LoginUseCase loginUseCase;
   void _reset_form(
-    ResetForm event,
+    ResetFormLogin event,
     Emitter<LoginState> emit,
   ) {
     emit(LoginState.initial());

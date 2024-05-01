@@ -5,6 +5,7 @@ import 'package:jci_app/features/about_jci/Domain/Repository/BoardRepo.dart';
 import 'package:jci_app/features/about_jci/Domain/entities/BoardRole.dart';
 import 'package:jci_app/features/about_jci/Domain/entities/BoardYear.dart';
 import 'package:jci_app/features/about_jci/Domain/entities/Post.dart';
+import 'package:jci_app/features/about_jci/data/models/BoardRoleModel.dart';
 
 import '../../../../core/error/Exception.dart';
 import '../datasources/Board/LocalBoardDataSources.dart';
@@ -41,9 +42,9 @@ final LocalBoardDataSources localBoardDataSources;
   }
 
   @override
-  Future<Either<Failure, Unit>> AddBoardRole(BoardRole boardRole) {
-    // TODO: implement AddBoardRole
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> AddBoardRole(BoardRole boardRole)async {
+    await localBoardDataSources.CacheIsYUpdated(true,boardRole.priority);
+    return await  _getMessage(remoteBoardDataSources.AddRole(BoardRoleModel.fromEntity(boardRole)));
   }
 
   @override
@@ -71,10 +72,13 @@ final LocalBoardDataSources localBoardDataSources;
   @override
   Future<Either<Failure, List<BoardRole>>> getBoardRoles(int priority) async{
     if(await networkInfo.isConnected ){
-      final resul=await localBoardDataSources.getBoardRoles(priority);
-      if (resul.isEmpty||resul==null){
+      final isUpdated=await localBoardDataSources.getIsUpdated(priority);
+
+      final resul= await localBoardDataSources.getBoardRoles(priority);
+      if (isUpdated  || resul.isEmpty){
         final result= await remoteBoardDataSources.getBoardRoles(priority);
         localBoardDataSources.CacheBoardRoles(result,priority);
+        localBoardDataSources.CacheIsYUpdated(false,priority);
         return Right(result);
       }
       return Right(resul);
@@ -148,5 +152,14 @@ final LocalBoardDataSources localBoardDataSources;
   Future<Either<Failure, Unit>> RemovePositionInBoard(String postId, String year)async  {
 
     return await  _getMessage(remoteBoardDataSources.RemovePost(postId,year));
+  }
+
+  @override
+  Future<Either<Failure, Unit>> RemoveBoardRole(String roleId) async{
+    await localBoardDataSources.CacheIsYUpdated(true,1);
+    await localBoardDataSources.CacheIsYUpdated(true,2);
+    await localBoardDataSources.CacheIsYUpdated(true,3);
+
+     return await  _getMessage(remoteBoardDataSources.RemoveRole(roleId));
   }
 }

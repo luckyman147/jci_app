@@ -7,6 +7,7 @@ import { TrainingField, TrainingInputs } from '../../dto/activity.dto';
 import { Member } from '../../models/Member';
 import { Training } from '../../models/activities/TrainingModel';
 import { getMembersInfo, getPermissionIdsByRelated } from '../../utility/role';
+import { sendNewEventEmail } from '../../utility/NotificationEmailUtility';
 
 //&Public
 
@@ -195,7 +196,13 @@ if (endDate.getTime() <= beginDate.getTime()) {
 
     // Add the Training to the database
     const savedTraining = await newTraining.save();
-
+    const members=await Member.find().select(["email","language"])
+   
+ 
+    members.forEach((member)=>{
+    
+      sendNewEventEmail(savedTraining.name,savedTraining.ActivityBeginDate,savedTraining.ActivityAdress,member.language,member.email,"training",[],savedTraining.ProfesseurName)
+    })
     res.json(savedTraining);
   } catch (error) {
     console.error('Error adding Training:', error);
@@ -386,98 +393,8 @@ export const getTrainingByDate = async (req: Request, res: Response, next: NextF
     }
   }
   
-  export const AddParticipantToTraining = async (req: Request, res: Response, next: NextFunction) => {
-    const member=req.member
-    if (member){
-    try {
-      const TrainingId = req.params.idTraining;
-   
   
-      console.log(TrainingId)
-      // Find the Training by ID
-      const training = await Training.findById(TrainingId);
-      console.log(training)
-  
-      if (!training) {
-        return res.status(404).json({ message: 'Training not found' });
-      }
-
-      // Check if the participant is already added
-      if (training.Participants.includes(member._id)) {
-        return res.status(400).json({ message: 'Participant is already added to the Training' });
-      }
-  
-      // Add the participant to the Participants array
-      await training.Participants.push(member);
-  
-      // Save the updated Training
-      const updatedTraining = await training.save();
-  
-      // Respond with the updated Training
-      res.status(200).json({ message: 'Participant added to the Training', Training: updatedTraining });
-    } catch (error) {
-     res.status(500).json({ message: 'Error adding participant to the Training' });
-    }}
-  };
  // Import your Member model
 
-export const RemoveParticipantFromTraining = async (req: Request, res: Response, next: NextFunction) => {
-  const member=req.member
-  if (member){
-  try {
-    const TrainingId = req.params.id;
-    const participantId = member._id;
 
-    // Find the Training by ID
-    const training = await Training.findById(TrainingId);
 
-    if (!training) {
-      return res.status(404).json({ message: 'Training not found' });
-    }
-
-    // Find the participant by ID
-    const participant = await Member.findById(participantId);
-
-    if (!participant) {
-      return res.status(404).json({ message: 'Participant not found' });
-    }
-
-    // Check if the participant is added to the Training
-    const isParticipantAdded = training.Participants.some((member) => member._id.equals(participantId));
- 
-    if (!isParticipantAdded) {
-      return res.status(400).json({ message: 'Participant is not added to the Training' });
-    }
-
-    // Remove the participant from the Participants array
-    training.Participants = training.Participants.filter((member) => !member._id.equals(participantId));
-
-    // Save the updated Training
-    const updatedTraining = await training.save();
-
-    // Respond with the updated Training
-    res.json({ message: 'Participant removed from the Training', Training: updatedTraining });
-  } catch (error) {
-     res.status(500).json({message:'Error removing participant from Training:', error});
-    next(error);
-   } }
-};
-export const deleteTrain= async (req:Request, res:Response, next:NextFunction) => {
-                           try {
-                             const TrainingId = req.params.id;
-
-                             // Check if the event exists
-                             const train = await Training.findById(TrainingId);
-                             if (!train) {
-                               return res.status(404).json({ error: 'Training not found' });
-                             }
-
-                             // Delete the event
-                             await train.deleteOne();
-
-                             res.status(204).json({message:"deleted successully"}); // 204 No Content indicates a successful deletion
-                           } catch (error) {
-                             console.error('Error deleting event:', error);
-                             next(error);
-                           }
-                         };

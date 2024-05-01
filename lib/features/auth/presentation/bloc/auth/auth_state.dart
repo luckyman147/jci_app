@@ -1,5 +1,9 @@
 part of 'auth_bloc.dart';
+enum VerifyEvent {
+ ResetPasswordEvent,
+  RegisterEvent,
 
+}
 abstract class AuthState extends Equatable {
   const AuthState();
 }
@@ -28,6 +32,7 @@ class AuthSuccessState extends AuthState {
   @override
   List<Object?> get props => [];
 }
+
 class AuthLogoutState extends AuthState {
   @override
   List<Object?> get props => [];

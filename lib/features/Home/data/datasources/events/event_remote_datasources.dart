@@ -40,14 +40,16 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource{
 
   EventRemoteDataSourceImpl({required this.client});
   @override
-  Future<Unit> createEvent(EventModel event)async  {    debugPrint("coverimagze from  ");
-    debugPrint(event.CoverImages.first);
+  Future<Unit> createEvent(EventModel event)async  {
 final body =event.toJson();
-  debugPrint(event.CoverImages.first);
+final token = await getTokens();
 
     return client.post(
       Uri.parse(createEventUrl),
-      headers: {"Content-Type": "application/json"},
+      headers: {"Content-Type": "application/json",
+        "Authorization": "Bearer ${token[1]}"
+
+      },
       body: json.encode(body),
     ).then((response) async {
       debugPrint(response.statusCode.toString());
@@ -60,7 +62,7 @@ final body =event.toJson();
           return Future.value(unit);
         }
         else if (upload_response.statusCode==400){
-          debugPrint(upload_response.reasonPhrase.toString());
+
           deleteEvent(decodedJson["_id"]);
           throw EmptyDataException();
 
@@ -80,10 +82,13 @@ final body =event.toJson();
 
   @override
   Future<Unit> deleteEvent(String id)async {
+    final token = await getTokens();
     final response = await client.delete(
 
       Uri.parse(getEventsUrl+"$id"),
-      headers: {"Content-Type": "application/json"},
+      headers: {"Content-Type": "application/json",
+        "Authorization": "Bearer ${token[1]}"
+      },
     );
     if (response.statusCode==204){
       return Future.value(unit);

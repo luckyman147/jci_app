@@ -42,6 +42,64 @@ class ShimmerEffects{
       ),
     ),
   );
+
+ static Widget shimmerCircle(double height, double width) {
+    return Center(
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Container(
+          height: height,
+          width: width,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget PresidensShimmer(bool ismax){
+    return GridView.builder(
+      // Add this line
+      itemCount:ismax? 6:1,
+
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        childAspectRatio: .8,
+        mainAxisSpacing: 10.0,
+        crossAxisSpacing: 10.0,
+        maxCrossAxisExtent: 380.0,
+      ),
+      itemBuilder: (BuildContext context, int index) {
+        return body();
+      },
+    );
+  }
+
+  static Widget body() {
+
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        height: 150,
+        width: 380,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+        ),
+      ),
+    );
+
+
+    // Rest of the method implementation
+  }
+
+
+
+
+
 }class ShimmerPostsWidget extends StatelessWidget {
 
 
@@ -153,4 +211,6 @@ return    ChildBody();
     );
 
   }
+
+
 }

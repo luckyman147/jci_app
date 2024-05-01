@@ -1,5 +1,7 @@
 part of 'sign_up_bloc.dart';
-
+enum SignUpStatus{Initial,
+  EmailSuccessState,MessageSignUp,Loading,ErrorSignUp
+}
 class SignUpState extends Equatable {
   const SignUpState({
       this.status = FormzSubmissionStatus.initial,
@@ -11,11 +13,12 @@ class SignUpState extends Equatable {
     this.email = const Email.pure(),
     this.confirmPassword = const ConfirmPassword.pure(),
     this.password = const Password.pure(),
-
+    this.signUpStatus= SignUpStatus.Initial
+,this.message=""
   });
-
+final SignUpStatus signUpStatus;
   final FormzSubmissionStatus status;
-
+final String message;
   final Firstname firstname;
   final Lastname lastname;
   final bool isValid;
@@ -27,10 +30,12 @@ class SignUpState extends Equatable {
 
 
   SignUpState copyWith({
+
+    SignUpStatus?signUpStatus,
     FormzSubmissionStatus? status,
     Email? email,
     Password? password,
-
+String?message,
     Firstname? firstname,
     Lastname? lastname,
     bool? isValid,
@@ -39,8 +44,10 @@ class SignUpState extends Equatable {
 
   }) {
     return SignUpState(
+      signUpStatus: signUpStatus??this.signUpStatus,
       status: status ?? this.status,
       email: email ?? this.email,
+      message: message??this.message,
       password: password ?? this.password,
       firstname: firstname ?? this.firstname,
       lastname: lastname ?? this.lastname,
@@ -63,26 +70,10 @@ confirmPassword: confirmPassword??this.confirmPassword
 
   @override
   List<Object> get props =>
-      [status, email, password, firstname, lastname, confirmPassword];
+      [status, email,message, password, firstname, lastname, confirmPassword,signUpStatus];
 
 
 }
 class SignUpInitial extends SignUpState{}
-class LoadingSignUp extends SignUpState{}
-class ErrorSignUp extends SignUpState{
-  final String message;
-  ErrorSignUp({ required this.message});
-  @override
-  List<Object> get props =>
-      [message];
 
 
-}class MessageSignUp extends SignUpState{
-  final String message;
-  MessageSignUp({ required this.message});
-  @override
-  List<Object> get props =>
-      [message];
-
-
-}

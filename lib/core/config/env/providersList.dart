@@ -79,7 +79,7 @@ List<SingleChildWidget> providersList = [
 
   BlocProvider(create: (_) => di.sl<AddDeleteUpdateBloc>()),
   BlocProvider(create: (_) => di.sl<PresidentsBloc>()),
-  BlocProvider(create: (_) => ToggleBooleanBloc(initialValue: true)),
+  BlocProvider(create: (_) => ToggleBooleanBloc()),
   BlocProvider(create: (_) => DescriptionBoolBloc()),
   BlocProvider(create: (_) => ChangeStringBloc("Events")),
   BlocProvider(create: (_) => PageIndexBloc(0)),

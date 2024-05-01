@@ -21,3 +21,20 @@ const objectives = [
 return  objectives;
 
 }
+export const convertAgendaItemsStringsToObjects = (agendaItemsStrings: string[]) => {
+    if (agendaItemsStrings.length === 0) return '';
+
+    const agendaItems = agendaItemsStrings.map((itemString) => {
+        const [itemName, durationString] = itemString.split('(');
+        const duration = durationString.replace(')', '');
+        return { item: itemName.trim(), duration: duration.trim() };
+    });
+
+    let html = '<ol>';
+    agendaItems.forEach((agendaItem) => {
+        html += `<li>${agendaItem.item} (${agendaItem.duration})</li>`;
+    });
+    html += '</ol>';
+
+    return html;
+};

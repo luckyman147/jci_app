@@ -16,4 +16,19 @@ factory BoardRoleModel.fromJson(Map<String, dynamic> json) {
     'priority': priority,
   };
 
+factory BoardRoleModel.fromEntity(BoardRole boardRole){
+    return BoardRoleModel(
+      id: boardRole.id,
+      name: boardRole.name,
+      priority: boardRole.priority,
+    );
+  }
+  BoardRole toEntity(){
+    return BoardRole(
+      id: id,
+      name: name,
+      priority: priority,
+    );
+  }
+
 }

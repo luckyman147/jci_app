@@ -10,6 +10,7 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 
 import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
+import 'package:jci_app/features/auth/presentation/widgets/SubmitFunctions.dart';
 
 import 'package:jci_app/features/auth/presentation/widgets/Text.dart';
 
@@ -17,6 +18,8 @@ import '../../../../core/widgets/backbutton.dart';
 
 
 import '../../domain/entities/Member.dart';
+import '../bloc/auth/auth_bloc.dart';
+import '../pages/pinPage.dart';
 import 'inputs.dart';
 
 
@@ -159,42 +162,30 @@ void _resetform(){
   }
 Widget _SignUpButton (  ){
 
-  return BlocBuilder<SignUpBloc, SignUpState>(
+  return 
+BlocBuilder<SignUpBloc, SignUpState>(
     builder: (context, state) {
       return
         state.status.isInProgress
             ? const CircularProgressIndicator():
         Container(
-        width: double.infinity,
-        height: 66,
-        decoration: decoration,
-        child: InkWell(
+              width: double.infinity,
+              height: 66,
+              decoration: decoration,
+              child: InkWell(
 
-          onTap:
-              () {
+                onTap:
+                    () {
 
 
-if (_key.currentState!.validate()) {
-  final member =
-Member(email: state.email.value,
-  password: state.password.value,
-  firstName: state.firstname.value,
-  lastName: state.lastname.value, id: '',
-  role: '', is_validated: false,
-  cotisation: [false], Images: [], phone: '', IsSelected: false, Activities: [], teams: [], points: 0, objectifs: [],  );
+        SubmitFunctions.SignUp(state, _key, context, _resetform);
+                  },
 
-  context.read<SignUpBloc>().add(SignUpSubmitted(member: member));
-
-  _resetform();
-  context.read<SignUpBloc>().add(ResetForm());
-  print('here  state status ${state.status}');
-}
-            },
-
-          child:  Center(child: Text('SignUp'.tr(context),style: PoppinsSemiBold(24, textColorWhite, TextDecoration.none) ,)),
-        ),
-      );
+                child:  Center(child: Text('SignUp'.tr(context),style: PoppinsSemiBold(24, textColorWhite, TextDecoration.none) ,)),
+              ),
+            );
     },
-  );}
+ 
+);}
 
 }

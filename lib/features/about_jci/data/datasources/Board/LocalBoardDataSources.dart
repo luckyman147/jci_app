@@ -11,7 +11,8 @@ abstract class LocalBoardDataSources{
   Future<BoardYearModel?> getBoard(String year);
   Future<List<BoardRoleModel>> getBoardRoles(int priority);
   Future<Unit> CacheBoardRoles(List<BoardRoleModel> liste,int priority);
-
+Future<Unit> CacheIsYUpdated(bool isUpdated,int priority);
+Future<bool> getIsUpdated(int priority);
 
 }
 class LocalBoardDataSourcesImpl implements LocalBoardDataSources {
@@ -48,6 +49,18 @@ class LocalBoardDataSourcesImpl implements LocalBoardDataSources {
   @override
   Future<List<BoardRoleModel>> getBoardRoles(int priority) {
     return BoardStore.getBoardRoles(priority);
+  }
+
+  @override
+  Future<Unit> CacheIsYUpdated(bool isUpdated,int prio)async {
+    await BoardStore.cacheIsUpdated(isUpdated,prio);
+    return Future.value(unit);
+  }
+
+  @override
+  Future<bool> getIsUpdated(int priority) async{
+    return await
+      BoardStore.getIsUpdated(priority);
   }
 
 

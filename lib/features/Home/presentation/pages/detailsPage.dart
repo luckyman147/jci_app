@@ -34,9 +34,7 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
       final result=        activityParams(type: activity.Events, act: null,id: widget.id);
       context.read<AcivityFBloc>().add(GetActivitiesByid(params: result));
     }
-   // if (widget.Activity == 'Events') {
-   //context.read<AcivityFBloc>().add(GetActivitiesByid( id: widget.id, act: activity.Events));
-    //}
+
     // TODO: implement initState
     super.initState();
   }

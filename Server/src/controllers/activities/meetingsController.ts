@@ -7,6 +7,7 @@ import { Member } from '../../models/Member';
 import { validate } from 'class-validator';
 import { Meeting, } from '../../models/activities/meetingModel';
 import { getMembersInfo, getPermissionIdsByRelated } from '../../utility/role';
+import { sendNewEventEmail } from '../../utility/NotificationEmailUtility';
 
 //&Public
 
@@ -120,7 +121,14 @@ ActivityPoints: meetingInputs.ActivityPoints,
 
       // Add the meeting to the database
       const savedMeeting = await newMeeting.save();
-
+      const members=await Member.find().select(["email","language"])
+   
+ 
+ members.forEach((member)=>{
+ 
+   sendNewEventEmail(savedMeeting.name,savedMeeting.ActivityBeginDate,savedMeeting.ActivityAdress,member.language,member.email,"meeting",savedMeeting.Agenda,"")
+ })
+ 
       res.json(savedMeeting);
   } catch (error) {
       console.error('Error adding meeting:', error);
@@ -270,98 +278,7 @@ export const getmeetingByDate = async (req: Request, res: Response, next: NextFu
       next(error);
   }
   };
-  export const AddParticipantTomeeting = async (req: Request, res: Response, next: NextFunction) => {
-    const member=req.member
-    if (member){
-    try {
-      const meetingId = req.params.idmeeting;
-   
-  
-      console.log(meetingId)
-      // Find the meeting by ID
-      const meeting = await Meeting.findById(meetingId);
-      console.log(meeting)
-  
-      if (!meeting) {
-        return res.status(404).json({ message: 'meeting not found' });
-      }
 
-      // Check if the participant is already added
-      if (meeting.Participants.includes(member._id)) {
-        return res.status(400).json({ message: 'Participant is already added to the meeting' });
-      }
-  
-      // Add the participant to the Participants array
-      await meeting.Participants.push(member);
-  
-      // Save the updated meeting
-      const updatedmeeting = await meeting.save();
-  
-      // Respond with the updated meeting
-      res.status(200).json({ message: 'Participant added to the meeting', meeting: updatedmeeting });
-    } catch (error) {
-     res.status(500).json({ message: 'Error adding participant to the meeting' });
-    }}
-  };
  // Import your Member model
 
-export const RemoveParticipantFrommeeting = async (req: Request, res: Response, next: NextFunction) => {
-  const member=req.member
-  if (member){
-  try {
-    const meetingId = req.params.id;
-    const participantId = member._id;
 
-    // Find the meeting by ID
-    const meeting = await Meeting.findById(meetingId);
-
-    if (!meeting) {
-      return res.status(404).json({ message: 'meeting not found' });
-    }
-
-    // Find the participant by ID
-    const participant = await Member.findById(participantId);
-
-    if (!participant) {
-      return res.status(404).json({ message: 'Participant not found' });
-    }
-
-    // Check if the participant is added to the meeting
-    const isParticipantAdded = meeting.Participants.some((member) => member._id.equals(participantId));
-
-    if (!isParticipantAdded) {
-      return res.status(400).json({ message: 'Participant is not added to the meeting' });
-    }
-
-    // Remove the participant from the Participants array
-    meeting.Participants = meeting.Participants.filter((member) => !member._id.equals(participantId));
-
-    // Save the updated meeting
-    const updatedmeeting = await meeting.save();
-
-    // Respond with the updated meeting
-    res.json({ message: 'Participant removed from the meeting', meeting: updatedmeeting });
-  } catch (error) {
-     res.status(500).json({message:'Error removing participant from meeting:', error});
-    next(error);
-   } }
-};
-export const deleteMeeting= async (req:Request, res:Response, next:NextFunction) => {
-                           try {
-                             const meetingId = req.params.id;
-
-                             // Check if the event exists
-                             const meeting = await Meeting.findById(meetingId);
-                             if (!meeting) {
-                               return res.status(404).json({ error: 'Meeting not found' });
-                             }
-
-                             // Delete the event
-                             await meeting.deleteOne();
-
-                             res.status(204).json({message:"deleted successully"}); // 204 No Content indicates a successful deletion
-                           } catch (error) {
-                             console.error('Error deleting meeting:', error);
-                             next(error);
-                           }
-                         };

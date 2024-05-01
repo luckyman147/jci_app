@@ -24,6 +24,16 @@ class ChangeRoleEvent  extends YearsEvent{
 
 
 }
+
+class AddRoleEvent extends YearsEvent {
+  final BoardRole role;
+
+  AddRoleEvent({required this.role});
+
+  @override
+
+
+  List<Object?> get props => [role];}
 class GetBoardRolesEvent extends YearsEvent {
   final int priority;
 
@@ -86,14 +96,7 @@ class RemovePosition extends YearsEvent {
   List<Object?> get props => [post];
 }
 
-class ChangePriority extends YearsEvent {
-  final Map<String,dynamic> priority;
-  ChangePriority({required this.priority});
 
-  @override
-  // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
-}
 class AddNewRole extends YearsEvent {
   final BoardRole role;
   AddNewRole({required this.role});
@@ -101,6 +104,16 @@ class AddNewRole extends YearsEvent {
   @override
 
   List<Object?> get props => [role];}
+class RemoveRole extends YearsEvent {
+  final String  roleid;
+  RemoveRole({required this.roleid});
+
+  @override
+  List<Object?> get props => [roleid];
+
+
+
+}
 
 
 

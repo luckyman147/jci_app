@@ -15,8 +15,9 @@ const memberInputs=plainToClass(CreateMemberInputs,req.body)
 
 const errors= await validate(memberInputs,{validationError:{target:true}})
 if(errors.length>0){
-    return res.status(400).json({message:'validation error',errors:errors[0].constraints})
 console.log(errors)
+    return res.status(400).json({message:'validation error',errors:errors[0].constraints})
+
 }
 
     const {email,password,firstName,lastName}=memberInputs
@@ -56,8 +57,9 @@ console.log(role)
         return res.status(201).json({message:"sign up completed " })
 
         
-}console.log('something')
-return res.status(400).json({message:'something went wrong'})
+}
+console.log('something')
+return res.status(500).json({message:'something went wrong'})
 
 }
 

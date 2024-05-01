@@ -12,3 +12,4 @@ class AlreadyLogoutException implements Exception {}
 class AlreadyLoginException implements Exception {}
 class AlreadyRegisterException implements Exception {}
 class AlreadyParticipateException implements Exception {}
+class WrongVerificationException implements Exception {}

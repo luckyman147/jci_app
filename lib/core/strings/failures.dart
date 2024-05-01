@@ -37,6 +37,8 @@ String mapFailureToMessage(Failure failure) {
       return EMPTY_DATA_FAILURE_MESSAGE;
     case AlreadyParticipatedFailure:
       return AlreadyParticipated;
+      case WrongVerificationCodeFailure:
+      return "Wrong Verification Code";
 
     default:
         return "Unexpected Error , Please try again later .";

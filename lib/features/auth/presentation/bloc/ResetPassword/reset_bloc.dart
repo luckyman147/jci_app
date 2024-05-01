@@ -20,15 +20,48 @@ part 'reset_event.dart';
 part 'reset_state.dart';
 
 class ResetBloc extends Bloc<ResetEvent, ResetPasswordState> {
-  ResetBloc(this.updatePasswordUseCase) : super( ResetPasswordState.initial()) {
+  ResetBloc(this.updatePasswordUseCase, this.checkOtpUseCase, this.sendResetPasswordEmailUseCase) : super( ResetPasswordState.initial()) {
     on<EmailnameChanged>(_onEmailChanged);
     on<PasswordChanged>(_onPasswordChanged);
     on<ConfirPasswordChanged>(_onCPasswordChanged);
     on <ResetPassForm>(_reset_form);
     on<ResetSubmitted>(_onSubmitted);
+    on<CheckOtpEvent>(CheckOtp);
+    on<sendResetPasswordEmailEvent>(SendResetPasswordEmail);
 
   }
+
+
+
+
 final UpdatePasswordUseCase updatePasswordUseCase;
+  final CheckOtpUseCase checkOtpUseCase;
+  final SendResetPasswordEmailUseCase sendResetPasswordEmailUseCase;
+
+  void SendResetPasswordEmail(sendResetPasswordEmailEvent event, Emitter<ResetPasswordState> emit) async {
+try{
+  emit(state.copyWith(status: ResetPasswordStatus.loading));
+  final failureOrDoneMessage = await sendResetPasswordEmailUseCase.call(event.email);
+  emit(_eitherSendedMessageOrErrorState(failureOrDoneMessage, 'Reset Password Email Sent Successfully'));
+
+}catch(e){
+  emit(state.copyWith(status: ResetPasswordStatus.error, message: e.toString()));
+}
+  }
+
+  void CheckOtp(CheckOtpEvent event, Emitter<ResetPasswordState> emit) async {
+    try{
+      emit(state.copyWith(status: ResetPasswordStatus.loading));
+      final failureOrDoneMessage = await checkOtpUseCase.call(event.otp);
+      emit(_eitherVerifiedMessageOrErrorState(failureOrDoneMessage, 'OTP Verified Successfully'));
+    }catch(e){
+      emit(state.copyWith(status: ResetPasswordStatus.error, message: e.toString()));
+}
+
+
+  }
+
+
   void _reset_form(
       ResetPassForm  event,
       Emitter<ResetPasswordState> emit,
@@ -81,13 +114,13 @@ final UpdatePasswordUseCase updatePasswordUseCase;
  ResetSubmitted event,
       Emitter<ResetPasswordState> emit,
       ) async {
-    if (state.isValid) {
-      print('event' + event.toString());
 
-      if (event is ResetSubmitted) {
+
+
+
         try {
 
-          print(' ya said im here');
+
           final failureOrDoneMessage = await updatePasswordUseCase.call(event.member);
 
 
@@ -100,30 +133,41 @@ final UpdatePasswordUseCase updatePasswordUseCase;
 
         }
         catch (e) {
-          emit(ErrorReset(message: "Something went wrong ${e.toString()}"));
+          state.copyWith(status: ResetPasswordStatus.error
+            ,
+            message: e.toString());
+
 
         }
-      } else {
-        if (!state.email.isValid) {
-          emit(ErrorReset(message: "Email is invalid"));
-        }
-        else if (!state.password.isValid) {
-          emit(ErrorReset(message: "Password is invalid"));
-        }
-        else {
-          emit(ErrorReset(message: "Something invalid"));
-        }
 
-      }
     }
-  }
+
   ResetPasswordState _eitherDoneMessageOrErrorState(
       Either<Failure, Unit> either, String message) {
     return either.fold(
-          (failure) => ErrorReset(
+          (failure) => state.copyWith(status: ResetPasswordStatus.error
+            ,
         message: mapFailureToMessage(failure),
       ),
-          (_) => MessageReset(message: message),
+          (_) => state.copyWith(status: ResetPasswordStatus.Updated, message: message)
+    );
+  } ResetPasswordState _eitherSendedMessageOrErrorState(
+      Either<Failure, Unit> either, String message) {
+    return either.fold(
+          (failure) => state.copyWith(status: ResetPasswordStatus.error
+            ,
+        message: mapFailureToMessage(failure),
+      ),
+          (_) => state.copyWith(status: ResetPasswordStatus.Sended, message: message)
+    );
+  }
+
+  ResetPasswordState _eitherVerifiedMessageOrErrorState(Either<Failure, bool> failureOrDoneMessage, String s) {
+    return failureOrDoneMessage.fold(
+            (failure) => state.copyWith(status: ResetPasswordStatus.error
+          ,
+          message: mapFailureToMessage(failure)),
+            (_) => state.copyWith(status: ResetPasswordStatus.verified, message: s)
     );
   }
 

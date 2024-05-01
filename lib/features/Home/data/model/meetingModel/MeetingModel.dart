@@ -40,7 +40,7 @@ factory MeetingModel.fromJson(Map<String, dynamic> json) {
       ActivityBeginDate: json['ActivityBeginDate'] != null ? DateTime.parse(json['ActivityBeginDate']) : DateTime.parse(json['ActivityBegindate']),
       ActivityEndDate: json['ActivityEndDate'] != null ? DateTime.parse(json['ActivityEndDate']) : json['ActivityEnddate']!=null? DateTime.parse(json['ActivityEnddate']):   DateTime.now(),
       ActivityAdress: "Local Menchia Hammem Sousse",
-      ActivityPoints: json['ActivityPoints'] as int,
+      ActivityPoints: json['ActivityPoints']??0,
       categorie: json['categorie'] as String,
       IsPaid: false,
       price:0,

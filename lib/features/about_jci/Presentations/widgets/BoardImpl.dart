@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/widgets/loading_widget.dart';
+import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/BoardBloc/boord_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/AssignToWidget.dart';
@@ -11,8 +12,11 @@ import 'package:jci_app/features/about_jci/Presentations/widgets/YearsButtons.da
 
 import '../../../../core/util/snackbar_message.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
+import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
+import '../../Domain/entities/President.dart';
 import 'BoardRoles.dart';
 import 'BoardWidget.dart';
+import 'PresComponents.dart';
 
 class BoardImpl{
 
@@ -92,6 +96,7 @@ class BoardImpl{
 
         case BoardStatus.Loaded:
           case BoardStatus.Changed:
+
           return BoardYearPostsWidget( posts: state.boardYears[0].posts, pageController: pageController,);
         case BoardStatus.Error:
           return ShimmerEffects.ShimmerYearsButton();
@@ -131,4 +136,5 @@ class BoardImpl{
       },
     );
   }
+
 }

@@ -14,7 +14,7 @@ Future<Unit> leaveActivity(String id,http.Client client ,String geturl) async{
         'Authorization': 'Bearer ${tokens[1]}',
       },
     );
-    print(" ya get ${Response.statusCode}");
+
     if (Response.statusCode == 200) {
       return Future.value(unit);
     } else if (Response.statusCode == 400) {
@@ -38,7 +38,7 @@ Future<Unit> ParticiActivity(String id,http.Client client ,String geturl) async{
     },
 
   );
-  print(" ya get ${Response.statusCode}");
+
   if (Response.statusCode == 200) {
     return Future.value(unit);
   } else if (Response.statusCode == 400) {

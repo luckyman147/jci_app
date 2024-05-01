@@ -1,23 +1,36 @@
+import 'dart:developer';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
+import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
+import 'package:jci_app/features/about_jci/Presentations/bloc/Board/BoardBloc/boord_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
+import 'package:jci_app/features/about_jci/Presentations/widgets/dialogs.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/strings/app_strings.dart';
 import '../../../MemberSection/presentation/widgets/ProfileComponents.dart';
 import '../../Domain/entities/Post.dart';
 
-class BoardYearPostsWidget extends StatelessWidget {
+class BoardYearPostsWidget extends StatefulWidget {
   final List<List<Post>> posts;
   final PageController pageController ;
 
-TextEditingController controller = TextEditingController();
   BoardYearPostsWidget({required this.posts, required this.pageController, });
+
+  @override
+  State<BoardYearPostsWidget> createState() => _BoardYearPostsWidgetState();
+}
+
+class _BoardYearPostsWidgetState extends State<BoardYearPostsWidget> {
+  final TextEditingController nameController = TextEditingController();
+
+TextEditingController controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +40,16 @@ TextEditingController controller = TextEditingController();
         child: SizedBox(
 
           width: MediaQuery.of(context).size.width,
-          child: ListView.builder(
+          child: BlocBuilder<BoordBloc, BoordState>(
+  builder: (context, state) {
+    return ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-              itemCount: posts.length,
+              itemCount: widget.posts.length,
               itemBuilder: (context, priorityIndex) {
-                final postList = posts[priorityIndex];
-        
+                final postList = widget.posts[priorityIndex];
+
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,17 +61,20 @@ TextEditingController controller = TextEditingController();
                         style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none  ),
                       ),
                     ),
-                    buildGridView(postList,priorityIndex+1,)
+                    buildGridView(postList,priorityIndex+1, state.Listlength.isNotEmpty?     state.Listlength[priorityIndex]:0),
                   ],
                 );
               },
-            ),
+            );
+  },
+),
         ),
       ),
     );
   }
 
-  Widget buildGridView(List<Post> postList,int priority) {
+  Widget buildGridView(List<Post> postList,int priority,int length) {
+    log("length $length");
     return BlocBuilder<YearsBloc, YearsState>(
   builder: (context, state) {
     return GridView.builder(
@@ -68,7 +86,7 @@ TextEditingController controller = TextEditingController();
                       crossAxisCount: 2, // Number of columns
                       childAspectRatio: .8, // Aspect ratio of items
                     ),
-                    itemCount: postList.length+1,
+                    itemCount: length,
                     itemBuilder: (context, postIndex) {
                       if (postIndex == postList.length) {
                         // This is the last item, return the button
@@ -77,8 +95,14 @@ TextEditingController controller = TextEditingController();
 
                          , true, "id", (p0) => FunctionMember.isSuper());
                       } else {
-                        final post = postList[postIndex];
-                        return ChildBody(post, context);
+                        if (postList.isEmpty) {
+                          return Container();
+                        }
+                        else {
+                          final post = postList[postIndex];
+                          return ChildBody(post, context,mounted);
+                        }
+
                       }
                     },
                   );
@@ -90,7 +114,7 @@ TextEditingController controller = TextEditingController();
     return InkWell(
                          onTap: (){
                             context.read<YearsBloc>().add(GetBoardRolesEvent(priority: prio));
-                           JCIFunctions.showAddPosition(context,pageController);
+                           Dialogs.showAddPosition(context,widget.pageController,nameController);
                          },
                          child: DottedBorder(
                            radius: Radius.circular(10),
@@ -98,21 +122,26 @@ TextEditingController controller = TextEditingController();
                                                       color: textColor,
                            strokeWidth: 2,
                             borderType: BorderType.RRect,
-                           child: Center(
+                           child:const  Center(
                              child:  Icon(Icons.add,color: textColor,size: 50,),
                            ),
                          ),
                        );
   }
 
-  InkWell ChildBody(Post post, BuildContext context) {
+  InkWell ChildBody(Post post, BuildContext context,bool mounted) {
     return InkWell(
-      onTap: () {
+      onTap: () async {
+        if (await FunctionMember.isSuper()) {
+          if (!mounted) return;
+          context.read<MembersBloc>().add(GetAllMembersEvent());
+          Dialogs.showPosAction(context,post,controller);
+        }
 
-        context.read<MembersBloc>().add(GetAllMembersEvent());
-        JCIFunctions.showPosAction(context,post,controller);
+
       },
-      onDoubleTap: (){
+      onLongPress: (){
+
 
 
       },
@@ -130,6 +159,7 @@ TextEditingController controller = TextEditingController();
                             )),
     );
   }
+
   Widget getPOSTWidget(Post post, BuildContext context) {
     return SingleChildScrollView(
       child: Column(
@@ -189,6 +219,5 @@ TextEditingController controller = TextEditingController();
       child: ProfileComponents.phot(post.assignTo[0].Images[0]["url"], context,110),
     );
   }
-
 }
 

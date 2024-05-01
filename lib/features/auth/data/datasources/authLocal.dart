@@ -9,7 +9,8 @@ abstract class AuthLocalDataSources {
   Future<Unit> updateTokenFromStorage();
   Future<Unit> updateFirstEntry();
   Future<bool> isLoggedIn();
-
+Future<String> getOtp();
+Future<Unit> updateOtp(String otp);
 
   Future<Unit> refreshToken();
 }
@@ -49,5 +50,17 @@ return Future.value(unit);
   Future<Unit> updateTokenFromStorage() {
     // TODO: implement updateTokenFromStorage
     throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getOtp()async  {
+  return await Store.getOtp()??'';
+
+  }
+
+  @override
+  Future<Unit> updateOtp(String otp)async {
+await Store.setOtp(otp);
+return Future.value(unit);
   }
 }

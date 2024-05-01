@@ -25,6 +25,37 @@ class Member extends Equatable {
 
   final String role;
 
+  factory Member.SignUp(String email,String password,String firstName,String lastName) {
+    return Member(
+      points: 0,
+      id: '',
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      phone: '',
+      password: password,
+      is_validated: false,
+      cotisation: [false],
+      Images: [],
+      Activities: [],
+      teams: [],
+      IsSelected: false,
+      role: '',
+      objectifs: [],
+    );
+  }
+
+
+
+
+
+
+
+
+
+
+
+
   factory  Member.fromImages(Map<String, dynamic> data) {
     log('hey');
     return Member(

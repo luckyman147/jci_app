@@ -15,7 +15,7 @@ export interface MemberDoc extends Document{
     Teams:any[]
     Points:number
     Permissions:any[]
-    
+    language:string
 Images:any[];
 is_validated:boolean
 cotisation:boolean[]
@@ -30,7 +30,7 @@ export const MemberSchema=new Schema({
     firstName:{type:String},
     lastName:{type:String},
     address:{type:String,},
-
+languange:{type:String,default:'fr'},
     Points:{type:Number,default:0},
     phone:{type:String},
     is_validated:{type:Boolean},

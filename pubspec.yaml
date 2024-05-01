@@ -19,6 +19,8 @@ dependencies:
   freezed:
   image_picker: ^1.0.7
   jwt_decoder:
+  url_launcher:
+  flutter_countdown_timer:
   dotted_border:
   bloc_concurrency: ^0.2.0
   stream_transform: ^2.0.0

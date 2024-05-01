@@ -35,8 +35,8 @@ final class LoginSubmitted extends LoginEvent {
 
 
 }
-class ResetForm extends LoginEvent {
-  const ResetForm();
+class ResetFormLogin extends LoginEvent {
+  const ResetFormLogin();
 }
 class GetUserEvent extends LoginEvent {
   const GetUserEvent();

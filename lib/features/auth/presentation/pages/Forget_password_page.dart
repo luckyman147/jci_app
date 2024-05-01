@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:jci_app/features/auth/presentation/pages/pinPage.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/strings/app_strings.dart';
@@ -39,7 +40,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                   padding: EdgeInsets.only(bottom: mediaquery.size.height/20,top: mediaquery.size.height/14,right: mediaquery.size.width/10,left: mediaquery.size.width/10),
                   child: Column(
                     children: [
-                      TextWidget(text: "reset password".tr(context), size:mediaquery.size.width/11 ),
+                      TextWidget(text: "reset password", size:mediaquery.size.width/11 ),
                    SizedBox(
                        width: mediaquery.size.width/1.32,
                        child: Text("send email".tr(context),style: PoppinsLight(mediaquery.size.width/23, ThirdColor )))
@@ -88,18 +89,10 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
 
               onTap: () {
                 if (keyConr.currentState!.validate()) {
-                  context.go('/pin/${state.email.value}');
+                  context.read<ResetBloc>().add(sendResetPasswordEmailEvent(email: state.email.value));
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  Pincode( verifyEvent: VerifyEvent.ResetPasswordEvent, member: null, email: state.email.value,)));
+
                 }
-              //  if (keyConr.currentState!.validate()) {
-                //  final member = LoginMember(email: state.email.value,
-                  //  password: state.password.value,
-                 // );
-
-
-                  //context.read<LoginBloc>().add(LoginSubmitted(member));
-                  //resetform();
-                  //context.read<LoginBloc>().add(ResetForm());
-
 
               },
 

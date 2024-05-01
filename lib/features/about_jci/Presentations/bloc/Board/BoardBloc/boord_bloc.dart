@@ -6,6 +6,7 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:jci_app/core/strings/failures.dart';
 
+import '../../../../../MemberSection/presentation/widgets/functionMember.dart';
 import '../../../../Domain/entities/BoardYear.dart';
 import '../../../../Domain/useCases/BoardUseCases.dart';
 import 'package:jci_app/core/error/Failure.dart';
@@ -74,7 +75,7 @@ class BoordBloc extends Bloc<BoordEvent, BoordState> {
     try{
       emit(BoordState(state: BoardStatus.Loading,));
       final result = await getBoardByYearUseCase.call(event.year);
-      _mapGetBoardOrFailure(result, emit);
+     emit( await _mapGetBoardOrFailure(result, emit));
 
     } catch (e) {
       emit(BoordState(state: BoardStatus.Error, message: e.toString()));
@@ -93,12 +94,28 @@ class BoordBloc extends Bloc<BoordEvent, BoordState> {
 
   }
 
-  void _mapGetBoardOrFailure(Either<Failure, BoardYear> result, Emitter<BoordState> emit) {
-     result.fold((l) {
-      emit(BoordState(state: BoardStatus.Error, boardYears: [], message: mapFailureToMessage(l)));
-    }, (r) {
-      emit(BoordState(state: BoardStatus.Loaded, boardYears: [r]));
-    });
+ Future< BoordState> _mapGetBoardOrFailure(Either<Failure, BoardYear> result, Emitter<BoordState> emit)  {
+  return  result.fold(
+          (l) async{
+   return  state.copyWith(  state: BoardStatus.Error, boardYears: [], message: mapFailureToMessage(l));
+      },
+          (r) async {
+        List<int> list = [];
+        if (await FunctionMember.isSuper()) {
+          for (final element in r.posts) {
+            int kol = element.length + 1;
+            list.add(kol);
+          }
+        } else {
+          for (final element in r.posts) {
+            list.add(element.length);
+          }
+        }
+
+return state.copyWith(boardYears: [r] ,state: BoardStatus.Loaded,Listlength: list);
+
+      },
+    );
   }
 
   void _mapAddBoardOrFailure(Either<Failure, Unit> result, Emitter<BoordState> emit,) {

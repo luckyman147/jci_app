@@ -10,7 +10,6 @@ import { Permission } from '../models/Pemission';
 import { Role } from '../models/role';
 import { generateSecureKey } from '../utility';
 import { findrole } from '../utility/role';
-import { test } from '../models/points';
 
 export const ChangeToAdmin=async(req:Request, res:Response,next:NextFunction)=>{
     const superAdmin=req. superadmin
@@ -229,7 +228,7 @@ export const getAllPresidents=async(req:Request, res:Response,next:NextFunction)
             limit: limit
         };
     }
-    const presidents=await LastPresidents.find().sort({ createdAt: 'desc' }) .limit(limit).skip(startIndex).exec();
+    const presidents=await LastPresidents.find().sort({ year: 'desc' }) .limit(limit).skip(startIndex).exec();
     if (presidents) {
         return res.status(200).json(presidents);
     }else{
@@ -274,27 +273,22 @@ try {
     const presid=await LastPresidents.findById(id)
     console.log(("hey"))
     if (!presid) {
-        return res.status(404).json({ message: 'Permission not found' });
+        return res.status(404).json({ message: 'president not found' });
     }
     const image = req.file as Express.Multer.File;
   
     if (!image) {
       return res.status(400).send("Invalid or missing image file");
     }
-    const newtest = new test({
-        filename: image.filename,
-        contentType: image.mimetype,
-        length: image.size,
-   
-      });
-      await newtest.save();
+    console.log("lol")
+
     // Convert the image to base64
     const base64Image = image.buffer.toString('base64');
     presid.CoverImage=base64Image
 
     const saved=await presid.save()
     if (saved) {
-        return res.status(201).json(test);
+        return res.status(201).json(saved);
     }else{
         return res.status(400).json({ message: 'Error creating permission' });
     }

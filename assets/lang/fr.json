@@ -17,7 +17,8 @@
   "Priority 3": "Membres ",
   "Meetings": "Réunions",
   "Meeting": "Réunion",
-
+"Edit President": "Modifier le président",
+  "Change  Image": "Changer l'image",
   "Trainings": "Formations",
   "Training": "Formation",
   "Choose A category": "Choisissez une catégorie",
@@ -109,6 +110,8 @@
 "Login": "Connexion",
   "titre_0": "Notre Mission",
   "description_0": "Offrir aux jeunes leaders des opportunités de développement du leadership en renforçant leur capacité à créer un changement positif",
+  "reset password": "Réinitialiser Votre Mot De Passe",
+
 
 
 

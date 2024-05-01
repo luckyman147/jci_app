@@ -16,12 +16,15 @@ abstract class RemoteBoardDataSources {
   Future<List<String>> getYears();
   Future<BoardYearModel> getBoardByYear(String year);
   Future<Unit> addBoard(String year);
+  Future<Unit> AddRole(BoardRoleModel boardrole);
+  Future<Unit> RemoveRole(String id);
   Future<Unit> RemoveBoard(String year);
   Future<List<BoardRoleModel>> getBoardRoles(int priority);
   Future<Unit> AddPositionInBoard(String year,String role);
   Future<Unit> AddMemberBoard(String id,String memberId);
   Future<Unit> RemoveMemberBoard(String id,String memberId);
   Future<Unit> RemovePost(String id,String year);
+
 
 }
 class RemoteBoardDataSourcesImpl implements RemoteBoardDataSources {
@@ -40,7 +43,7 @@ class RemoteBoardDataSourcesImpl implements RemoteBoardDataSources {
       },
       body: json.encode(body),
     ).then((response) async {
-      log(response.statusCode.toString());
+
       if (response.statusCode == responseSuccess) {
         return Future.value(unit);
 
@@ -57,6 +60,36 @@ class RemoteBoardDataSourcesImpl implements RemoteBoardDataSources {
       }
     });
   }
+
+
+Future<Unit>     deleteFunction(http.Client client, String url) async {
+    try {
+      final tokens= await Store.GetTokens();
+
+      final response = await client.delete(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer ${tokens[1]}"
+        },
+      );
+
+
+
+      if (response.statusCode == 204) {
+        return Future.value(unit);
+      } else if (response.statusCode == 400) {
+        throw ServerException();
+      } else if (response.statusCode == 404) {
+        throw WrongCredentialsException();
+      } else {
+        throw ServerException();
+      }
+    } finally {
+      // Do not close the client here if it's shared across requests
+      // client.close();
+    }
+  }
   @override
   Future<List<String>> getYears()async {
 return client.get(Uri.parse(getYearsUrl)).then((response) {
@@ -72,6 +105,7 @@ return client.get(Uri.parse(getYearsUrl)).then((response) {
     }
   }).catchError((error) => throw ServerException());
 
+
   }
 
   @override
@@ -83,7 +117,7 @@ return client.get(Uri.parse(getYearsUrl)).then((response) {
         List<BoardYearModel> boardYears = (jsonDecode(response.body) as List)
             .map((item) => BoardYearModel.fromJson(item))
             .toList();
-        log("message");
+
         return  boardYears.first;
       } else {
         throw EmptyDataException();
@@ -107,32 +141,11 @@ return client.get(Uri.parse(getYearsUrl)).then((response) {
 
 
   @override
-  Future<Unit> RemoveBoard(String year) {
-    return client.delete(
-      Uri.parse(removeBoardUrl(year)),
-      headers: {"Content-Type": "application/json",
-     
-
-      },
-    
-    ).then((response) async {
-      log(response.statusCode.toString());
-      if (response.statusCode == 204) {
-        return Future.value(unit);
-
-      }
-      else if (response.statusCode == 400) {
-        throw ServerException();
-      }
-      else if  (response.statusCode == 404){
-        throw WrongCredentialsException();
-      }
-
-      else {
-        throw ServerException();
-      }
-    });
+  Future<Unit> RemoveBoard(String year) async{
+    return await deleteFunction(client, removeBoardUrl(year));
   }
+
+
 
   @override
   Future<List<BoardRoleModel>> getBoardRoles(int priority) {
@@ -174,31 +187,21 @@ return await UnitFunction({
   }
 
   @override
-  Future<Unit> RemovePost(String id, String year) async{ return client.delete(
-    Uri.parse(RemovePostUrl(id,year)),
-    headers: {"Content-Type": "application/json",
-
-
-    },
-
-  ).then((response) async {
-    log(response.statusCode.toString());
-    if (response.statusCode == 204) {
-      return Future.value(unit);
-
-    }
-    else if (response.statusCode == 400) {
-      throw ServerException();
-    }
-    else if  (response.statusCode == 404){
-      throw WrongCredentialsException();
-    }
-
-    else {
-      throw ServerException();
-    }
-  });
+  Future<Unit> RemovePost(String id, String year) async{
+    return await deleteFunction(client, RemovePostUrl(id,year));
   }
+
+  @override
+  Future<Unit> AddRole(BoardRoleModel boardRoleModel) async{
+    return await UnitFunction(boardRoleModel.toJson(), AddRoleBoardUrl, 201);
+  }
+
+  @override
+  Future<Unit> RemoveRole(String id) {
+    return deleteFunction(client, RemoveBoardRoleUrl(id));
+  }
+
+
 
 
 }

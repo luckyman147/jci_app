@@ -3,7 +3,7 @@ enum Section{
   Details,Attachments,Comments
 
 }
-enum Status{Loaded,Loading,Error,Empty,Initial}
+enum Status{Loaded,Loading,Error,Empty,Initial,Changed}
 enum TextFieldsTitle {
   Active,Inactive}
 enum TextFieldsDescription {

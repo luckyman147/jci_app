@@ -37,7 +37,7 @@ class BoardComponents{
     );
   }
 
-  static BlocBuilder<YearsBloc, YearsState> AddPositionWidget(PageController pageController) {
+  static BlocBuilder<YearsBloc, YearsState> AddPositionWidget(PageController pageController,TextEditingController name_controller) {
     return BlocBuilder<YearsBloc, YearsState>(
       builder: (context, state) {
         return SizedBox(
@@ -46,6 +46,8 @@ class BoardComponents{
           child: BlocBuilder<ActionJciCubit, ActionJciState>(
   builder: (context, ste) {
     return PageView.builder(
+      scrollBehavior: ScrollBehavior(),
+
             scrollDirection: Axis.vertical,
               controller: pageController,
 itemCount: 2,
@@ -57,7 +59,7 @@ context.read<ActionJciCubit>().changePageNum(page);
               if (ste.pageNum == 0){
               return AddPositionColumn(context, state);}
               else{
-                return AddNewRoleWidget(context);
+                return AddNewRoleWidget(context,state,name_controller);
               }
             }
           );
@@ -97,11 +99,14 @@ context.read<ActionJciCubit>().changePageNum(page);
                 width: MediaQuery.of(context).size.width,
                 height: 50,
                 child: BoardComponents.ButtomActin(context,() {
-                  final Pos=PostField(year: state.year, role: (state.newrole['role'] as BoardRole).id, assignTo: null, id: null);
+                  if (JCIFunctions.objectExistsInList(state.roles, state.newrole['role'])==true){
+                    final Pos=PostField(year: state.year, role: (state.newrole['role'] as BoardRole).id, assignTo: null, id: null);
 
-                  context.read<YearsBloc>().add(AddPosition(postField: Pos));
-                  Navigator.pop(context);
-                },"Add Position",PrimaryColor,textColorWhite),
+                    context.read<YearsBloc>().add(AddPosition(postField: Pos));
+                    Navigator.pop(context);
+                  }
+
+                },"Add Position",PrimaryColor,textColorWhite,JCIFunctions.objectExistsInList(state.roles, state.newrole['role'])),
               ),
             ),
           ],
@@ -175,8 +180,8 @@ context.read<ActionJciCubit>().changePageNum(page);
       },
     );
   }
-  static Widget NewRolesGridprioritys() {
-    final list=BoardRole.createBoardRoles();
+  static Widget NewRolesGridprioritys(List<BoardRole>list) {
+
     return BlocBuilder<YearsBloc, YearsState>(
   builder: (context, state) {
     return GridView.builder(
@@ -194,7 +199,7 @@ context.read<ActionJciCubit>().changePageNum(page);
           child: InkWell(
               onTap: () {
 
-                log("state ${state.newrole['role'].id}");
+
                 JCIFunctions.ChangeRoleFunction(state, list[index], context);
                 // Close dialog and pass selected year
               },
@@ -208,10 +213,10 @@ context.read<ActionJciCubit>().changePageNum(page);
 
 
 
-  static AlertDialog alertDialogDelete(String year, BuildContext context) {
+  static AlertDialog alertDialogDelete(String year,String role, BuildContext context,TypeDelete type,String text) {
   return AlertDialog(
-    title: Text('Delete Board $year',style: PoppinsRegular(15, textColorBlack),),
-    content: Text('Are you sure you want to delete this board?',style: PoppinsSemiBold(16, Colors.red, TextDecoration.none),),
+    title: Text('Delete $text',style: PoppinsRegular(15, textColorBlack),),
+    content: Text('Are you sure you want to delete this ${type.name}?',style: PoppinsLight(16, textColor, ),),
     actions: <Widget>[
       TextButton(
         onPressed: () {
@@ -221,25 +226,34 @@ context.read<ActionJciCubit>().changePageNum(page);
       ),
       TextButton(
         onPressed: () {
-          context.read<BoordBloc>().add(RemoveBoardEvent(year: year));
+          if (type==TypeDelete.Role){
+            context.read<YearsBloc>().add(RemoveRole(roleid:role ));
+            Navigator.of(context).pop();
+
+
+          }
+else{
+          context.read<BoordBloc>().add(RemoveBoardEvent(year: year));}
           Navigator.of(context).pop();
+          context.read<ActionJciCubit>().changePageNum(0);
+
         },
-        child: Text('Delete',style: PoppinsRegular(17, Colors.red),),
+        child: Text('Delete',style: PoppinsRegular(17, PrimaryColor),),
       ),
     ],
   );
 }
- static  SizedBox SubmitAddMemberButton(ActionJciState state,Post post) {
+ static  SizedBox SubmitAddMemberButton(ActionJciState state,Post post,BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 50,
+      height: MediaQuery.of(context).size.height/15,
       child: BlocBuilder<YearsBloc, YearsState>(
         builder: (context, ste) {
           return BoardComponents.ButtomActin(context,
                   () {
                 JCIFunctions.AddMemberFun(ste, state, context,post.id );
               }
-              , "Assign", PrimaryColor, textColorWhite);
+              , "Assign", PrimaryColor, textColorWhite,true);
         },
       ),
     );
@@ -267,7 +281,7 @@ context.read<ActionJciCubit>().changePageNum(page);
 
         Padding(
           padding: paddingSemetricVerticalHorizontal(v: 10),
-          child: SubmitAddMemberButton(state,post),
+          child: SubmitAddMemberButton(state,post,context),
         ):
       RowPostAwction(context, post),
     ],);
@@ -280,11 +294,12 @@ context.read<ActionJciCubit>().changePageNum(page);
   }
 
 
-  static ElevatedButton ButtomActin( BuildContext context,Function () onTAp,String text,Color color,Color textcolor) {
+  static ElevatedButton ButtomActin( BuildContext context,Function () onTAp,String text,Color color,Color Textcolor,bool isactive) {
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: color,
+          primary: isactive?color:textColorWhite,
           shape: RoundedRectangleBorder(
+            side: BorderSide(color: isactive?color:textColorWhite, width: 1),
             borderRadius: BorderRadius.circular(15),
           ),
         ),
@@ -292,7 +307,9 @@ context.read<ActionJciCubit>().changePageNum(page);
           onTAp();
         },
         child: Text(
-          '$text', style: PoppinsRegular(16.0,textcolor),)
+          '$text', style: PoppinsRegular(16.0,
+            !isactive?textColor:
+            Textcolor),)
     );
   }
 
@@ -332,9 +349,9 @@ context.read<ActionJciCubit>().changePageNum(page);
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment:post.assignTo!=null&&post.assignTo[0].id.isNotEmpty? MainAxisAlignment.spaceAround:MainAxisAlignment.center,
             children:[
-          buildCircularIconButton(Icons.edit_square, () { }, "Update Position", context),
+
           Visibility(
             visible: post.assignTo!=null&&post.assignTo[0].id.isNotEmpty,
 
@@ -431,7 +448,8 @@ static  Widget buildCircularIconButton(IconData iconData, VoidCallback onPressed
       ),
     );
   }
-  static Widget AddNewRoleWidget(BuildContext context){
+  static Widget AddNewRoleWidget(BuildContext context,YearsState state,TextEditingController nameController){
+    final roles=BoardRole.createBoardRoles();
     return Container(
       height: MediaQuery.of(context).size.height * 0.6,
       padding: EdgeInsets.all(16.0),
@@ -439,16 +457,23 @@ static  Widget buildCircularIconButton(IconData iconData, VoidCallback onPressed
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           headefnewrole(context),
-          textfieldnamerole(),
+          textfieldnamerole(nameController),
 
           Expanded(
-            child: BoardComponents.NewRolesGridprioritys(),
+            child: BoardComponents.NewRolesGridprioritys(roles),
           ),
           SizedBox(
               width: MediaQuery.of(context).size.width,
-              height: 50,
-              child: BoardComponents.ButtomActin(context, () => null, "Add new role", PrimaryColor, textColorWhite))
-        ],
+              height: 50,              child: BoardComponents.ButtomActin(context, (){
+                if (JCIFunctions.objectExistsInList(roles, state.newrole['role']) && nameController.text.isNotEmpty){
+ final role=BoardRole(name: nameController.text, priority: (state.newrole['role']as BoardRole).priority, id: '');
+                  context.read<YearsBloc>().add(AddRoleEvent(role: role));
+                  Navigator.pop(context);
+                }
+
+
+              }, "Add new role", PrimaryColor, textColorWhite,JCIFunctions.objectExistsInList(roles, state.newrole['role']) && nameController.text.isNotEmpty),
+          )],
       ),
     );
   }
@@ -472,10 +497,10 @@ static  Widget buildCircularIconButton(IconData iconData, VoidCallback onPressed
         );
   }
 
-  static TextFormField textfieldnamerole() {
+  static TextFormField textfieldnamerole(TextEditingController controller) {
     return TextFormField(
-          style: PoppinsRegular(18, textColor),
-          //controller: _roleController,
+          style: PoppinsRegular(18, textColorBlack),
+          controller: controller,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Please enter Role name';
@@ -488,7 +513,7 @@ static  Widget buildCircularIconButton(IconData iconData, VoidCallback onPressed
             hintStyle: PoppinsRegular(18, textColor),
             border: border(textColor),
             focusedBorder: border(PrimaryColor),
-            enabledBorder: border(PrimaryColor),
+            enabledBorder: border(textColor),
             errorBorder: border(Colors.red),
           ),
         );

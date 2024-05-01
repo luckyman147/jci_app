@@ -38,13 +38,13 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
 
   TrainingRemoteDataSourceImpl({required this.client});
   @override
-  Future<Unit> createTraining(TrainingModel Training) {
-    debugPrint("coverimagze from  ");
-    debugPrint(Training.CoverImages.first);
+  Future<Unit> createTraining(TrainingModel Training)async {
+    final token = await getTokens();
     final body =Training.toJson();
     return client.post(
       Uri.parse(createTrainingUrl),
-      headers: {"Content-Type": "application/json"},
+      headers: {"Content-Type": "application/json",
+        "Authorization": "Bearer ${token[1]}"},
       body: json.encode(body),
     ).then((response) async {
       if (response.statusCode == 200) {
@@ -76,10 +76,14 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
 
   @override
   Future<Unit> deleteTraining(String id) async {
+    final token = await getTokens();
     final response = await client.delete(
 
       Uri.parse(getTrainingsUrl+"$id"),
-      headers: {"Content-Type": "application/json"},
+      headers: {"Content-Type": "application/json",
+        "Authorization": "Bearer ${token[1]}"
+
+      },
     );
     if (response.statusCode==204){
       return Future.value(unit);
@@ -153,7 +157,7 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
       body: json.encode({"id": memberId}),
 
     );
-    print(response.statusCode);
+
     if (response.statusCode == 200) {
       final Map<String, dynamic> decodedJson = json.decode(response.body) ;
       if (decodedJson.containsKey('Trainings')) {
@@ -184,8 +188,7 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
       headers: {"Content-Type": "application/json"},
       body: json.encode({"id": memberId}),
     );
-    print(response.statusCode);
-    print("object");
+
     if (response.statusCode == 200) {
       final Map<String, dynamic> decodedJson = json.decode(response.body) ;
       if (decodedJson.containsKey('Trainings')) {

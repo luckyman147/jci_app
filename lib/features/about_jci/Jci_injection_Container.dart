@@ -27,7 +27,7 @@ Future<void> initJci() async {
         sl(),
       ));
 
-  sl.registerFactory(() => YearsBloc(sl(),sl(),sl(),sl()));
+  sl.registerFactory(() => YearsBloc(sl(),sl(),sl(),sl(),sl(),sl ()));
   sl.registerFactory(() => BoordBloc(sl(),sl(),sl(),sl(),sl()));
 
   sl.registerFactory(()=>ActionJciCubit());
@@ -36,6 +36,8 @@ Future<void> initJci() async {
   sl.registerLazySingleton<LocalBoardDataSources>(()=>LocalBoardDataSourcesImpl());
   sl.registerLazySingleton<RemoteBoardDataSources>(()=>RemoteBoardDataSourcesImpl(client: sl()));
   
+  sl.registerLazySingleton(()=>AddRoleUseCase( boardRepo: sl()));
+  sl.registerLazySingleton(()=>RemoveRoleUseCase( boardRepo: sl()));
   sl.registerLazySingleton(()=>AddPositionUseCase( boardRepo: sl()));
   sl.registerLazySingleton(()=>RemovePositionUseCase( boardRepo: sl()));
   sl.registerLazySingleton(()=>AddMemberBoardUseCase( boardRepo: sl()));

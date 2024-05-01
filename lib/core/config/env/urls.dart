@@ -1,6 +1,6 @@
 import 'dart:io';
 
-  final BaseUrl = "http://192.168.1.2"
+  final BaseUrl = "http://192.168.1.4"
       ":8080";
   final SuperAdminUrl = "$BaseUrl/Super";
   final BoardUrl = "$BaseUrl/Board";
@@ -9,11 +9,13 @@ import 'dart:io';
   final getYearsUrl= "$BoardUrl/years";
   final addBoardUrl= "$BoardUrl/AddBoard";
   final addPosiUrl= "$PositionUrl/AddPosition";
+  final AddRoleBoardUrl= "$BoardRoleUrl/AddBoardRole";
    String getBoardByYearUrl(String year)=> "$BoardUrl/get/$year";
    String removeBoardUrl(String year)=> "$BoardUrl/$year";
    String AddMemberBoardUrl(String id)=> "$PositionUrl/$id/AddMember";
    String RemoveMemberBoardUrl(String id)=> "$PositionUrl/$id/RemoveMember";
    String getBoardRoleUrl(int Priority)=> "$BoardRoleUrl/$Priority";
+   String RemoveBoardRoleUrl(String id)=> "$BoardRoleUrl/$id";
 String RemovePostUrl(String id,String year)=> "$PositionUrl/$id/$year";
 final LoginUrl = "$BaseUrl/auth/login";
 final SignUpUrl = "$BaseUrl/auth/signup";
@@ -49,25 +51,10 @@ final getMeetingByWeek = "$BaseUrl/Meeting/Latestofweek";
 final getEventByWeek = "$BaseUrl/Event/Latestofweekend";
 final getEventsUrl = "$BaseUrl/Event/";
 
-bool isEmulator() {
-  if (Platform.isAndroid) {
-    // Check if the 'goldfish' or 'ranchu' emulators are present in the model name
-    return (Platform.operatingSystem == 'android' &&
-            Platform.version.contains('goldfish')) ||
-        (Platform.operatingSystem == 'android' &&
-            Platform.version.contains('ranchu'));
-  }
-  return false;
-}
 
-void main() {
-  if (isEmulator()) {
-    print('Running on an emulator.');
-  } else {
-    print('Running on a physical device.');
-  }
-}
 
 class Urls{
+  static String mailVerify= "$BaseUrl/mails/VerifyEmails";
+  static String ResetPassword= "$BaseUrl/mails/ResetPasswordMails";
   static String TeamMember(String teamId) => "$TeamUrl$teamId/TeamMembers";
 }
