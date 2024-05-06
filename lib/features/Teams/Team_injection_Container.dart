@@ -15,6 +15,7 @@ import 'package:jci_app/features/Teams/presentation/bloc/NumPages/num_pages_bloc
 import 'package:jci_app/features/Teams/presentation/bloc/TaskFilter/taskfilter_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/Timeline/timeline_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
 
 
 import 'domain/usecases/TaskUseCase.dart';
@@ -24,7 +25,7 @@ final sl = GetIt.instance;
 Future<void> initTeams() async {
 
   //bloc
-
+sl.registerFactory(() => MembersTeamCubit());
   sl.registerFactory(() => TimelineBloc());
   sl.registerFactory(() => TaskVisibleBloc());
   sl.registerFactory(() => TaskfilterBloc());
@@ -41,7 +42,7 @@ Future<void> initTeams() async {
       updateTaskNameUseCase: sl(), updateTaskTimelineUseCase: sl(),
       UpdateMembersUseCase: sl(), updateFileUseCase: sl (), deleteFileUseCase: sl(), updateChecklistNameUseCase: sl()));
 
-  sl.registerFactory(() => GetTeamsBloc(sl(), sl()  ,sl(),sl(),sl(),sl(),sl()));
+  sl.registerFactory(() => GetTeamsBloc(sl(), sl()  ,sl(),sl(),sl(),sl(),sl(),sl()));
   //datasources
 
   sl.registerLazySingleton<TaskRemoteDataSource>(() => TaskRemoteDataSourceImpl(client: sl()));
@@ -64,6 +65,7 @@ Future<void> initTeams() async {
 
 
   sl.registerLazySingleton(() => UpdateChecklistStatusUseCase(sl()));
+  sl.registerLazySingleton(() => InviteMemberUseCase(sl()));
   sl.registerLazySingleton(() => UpdateIsCompletedUseCases(sl()));
   sl.registerLazySingleton(() => AddTaskUseCase(sl()));
   sl.registerLazySingleton(() => UpdateTaskUseCase(sl()));

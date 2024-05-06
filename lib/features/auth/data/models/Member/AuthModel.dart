@@ -22,7 +22,7 @@ factory MemberModel.fromEntity(Member member) {
       password: member.password,
       IsSelected: member.IsSelected,
       teams: member.teams,
-      Activities: member.Activities, objectifs: member.objectifs,
+      Activities: member.Activities, objectifs: member.objectifs, language: member.language,
     );
   }
 
@@ -43,7 +43,7 @@ factory MemberModel.fromEntity(Member member) {
         firstName: json['firstName'] as String,
         lastName: json['lastName']?? '' ,
         phone: json['phone'] ??"",
-        email: json['email'] as String,
+        email: json['email'] ?? "",
         password: "",
         IsSelected:false,
         teams: json['teams'] == null ? [] :json['teams'] as List<dynamic>,
@@ -53,9 +53,9 @@ factory MemberModel.fromEntity(Member member) {
 
         (json['Activities'] as List<dynamic>)
             .map((e) => e )
-            .toList(),
+            .toList(), language: json['language'] ?? 'fr'
       );}
-  MemberModel({required super.id, required super.role, required super.is_validated, required super.cotisation, required super.Images, required super.firstName, required super.lastName, required super.phone, required super.email, required super.password, required super.IsSelected, required super.Activities, required super.teams, required super.points, required super.objectifs});
+  MemberModel({required super.id, required super.role, required super.is_validated, required super.cotisation, required super.Images, required super.firstName, required super.lastName, required super.phone, required super.email, required super.password, required super.IsSelected, required super.Activities, required super.teams, required super.points, required super.objectifs, required super.language});
 
   Map<String, dynamic> toJson() => _$MemberModelToJson(this);
 

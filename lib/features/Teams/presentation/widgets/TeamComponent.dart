@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'dart:math';
+import 'dart:developer';
+
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -307,22 +308,7 @@ class myTaskButtons extends StatelessWidget {
     context.read<TaskfilterBloc>().add((TaskfilterSelected(filter)));
 
 
-    if (filter == TaskFilter.All) {
-      debugPrint(state.tasks.toString());
 
-      context.read<GetTaskBloc>().add(initTasks(state.tasks));
-
-    } else if (filter == TaskFilter.Completed) {
-      debugPrint(state.tasks.toString());
-      context.read<GetTaskBloc>().add(initTasks((TeamFunction.filterCompletedTasks(state.tasks))));
-
-    }
-    else if (filter == TaskFilter.Pending) {
-      debugPrint(state.tasks.toString());
-
-      context.read<GetTaskBloc>().add(initTasks((TeamFunction.filterPendingTasks(state.tasks))));
-
-    }
 
     // Add logic to handle the button press for the specific activity
     // You can dispatch events to other blocs or perform any other actions here.

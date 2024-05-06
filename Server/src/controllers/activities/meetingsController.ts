@@ -160,7 +160,7 @@ export const getmeetingById = async (req: Request, res: Response, next: NextFunc
         Permissions:Permissions,
        
       
-        participants: await getMembersInfo(meeting.Participants),
+        participants: await getMembersInfo(meeting.Participants.map(member=>member.memberid)),
         
       });
     } else {

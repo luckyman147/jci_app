@@ -12,6 +12,7 @@ import '../../../../core/app_theme.dart';
 import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
 import '../../../auth/domain/entities/Member.dart';
 import '../../domain/entities/Team.dart';
+import '../../domain/usecases/TaskUseCase.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../bloc/Timeline/timeline_bloc.dart';
@@ -207,8 +208,9 @@ Widget BottomShetTaskBody(
             ),
           ),
           onPressed: (){
+            final inputFields input=inputFields(taskid: taskid, teamid:null, file: null, memberid: null, status: null, Deadline: Deadlinedate, StartDate: Startdate, name: null, task: null, isCompleted: null, member: null, fileid: null, );
 
-            context.read<GetTaskBloc>().add(UpdateTimeline({"StartDate":Startdate,"Deadline":Deadlinedate,"id":taskid}));
+            context.read<GetTaskBloc>().add(UpdateTimeline(input));
             context.pop();
             context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
 
@@ -250,7 +252,7 @@ void AssignBottomSheetBuilder(BuildContext context, MediaQueryData mediaQuery,
       );
     }
     else if  (state.status== TaskStatus.success || state.status== TaskStatus.Changed){
-    return MembersAssignToBottomSheet(mediaQuery, onRemoveTap, onAddTap,membersList,ListAssignTo);}
+    return MemberTeamSelection. MembersAssignToBottomSheet(mediaQuery, onRemoveTap, onAddTap,membersList,ListAssignTo);}
     else return Container();
   },
 );
@@ -333,7 +335,9 @@ class AttachedFileWidget extends StatelessWidget {
               IconButton(
 
                   onPressed: (){
-                context.read<GetTaskBloc>().add(DeleteFileEvent({"file":fileData['id'],'taskid':idTask}));
+                    final inputFields input=inputFields(taskid: idTask, teamid:null, file: null, memberid: null, status: null, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: null, fileid: fileData['id'], );
+
+                    context.read<GetTaskBloc>().add(DeleteFileEvent(input));
                 context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
 
 

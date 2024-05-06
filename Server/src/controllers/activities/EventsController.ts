@@ -8,6 +8,7 @@ import { Member } from '../../models/Member';
 import { Event } from '../../models/activities/eventModel';
 import { participationEmail, sendNewEventEmail } from '../../utility/NotificationEmailUtility';
 import { getMembersInfo, getPermissionIdsByRelated } from '../../utility/role';
+import { validate } from 'class-validator';
 
 //&Public
 
@@ -151,6 +152,16 @@ export const addEvent = async (req: Request, res: Response, next: NextFunction) 
   try {
     // Extract data from the request body
     const eventInputs=plainToClass(EventInputs,req.body)
+    // Validate the inputs
+    const errors = await validate(eventInputs, { validationError: { target: false } });
+    if  (errors.length>0
+    ){
+
+      return res.status(400).json({ message: 'Invalid input', errors });
+
+    }
+
+    
 //compare end date 
     if (eventInputs.ActivityEndDate<eventInputs.ActivityBeginDate){
       return res.status(400).json({message:"End date should be greater than begin date"})
@@ -262,7 +273,7 @@ export const getEventById = async (req: Request, res: Response, next: NextFuncti
         ActivityEnddate: event.ActivityEndDate,
         ActivityAdress: event.ActivityAdress,
    
-        participants: await getMembersInfo(event.Participants),
+        participants: await getMembersInfo(event.Participants.map(member => member.memberid)),
         CoverImages: event.CoverImages,
         Permissions:Permissions
 

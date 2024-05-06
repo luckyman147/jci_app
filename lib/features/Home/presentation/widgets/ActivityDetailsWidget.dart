@@ -11,12 +11,12 @@ import 'ActivityDetailsComponents.dart';
 
 class ActivityDetail extends StatelessWidget {
   final Activity activitys;
-  final bool bools;
+
   final activity act;
   final int index;
 
   const ActivityDetail(
-      {Key? key, required this.activitys, required this.bools, required this.act, required this.index})
+      {Key? key, required this.activitys, required this.act, required this.index})
       : super(key: key);
 
   @override
@@ -40,7 +40,7 @@ AddDots(activitys, mediaQuery)
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ActivityDetailsComponent.rowName(
-                    mediaQuery, context, activitys,bools, act, index),
+                    mediaQuery, context, activitys, act, index),
 
 
 

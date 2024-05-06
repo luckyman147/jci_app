@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import nodemailer from "nodemailer";
 import { transporter } from "../../config/mailer";
-import { GenerateOtp, onRequestOTP, onRequestResetPasswordOTP } from "../../utility/NotificationEmailUtility";
+import { GenerateOtp, onRequestOTP, onRequestResetPasswordOTP, ReminderActivity, sendReportIncativity, sendReportmembership, sendTaskDeadlineOverdueEmail } from "../../utility/NotificationEmailUtility";
 import { Member } from "../../models/Member";
+import { Task } from "../../models/teams/TaskModel";
+import { Activity } from "../../models/activities/activitieModel";
 require('dotenv').config();
 
 
@@ -49,8 +51,53 @@ if (!MemberInfo){
 
 
 
+export const reportMembershipEmail=async(req: Request, res: Response)=> {
+    const {memberid}=req.params
+    const member=await Member.findById(memberid)
+    if(member){
+    sendReportmembership(member.language,member.firstName,member.email)
+    res.status(200).json({message:'Email sent'})
+    }
+}
+export const reportInactivityEmail=async(req: Request, res: Response)=> {
+    const {memberid}=req.params
+    const member=await Member.findById(memberid)
+    if(member){
+    sendReportIncativity(member.language,member.firstName,member.email)
+    res.status(200).json({message:'Email sent'})
+    }
+}
 
+export const SendReportDeadlineTask=async (req:Request,res:Response)=>{
+    const taskid= req.params
+    const task=await Task.findById(taskid)
+    if (task ){
 
+        const members=await Member.find({ _id: { $in: task!.AssignTo } });
+        if (members){
+            members.forEach ((member)=>
+             sendTaskDeadlineOverdueEmail(member.language,member.email,task.name)
+            
+            )
+        }
+       
+    }
+}
+export const SendReminderActivity=async (req:Request,res:Response)=>{
+    const {activityId}= req.params
+    const activity=await Activity.findById(activityId)
+    if (activity ){
+
+        const members=await Member.find();
+        if (members){
+            members.forEach ((member)=>
+             ReminderActivity(member.language,member.email,activity.name,activity.ActivityBeginDate,activity.ActivityAdress)
+            
+            )
+        }
+       return res.status(200).json("email sent succefully")
+    }
+}
 
 
 

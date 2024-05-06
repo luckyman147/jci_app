@@ -1,20 +1,16 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:file_picker/file_picker.dart';
+
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
-import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/TaskFilter/taskfilter_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 
 import 'package:jci_app/features/Teams/presentation/bloc/Timeline/timeline_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/CheckList.dart';
-import 'package:jci_app/features/Teams/presentation/widgets/DetailTeamWidget.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
@@ -26,9 +22,10 @@ import '../../../Home/presentation/widgets/MemberSelection.dart';
 
 
 import '../../domain/entities/Team.dart';
-import 'CreateTeamWIdgets.dart';
+
+import '../../domain/usecases/TaskUseCase.dart';
 import 'DetailTeamComponents.dart';
-import 'MembersTeamSelection.dart';
+
 import 'TaskComponents.dart';
 
 
@@ -292,8 +289,10 @@ if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])){
                 "TaskName here",
                 mediaQuery,
                     () {
+                      final inputFields input=inputFields(taskid: widget.task['id'], teamid: widget.team.id, file: null, memberid: null, status: null, Deadline: null, StartDate: null, name: TaskName.text, task: null, isCompleted: null, member: null, fileid: null, );
+
                   context.read<GetTaskBloc>().add(UpdateTaskName(
-                      {"taskid": widget.task['id'], "name": TaskName.text}));
+                      input));
                   context.read<TaskVisibleBloc>().add(
                       ChangeTextFieldsTitle(TextFieldsTitle.Inactive));
                   context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
@@ -389,19 +388,21 @@ if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])){
   void buildAssignBottomSheetBuilderFunction(BuildContext context, MediaQueryData mediaQuery, GetTaskState state) {
     return AssignBottomSheetBuilder(context, mediaQuery, (member) {
                         //delete memberr
+      final inputFields input=inputFields(taskid: state.tasks[widget.index]['id'], teamid: widget.team.id, file: null, memberid: member.id, status: false, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: member, fileid: null, );
 
                         context.read<GetTaskBloc>().add(
 
                             UpdateMember(
-                                {"taskid": state.tasks[widget.index]['id'], "member": member,
-                                  'status': false, 'memberId': member.id}));
+
+                              input));
                         context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
 
     }, (member) {
-                        //add member
+      final inputFields input=inputFields(taskid: state.tasks[widget.index]['id'], teamid: widget.team.id, file: null, memberid: member.id, status: true, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: member, fileid: null, );
+
+      //add member
                         context.read<GetTaskBloc>().add(UpdateMember(
-                            {"taskid": state.tasks[widget.index]['id'], "member": member,
-                              'status': true, 'memberId': member.id}));
+                            input));
                         context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
 
     },widget.team,

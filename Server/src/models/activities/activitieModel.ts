@@ -14,6 +14,8 @@ categorie:string
     Price:number
     Participants:any[]
     CoverImages:string[]
+
+    guests:any[]
     
 }
 export const ActivitySchema=new Schema({
@@ -24,15 +26,31 @@ export const ActivitySchema=new Schema({
     ActivityAdress:{type:String,
     default:"Local Menchia"
     },
-    ActivityPoints:{type:Number},
- 
+    
+    ActivityPoints:{type:Number,default:50},
+
+    
+      guests:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Guest',
+        default:[]
+      
+      }],
     categorie:{type:String,required:true},
     IsPaid:{type:Boolean,default:false},
     Price:{type:Number,default:0},
     Participants: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Member',
-        default:[]
+        memberid: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Member', // Reference to the Member model
+       
+        },
+        status: {
+          type: String,
+          enum: ['pending', 'present', 'absent'],
+          default: 'pending',
+    
+        }
       }],
     CoverImages:{type:[{type:String}],required:true}
 },{

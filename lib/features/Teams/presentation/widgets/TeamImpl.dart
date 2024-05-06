@@ -15,6 +15,7 @@ import 'package:jci_app/features/Teams/presentation/widgets/DetailTeamWidget.dar
 import 'package:jci_app/features/Teams/presentation/widgets/TeamWidget.dart';
 
 import '../bloc/NumPages/num_pages_bloc.dart';
+import 'ShimmerEffects.dart';
 enum TeamAction { Upload, delete,Exit }
 Widget allTeams(String id,ScrollController scrollController,bool isHome) {
   return BlocBuilder<NumPagesBloc, NumPagesState>(
@@ -27,11 +28,12 @@ Widget allTeams(String id,ScrollController scrollController,bool isHome) {
 
             switch (state.status){
               case TeamStatus.error:
-                return MessageDisplayWidget(message: state.errorMessage);
+                return ShimmerListView(itemCount: 3,);
                 case TeamStatus.success:
+                case TeamStatus.IsRefresh:
 
                   if (state.teams.isEmpty) {
-                    return MessageDisplayWidget(message: "No Data Found");
+                    return ShimmerListView(itemCount: 3);
                   }
                   return RefreshIndicator(onRefresh: () {
                     context.read<GetTeamsBloc>().add(GetTeams(isPrivate: isHome?true:false ));
@@ -43,12 +45,11 @@ Widget allTeams(String id,ScrollController scrollController,bool isHome) {
                   TeamWidget(teams: state.teams,scrollController: scrollController,hasReachedMax: state.teams.length<=3?true: state.hasReachedMax,));
 case TeamStatus.initial:
 
-                return LoadingWidget();
-              case TeamStatus.IsRefresh:
-                return LoadingWidget();
+                return ShimmerListView(itemCount: 3);
+
+;
               default:
-                return Text("data");
-            }
+                return ShimmerListView(itemCount: 3);}
 
           }, listener: (BuildContext context, GetTeamsState state) {
 

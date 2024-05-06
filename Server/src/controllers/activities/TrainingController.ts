@@ -288,7 +288,7 @@ export const getTrainingById = async (req: Request, res: Response, next: NextFun
         ActivityEnddate: training.ActivityEndDate,
         ActivityAdress: training.ActivityAdress,
    
-        participants: await getMembersInfo(training.Participants),
+        participants: await getMembersInfo(training.Participants.map(member=>member.memberid)),
         CoverImages: training.CoverImages,
         Permissions:Permissions
 

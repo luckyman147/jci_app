@@ -33,7 +33,7 @@ app.use('/Super',SuperAdmineRouter)
 app.use('/auth',AuthRouter)
 app.use("/Event",EventRoute)
 app.use("/Meeting",meetingRoute)
-app.use("/Activity  ",Activityroute)
+app.use("/Activity",Activityroute)
 app.use("/Training",trainingRoute)
 app.use('/Team',TeamRoute)
 app.use('/api-docs-1', swaggerUi.serve, swaggerUi.setup(specs));

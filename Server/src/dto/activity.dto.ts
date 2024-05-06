@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator'
+import { IsEnum, IsNotEmpty } from 'class-validator'
 
 export interface EventOftheMonthField {
     _id:string
@@ -42,6 +42,32 @@ participants:any []
 
 
 }
+enum ActivityStatus {
+    PENDING = 'pending',
+    PRESENT = 'present',
+    ABSENT = 'absent',
+  }
+  
+  export class ActivityMemberStatus {
+    @IsNotEmpty()
+    memberId: string;
+  
+    @IsNotEmpty()
+    activityId: string;
+  
+    @IsEnum(ActivityStatus)
+    status: ActivityStatus;
+  }  
+  export class GuestInput {
+    @IsNotEmpty()
+    name: string;
+  
+    @IsNotEmpty()
+    email: string;
+    
+    @IsNotEmpty()
+    phone: string;
+  }
 export class EventInputs{
     @IsNotEmpty()
     name:string

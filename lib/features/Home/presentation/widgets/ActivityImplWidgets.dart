@@ -1,4 +1,5 @@
-import 'dart:math';
+
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Compoenents.dart';
+import 'package:jci_app/features/Home/presentation/widgets/GuestWidget.dart';
 
 
 import '../../../../core/app_theme.dart';
@@ -87,10 +89,8 @@ Widget ActivityDetails(activity Act, String id,index) {
             if (state is ActivityLoadingState) {
               return ReloadDetailsPage();
             } else if (state is ACtivityByIdLoadedState) {
-              print(ss.isParticipantAdded[index]);
-              print(index);
 
-              return ActivityDetail(activitys: state.activity, bools: ss.isParticipantAdded[index]['isPart'], act: Act, index: index,);
+              return ActivityDetail(activitys: state.activity, act: Act, index: index,);
             }
             else if (state is ErrorActivityState) {
               return ReloadDetailsPage();
@@ -124,15 +124,41 @@ Widget ALLActivities(activity act) =>
               child:
               BlocBuilder<ParticpantsBloc, ParticpantsState>(
   builder: (context, ste) {
-   debugPrint(ste.toString());
-    if  ((ste.isParticipantAdded.length==state.activitys.length&& (ste is ParticipantChanged || ste is ParticipantSuccessState )) ){
+switch (ste.status){
+
+
+  case ParticpantsStatus.initial:
+    context.read<ParticpantsBloc>().add(initstateList(act: ActivityAction.mapObjects(state.activitys)));
+    return LoadingWidget();
+
+  case ParticpantsStatus.loading:
+    return LoadingWidget();
+
+  case ParticpantsStatus.failed:
+    return LoadingWidget();
+
+  case ParticpantsStatus.success:
+  case ParticpantsStatus.changed:
+  case ParticpantsStatus.loaded:
+  case ParticpantsStatus.empty:
+  case ParticpantsStatus.LoadedGuests:
+
+
+    if  (ste.isParticipantAdded.length==state.activitys.length ){
 
     return ActivityWidget(Activities: state.activitys, act: act,);
   }
     else{
+
       context.read<ParticpantsBloc>().add(initstateList(act: ActivityAction.mapObjects(state.activitys)));
       return LoadingWidget();
     }
+    break;
+  default:
+    return LoadingWidget();
+
+}
+
     },
 )
 
@@ -180,6 +206,74 @@ Widget AddDots(Activity activitys,MediaQueryData mediaQuery){
       return Container();
     },
   );
+}
+Widget ShowPartipants(String activityId){
+  return BlocBuilder<ParticpantsBloc, ParticpantsState>(
+    builder: (context, state) {
+    switch(state.status){
+      case ParticpantsStatus.initial:
+        context.read<ParticpantsBloc>().add(LoadIsParttipatedList(activityId: activityId));
+        return ShimmerButton.shimmerparticipants();
+      case ParticpantsStatus.loading:
+        return ShimmerButton.shimmerparticipants();
+      case ParticpantsStatus.failed:
+        context.read<ParticpantsBloc>().add(LoadIsParttipatedList(activityId: activityId));
+
+        return ShimmerButton.shimmerparticipants();
+      case ParticpantsStatus.loaded:
+      case ParticpantsStatus.changed:
+      case ParticpantsStatus.success:
+      case ParticpantsStatus.LoadedGuests:
+      case ParticpantsStatus.empty:
+
+        return ActivityDetailsComponent.ParticipantsWidget( state.members,activityId,context);
+      default:
+        context.read<ParticpantsBloc>().add(LoadIsParttipatedList(activityId: activityId));
+
+        return ShimmerButton.shimmerparticipants();
+    }
+    },
+  );
+
+}
+Widget ShowGuests(String activityId){
+  return BlocBuilder<ParticpantsBloc, ParticpantsState>(
+    builder: (context, state) {
+    switch(state.status){
+      case ParticpantsStatus.initial:
+
+        return ShimmerButton.shimmerparticipants();
+      case ParticpantsStatus.loading:
+        return ShimmerButton.shimmerparticipants();
+      case ParticpantsStatus.failed:
+        context.read<ParticpantsBloc>().add(GetGuestsEvent(activityId: activityId));
+
+        return ShimmerButton.shimmerparticipants();
+      case ParticpantsStatus.loaded:
+        context.read<ParticpantsBloc>().add(GetGuestsEvent(activityId: activityId));
+return ShimmerButton.shimmerparticipants();
+        case ParticpantsStatus.changed:
+          context.read<ParticpantsBloc>().add(GetGuestsEvent(activityId: activityId));
+          return ShimmerButton.shimmerparticipants();
+          
+          
+          case ParticpantsStatus.empty:
+          return SizedBox();
+            
+            case ParticpantsStatus.success:
+          case ParticpantsStatus.LoadedGuests:
+            
+            
+            log("sssss"+state.guests.toString());
+        return GuestWidget(guests: state.guests, activityId: activityId,);
+      default:
+        context.read<ParticpantsBloc>().add(GetGuestsEvent(activityId: activityId));
+
+        return ShimmerButton.shimmerparticipants();
+    }
+    },
+  );
+
 }
 
 

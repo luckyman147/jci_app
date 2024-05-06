@@ -7,6 +7,7 @@ part of 'MerberSignUp.dart';
 // **************************************************************************
 
 MemberSignup _$MemberSignupFromJson(Map<String, dynamic> json) => MemberSignup(
+      language: json['language'] ?? 'fr',
       points: json['points'],
       teams: json['teams'],
       id: json['id'],
@@ -37,4 +38,5 @@ Map<String, dynamic> _$MemberSignupToJson(MemberSignup instance) =>
       'Activities': instance.Activities,
       'IsSelected': instance.IsSelected,
       'role': instance.role,
+          'language': instance.language,
     };

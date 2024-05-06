@@ -71,8 +71,8 @@ on<UpdateChecklistName>(_updateChecklistName);
   void _updateChecklistName(UpdateChecklistName event, Emitter<GetTaskState> emit)async  {
 try{
   final result = await updateChecklistNameUseCase(event.fields);
-  emit(_mapFailureOrUpdatedChecklistStatusToState(result,emit,event.fields['taskid']!,event.fields['checkid']!,
-      event.fields['name']! ,"name"));
+  emit(_mapFailureOrUpdatedChecklistStatusToState(result,emit,event.fields.taskid!,event.fields.checkid!,
+      event.fields.name ,"name"));
 }
 catch(e){
   log(e.toString());
@@ -80,46 +80,50 @@ catch(e){
 }
   }
  void _deleteFile(DeleteFileEvent event ,Emitter<GetTaskState> emit)async {
-    if (event.fields['taskid'] == null) {
+    if (event.fields.taskid == null) {
       emit(state.copyWith(status: TaskStatus.error, errorMessage: "An error occurred"));
       return;
     }
-    if (event.fields['file'] == null) {
+    if (event.fields.fileid == null) {
       emit(state.copyWith(status: TaskStatus.error, errorMessage: "An error occurred"));
       return;
     }
     try{
       final result = await deleteFileUseCase(event.fields);
-      result.fold((l) {
-        emit(state.copyWith(status: TaskStatus.error, errorMessage: "$l + error occurred"));
-      }, (r) {
-        log('message +$r');
-        final updatedTasks = [...state.tasks.map((task) {
-          if (task['id'] == event.fields['taskid']) {
-            // Remove the checklist with the matching ID
-            task['attachedFile'] = UnmodifiableListView<Map<String, dynamic>>(
-              task['attachedFile']
-                  .where((checklist) => checklist['id'] != event.fields['file'])
-                  .map<Map<String, dynamic>>((element) => element as Map<String, dynamic>)
-                  .toList(),
-            );          }
-          return task;
-        })];
-
-        checkState(emit, updatedTasks);
-      });
+      _eitherdeleteFileorFailure(result, emit, event);
     } catch (e) {
       emit(state.copyWith(status: TaskStatus.error, errorMessage: "$e + error occurred"));
     }
  }
 
+ void _eitherdeleteFileorFailure(Either<Failure, Unit> result, Emitter<GetTaskState> emit, DeleteFileEvent event) {
+   result.fold((l) {
+     emit(state.copyWith(status: TaskStatus.error, errorMessage: "$l + error occurred"));
+   }, (r) {
+
+     final updatedTasks = [...state.tasks.map((task) {
+       if (task['id'] == event.fields.taskid) {
+         // Remove the checklist with the matching ID
+         task['attachedFile'] = UnmodifiableListView<Map<String, dynamic>>(
+           task['attachedFile']
+               .where((checklist) => checklist['id'] != event.fields.fileid)
+               .map<Map<String, dynamic>>((element) => element as Map<String, dynamic>)
+               .toList(),
+         );          }
+       return task;
+     })];
+
+     checkState(emit, updatedTasks);
+   });
+ }
+
 
 void _updateFiles(UpdateFile event, Emitter<GetTaskState> emit) async {
-    if (event.fields['file'] == null) {
+    if (event.fields.fileid== null) {
       emit(state.copyWith(status: TaskStatus.error, errorMessage: "EMPTY occurred"));
       return;
     }
-    if (event.fields['taskid'] == null) {
+    if (event.fields.taskid == null) {
       emit(state.copyWith(status: TaskStatus.error, errorMessage: "An error occurred"));
       return;
     }
@@ -129,8 +133,8 @@ void _updateFiles(UpdateFile event, Emitter<GetTaskState> emit) async {
       result.fold((l) {
         emit(state.copyWith(status: TaskStatus.error, errorMessage: "$l + error occurred"));
       }, (r) {
-        log('message +$r');
-        List<Map<String, dynamic>> updatedTasks = AddSousFieldAction(event.fields['taskid']!,
+
+        List<Map<String, dynamic>> updatedTasks = AddSousFieldAction(event.fields.taskid,
             TeamFunction.toMapFile(r), "attachedFile");
 
         checkState(emit, updatedTasks);
@@ -145,29 +149,33 @@ void _updateFiles(UpdateFile event, Emitter<GetTaskState> emit) async {
   void _updateMembers(UpdateMember event, Emitter<GetTaskState> emit) async {
     try {
       final result = await UpdateMembersUseCase(event.fields);
-log( "ddddddddddddddddddddd");
-      if (event.fields['status'] as bool ==true){
 
-
-        List<Map<String, dynamic>> updatedTasks = AddSousFieldAction(event.fields['taskid']!,
-            TeamFunction.toMapMember(event.fields['member']as Member), "AssignTo");
-
-checkState(emit, updatedTasks);
-
-      }else{
-        final updatedTasks=[...state.tasks.map((task) {
-          if (task['id'] == event.fields['taskid']) {
-            // Remove the checklist with the matching ID
-            task['AssignTo'] = UnmodifiableListView(task['AssignTo'].where((member) => member['id'] != event.fields['memberId'] && member['_id'] != event.fields['memberId']).toList());
-
-          }
-          return task;
-        })];
-        checkState(emit, updatedTasks);
-      }
+      _updatedMember(event, emit);
 
     } catch (e) {
       emit(state.copyWith(status: TaskStatus.error, errorMessage: "$e"));
+    }
+  }
+
+  void _updatedMember(UpdateMember event, Emitter<GetTaskState> emit) {
+      if (event.fields.status==true){
+
+
+      List<Map<String, dynamic>> updatedTasks = AddSousFieldAction(event.fields.taskid,
+          TeamFunction.toMapMember(event.fields.member! ), "AssignTo");
+
+    checkState(emit, updatedTasks);
+
+    }else{
+      final updatedTasks=[...state.tasks.map((task) {
+        if (task['id'] == event.fields.taskid) {
+          // Remove the checklist with the matching ID
+          task['AssignTo'] = UnmodifiableListView(task['AssignTo'].where((member) => member['id'] != event.fields.memberid && member['_id'] != event.fields.memberid).toList());
+
+        }
+        return task;
+      })];
+      checkState(emit, updatedTasks);
     }
   }
 
@@ -202,13 +210,13 @@ checkState(emit, updatedTasks);
     }
   }
   void _initTasks(initTasks event, Emitter<GetTaskState> emit) {
-    emit(state.copyWith(tasks: event.tasksInit));
+    emit(state.copyWith(clonetasks: event.tasksInit,status: TaskStatus.success,));
   }
   void _init_members(init_members event, Emitter<GetTaskState> emit) {
     UpdateTaskField(event,emit,'AssignTo',event.members,event.id);
   }
 void reset(resetevent event, Emitter<GetTaskState> emit) {
-  emit(state.copyWith(status: TaskStatus.initial, tasks: [],));
+  emit(state.copyWith(status: TaskStatus.initial, tasks: [],clonetasks: []));
 }
  void onGetTasks(GetTasks event, Emitter<GetTaskState> emit) async {
 
@@ -218,6 +226,7 @@ void reset(resetevent event, Emitter<GetTaskState> emit) {
         final result = await getTasksOfTeamUseCase(event.id);
         final r= result.getOrElse(() => []);
             emit(state.copyWith(tasks: r.map((e) => TeamFunction.toMap(e)).toList(),status: TaskStatus.success,
+              clonetasks: r.map((e) => TeamFunction.toMap(e)).toList()
 
 
 
@@ -246,9 +255,9 @@ void reset(resetevent event, Emitter<GetTaskState> emit) {
 void taskStatusUpdated(UpdateStatus event, Emitter<GetTaskState> emit) async {
     try{
       final result = await updateIsCompletedUseCases(event.isCompleted);
-      log(event.isCompleted['IsCompleted'].toString());
-      UpdateTaskField(event, emit,"isCompleted",event.isCompleted['IsCompleted'] ,event.isCompleted['id']!);
-      log(state.status.toString());
+
+      UpdateTaskField(event, emit,"isCompleted",event.isCompleted.isCompleted ,event.isCompleted.taskid!);
+
     }
     catch(e){
       log(e.toString());
@@ -281,9 +290,9 @@ void UpdateTaskField(GetTaskEvent event, Emitter<GetTaskState> emit,String field
 
 
 void                        UpdateTimelineFun(UpdateTimeline event, Emitter<GetTaskState> emit,) {
-     final act =TeamFunction. findTaskById(state.tasks, event.timeline['id']);
-  act["StartDate"] = event.timeline['StartDate'];
-  act["Deadline"] = event.timeline['Deadline'];
+     final act =TeamFunction. findTaskById(state.tasks, event.timeline.taskid);
+  act["StartDate"] = event.timeline.StartDate;
+  act["Deadline"] = event.timeline.Deadline;
   List<Map<String, dynamic>> updatedTasks = List.from(state.tasks);
   updatedTasks[updatedTasks.indexOf(act)] = act;
   checkState(emit, updatedTasks);
@@ -295,14 +304,14 @@ void checkState(Emitter<GetTaskState> emit, List<Map<String, dynamic>> updatedTa
   log(state.status.toString());
   }
   else {
-  emit (    state.copyWith(tasks: updatedTasks,status: TaskStatus.success ));
+  emit (    state.copyWith(tasks: updatedTasks,status: TaskStatus.success,clonetasks: updatedTasks ));
   log(state.status.toString());}
 }
 
 void _ChecklistStatusUpdated(UpdateChecklistStatus event, Emitter<GetTaskState> emit) async {
     try{
       final result = await updateChecklistStatusUseCase(event.checklist);
-      emit(_mapFailureOrUpdatedChecklistStatusToState(result,emit,event.checklist['taskid']!,event.checklist['checkid']!,event.checklist['IsCompleted']! as bool,"isCompleted"));
+      emit(_mapFailureOrUpdatedChecklistStatusToState(result,emit,event.checklist.taskid!,event.checklist.checkid,event.checklist.IsCompleted ,"isCompleted"));
     }
     catch(e){
       log(e.toString());
@@ -312,7 +321,7 @@ void _ChecklistStatusUpdated(UpdateChecklistStatus event, Emitter<GetTaskState> 
 void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
     try{
       final result = await updateTaskNameUseCase(event.fields);
-      UpdateTaskField(event, emit,"name",event.fields['name'] ,event.fields['taskid']!);
+      UpdateTaskField(event, emit,"name",event.fields.name ,event.fields.taskid);
     }
     catch(e){
       log(e.toString());
@@ -336,7 +345,7 @@ void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
 
       final result = await addTaskUseCase(event.task);
       emit(_mapFailureOrAddedToState(result,emit));
-      log(''''message''');
+
     } catch (error) {
       emit(AddTaskError(message: "An error occurred"));
     }
@@ -346,9 +355,8 @@ void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
     try {
 
       final result = await addChecklistUseCase(event.checklist);
-      emit(_mapFailureOrAddedChecklistToState(result,emit,event.checklist['idTask']!));
-      log(''''message''');
-      log(state.status.toString());
+      emit(_mapFailureOrAddedChecklistToState(result,emit,event.checklist.taskid!));
+
     } catch (error) {
       emit(AddTaskError(message: "No Tasks found, "));
     }
@@ -359,11 +367,12 @@ void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
     return either.fold(
             (failure) => AddTaskError(message: mapFailureToMessage(failure),),
             (act) {
-        return      state.copyWith(tasks: UnmodifiableListView(
+              final updated=UnmodifiableListView(
                 [
                   TeamFunction.      toMap(act),...state.tasks
-                ],),
-          status: TaskStatus.success,
+                ],);
+        return      state.copyWith(tasks: updated,
+          status: TaskStatus.success,clonetasks: updated
 
         );
 
@@ -378,7 +387,7 @@ void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
             (act) {
               List<Map<String, dynamic>> updatedTasks = AddSousFieldAction(id, TeamFunction.toMapChecklist(act),"CheckLists");
 
-              return state.copyWith(tasks: updatedTasks, status: TaskStatus.Changed,);
+              return state.copyWith(tasks: updatedTasks, status: TaskStatus.Changed,clonetasks: updatedTasks);
           }
     );
   }
@@ -409,7 +418,7 @@ void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
           List<Map<String, dynamic>> updatedTasks = changeChecklist(
               updatedCheckLists, index, newche, updatedTask, updatedField, "CheckLists");
           return state.copyWith(tasks: updatedTasks, status: state.status==TaskStatus.Changed?
-          TaskStatus.success: TaskStatus.Changed ,);
+          TaskStatus.success: TaskStatus.Changed , clonetasks: updatedTasks);
         }
     );
   }

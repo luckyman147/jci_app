@@ -11,6 +11,7 @@ import 'package:jci_app/features/auth/domain/usecases/authusecase.dart';
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/bool/toggle_bool_bloc.dart';
+import 'package:jci_app/features/auth/presentation/widgets/Components.dart';
 
 import 'package:jci_app/features/auth/presentation/widgets/PinForm.dart';
 import 'package:jci_app/features/auth/presentation/widgets/SubmitFunctions.dart';
@@ -74,11 +75,14 @@ class _PincodeState extends State<Pincode> {
             width: mediaquery.size.width/1.32,
 
             child: Text ('We have sent the verification code. Please check your inbox.'.tr(context), style: PoppinsLight(mediaquery.size.width/22, ThirdColor),)),
-            TimerWidget(context),
+        AuthComponents.    TimerWidget(context,widget.email??'',widget.verifyEvent,(){
+          SubmitFunctions.    Resendemail(context,widget.email,widget.verifyEvent);
+
+        }),
             BuildForm(mediaquery, context),
 
 
-            buildButtonPin(mediaquery),
+       AuthComponents.     buildButtonPin(mediaquery,_controller1,formKey,widget.verifyEvent,widget.member),
 
 
           ]
@@ -91,33 +95,6 @@ class _PincodeState extends State<Pincode> {
 
 
 
-
-  BlocBuilder<ToggleBooleanBloc, ToggleBooleanState> buildButtonPin(MediaQueryData mediaquery) {
-    return BlocBuilder<ToggleBooleanBloc, ToggleBooleanState>(
-builder: (context, state) {
-  return SizedBox(
-            width: mediaquery.size.width/1.32,
-
-            child: InkWell(
-              onTap:  () {
-          SubmitFunctions.      SUbmitPin(state, context,widget.verifyEvent, _controller1,formKey,widget.member);
-              },
-              child: Container(
-                width: double.infinity,
-                height: 66,
-                    decoration: BoxDecoration(
-                      color: state.isCompleted? PrimaryColor:textColorWhite,
-
-                      borderRadius: BorderRadius.circular(16.0),
-                      border: Border.all(color: textColorBlack, width: 2.0),
-                    ),
-                child:  Center(child: Text('Submit'.tr(context),style: PoppinsSemiBold(24, state.isCompleted?textColorWhite:textColor, TextDecoration.none) ,)),
-              ),
-            ),
-          );
-},
-);
-  }
 
 
 
@@ -147,43 +124,7 @@ builder: (context, state) {
 );
   }
 
-  Row TimerWidget(BuildContext context) {
-    return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CountdownTimer(
-                endTime: DateTime.now().millisecondsSinceEpoch +100000, // Set end time for 5 minutes (300,000 milliseconds)
-                widgetBuilder: (_,  time) {
-                  if (time == null) {
-                    context.read<ToggleBooleanBloc>().add(ChangeIscompleted(isCompleted: false));
-                    context.read<ToggleBooleanBloc>().add(ChangeIsEnabled(isEnabled: false));
-                    return TextButton(child: Text('Time Expired',style:
-                      PoppinsSemiBold(15, Colors.red,TextDecoration.none)
-                      ,), onPressed: () {
-                  SubmitFunctions.    Resendemail(context,widget.email,widget.verifyEvent);
 
-                    },); // Show 'Expired' when the countdown is finished
-                  }
-                  // Format remaining time to display
-                  String formattedTime = '${time.min ?? 0}:${time.sec ?? 0}';
-                  return Row(
-                    children: [
-                      Text('Time remaining:',
-                      style: PoppinsRegular(18, textColor)
-
-                      ),
-                      SizedBox(width: 5,),
-                      Text(formattedTime,
-                      style: PoppinsRegular(18, PrimaryColor)
-                      ),
-
-                    ],
-                  ); // Display remaining time
-                },
-              ),
-            ],
-          );
-  }
 
 
 

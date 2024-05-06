@@ -18,6 +18,7 @@ import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visi
 
 import '../../domain/entities/Task.dart';
 import '../../domain/entities/Team.dart';
+import '../../domain/usecases/TaskUseCase.dart';
 import '../bloc/TaskFilter/taskfilter_bloc.dart';
 import 'DetailTeamComponents.dart';
 import 'DetailTeamWidget.dart';
@@ -144,7 +145,7 @@ Icon(Icons.attach_file_rounded, color: textColorBlack,),
                                 Text(widget.tasks[index]['attachedFile'].length.toString(),style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColorBlack), ),
                               ],
                             ),
-                            builddesc( widget.tasks[index],12,index),
+                            builddesc( widget.tasks,12,index),
                           ],
                         )
 
@@ -249,7 +250,7 @@ Widget BottomTaskSheet(MediaQueryData mediaQuery,List<Map<String, dynamic>> task
 
   );
 }
-Widget builddesc(Map<String, dynamic> tasks,double size,int index) {
+Widget builddesc(List<Map<String, dynamic>> tasks,double size,int index) {
   return BlocBuilder<GetTaskBloc, GetTaskState>(
   builder: (context, state) {
     return SizedBox(
@@ -260,15 +261,15 @@ Widget builddesc(Map<String, dynamic> tasks,double size,int index) {
 
       child: Container(
         decoration: BoxDecoration(
-            color: state.tasks[index]['isCompleted']?Colors.green.withOpacity(.1):SecondaryColor,
+            color: tasks[index]['isCompleted']?Colors.green.withOpacity(.1):SecondaryColor,
             borderRadius: BorderRadius.circular(10)
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Center(
-            child: Text(state.tasks[index]['isCompleted']?"Completed" :"Pending",style: PoppinsSemiBold(size,
+            child: Text(tasks[index]['isCompleted']?"Completed" :"Pending",style: PoppinsSemiBold(size,
 
-                state.tasks[index]['isCompleted']?Colors.green:Colors.white
+                tasks[index]['isCompleted']?Colors.green:Colors.white
                 , TextDecoration.none), ),
           ),
         ),),
@@ -321,7 +322,7 @@ class BottomTasks extends StatelessWidget {
               children: [
                 SizedBox(
 
-                    child: builddesc(tasks[index], 14,index)),
+                    child: builddesc(tasks, 14,index)),
                 tasks[index]["AssignTo"] != null &&
                     tasks[index]["AssignTo"].length > 0
                     ?    tasks[index]["AssignTo"][0]['Images'] != null &&
@@ -390,8 +391,9 @@ class _buildCheckBoxState extends State<buildCheckBox> {
 
 
       value:widget.task['isCompleted'], onChanged: (bool? value) {
+      final inputFields input=inputFields(taskid:widget.task['id'] , teamid: null, file: null, memberid: null, status: false, Deadline: null, StartDate: null, name: null, task: null, isCompleted: value, member: null, fileid: null, );
 
-      context.read<GetTaskBloc>().add(UpdateStatus({"id":widget.task['id'],"IsCompleted":value}, widget.index));
+      context.read<GetTaskBloc>().add(UpdateStatus(input, widget.index));
       context.read<TaskfilterBloc>().add(filterTask(state.tasks));
       context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
 

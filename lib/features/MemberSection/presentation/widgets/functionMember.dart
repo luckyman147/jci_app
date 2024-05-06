@@ -1,8 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
@@ -62,7 +64,7 @@ static Future<List<Member>> getMembers(){
           IsSelected: member.IsSelected,
           role: 'member ',
           is_validated: member.is_validated,
-          password: 'password', objectifs: [],
+          password: 'password', objectifs: [], language: member.language,
         );
         context.read<MembersBloc>().add(
             UpdateMemberProfileEvent(memberUpdate));
@@ -138,4 +140,27 @@ static Future<bool> isAssignedOrLoyal(Team team, List<dynamic> assignT)async {
 static Future<bool> isMember(Member merber)async {
 
   return merber.role=='member';
-}}
+}
+  static void Showinfo(BuildContext context, Member member) {
+    showModalBottomSheet(
+        showDragHandle: true,
+        context: context, builder: (context){
+
+      return SizedBox(
+        height: 200,
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            member.phone.isNotEmpty?
+          ProfileComponents.  BuildInfoRow( Icons.phone, member.phone):SizedBox(),
+            SizedBox(height: 10,),
+        ProfileComponents.    BuildInfoRow( Icons.email, member.email),
+
+          ],),
+      );
+    });
+  }
+
+}

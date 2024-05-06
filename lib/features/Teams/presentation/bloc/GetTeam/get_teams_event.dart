@@ -76,7 +76,7 @@ class  checkIfPartipated extends GetTeamsEvent {
   List<Object> get props => [];
 }
 class UpdateTeamMember extends GetTeamsEvent{
-  final Map<String,String> fields;
+  final TeamInput fields;
 
   UpdateTeamMember({required this.fields});
 
@@ -84,3 +84,14 @@ class UpdateTeamMember extends GetTeamsEvent{
   // TODO: implement props
   List<Object?> get props => [fields];
 }
+class InviteMembers extends GetTeamsEvent{
+final TeamInput teamfi;
+  InviteMembers({required this.teamfi});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [teamfi];
+}
+
+
+

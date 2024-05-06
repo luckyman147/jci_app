@@ -37,7 +37,12 @@ Future<void> initActivities() async {
 
     getEventsOfTheMonthUseCase: sl(),
  participantBloc: sl(), getAllActivitiesUseCases: sl(), getActivityByIdUseCases: sl(), ));
-  sl.registerFactory(() => ParticpantsBloc(leaveActivityUseCases: sl(), participateActivityUseCases: sl()));
+  sl.registerFactory(() => ParticpantsBloc(leaveActivityUseCases: sl(), participateActivityUseCases: sl(), checkPermissionsUseCases: sl(), getAllParticipantsUseCases: sl(), getAllGuestsUseCases: sl(), addGuestUseCases: sl(),
+    updateGuestUseCases: sl(), removeGuestUseCases: sl(), confirmGuestUseCases: sl(), sendReminderUseCases: sl(),
+
+
+
+  ));
 
 
 
@@ -81,6 +86,8 @@ sl.registerLazySingleton(() => LeaveTrainingUseCase(sl()));
 sl.registerLazySingleton(() => ParticipateEventUseCase(sl()));
 sl.registerLazySingleton(() => ParticipateMeetingUseCase(sl()));
 sl.registerLazySingleton(() => ParticipateTrainingUseCase(sl()));
+sl.registerLazySingleton(() => CheckAbsenceUseCases( activitiesRepo: sl()));
+sl.registerLazySingleton(() => GetAllParticipantsUseCases(activitiesRepo:  sl()));
 
 
 
@@ -91,6 +98,12 @@ sl.registerLazySingleton(() => ParticipateTrainingUseCase(sl()));
       () => GetTrainingsOfTheMonthUseCase(TrainingRepository: sl()));
 
   sl.registerLazySingleton(() => GetAllActivitiesUseCases( activitiesRepo: sl()));
+  sl.registerLazySingleton(() => SendReminderUseCases( activitiesRepo: sl()));
+  sl.registerLazySingleton(() => GetGuestsUseCases( activitiesRepo: sl()));
+  sl.registerLazySingleton(() => AddGuestUseCases( activitiesRepo: sl()));
+  sl.registerLazySingleton(() => DeleteGuestUseCases( activitiesRepo: sl()));
+  sl.registerLazySingleton(() => UpdateGuestUseCases( activitiesRepo: sl()));
+  sl.registerLazySingleton(() => ConfirmGuestUseCases( activitiesRepo: sl()));
   sl.registerLazySingleton(() => DeleteActivityUseCases( activitiesRepo: sl()));
   sl.registerLazySingleton(() => UpdateActivityUseCases( activitiesRepo: sl()));
   sl.registerLazySingleton(() => CreateActivityUseCases( activitiesRepo: sl()));

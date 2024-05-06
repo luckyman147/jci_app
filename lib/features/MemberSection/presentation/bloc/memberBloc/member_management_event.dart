@@ -57,3 +57,21 @@ class AddCotisation extends MemberManagementEvent{
   @override
   List<Object> get props => [];
 }
+class ChangeLanguageEvent extends MemberManagementEvent{
+  final String language;
+  ChangeLanguageEvent({required this.language});
+  @override
+  List<Object> get props => [language];
+}
+class SendMembershipReportEvent extends MemberManagementEvent{
+  final String id;
+  SendMembershipReportEvent({required this.id});
+  @override
+  List<Object> get props => [id];
+}
+class SendInactivityReportEvent extends MemberManagementEvent{
+  final String id;
+  SendInactivityReportEvent({required this.id});
+  @override
+  List<Object> get props => [id];
+}

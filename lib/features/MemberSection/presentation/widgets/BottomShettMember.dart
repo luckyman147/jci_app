@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/features/MemberSection/domain/repositories/MemberRepo.dart';
+import 'package:jci_app/features/MemberSection/domain/usecases/MemberUseCases.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
+import 'package:jci_app/features/about_jci/Presentations/widgets/PresWidgets.dart';
 
 import '../../../auth/domain/entities/Member.dart';
 
@@ -80,7 +82,37 @@ builder: (context, state) {
                       context.read<MemberManagementBloc>().add(AddCotisation());
                     }, icon: Icon(Icons.add)),
                   ],
-                )
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    SizedBox(
+                      width: mediaQuery.size.width * 0.5,
+                      child: PresWidgets.ButtonActions(context, BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                        width: 2,
+                        color:textColor
+                      )), Icons.card_membership_rounded, "Membership Report", () =>
+                                  context.read<MemberManagementBloc>().add(SendMembershipReportEvent(id:member.id)),
+                      ),
+                    ),
+                    SizedBox(
+                      width: mediaQuery.size.width * 0.5,
+                      child: PresWidgets.ButtonActions(context, BoxDecoration(border: Border.all(
+                        width: 2,
+                        color:textColor
+
+                      ),borderRadius: BorderRadius.circular(15
+                      )), Icons.report, "Inactivity Report", () =>
+                                  context.read<MemberManagementBloc>().add(SendInactivityReportEvent(id:member.id)),
+                      ),
+                    ),
+                  ],
+                ),
+
+
               ],
             );
           },

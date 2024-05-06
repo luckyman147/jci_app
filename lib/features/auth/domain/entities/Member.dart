@@ -20,13 +20,15 @@ class Member extends Equatable {
   final List<dynamic> Activities;
   final List<dynamic> teams;
  final bool IsSelected;
+ final String language;
  final int points;
  final List<dynamic> objectifs;
 
   final String role;
 
-  factory Member.SignUp(String email,String password,String firstName,String lastName) {
+  factory Member.SignUp(String email,String password,String firstName,String lastName,String language) {
     return Member(
+      language: language,
       points: 0,
       id: '',
       email: email,
@@ -59,6 +61,7 @@ class Member extends Equatable {
   factory  Member.fromImages(Map<String, dynamic> data) {
     log('hey');
     return Member(
+      language: data['language']??'fr',
 
       points: data['points']??0,
 
@@ -81,12 +84,14 @@ class Member extends Equatable {
 
 
   static Member get memberTest=> const Member(
+      language: "fr",
 
       IsSelected: false, id: "id", role: "role", is_validated: false,
       cotisation:[false] , Images: [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password", Activities: [], teams: [], points: 0, objectifs: []);
 
   static Member toMember(Map<String, dynamic> json) {
     return Member(
+      language: json['language']??'fr',
       objectifs: json['objectifs']??[],
       points: json['points']??0,
       id: json['_id'] ==null?json['id'] as String:json['_id'] as String,
@@ -114,6 +119,7 @@ class Member extends Equatable {
         required this.objectifs,
         required this.points,
         required this.teams,
+        required this.language,
         required this.Activities,
         required this.IsSelected,
         required this.id,

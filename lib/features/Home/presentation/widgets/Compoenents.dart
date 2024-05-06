@@ -14,6 +14,7 @@ import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/Home/domain/usercases/ActivityUseCases.dart';
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
+import 'package:jci_app/features/Home/presentation/widgets/ActivityDetailsComponents.dart';
 //import 'package:jci_app/features/auth/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
@@ -608,14 +609,16 @@ Widget ButtonComponent({required List<Activity> Activities,required index,requir
         left: left,
 
 
-        child: ParticipateButton(acti: Activities[index], containerWidth: mediaQuery.size.width/3.2, index: index, isPartFromState: state.isParticipantAdded[index]['isPart'], act: act,
-          textSize: mediaQuery.devicePixelRatio*3.7,));
+        child:
+  ActivityDetailsComponent.FutureJoinButton(state, index, Activities[index], act, mediaQuery, mediaQuery.size.width/3.2, mediaQuery.devicePixelRatio*3.7)
+
+    );
   },
 );
 
 Widget MonthWeekBuild (activity act,ActivityLoadedMonthState state,MediaQueryData mediaQuery)=>  BlocBuilder<ParticpantsBloc, ParticpantsState>(
   builder: (context, ste) {
-    if  ((ste.isParticipantAdded.length==state.activitys.length&&  (ste is ParticipantChanged || ste is ParticipantSuccessState )) ){
+    if  ((ste.isParticipantAdded.length==state.activitys.length&&  (ste .status==ParticpantsStatus.success || ste .status==ParticpantsStatus.changed )) ){
       if (ActivityAction.filterActivityByCurrentMonth(state.activitys).isEmpty){
         return Align(
             alignment: AlignmentDirectional.center,

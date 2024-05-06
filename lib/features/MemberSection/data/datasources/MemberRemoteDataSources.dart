@@ -32,6 +32,12 @@ Future<Unit> ChangeToSuperAdmin(String memberid);
 Future<Unit> ChangeToMember(String memberid);
 Future<Unit> validateCotisation(String memberid,int type, bool cotisation);
 
+  Future<Unit> ChangeLanguage(String language) ;
+
+  Future<Unit> SendInactivityReport(String id) ;
+
+  Future<Unit> SendMembershipReport(String id);
+
 
 }
 class MemberRemoteImpl implements MemberRemote {
@@ -335,14 +341,11 @@ body: json.encode(body)
 
 
       else {
-        // Request failed
-        print('Request failed with status: ${Response.statusCode}');
-        print('Response body: ${Response.body}');
+
         throw ServerException();
       }
     } catch (e) {
-      // Exception occurred during the request
-      print('Exception during request: $e');
+
       throw ServerException();
     }
   }
@@ -363,6 +366,89 @@ body: json.encode(body)
   Future<Unit> ChangeToSuperAdmin(String memberid) {
     return _mappatchrequest(ChangeToSuperUrl(memberid), {
     });
+  }
+
+  @override
+  Future<Unit> ChangeLanguage(String language) {
+    return _mappatchrequest(ChangeLanguageUrl, {
+      "language":language
+    });
+  }
+
+  @override
+  Future<Unit> SendInactivityReport(String id)async {
+    final tokens=await getTokens();
+
+    final  AccessToken =  tokens[1]; // replace with your actual access token
+
+    try {
+      final Response = await client.post(
+          Uri.parse(Urls.mailIcativityReporturl(id)),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $AccessToken',
+          },
+
+
+      );
+
+      if (Response.statusCode == 200 || Response.statusCode == 201) {
+        return Future.value(unit);
+
+      }
+
+      else if (Response.statusCode==401){
+        throw UnauthorizedException();
+      }
+
+
+
+      else {
+
+        throw ServerException();
+      }
+    } catch (e) {
+
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<Unit> SendMembershipReport(String id) async{
+    final tokens=await getTokens();
+
+    final  AccessToken =  tokens[1]; // replace with your actual access token
+
+    try {
+      final Response = await client.post(
+        Uri.parse(Urls.mailMembershipReporturl(id)),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $AccessToken',
+        },
+
+
+      );
+
+      if (Response.statusCode == 200 || Response.statusCode == 201) {
+        return Future.value(unit);
+
+      }
+
+      else if (Response.statusCode==401){
+        throw UnauthorizedException();
+      }
+
+
+
+      else {
+
+        throw ServerException();
+      }
+    } catch (e) {
+
+      throw ServerException();
+    }
   }
 
 }

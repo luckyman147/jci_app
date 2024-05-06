@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jci_app/features/Teams/domain/usecases/TaskUseCase.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/widgets/TaskDetailWidget.dart';
-import 'package:jci_app/features/Teams/presentation/widgets/CreateTeamWIdgets.dart';
+
 import 'package:jci_app/features/Teams/presentation/widgets/TaskImpl.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 
-import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
 
 import '../../domain/entities/Team.dart';
 
@@ -30,8 +28,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
   @override
   void initState() {
+    final inputFields input=inputFields(taskid: widget.taskId, teamid: widget.team.id, file: null, memberid: null, status: null, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: null, fileid: null, );
     context.read<GetTaskBloc>().add(
-        GetTaskById(ids: {"id": widget.team.id, "taskid": widget.taskId}));
+        GetTaskById(ids: input));
     context.read<TaskVisibleBloc>().add(ToggleTaskVisible(true));
     context.read<TaskVisibleBloc>().add(ChangeTextFieldsTitle(TextFieldsTitle.Inactive));
 

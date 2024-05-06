@@ -29,6 +29,8 @@ abstract class TeamRemoteDataSource {
 Future<List<TeamModel>> getTeamByName(String name);
 Future<Unit> updateMembers(String teamid, String memberid, String Status);
 
+  Future<Unit> inviteMember(String id, String memberid) ;
+
 }
 
 class TeamRemoteDataSourceImpl implements TeamRemoteDataSource{
@@ -254,4 +256,25 @@ body: json.encode({"Member":memberid,"Status":Status}),
     });
   }
 
-}
+  @override
+  Future<Unit> inviteMember(String id, String memberid) async{
+     final tokens=await Store.GetTokens();
+      return client.post(
+        Uri.parse( Urls.InviteMemberUrl(id, memberid)),
+        headers: {"Content-Type": "application/json",
+          "Authorization": "Bearer ${tokens[1]}"
+        },
+
+
+      ).then((response) async {
+        if (response.statusCode == 201) {
+          return Future.value(unit);
+        } else if (response.statusCode == 400) {
+          throw EmptyDataException();
+        }else{
+          throw ServerException();
+        }
+      });
+     }
+  }
+

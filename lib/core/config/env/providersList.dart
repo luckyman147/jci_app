@@ -16,6 +16,7 @@ import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.
 import 'package:jci_app/features/Teams/presentation/bloc/TaskFilter/taskfilter_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/Timeline/timeline_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/BoardBloc/boord_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/presidents_bloc.dart';
@@ -73,6 +74,7 @@ List<SingleChildWidget> providersList = [
 
   BlocProvider(create: (_)=> di.sl<TaskVisibleBloc>()),
   BlocProvider(create: (_)=> di.sl<TimelineBloc>()),
+  BlocProvider(create: (_)=> di.sl<MembersTeamCubit>()),
   BlocProvider(create: (_)=> di.sl<TaskfilterBloc>()),
 
 

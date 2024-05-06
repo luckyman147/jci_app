@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Functions.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
 import 'package:mime/mime.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,15 +13,15 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jci_app/features/Teams/data/models/TaskModel.dart';
+
 import 'package:jci_app/features/Teams/domain/entities/Checklist.dart';
 import 'package:jci_app/features/Teams/domain/entities/Task.dart';
 import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../../../core/config/services/MemberStore.dart';
+
 import '../../../../core/config/services/TeamStore.dart';
-import '../../../../core/config/services/store.dart';
+
 import '../../../../core/util/snackbar_message.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 
@@ -30,6 +31,8 @@ import '../../../MemberSection/presentation/bloc/bools/change_sbools_cubit.dart'
 import '../../../MemberSection/presentation/pages/memberProfilPage.dart';
 import '../../../MemberSection/presentation/widgets/functionMember.dart';
 import '../../domain/entities/Team.dart';
+import '../../domain/usecases/TaskUseCase.dart';
+import '../../domain/usecases/TeamUseCases.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/GetTeam/get_teams_bloc.dart';
 import '../bloc/TaskFilter/taskfilter_bloc.dart';
@@ -44,9 +47,52 @@ class TeamFunction{
     return team.status;
   }
 
+  static void NavigateTOMemberSection(BuildContext context, Member member) {
+    context.read<MembersBloc>().add(
+        GetMemberByIdEvent(
+            MemberInfoParams(id: member.id, status: true)));
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MemberSectionPage(id: member.id,),
+      ),
+    );
+  }
+  static void InviteKickMember(bool isAssign, Team team, Member member, BuildContext context) {
+    if (!isAssign) {
+      final teamfi = TeamInput(
+          team.id,
+          member.id,
+          null,
+          TeamFunction.toMapMember(member)
 
+      );
+      context.read<GetTeamsBloc>().add(InviteMembers(teamfi: teamfi));
+      Navigator.pop(context);
+    }
+    else{
+      final teamfi = TeamInput(
+          team.id,
+          member.id,
+          "kick",
+          TeamFunction.toMapMember(member)
 
+      );
+      context.read<GetTeamsBloc>().add(UpdateTeamMember(fields: teamfi));
+      Navigator.pop(context);
+    }
+  }
+  static void ChangeMemerFunction(bool isExisted, BuildContext context, Member item,Function(Member) onRemoveTap, Function(Member  ) onAddTap) {
+    if (isExisted) {
+      context.read<MembersTeamCubit>().RemoveMember( item);
 
+      onRemoveTap(item);
+    }
+    else {
+      context.read<MembersTeamCubit>().AddMember(item);
+      onAddTap(item);
+    }
+  }
 
 
   static bool doesObjectExistInList(List<Member> list, Member targetObject) {
@@ -93,12 +139,20 @@ class TeamFunction{
 
       'description': objects.description, 'status': objects.status, 'Members': objects.Members,};
   }
-  static  List<Map<String, dynamic>> filterCompletedTasks(List<Map<String, dynamic>> tasks) {
-    return tasks.where((task) => task['isCompleted']).toList();
+ static List<Map<String, dynamic>> filterCompletedTasks(List<Map<String, dynamic>> tasks) {
+    List<Map<String, dynamic>> completedTasks = [];
+
+    for (var task in tasks) {
+      if (task['isCompleted'] == true) {
+        completedTasks.add(task);
+      }
+    }
+
+    return completedTasks;
   }
 
   static  List<Map<String, dynamic>> filterPendingTasks(List<Map<String, dynamic>> tasks) {
-    return tasks.where((task) => !task['isCompleted']).toList();
+    return tasks.where((task) => task['isCompleted']==false).toList();
   }
   static int getIndexById(String id, List<Map<String, dynamic>> list) {
     for (int i = 0; i < list.length; i++) {
@@ -218,12 +272,12 @@ class TeamFunction{
   }
 
 
- static  void SearchAction(BuildContext context, String value, FormzState state) {
-    context.read<FormzBloc>().add(MembernameChanged( name: value));
-    if (state.memberName.value.length > 1){
-      context.read<MembersBloc>().add(GetMemberByNameEvent( name: state.memberName.value));}
-    else if (state.memberName.value.isEmpty|| state.memberName.displayError!= null ){
-      context.read<MembersBloc>().add(GetAllMembersEvent());
+ static  void SearchAction(BuildContext context, String value, MembersTeamState state) {
+    context.read<MembersTeamCubit>().nameChanged(value);
+    if (state.name.length > 1){
+      context.read<MembersBloc>().add(GetMemberByNameEvent( name: state.name));}
+    else if (state.name.isEmpty|| state.name==null ){
+      context.read<MembersBloc>().add(const GetAllMembersEvent(false));
     }
   }
   static Future<void> ToMembersSection(Team team, BuildContext context, Member member, ChangeSboolsState state,bool mounted) async {
@@ -389,8 +443,9 @@ class TeamFunction{
 
   final taskFile=TaskFile(url: "url", id: "", path: file.path!, extension: file.extension!, );
   if (!mounted) return;
-  context.read<GetTaskBloc>().add(UpdateFile(
-  {"taskid":id, "file": taskFile}));
+  final inputFields input=inputFields(taskid: id, teamid: null, file: taskFile, memberid: null, status: null, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: null, fileid: null, );
+
+  context.read<GetTaskBloc>().add(UpdateFile(input));
   log(result.toString());
   // Use the file as needed
   }

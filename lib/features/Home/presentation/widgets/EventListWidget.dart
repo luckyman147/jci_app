@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 
 import 'package:flutter/foundation.dart';
@@ -16,6 +17,7 @@ import 'package:jci_app/features/Home/domain/entities/Activity.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
+import 'package:jci_app/features/Home/presentation/widgets/Functions.dart';
 
 import 'Compoenents.dart';
 
@@ -49,141 +51,144 @@ class _ActivityWidgetState extends State<ActivityWidget> {
             onTap: () {
               context.go('/activity/${widget.Activities[index].id}/${state.selectedActivity.name}/$index');
             },
-            child: Container(
+            child: SingleChildScrollView(
+scrollDirection: Axis.horizontal,
+              child: Container(
 
-            margin: paddingSemetricHorizontal(),
-              height: mediaQuery.size.height / 4.4,
-            width: mediaQuery.size.width/1.1,
-              decoration: BoxDecoration(
-                border: Border.all(color: textColor),
+              margin: paddingSemetricHorizontal(),
+                height: mediaQuery.size.height / 4.4,
+              width: mediaQuery.size.width,
+                decoration: BoxDecoration(
+                  border: Border.all(color: textColor),
 
-              ),
-              child: Padding(
-                padding:paddingSemetricHorizontal(),
-                child: SizedBox(
-                  width: mediaQuery.size.width / 4,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        widget.Activities[index].CoverImages.isNotEmpty ?
-                        InkWell(
-                          highlightColor: Colors.transparent,
+                ),
+                child: Padding(
+                  padding:paddingSemetricHorizontal(),
+                  child: SizedBox(
+                    width: mediaQuery.size.width / 5,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          widget.Activities[index].CoverImages.isNotEmpty ?
+                          InkWell(
+                            highlightColor: Colors.transparent,
 
-                          onTap: () {
-                            context.go(
-                                '/activity/${ widget.Activities[index].id}/${state
-                                    .selectedActivity.name}/${index}');
-                          },
-                          child: ClipRRect(
+                            onTap: () {
+                              context.go(
+                                  '/activity/${ widget.Activities[index].id}/${state
+                                      .selectedActivity.name}/${index}');
+                            },
+                            child: ClipRRect(
 
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.memory(base64Decode(
+                                    widget.Activities[index].CoverImages[0]!),
+                                  fit: BoxFit.cover,
+                                  height: mediaQuery.size.height / 6,
+                                  width: 130,
+                                  scale: 0.1,)),
+                          ) :
+                          InkWell(
+                            highlightColor: Colors.transparent,
+                            onLongPress: () {
+                              context.go(
+                                  '/activity/${ widget.Activities[index].id}/${state
+                                      .selectedActivity.name}/$index');
+                            },
+
+                            child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: Image.memory(base64Decode(
-                                  widget.Activities[index].CoverImages[0]!),
-                                fit: BoxFit.cover,
-                                height: mediaQuery.size.height / 6,
-                                width: 130,
-                                scale: 0.1,)),
-                        ) :
-                        InkWell(
-                          highlightColor: Colors.transparent,
-                          onLongPress: () {
-                            context.go(
-                                '/activity/${ widget.Activities[index].id}/${state
-                                    .selectedActivity.name}/$index');
-                          },
 
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                  height: mediaQuery.size.height / 5.8,
 
-                            child: Container(
-                                height: mediaQuery.size.height / 5.8,
+                                  color: backgroundColored,
+                        width: 120,
+                                child: Image.asset('assets/images/jci.png', fit: BoxFit.contain, scale: 0.1,),
 
-                                color: backgroundColored,
-                      width: 130,
-                              child: Image.asset('assets/images/jci.png', fit: BoxFit.contain, scale: 0.1,),
-
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(DateFormat('EEE, MMM, d').format(
-                                      widget.Activities[index].ActivityBeginDate),
-                                      style: PoppinsRegular(13, textColorBlack)),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0),
-                                    child: Text(
-                                        "${"Start At".tr(context)} ${DateFormat('h:mm').format(
-                                            widget.Activities[index]
-                                                .ActivityBeginDate)}",
-                                        style: PoppinsRegular(13, textColorBlack)
-                                    ),
-                                  ),
-                                ],
-                              ), Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                      width: mediaQuery.size.width / 3,
-                                      child: Text(widget.Activities[index].name,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: PoppinsSemiBold(
-                                            widget.Activities[index].name.length < 10
-                                                ? mediaQuery.devicePixelRatio * 6
-                                                : mediaQuery.devicePixelRatio *5
-
-                                            , textColorBlack, TextDecoration.none),)),
-                                ],
-                              ),SizedBox(
-
-                                child: Row(
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Icon(Icons.location_on_outlined, color: textColorBlack, size: 20,),
-                                    SizedBox(
-                                      width: mediaQuery.size.width / 3,
-
-                                      child: Text(widget.Activities[index].ActivityAdress,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: PoppinsLight(
-                                            widget.Activities[index].ActivityAdress
-                                                .length < 20 ? mediaQuery
-                                                .devicePixelRatio * 4.5 : mediaQuery
-                                                .devicePixelRatio * 4, textColorBlack,
-                                            ),
-
+                                    Text(DateFormat('EEE, MMM, d').format(
+                                        widget.Activities[index].ActivityBeginDate),
+                                        style: PoppinsRegular(13, textColorBlack)),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0),
+                                      child: Text(
+                                          "${"Start At".tr(context)} ${DateFormat('h:mm').format(
+                                              widget.Activities[index]
+                                                  .ActivityBeginDate)}",
+                                          style: PoppinsRegular(13, textColorBlack)
                                       ),
                                     ),
                                   ],
+                                ), Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                        width: mediaQuery.size.width / 3,
+                                        child: Text(widget.Activities[index].name,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: PoppinsSemiBold(
+                                              widget.Activities[index].name.length < 10
+                                                  ? mediaQuery.devicePixelRatio * 6
+                                                  : mediaQuery.devicePixelRatio *5
+
+                                              , textColorBlack, TextDecoration.none),)),
+                                  ],
+                                ),SizedBox(
+
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.location_on_outlined, color: textColorBlack, size: 20,),
+                                      SizedBox(
+                                        width: mediaQuery.size.width / 3,
+
+                                        child: Text(widget.Activities[index].ActivityAdress,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: PoppinsLight(
+                                              widget.Activities[index].ActivityAdress
+                                                  .length < 20 ? mediaQuery
+                                                  .devicePixelRatio * 4.5 : mediaQuery
+                                                  .devicePixelRatio * 4, textColorBlack,
+                                              ),
+
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
 
 
-                              BlocBuilder<ParticpantsBloc, ParticpantsState>(
-                                  builder: (context, state) {
-                  return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: button(Activities: widget.Activities, mediaQuery: mediaQuery, index: index, act: widget.act, context: context),
+                                BlocBuilder<ParticpantsBloc, ParticpantsState>(
+                                    builder: (context, state) {
+                    return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: button(Activities: widget.Activities, mediaQuery: mediaQuery, index: index, act: widget.act, context: context),
 
-                              );
-                                  },
-                                )
+                                );
+                                    },
+                                  )
 
-                            ],
-                          ),
-                        )
-                      ]
+                              ],
+                            ),
+                          )
+                        ]
+                    ),
                   ),
                 ),
-              ),
 
+              ),
             ),
           );
         },
@@ -202,9 +207,40 @@ required   BuildContext   context}) {
   return BlocBuilder<ParticpantsBloc, ParticpantsState>(
 
       builder: (context, state) {
-
-        return ParticipateButton(acti:Activities[index], index: index, isPartFromState: state.isParticipantAdded[index]['isPart']??false,
-          act: act, textSize: mediaQuery.devicePixelRatio*5, containerWidth: mediaQuery.size.width/2.5, );
+        log('ddd'+state.isParticipantAdded[index]["participants"].runtimeType.toString());
+        return AnimatedSwitcher(
+          duration: Duration(milliseconds: 500), // Set the duration for the animation
+          child: FutureBuilder(
+          future: ActivityAction.checkifMemberExist(state.isParticipantAdded[index]["participants"].cast<Map<String, dynamic>>()), // Your asynchronous function that returns a Future
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                // Show a loading indicator while data is being fetched
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasError) {
+                // Show an error message if an error occurs
+                return Center(
+                  child: Text('Error: ${snapshot.error}'),
+                );
+              } else {
+                // Show the ParticipateButton with data when data is available
+                return AnimatedSwitcher(
+                  duration: Duration(milliseconds: 500), // Set the duration for the animation
+                  child: ParticipateButton(
+                    key: UniqueKey(), // Ensure widget is rebuilt when its properties change
+                    acti: Activities[index],
+                    index: index,
+                    isPartFromState: snapshot.data as bool,
+                    act: act,
+                    textSize: mediaQuery.devicePixelRatio * 5,
+                    containerWidth: mediaQuery.size.width / 2.5,
+                  ),
+                );
+              }
+            },
+          ),
+        );
       },
     );
   }

@@ -32,95 +32,286 @@ import 'AddUpdateFunctions.dart';
 import 'Compoenents.dart';
 import 'Functions.dart';
 import 'MemberSelection.dart';
-Widget firstLine({required String work,required mediaQuery,
-  required List<String>part,required GlobalKey<FormState> formKey,
-  required   String id, required TextEditingController namecontroller,required TextEditingController descriptionController,required BuildContext context,
-  required TextEditingController LeaderName, required TextEditingController prof,required TextEditingController price,required TextEditingController location,required TextEditingController points,
 
 
-}
-    ) => BlocBuilder<PageIndexBloc, PageIndexState>(
-  builder: (context, state) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        BackButton(
-          onPressed: () {
-            AddUpdateFunctions. PopFunctions(work, context,id);     },
-        ),
-        Row(
-          children: [
-            work!="edit"?
-            Text("Add".tr(context),
-                style:
-                PoppinsSemiBold(16, textColorBlack, TextDecoration.none)):  Text("Edit".tr(context),style:PoppinsSemiBold(16, textColorBlack, TextDecoration.none)),
-            work!="edit"? Padding(
-              padding: const EdgeInsets.only(bottom: 2),
-              child: MyDropdownButton(),
-            ):SizedBox(),
-          ],
-        ),
-        Padding(
+class AddWidgetComponents {
+
+
+  static Widget showLeader(activity act,mediaQuery,BuildContext context,TextEditingController  ProfesseurName,TextEditingController LeaderController  ){
+
+    return
+      act==activity.Trainings
+          ?
+      TextfieldNormal(context,
+          "Professeur Name".tr(context), "Professeur Name here".tr(context), ProfesseurName,
+              (value){
+            context.read<FormzBloc>().add(ProfesseurNameChanged(profName: value));
+          }):
+      act==activity.Events?
+      TextfieldNormal(context,
+          "Leader Name".tr(context), "Leader name here".tr(context), LeaderController,
+              (value){
+            context.read<FormzBloc>().add(LeaderNameChanged(leaderName: value));
+          }):
+
+      BlocBuilder<FormzBloc, FormzState>(
+        builder: (context, state) {
+
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
+
+                child: Text(
+                  "Director Name".tr(context),
+                  style: PoppinsRegular(18, textColorBlack),
+                ),
+              ),
+              bottomMemberSheet(context ,mediaQuery,
+                  state.memberFormz.value??Member.memberTest,"Select A Director","Director"),
+            ],
+          );
+        },
+      );
+
+  }
+ static Widget showRegistration(activity act,DateTime time){
+    return act==activity.Events?
+    Padding(
+        padding:
+        const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
+        child:RegistrationTime(Registration: time,)
+    ):SizedBox();
+  }
+static   Widget showImagePicker(activity act ,mediaQuery)=>
+      act==activity.Meetings?
+      SizedBox():
+      Padding(
+
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Add(formKey: formKey,
-              namecontroller: namecontroller,
-              descriptionController: descriptionController,
-              LeaderController: LeaderName,
-              ProfesseurName: prof,
-              LocationController:location,
-              Points: points,
-              mediaQuery: mediaQuery,
-              Price: price,
-              action:work,
-              id: id,
-              part: part),
-        )
+          child:imageTeamPicker(mediaQuery)
+      );
 
-      ],
-    );
-  },
-);
 
-Widget AddEndDateButton(mediaQuery,String text) => BlocBuilder<VisibleBloc, VisibleState>(
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
-          child: InkWell(
-            onTap: () {
+ static Widget Add({
+    required GlobalKey<FormState> formKey,
+    required TextEditingController namecontroller,
+    required TextEditingController descriptionController,
+    required TextEditingController LeaderController,
+    required TextEditingController ProfesseurName,
+    required TextEditingController LocationController,
+    required TextEditingController Points,
+    required TextEditingController Price,
+    required MediaQueryData mediaQuery,
+    required List<String> part,
+    required String action,
+    required String id,
 
-              context
-                  .read<VisibleBloc>()
-                  .add(VisibleEndDateToggleEvent(!state.isVisible));
+
+  }) =>
+      BlocBuilder<FormzBloc, FormzState>(
+        builder: (context, ste) {
+          return BlocBuilder<TextFieldBloc, TextFieldState>(
+            builder: (context, statef) {
+              return BlocBuilder<VisibleBloc, VisibleState>(
+                builder: (context, vis) {
+                  return BlocConsumer<AddDeleteUpdateBloc,
+                      AddDeleteUpdateState>(
+                    listener: (ctx, ste) {
+                      AddUpdateFunctions.    Listener(ste, context);
+                    },
+                    builder: (context, state) {
+                      return BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
+                        builder: (context, state) {
+                          return BlocBuilder<ActivityCubit, ActivityState>(
+                            builder: (context, acti) {
+                              return GestureDetector(
+                                onTap: () {
+                                  AddUpdateFunctions.      SaveActionFunction(acti, formKey, state, Price, ste, LeaderController, namecontroller, descriptionController, LocationController, Points, vis, part, action, id, context, ProfesseurName, statef);
+
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                      child: Text(
+                                        "Save",
+                                        style: PoppinsSemiBold(
+                                            mediaQuery.devicePixelRatio * 6,
+                                            PrimaryColor, TextDecoration.none),
+                                      )),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              );
             },
-            child: Container(
-              decoration: BoxDecoration(
-                  color: PrimaryColor.withOpacity(.1),
-                  borderRadius: BorderRadius.circular(10)),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                 const    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Icon(
-                        Icons.calendar_today,
-                        color: SecondaryColor,
+          );
+        },
+      );
+
+
+
+
+
+
+
+
+
+
+
+ static Widget showDetails(mediaQuery,activity act,DateTime time,BuildContext context ,TextEditingController _price,TextEditingController _LocationController)=>
+      act==activity.Meetings?
+      Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+
+          children: [
+
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
+
+              child: Text(
+                "Agenda".tr(context),
+                style: PoppinsRegular(18, textColorBlack),
+              ),
+            ),
+            BlocBuilder<TextFieldBloc, TextFieldState>(
+
+              builder: (context, state) {
+                if (state is TextfieldChanged) {
+
+                  return
+                    SizedBox(child: TextFieldGenerator(text: state.textFieldControllers,));
+                }
+
+                else{
+                  return     SizedBox(child: TextFieldGenerator(text: state.textFieldControllers,));
+
+                }
+              },
+
+            )]
+      ) :
+
+
+      Column(
+
+        children: [
+
+
+          showRegistration(act, time,),
+          TextfieldNormal(context,"Location", "Location Here".tr(context), _LocationController,
+                  (value){
+                context.read<FormzBloc>().add(LocationChanged(location: value));
+              }
+          ),
+          PriceWidget(mediaQuery,_price),
+
+        ],
+      );
+
+
+ static  Widget firstLine({required String work, required mediaQuery,
+    required List<String>part, required GlobalKey<FormState> formKey,
+    required String id, required TextEditingController namecontroller, required TextEditingController descriptionController, required BuildContext context,
+    required TextEditingController LeaderName, required TextEditingController prof, required TextEditingController price, required TextEditingController location, required TextEditingController points,
+
+
+  }) =>
+      BlocBuilder<PageIndexBloc, PageIndexState>(
+        builder: (context, state) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              BackButton(
+                onPressed: () {
+                  AddUpdateFunctions.PopFunctions(work, context, id);
+                },
+              ),
+              Row(
+                children: [
+                  work != "edit"
+                      ?
+                  Text("Add".tr(context),
+                      style:
+                      PoppinsSemiBold(16, textColorBlack, TextDecoration.none))
+                      : Text("Edit".tr(context), style: PoppinsSemiBold(
+                      16, textColorBlack, TextDecoration.none)),
+                  work != "edit" ? Padding(
+                    padding: const EdgeInsets.only(bottom: 2),
+                    child: MyDropdownButton(),
+                  ) : SizedBox(),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Add(formKey: formKey,
+                    namecontroller: namecontroller,
+                    descriptionController: descriptionController,
+                    LeaderController: LeaderName,
+                    ProfesseurName: prof,
+                    LocationController: location,
+                    Points: points,
+                    mediaQuery: mediaQuery,
+                    Price: price,
+                    action: work,
+                    id: id,
+                    part: part),
+              )
+
+            ],
+          );
+        },
+      );
+
+ static  Widget AddEndDateButton(mediaQuery, String text) =>
+      BlocBuilder<VisibleBloc, VisibleState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
+            child: InkWell(
+              onTap: () {
+                context
+                    .read<VisibleBloc>()
+                    .add(VisibleEndDateToggleEvent(!state.isVisible));
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    color: PrimaryColor.withOpacity(.1),
+                    borderRadius: BorderRadius.circular(10)),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Icon(
+                          Icons.calendar_today,
+                          color: SecondaryColor,
+                        ),
                       ),
-                    ),
-                    Text(text,
-                        style: PoppinsRegular(
-                            mediaQuery.devicePixelRatio * 5, textColorBlack)),
-                  ],
+                      Text(text,
+                          style: PoppinsRegular(
+                              mediaQuery.devicePixelRatio * 5, textColorBlack)),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      },
-    );
+          );
+        },
+      );
 
-
+}
 
 
 class DateFieldWidget extends StatefulWidget {
@@ -173,6 +364,7 @@ class _DateFieldWidgetState extends State<DateFieldWidget> {
       ),
     );
   }
+
 
   InkWell buildBottomSheet(BuildContext context, FormzState state) {
     return bottomSheet(
@@ -802,184 +994,3 @@ style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),
   }
 
 }
-Widget showLeader(activity act,mediaQuery,BuildContext context,TextEditingController  ProfesseurName,TextEditingController LeaderController  ){
-
-  return
-    act==activity.Trainings
-        ?
-    TextfieldNormal(context,
-        "Professeur Name".tr(context), "Professeur Name here".tr(context), ProfesseurName,
-            (value){
-          context.read<FormzBloc>().add(ProfesseurNameChanged(profName: value));
-        }):
-    act==activity.Events?
-    TextfieldNormal(context,
-        "Leader Name".tr(context), "Leader name here".tr(context), LeaderController,
-            (value){
-          context.read<FormzBloc>().add(LeaderNameChanged(leaderName: value));
-        }):
-
-    BlocBuilder<FormzBloc, FormzState>(
-      builder: (context, state) {
-
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18.0),
-
-              child: Text(
-                "Director Name".tr(context),
-                style: PoppinsRegular(18, textColorBlack),
-              ),
-            ),
-            bottomMemberSheet(context ,mediaQuery,
-                state.memberFormz.value??Member.memberTest,"Select A Director","Director"),
-          ],
-        );
-      },
-    );
-
-}
-Widget showRegistration(activity act,DateTime time){
-  return act==activity.Events?
-  Padding(
-      padding:
-      const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
-      child:RegistrationTime(Registration: time,)
-  ):SizedBox();
-}
-Widget showImagePicker(activity act ,mediaQuery)=>
-    act==activity.Meetings?
-    SizedBox():
-    Padding(
-
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child:imageTeamPicker(mediaQuery)
-    );
-
-
-Widget Add({
-  required GlobalKey<FormState> formKey,
-  required TextEditingController namecontroller,
-  required TextEditingController descriptionController,
-  required TextEditingController LeaderController,
-  required TextEditingController ProfesseurName,
-  required TextEditingController LocationController,
-  required TextEditingController Points,
-  required TextEditingController Price,
-  required MediaQueryData mediaQuery,
-  required List<String> part,
-  required String action,
-  required String id,
-
-
-}) =>
-    BlocBuilder<FormzBloc, FormzState>(
-      builder: (context, ste) {
-        return BlocBuilder<TextFieldBloc, TextFieldState>(
-          builder: (context, statef) {
-            return BlocBuilder<VisibleBloc, VisibleState>(
-              builder: (context, vis) {
-                return BlocConsumer<AddDeleteUpdateBloc,
-                    AddDeleteUpdateState>(
-                  listener: (ctx, ste) {
-                    AddUpdateFunctions.    Listener(ste, context);
-                  },
-                  builder: (context, state) {
-                    return BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
-                      builder: (context, state) {
-                        return BlocBuilder<ActivityCubit, ActivityState>(
-                          builder: (context, acti) {
-                            return GestureDetector(
-                              onTap: () {
-                                AddUpdateFunctions.      SaveActionFunction(acti, formKey, state, Price, ste, LeaderController, namecontroller, descriptionController, LocationController, Points, vis, part, action, id, context, ProfesseurName, statef);
-
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Center(
-                                    child: Text(
-                                      "Save",
-                                      style: PoppinsSemiBold(
-                                          mediaQuery.devicePixelRatio * 6,
-                                          PrimaryColor, TextDecoration.none),
-                                    )),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-            );
-          },
-        );
-      },
-    );
-
-
-
-
-
-
-
-
-
-
-
-Widget showDetails(mediaQuery,activity act,DateTime time,BuildContext context ,TextEditingController _price,TextEditingController _LocationController)=>
-    act==activity.Meetings?
-    Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-
-        children: [
-
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
-
-            child: Text(
-              "Agenda".tr(context),
-              style: PoppinsRegular(18, textColorBlack),
-            ),
-          ),
-          BlocBuilder<TextFieldBloc, TextFieldState>(
-
-            builder: (context, state) {
-              if (state is TextfieldChanged) {
-
-                return
-                  SizedBox(child: TextFieldGenerator(text: state.textFieldControllers,));
-              }
-
-              else{
-                return     SizedBox(child: TextFieldGenerator(text: state.textFieldControllers,));
-
-              }
-            },
-
-          )]
-    ) :
-
-
-    Column(
-
-      children: [
-
-
-        showRegistration(act, time,),
-        TextfieldNormal(context,"Location", "Location Here".tr(context), _LocationController,
-                (value){
-              context.read<FormzBloc>().add(LocationChanged(location: value));
-            }
-        ),
-        PriceWidget(mediaQuery,_price),
-
-      ],
-    );
-

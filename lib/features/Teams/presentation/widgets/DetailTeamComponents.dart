@@ -10,23 +10,25 @@ import 'package:intl/intl.dart';
 import 'package:jci_app/core/strings/app_strings.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
+import 'package:jci_app/features/Teams/domain/usecases/TeamUseCases.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import '../../../Home/presentation/widgets/Functions.dart';
-import '../../../MemberSection/domain/usecases/MemberUseCases.dart';
+
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
-import '../../../MemberSection/presentation/pages/memberProfilPage.dart';
-import '../../../auth/data/models/Member/AuthModel.dart';
+
 import '../../../auth/domain/entities/Member.dart';
 import '../../domain/entities/Team.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/GetTeam/get_teams_bloc.dart';
 import '../bloc/TaskFilter/taskfilter_bloc.dart';
 import '../bloc/TaskIsVisible/task_visible_bloc.dart';
+import 'CreateTeamWIdgets.dart';
 import 'MembersTeamSelection.dart';
 import 'TaskComponents.dart';
 import 'TaskWidget.dart';
@@ -134,7 +136,7 @@ width: mediaQuery.size.width,
                     context, mediaQuery, team.Members.length, team.Members,30,40),
               ),
               ProfileComponents.buildFutureBuilder(elevatedButtonBuildAction("Join",(){}), true, "", (p0) => FunctionMember.IsNotExistedAndPublic(team)),
-              ProfileComponents.buildFutureBuilder(InviteBuitton(), true, "", (p0) => FunctionMember.ischefAndExisted(team))
+              ProfileComponents.buildFutureBuilder(InviteBuitton(context,team), true, "", (p0) => FunctionMember.ischefAndExisted(team))
             ],
           ),
         );
@@ -142,20 +144,25 @@ width: mediaQuery.size.width,
     );
   }
 
-  static IconButton InviteBuitton() {
+  static IconButton InviteBuitton(BuildContext context,Team team) {
     return IconButton.filled(
   style: ButtonStyle(
     backgroundColor: MaterialStateProperty.all(PrimaryColor),
 
   ),
-  onPressed: (){}, icon: Icon(Icons.person_add_alt_1,color: textColorWhite,));
+  onPressed: (){
+    context.read<MembersBloc>( ).add(const GetAllMembersEvent(false));
+    MemberBottomSheetBuilder(context, MediaQuery.of(context),assignType.Invite,team);
+
+
+  }, icon:const  Icon(Icons.person_add_alt_1,color: textColorWhite,));
   }
 
   static ElevatedButton elevatedButtonBuildAction(String text, Function() action) {
     return ElevatedButton(
 
                 style: ElevatedButton.styleFrom(
-                  primary: PrimaryColor,
+
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -185,7 +192,7 @@ static   Future<dynamic> TeamMembersShett(BuildContext context, mediaQuery,Team 
                         padding:paddingSemetricHorizontal(),
                         child: Text("Board members ( ${team.Members.length} )",style: PoppinsSemiBold(17, textColorBlack, TextDecoration.none),),
                       ),
-                      SeachMemberWidget(mediaQuery, context,(value){},false),
+                MemberTeamSelection.      SeachMemberWidget(mediaQuery, context,(value){}),
                       Padding(
                         padding: paddingSemetricVertical(),
                         child: SizedBox(
@@ -226,7 +233,7 @@ static   Future<dynamic> TeamMembersShett(BuildContext context, mediaQuery,Team 
                           child: Row(
 
                             children: [
-                              imageWidget(Member.toMember(team.Members[team.Members.length-index-1])),
+                            MemberTeamSelection.  imageWidget(Member.toMember(team.Members[team.Members.length-index-1])),
                                         ProfileComponents.buildFutureBuilder(Icon(Icons.person_sharp,),  true, Member.toMember(team.Members[team.Members.length-index-1]).id, (p0) => FunctionMember.isOwner(Member.toMember(team.Members[team.Members.length-index-1]).id))
                             ],
                           ),
@@ -248,8 +255,8 @@ static   Future<dynamic> TeamMembersShett(BuildContext context, mediaQuery,Team 
 
  static Widget KickButton(BuildContext context, Team team, int index) {
    return TextButton(onPressed: () {
-     context.read<GetTeamsBloc>().add(UpdateTeamMember(fields: {"teamid":team.id,"memberid":
-     Member.toMember(team.Members[team.Members.length-index-1]).id.toString(),"Status":"kick"}));
+     final TeamInput tam=TeamInput(team.id, Member.toMember(team.Members[team.Members.length-index-1]).id.toString(), "kick",team.Members[team.Members.length-index-1]);
+     context.read<GetTeamsBloc>().add(UpdateTeamMember(fields: tam));
    }, child: Icon( Icons.remove_circle,color: Colors.red,),);
  }
 
@@ -443,10 +450,10 @@ static   Column ModelShowBottomActions(mediaQuery, BuildContext context,Team tea
           TeamComponent.actionTeamRow(mediaQuery, TeamAction.Upload, Icons.edit, "Update", () async{
             context.read<TaskVisibleBloc>().add(ChangeImageEvent(team.CoverImage));
             final  image=  await  ActivityAction.convertBase64ToXFile(team.CoverImage);
-            //log("kkkkkkkkkkkk${image!.path}");
+
             if (!mounted) return;
             context.go('/CreateTeam?team=${jsonEncode(team.toJson())}&&image=${image}');
-            context.read<FormzBloc>().add(InitMembers(members: team.Members.map((e) => Member.toMember(e)).toList()));
+            context.read<MembersTeamCubit>().initMembers( team.Members.map((e) => Member.toMember(e)).toList());
 
             context.read<TaskVisibleBloc>().add(ChangeImageEvent(
                 image!=null?
@@ -577,7 +584,7 @@ static Padding PhotoContainer(List<dynamic> item, int i,double height) {
                 width: 5),
             shape: BoxShape.circle,
           ),
-          child: photo(
+          child: MemberTeamSelection. photo(
               item[i]["Images"],
               height, 15)),
     ),

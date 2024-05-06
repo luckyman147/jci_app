@@ -1,5 +1,5 @@
 import express from "express";
-import { GetActivityByid, GetActivityByname } from "../../controllers/activities/activityController";
+import { addGuestToActivity, changeMemberStatus, deleteGuest, GetActivityByid, GetActivityByname, getActivityMembers, getAllGuestsOfActivity, updateGuest, updateGuestConfirmation } from "../../controllers/activities/activityController";
 
 const router=express.Router()
 
@@ -23,4 +23,11 @@ router.get('/:id',GetActivityByid)
  *         description: Activity not found
  */
 router.get('/:name',GetActivityByname)
+router.get('/members/:activityId',getActivityMembers)
+router.patch('/members',changeMemberStatus)
+router.get('/guests/:activityId',getAllGuestsOfActivity)
+router.post('/guests/:activityId',addGuestToActivity)
+router.delete('/guests/:activityId/:guestId',deleteGuest)
+router.patch('/guests/:guestId',updateGuest)
+router.patch('/guests/:activityId/:guestId',updateGuestConfirmation)
 export { router as Activityroute };

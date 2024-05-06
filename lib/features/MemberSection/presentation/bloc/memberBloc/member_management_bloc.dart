@@ -18,8 +18,10 @@ class MemberManagementBloc extends Bloc<MemberManagementEvent, MemberManagementS
   final UpdatePointsUseCase updatePointsUseCase;
   final validateMemberuseCase validateMemberUseCase;
   final ChangeRoleUseCase changeRoleUseCase;
-
-  MemberManagementBloc(this.updateCotisationUseCase, this.updatePointsUseCase, this.validateMemberUseCase, this.changeRoleUseCase) : super(MemberManagementInitial()) {
+  final SendInactivityReportUseCase sendInactivityReportUseCase;
+  final SendMembershipReportUseCase sendMembershipReportUseCase;
+final ChangeLanguageUseCase changeLanguageUseCase;
+  MemberManagementBloc(this.updateCotisationUseCase, this.updatePointsUseCase, this.validateMemberUseCase, this.changeRoleUseCase, this.changeLanguageUseCase, this.sendInactivityReportUseCase, this.sendMembershipReportUseCase) : super(MemberManagementInitial()) {
     on<MemberManagementEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -31,12 +33,38 @@ class MemberManagementBloc extends Bloc<MemberManagementEvent, MemberManagementS
     on<RemovePoints>(_RemovePoints);
     on<AddCotisation>(_addCotisatisation);
     on<ChangeRoleEvent>(_changeRole);
+    on<ChangeLanguageEvent>(_changeLanguage);
+    on<SendInactivityReportEvent>(_sendInactivityReport);
+    on<SendMembershipReportEvent>(_sendMembershipReport);
   }
   void initMember(initMemberEvent event, Emitter<MemberManagementState> emit) {
     emit(MemberManagementState(isUpdated: event.isUpdated, cotisation: event.cotisation, points: event.points,
         role: event.role, clone: event.points,objectifs: event.objectifs));
 
   }
+
+  void _sendInactivityReport(SendInactivityReportEvent event,Emitter<MemberManagementState> emit) async {
+    final result =await  sendInactivityReportUseCase(event.id);
+    emit(_eitherSendInactivityReportOrFailute(result, 'Inactivity Report Sent Successfully'));
+  }
+  void _sendMembershipReport(SendMembershipReportEvent event,Emitter<MemberManagementState> emit) async {
+    final result =await  sendMembershipReportUseCase(event.id);
+    emit(_eitherSendInactivityReportOrFailute(result, 'Membership Report Sent Successfully'));
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   void _addPoints(AddPoints event,Emitter<MemberManagementState> emit) async {
    emit(state.copyWith(clone: state.clone+50));
   }
@@ -47,6 +75,10 @@ class MemberManagementBloc extends Bloc<MemberManagementEvent, MemberManagementS
 void _addCotisatisation(AddCotisation event,Emitter<MemberManagementState> emit) async {
   state.cotisation.add(false);
     emit(state.copyWith(cotisation:state.cotisation ));
+  }
+  void _changeLanguage(ChangeLanguageEvent event,Emitter<MemberManagementState> emit) async {
+    final result =await  changeLanguageUseCase(event.language);
+    emit(_eitherChangeLanguageOrFailute(result, 'Language Changed Successfully', event.language));
   }
 
 
@@ -173,4 +205,16 @@ void _addCotisatisation(AddCotisation event,Emitter<MemberManagementState> emit)
     );
 
     }
+
+  MemberManagementState _eitherChangeLanguageOrFailute(Either<Failure, Unit> result, String s, String language) {
+    return result.fold(
+            (failure) => state.copyWith(typeResult: TypeResult.failed, ErrorMessage: mapFailureToMessage(failure)),
+            (success) => state.copyWith(typeResult: TypeResult.success, ErrorMessage: s,));
+  }
+
+  MemberManagementState _eitherSendInactivityReportOrFailute(Either<Failure, Unit> result, String s) {
+    return result.fold(
+            (failure) => state.copyWith(typeResult: TypeResult.failed, ErrorMessage: mapFailureToMessage(failure)),
+            (success) => state.copyWith(typeResult: TypeResult.success, ErrorMessage: s,));
+  }
 }

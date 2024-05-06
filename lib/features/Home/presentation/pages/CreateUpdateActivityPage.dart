@@ -87,7 +87,7 @@ class _CreateUpdateActivityPageState extends State<CreateUpdateActivityPage> {
 
 
   );
-  context.read<MembersBloc>().add(GetAllMembersEvent());
+  context.read<MembersBloc>().add(GetAllMembersEvent(false));
     // TODO: implement initState
     super.initState();
   }
@@ -128,12 +128,12 @@ return      LoadingWidget();
               return Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                firstLine(work: widget.work, context: context, mediaQuery: mediaQuery, part: widget.part, id: widget.id    
+                  AddWidgetComponents.   firstLine(work: widget.work, context: context, mediaQuery: mediaQuery, part: widget.part, id: widget.id
                   
                   ,formKey: _formKey, namecontroller: _namecontroller, descriptionController: _descriptionController,
                     LeaderName: _LeaderController, prof: _ProfesseurName, location: _LocationController, points: _Points, price: _price        
                   ),
-                  showImagePicker(vis.selectedActivity, mediaQuery),
+                  AddWidgetComponents.         showImagePicker(vis.selectedActivity, mediaQuery),
                   TextfieldNormal(context,
                       "${vis.selectedActivity.name.tr(context)} ${"Name".tr(context)}" ,"${"Name of".tr(context)}${vis.selectedActivity.name} ${"here".tr(context)}", _namecontroller,
 
@@ -141,7 +141,7 @@ return      LoadingWidget();
                         context.read<FormzBloc>().add(ActivityNameChanged(activityName: value));
                       }
                   ),
-                  showLeader(vis.selectedActivity,mediaQuery,context,_ProfesseurName,_LeaderController),
+                  AddWidgetComponents.      showLeader(vis.selectedActivity,mediaQuery,context,_ProfesseurName,_LeaderController),
 
                   Padding(
                       padding: const EdgeInsets.symmetric(
@@ -151,10 +151,10 @@ return      LoadingWidget();
                           child: BeginTimeWidget()
 
                       )),
-                  AddEndDateButton(mediaQuery,"Show End date".tr(context)),
+                  AddWidgetComponents.    AddEndDateButton(mediaQuery,"Show End date".tr(context)),
                      EndDateWidget(LabelText: 'End Date'.tr(context), SheetTitle: "Date and Hour of End".tr(context), HintTextDate: 'End Date'.tr(context), HintTextTime: 'End Time'.tr(context),
                   ),
-                  showDetails(mediaQuery, vis.selectedActivity, state.registrationTimeInput.value??DateTime.now().add(Duration(days: 1)),context,_price,_LocationController),
+                  AddWidgetComponents.    showDetails(mediaQuery, vis.selectedActivity, state.registrationTimeInput.value??DateTime.now().add(Duration(days: 1)),context,_price,_LocationController),
                   TextfieldNormal(context,"Points", "Points here".tr(context), _Points, (p0) => null),
 
                   TextfieldDescription(context,

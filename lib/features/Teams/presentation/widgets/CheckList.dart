@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
+import 'package:jci_app/features/Teams/domain/usecases/TaskUseCase.dart';
 
 import '../../../../core/util/snackbar_message.dart';
 import '../../domain/entities/Checklist.dart';
@@ -94,9 +95,8 @@ class CheckListWidget extends StatelessWidget {
 
 
                   value:checkList[index]['isCompleted'], onChanged: (bool? value) {
-
-                  context.read<GetTaskBloc>().add(UpdateChecklistStatus({"taskid":id,"checkid":checkList[index]['id'],
-                    "IsCompleted":value }));
+final CheckInputFields checkInputFields = CheckInputFields(taskid: id, checkid: checkList[index]['id'], IsCompleted: value!, checklist: null, name: null, teamid: null);
+                  context.read<GetTaskBloc>().add(UpdateChecklistStatus(checkInputFields));
                   context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
 
 
@@ -108,8 +108,9 @@ class CheckListWidget extends StatelessWidget {
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.done,
                   onSubmitted: (value){
-                    context.read<GetTaskBloc>().add(UpdateChecklistName({"taskid":id,"checkid":checkList[index]['id'],
-                      "name":value }));
+                    final CheckInputFields checkInputFields = CheckInputFields(taskid: id, checkid: checkList[index]['id'], IsCompleted: null, checklist: null, name: value, teamid: null);
+
+                    context.read<GetTaskBloc>().add(UpdateChecklistName(checkInputFields));
                     context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
 
                   },
@@ -194,11 +195,12 @@ focusNode: focus ,
                             message: "Empty Field", context: context);
                       }
                       else {
+                        final CheckInputFields checkInputFields = CheckInputFields(taskid: id, checkid: '', IsCompleted: null, checklist: null, name: controller.text, teamid: null);
 
                         context.read<TaskVisibleBloc>().add(
                             ToggleTaskVisible(true));
                         context.read<GetTaskBloc>().add(AddCheckList(
-                            {"idTask": id, "checklist": controller.text}));
+                            checkInputFields));
 
 
                         controller.clear();

@@ -5,6 +5,8 @@ import 'package:jci_app/features/Home/data/model/TrainingModel/TrainingModel.dar
 import 'package:jci_app/features/Home/data/model/meetingModel/MeetingModel.dart';
 
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/ActivityParticpants.dart';
+import 'package:jci_app/features/Home/domain/entities/Guest.dart';
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 
@@ -20,6 +22,7 @@ import '../datasources/events/Event_local_datasources.dart';
 import '../datasources/events/event_remote_datasources.dart';
 import '../datasources/trainings/TrainingLocalDatasources.dart';
 import '../datasources/trainings/Training_Remote_datasources.dart';
+import '../model/GuestModel.dart';
 import '../model/events/EventModel.dart';
 
 class ActivityRepoImpl implements ActivitiesRepo{
@@ -341,5 +344,113 @@ final result= MeetingModel.fromEntities(act as Meeting);
       return Left(OfflineFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, Unit>> CheckAbsence(String activityId, String memberId, String status)async  {
+    if (await networkInfo.isConnected) {
+      try {
+        await trainingRemoteDataSource.checkAbsence(activityId, memberId, status);
+        return Right(unit);
+      } on EmptyDataException {
+        return Left(EmptyDataFailure());
+      } on WrongCredentialsException {
+        return Left(WrongCredentialsFailure());
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+  }  Future<Either<Failure, Unit>> _response(Future<Unit> response)async  {
+    if (await networkInfo.isConnected) {
+      try {
+        await response;
+        return Right(unit);
+      } on EmptyDataException {
+        return Left(EmptyDataFailure());
+      } on WrongCredentialsException {
+        return Left(WrongCredentialsFailure());
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ActivityParticipants>>> getAllParticipants(String activityId)   async{
+
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await trainingRemoteDataSource.getAllParticipants(activityId);
+        return Right(result);
+      } on EmptyDataException {
+        return Left(EmptyDataFailure());
+      } on WrongCredentialsException {
+        return Left(WrongCredentialsFailure());
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> SendRemiderActivity(String activityId)async {
+    return _response(trainingRemoteDataSource.sendReminder(activityId));
+
+  }
+
+  @override
+  Future<Either<Failure, Unit>> addGuest(String activityId, Guest guest) async{
+
+final guestmodel=GuestModel.fromEntity(guest);
+    return await  _response( trainingRemoteDataSource.addGuest(activityId, guestmodel));
+  }
+
+  @override
+  Future<Either<Failure, Unit>> deleteGuest(String activityId, String guestId)  async {
+    return _response( trainingRemoteDataSource.deleteGuest(activityId, guestId));
+
+  }
+
+  @override
+  Future<Either<Failure, List<Guest>>> getAllguest(String activityId)async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await trainingRemoteDataSource.getAllGuest(activityId);
+        return Right(result);
+      } on EmptyDataException {
+        return Left(EmptyDataFailure());
+      } on WrongCredentialsException {
+        return Left(WrongCredentialsFailure());
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+    // TODO: implement getAllguest
+
+  }
+
+  @override
+  Future<Either<Failure, Unit>> updateGuest(String activityId, Guest guest)async {
+    final guestModel=GuestModel.fromEntity(guest);
+    return _response( trainingRemoteDataSource.updateGuest(activityId, guestModel));
+
+
+  }
+
+  @override
+  Future<Either<Failure, Unit>> updateGuestStatus(String activityId, String guestid, bool status) async{
+    return _response( trainingRemoteDataSource.updateGuestStatus(activityId, guestid, status));
+  }
+
+
+
+
 
 }

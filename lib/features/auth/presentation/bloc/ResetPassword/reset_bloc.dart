@@ -124,7 +124,7 @@ try{
           final failureOrDoneMessage = await updatePasswordUseCase.call(event.member);
 
 
-          print("Reset" + failureOrDoneMessage.toString());
+
 
           emit(_eitherDoneMessageOrErrorState(
               failureOrDoneMessage, 'Reset  Password Successfuly'));

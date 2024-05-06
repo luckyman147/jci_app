@@ -1,41 +1,41 @@
 import express, { Response } from "express";
-import multer from "multer";
-import { addCheck, deleteChecklist, updateChecklistName, updateIsCompletedChecklist } from "../../controllers/teams/ChecklistController";
-import { GetTaskById, GetTasksOFTeam, addTask, deleteFile, deleteTask, updateDeadline, updateFiles, updateIsCompleted, updateMembers, updateTask, updateTaskName } from "../../controllers/teams/taskController";
-import { AddTeam, GetTeams, UpdateTeamMembers, addMember, deleteTeam, getTeamById, getTeamByName, updateImage, updateTeam, uploadTeamImage } from "../../controllers/teams/teamsController";
+                                           import multer from "multer";
+                                           import { addCheck, deleteChecklist, updateChecklistName, updateIsCompletedChecklist } from "../../controllers/teams/ChecklistController";
+                                           import { GetTaskById, GetTasksOFTeam, addTask, deleteFile, deleteTask, updateDeadline, updateFiles, updateIsCompleted, updateMembers, updateTask, updateTaskName } from "../../controllers/teams/taskController";
+                                           import { AddTeam, GetTeams, UpdateTeamMembers, addMember, deleteTeam, getTeamById, getTeamByName, updateImage, updateTeam, uploadTeamImage } from "../../controllers/teams/teamsController";
 
-import { Authenticate } from "../../middleware/CommonAuth";
-interface CustomResponse extends Response {
-    paginatedResults: any;
-}
+                                           import { Authenticate, AuthenticateAdmin } from "../../middleware/CommonAuth";
+                                           interface CustomResponse extends Response {
+                                               paginatedResults: any;
+                                           }
 
-const router = express.Router();
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
-
-router.get('/All',Authenticate, GetTeams);
-router.get("/get",Authenticate,getTeamByName);// get teams /
-router.get('/get/:id', getTeamById);// get team by id/ 
-router.post('/', Authenticate, AddTeam);//create team
-router.put('/:teamid/TeamMembers', Authenticate, UpdateTeamMembers);//create team
-router.post('/:id/AddMember/:memberId', addMember);//*add member
-router.put('/:id',updateTeam);//update team
-router.delete('/:id',deleteTeam)//!delete team 
-router.patch('/:id/UpdateImage',upload.single("CoverImages"),updateImage)
-router.post('/:id/uploadImage',upload.single("CoverImage"),uploadTeamImage)//delete team
-router.get('/:id/tasks',GetTasksOFTeam)
-router.get('/:id/tasks/:taskId',GetTaskById)
+                                           const router = express.Router();
+                                           const storage = multer.memoryStorage();
+                                           const upload = multer({ storage: storage });
 
 
+                                           router.get('/All',Authenticate, GetTeams);
+                                           router.get("/get",Authenticate,getTeamByName);// get teams /
+                                           router.get('/get/:id', getTeamById);// get team by id/
+                                           router.post('/', AuthenticateAdmin, AddTeam);//create team
+                                           router.put('/:teamid/TeamMembers', Authenticate, UpdateTeamMembers);//create team
+                                           router.post('/:id/AddMember/:memberId',AuthenticateAdmin, addMember);//*add member
+                                           router.put('/:id',updateTeam);//update team
+                                           router.delete('/:id',deleteTeam)//!delete team
+                                           router.patch('/:id/UpdateImage',upload.single("CoverImages"),updateImage)
+                                           router.post('/:id/uploadImage',upload.single("CoverImage"),uploadTeamImage)//delete team
+                                           router.get('/:id/tasks',GetTasksOFTeam)
+                                           router.get('/:id/tasks/:taskId',GetTaskById)
 
 
- //& get tasks
 
- router.post('/:id/tasks',addTask),
- // create a tas
 
-router.put('/:taskid/UpdateStatus',updateIsCompleted)
+                                            //& get tasks
+
+                                            router.post('/:id/tasks',addTask),
+                                            // create a tas
+
+                                           router.put('/:taskid/UpdateStatus',updateIsCompleted)
 router.put('/:id/tasks/:taskid', upload.array("CoverImage",4),updateTask)//* update tasks 
 router.put('/tasks/:taskid/UpdateName',updateTaskName)//* update tasks
 router.put('/:taskid/UpdateDeadline',updateDeadline)//* update tasks 

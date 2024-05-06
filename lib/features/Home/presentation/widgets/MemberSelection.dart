@@ -8,6 +8,7 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 
 import '../../../../core/app_theme.dart';
+import '../../../../core/strings/app_strings.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../MemberSection/domain/usecases/MemberUseCases.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
@@ -26,7 +27,7 @@ Widget MemberContainer(mediaQuery,Member item)=>BlocBuilder<FormzBloc, FormzStat
       return  Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          imageWidget(item,50,23),
+          imageWidget(item,50,23,true),
           SizedBox(
             width: mediaQuery.size.width / 3,
             child: ElevatedButton(
@@ -77,7 +78,7 @@ Widget bottomMemberSheet(BuildContext context, MediaQueryData mediaQuery,
             child: Padding(
               padding: paddingSemetricHorizontal(),
               child:
-              member!=null&& member.firstName.isNotEmpty?imageWidget(member,40,23):
+              member!=null&& member.firstName.isNotEmpty?imageWidget(member,40,23,true):
               Text("$text",style: PoppinsNorml(18, ThirdColor),),
             ),
           )),
@@ -132,7 +133,7 @@ Widget MembersBottomSheet(String text,
                     if (state.memberName.value.length > 1){
                       context.read<MembersBloc>().add(GetMemberByNameEvent( name: state.memberName.value));}
                     else if (state.memberName.value.isEmpty|| state.memberName.displayError!= null ){
-                      context.read<MembersBloc>().add(GetAllMembersEvent());
+                      context.read<MembersBloc>().add(GetAllMembersEvent(false));
                     }
                     debugPrint(state.memberName.displayError.toString());
                     // BlocProvider.of<MembersBloc>(context)
@@ -216,7 +217,7 @@ Widget MembersWidget(MediaQueryData mediaQuery,String name)=>BlocConsumer<Member
             child: MembersDetails( state.members,mediaQuery));
       }
       else{
-        context.read<MembersBloc>().add(GetAllMembersEvent());
+        context.read<MembersBloc>().add(GetAllMembersEvent(true));
       }
 
     }
@@ -226,7 +227,7 @@ Widget MembersWidget(MediaQueryData mediaQuery,String name)=>BlocConsumer<Member
     return LoadingWidget();
   }, listener: (BuildContext context, MembersState state) {
   if (state is MemberFailure) {
-    context.read<MembersBloc>().add(GetAllMembersEvent());
+    context.read<MembersBloc>().add(GetAllMembersEvent(true));
   }
 
 
@@ -236,7 +237,7 @@ Widget MembersWidget(MediaQueryData mediaQuery,String name)=>BlocConsumer<Member
 );
 Future<void> RefreshMembers(BuildContext context,SearchType type,String name) async {
   if (type==SearchType.All||name.isEmpty)
-    context.read<MembersBloc>().add(GetAllMembersEvent());
+    context.read<MembersBloc>().add(GetAllMembersEvent(true));
   else
     context.read<MembersBloc>().add(GetMemberByNameEvent(name: name));
 
@@ -277,7 +278,7 @@ Widget MembersDetails(List<Member> members,mediaQuery)=>ListView.separated(
 
 
 
-Widget imageWidget(Member item,double height , double size){
+Widget imageWidget(Member item,double height , double size,bool bools){
 if (item.Images.isNotEmpty){
 
 }
@@ -289,7 +290,7 @@ if (item.Images.isNotEmpty){
         child: Container(
           height: height,
           width: height,
-          color: textColor,
+          child:Image.asset(vip)
         ),
 
       )
@@ -306,7 +307,7 @@ if (item.Images.isNotEmpty){
         ),
       ),
       const SizedBox(width: 8),
-      Text(item.firstName, style: PoppinsSemiBold(size, textColorBlack, TextDecoration.none)),]);}
+      Text(item.firstName, style: PoppinsSemiBold(size, bools?textColorBlack:textColorWhite, TextDecoration.none)),]);}
 
 
 

@@ -3,6 +3,7 @@ import 'package:jci_app/features/Teams/domain/repository/TeamRepo.dart';
 
 import '../../../../core/error/Failure.dart';
 import '../../../../core/usescases/usecase.dart';
+import '../../../auth/domain/entities/Member.dart';
 import '../entities/Team.dart';
 
 class GetAllTeamsUseCase {
@@ -70,15 +71,33 @@ class getTeamByNameUseCase  extends UseCase<List<Team>, Map<String,dynamic>>{
     return _teamRepository.getTeamByName(params['name']);
   }
 }
-class UpdateTeamMembersUseCase  extends UseCase<Unit, Map<String,dynamic>>{
+class UpdateTeamMembersUseCase  extends UseCase<Unit, TeamInput>{
   final TeamRepo _teamRepository;
 
   UpdateTeamMembersUseCase(this._teamRepository);
 
   @override
-  Future<Either<Failure, Unit>> call(Map<String,dynamic> params) {
-    return _teamRepository.UpdateMembers(params['teamid'],params['memberid'],params['Status']);
+  Future<Either<Failure, Unit>> call( params) {
+    return _teamRepository.UpdateMembers(params.id,params.memberid!,params.Status!);
   }
 }
+class InviteMemberUseCase  extends UseCase<Unit, TeamInput>{
+  final TeamRepo _teamRepository;
 
+  InviteMemberUseCase(this._teamRepository);
+
+  @override
+  Future<Either<Failure, Unit>> call( params) {
+    return _teamRepository.InviteMember(params.id,params.memberid!);
+  }
+}
+class TeamInput{
+  final String id;
+  final String? memberid;
+  final String? Status;
+  final Map<String,dynamic>? member;
+
+
+  TeamInput(this.id, this.memberid, this.Status, this.member);
+}
 

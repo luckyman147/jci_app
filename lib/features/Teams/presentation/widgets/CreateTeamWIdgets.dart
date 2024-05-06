@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/core/util/snackbar_message.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
 
 import 'package:jci_app/features/Teams/presentation/widgets/MembersTeamSelection.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
@@ -64,6 +65,8 @@ Widget DoneActions(TextEditingController TeamName, TextEditingController descrip
   builder: (context, form) {
     return BlocBuilder<FormzBloc, FormzState>(
   builder: (context, state) {
+    return BlocBuilder<MembersTeamCubit, MembersTeamState>(
+  builder: (context, te) {
     return BlocBuilder<VisibleBloc, VisibleState>(
       builder: (context, Visstate) {
         return Padding(
@@ -82,13 +85,13 @@ Widget DoneActions(TextEditingController TeamName, TextEditingController descrip
                         TeamLeader: '',
                         status: Visstate.isPaid,
                         tasks: [],
-                        Members: TeamFunction. getIds(state.membersTeamFormz.value ?? []));
+                        Members: TeamFunction. getIds( te.members));
                     context.read<GetTeamsBloc>().add(AddTeam(team));
                   }
                   else {
 
 
-                    log(TeamFunction.getIds(state.membersTeamFormz.value??[] ).toString());
+
                     final Team ha = Team(
                         name: TeamName.text,
                         description: description.text,
@@ -99,7 +102,7 @@ Widget DoneActions(TextEditingController TeamName, TextEditingController descrip
                         TeamLeader: team.TeamLeader,
                         status: Visstate.isPaid,
                         tasks: team.tasks,
-                        Members:TeamFunction. getIds(state.membersTeamFormz.value ?? []));
+                        Members:TeamFunction. getIds(te.members));
                    context.read<GetTeamsBloc>().add(UpdateTeam(ha));
                   }
                 }
@@ -114,6 +117,8 @@ Widget DoneActions(TextEditingController TeamName, TextEditingController descrip
         );
       },
     );
+  },
+);
   },
 );
   },
@@ -335,7 +340,7 @@ Widget TextTeamfieldDescription(String name, String HintText,
 
 
 Widget bottomMembersSheet(BuildContext context, MediaQueryData mediaQuery,
-    List<Member> members,
+    List<Member> members,assignType assign,Team team
 
 
 
@@ -346,7 +351,7 @@ Widget bottomMembersSheet(BuildContext context, MediaQueryData mediaQuery,
     padding: const EdgeInsets.symmetric(horizontal: 16.0,),
     child: InkWell(
       onTap: () {
-        MemberBottomSheetBuilder(context, mediaQuery, (value){}, (value){});
+        MemberBottomSheetBuilder(context, mediaQuery,assign,team);
       },
       child:Container(
           width: mediaQuery.size.width,
@@ -370,19 +375,17 @@ Widget bottomMembersSheet(BuildContext context, MediaQueryData mediaQuery,
     ),
   );}
 
-void MemberBottomSheetBuilder(BuildContext context, MediaQueryData mediaQuery,
-    Function(Member) onRemoveTap, Function(Member) onAddTap
+void MemberBottomSheetBuilder(BuildContext context, MediaQueryData mediaQuery,assignType assign,Team team
+
     ) {
   showModalBottomSheet(
     context: context,
-    builder: (ctx) {
-      return BlocBuilder<FormzBloc, FormzState>(
-        builder: (context, state) {
-          return MembersTeamBottomSheet(mediaQuery, onRemoveTap, onAddTap);
-        },
-      );
-    },
-  );
+    builder: (ctx)
+  {
+    return MemberTeamSelection.MembersTeamBottomSheet(
+      mediaQuery, assign, team
+    );
+  });
 }
 
 
@@ -402,7 +405,7 @@ Widget membersImage(BuildContext context, MediaQueryData mediaQuery,
                       color: textColorWhite,width: 5),
                   shape: BoxShape.circle,
                 ),
-                child: photo(members[i].Images,50,100))),
+                child: MemberTeamSelection.photo(members[i].Images,50,100))),
       if (members.length > 4)
         Container(
           height: 50,
@@ -436,13 +439,12 @@ Widget bottomEventSheet(BuildContext context, MediaQueryData mediaQuery,
         showModalBottomSheet(
           context: context,
           builder: (ctx) {
-            return BlocBuilder<FormzBloc, FormzState>(
-              builder: (context, state) {
+
                 return EventsTeamBottomSheet(mediaQuery);
               },
             );
-          },
-        );
+
+
       },
       child:Container(
           width: mediaQuery.size.width,

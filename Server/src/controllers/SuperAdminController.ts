@@ -10,6 +10,7 @@ import { Permission } from '../models/Pemission';
 import { Role } from '../models/role';
 import { generateSecureKey } from '../utility';
 import { findrole } from '../utility/role';
+import { sendPromotionEmail } from '../utility/NotificationEmailUtility';
 
 export const ChangeToAdmin=async(req:Request, res:Response,next:NextFunction)=>{
     const superAdmin=req. superadmin
@@ -36,6 +37,7 @@ const permissions = await Permission.find({ related: { $in: ["Meetings","Events"
         role?.Members.push(member.id)
         const saved=await member.save()
         if (saved) {
+            sendPromotionEmail(member.language,member.firstName,'admin',member.email)
             return res.status(201).json(saved);
             
             
@@ -66,6 +68,7 @@ const permissions = await Permission.find();
         role?.Members.push(member.id)
         const saved=await member.save()
         if (saved) {
+            sendPromotionEmail(member.language,member.firstName,'super admin',member.email)
             return res.status(201).json(saved);
             
             

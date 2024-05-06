@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { File } from "../models/FileModel";
 
-import { EditMemberProfileInputs } from '../dto/member.dto';
+import { EditLanguageInputs, EditMemberProfileInputs } from '../dto/member.dto';
 import { Member } from '../models/Member';
 import { findroleByid, getActivitiesInfo, getFilesInfoByIds, getMeetingsInfo, getteamsInfo, getTrainingInfo } from '../utility/role';
 import path from 'path';
@@ -155,5 +155,31 @@ export const updateImageProfile = async (req: Request, res: Response, next: Next
 } catch (error) {
         console.log(error);
       res.status(500).json({ error: "errrr"});
+    }
+}
+export const updateLanguage= async(req:Request,res:Response,next:NextFunction)=>{
+    
+    const member=req.member
+    const profileinputs=plainToClass (EditLanguageInputs,req.body)
+    const errors=await validate(profileinputs,{validationError:{target:false}})
+    if(errors.length>0){
+    console.log(errors)
+        return res.status(400).json(errors)
+    }
+
+
+    const {language}=profileinputs
+    if(member){
+        const profile=await Member.findById(member?._id)
+if (profile){
+            profile.language=language
+
+            const updated=await profile.save()
+            if(updated){
+                return res.status(200).json({message:'profile updated'})
+            }
+            return res.status(400).json({message:'error with profile'})
+        }
+        return res.status(404).json({message:'member not found'})
     }
 }

@@ -36,12 +36,9 @@ class TeamWidget extends StatelessWidget {
     return ListView.separated(
         controller: scrollController,
         itemBuilder: (ctx, index) {
-          String date = index >= teams.length
-              ? DateTime.now().toString()
-              : teams[index].event['ActivityEndDate']!;
-          final parse = DateTime.parse(date);
+
           return index >= teams.length ?
-          LoadingWidget() : body(teams, index, mediaQuery, context, parse);
+          LoadingWidget() : body(teams, index, mediaQuery, context);
         },
         separatorBuilder: (BuildContext context, int index) {
           return const SizedBox(
@@ -53,7 +50,7 @@ class TeamWidget extends StatelessWidget {
 }
 
 Widget body(List<Team> teams, int index, MediaQueryData mediaQuery,
-    BuildContext context, DateTime parse) =>
+    BuildContext context, ) =>
     SingleChildScrollView(
         child: Padding(
           padding: EdgeInsetsDirectional.symmetric(
@@ -235,7 +232,10 @@ Widget Images(List<Team> teams, int index) =>
                         width: 5),
                     shape: BoxShape.circle,
                   ),
-                  child: photo(
+                  child:
+
+
+               MemberTeamSelection.   photo(
                       teams[index].Members[i]['Images'] as List<dynamic>,
                       25, 100))),
         if (teams[index].Members.length > 3)
@@ -378,9 +378,9 @@ class TeamHomeWidget extends StatelessWidget {
        scrollDirection: Axis.horizontal,
         itemBuilder: (ctx, index) {
 
-          String date =teams[index].event['ActivityEndDate']!;
-          final parse = DateTime.parse(date);
-          final Isfinished=DateTime.now().compareTo(parse);
+      ;
+
+
           return SingleChildScrollView(
             child: InkWell(
               onTap: () {

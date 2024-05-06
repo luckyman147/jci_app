@@ -9,6 +9,8 @@ import { CheckList } from "../../models/teams/CheckListModel";
 import { Task } from "../../models/teams/TaskModel";
 import { team } from "../../models/teams/team";
 import { getCheckListsInfoByIds, getFilesInfoByIds, getMembersInfo, getTaskById, getTasksInfo } from "../../utility/role";
+import { sendTaskAssignmentEmail, sendTaskCompletedEmail } from "../../utility/NotificationEmailUtility";
+import { Member } from "../../models/Member";
 
 export const GetTasksOFTeam=async(req:Request,res:Response,next:NextFunction)=>{
 
@@ -257,9 +259,20 @@ await   file.save()
       if (errors.length > 0) {
         return res.status(400).json({ message: 'Input validation failed', errors });
       }
+
            
 task.isCompleted=taskInput.IsCompleted
+const members=await Member.find({ _id: { $in: task.AssignTo } });
+console.log(members)
+console.log(taskInput.IsCompleted)
+
 await task.save()
+if (task.isCompleted==true){
+                   members.forEach((member)=>
+
+                     sendTaskCompletedEmail(member.language,member.email,task.name)
+                   )
+                 }
       res.status(200).json({ message:"Completed" , task });}
    
     
@@ -312,11 +325,15 @@ console.log(task)
       if (!task) {
         return res.status(404).json({ error: 'task not found' });
       }
+      
     const membersInput = plainToClass(MembersInput, req.body);
       const errors = await validate(membersInput, { validationError: { target: false } });
       if (errors.length > 0) {
         return res.status(400).json({ message: 'Input validation failed', errors });
       }
+      const member=await Member.findById(membersInput.Member)
+      if (!member) {
+        return res.status(404).json({ error: 'Member not found' });}
          console.log(membersInput.Status)  
     //        if (task.AssignTo.includes(membersInput.Member) && membersInput.Status=="true"){
     // return res.status(400).json({ error: 'Member already exists' });}
@@ -328,7 +345,7 @@ if (membersInput.Status=="true"){
   await task.AssignTo.push(membersInput.Member)
 
     await task.save()
-    
+    sendTaskAssignmentEmail( member.language,member.email,task.name)
       res.status(200).json({ message:"Completed" , task });
 }
 else {

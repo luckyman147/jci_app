@@ -6,9 +6,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/features/Home/presentation/widgets/AddActivityWidgets.dart';
+import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
+import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
+import 'package:jci_app/features/auth/presentation/widgets/Components.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
@@ -17,7 +21,9 @@ import '../../../Home/presentation/widgets/Functions.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../../auth/data/models/Member/AuthModel.dart';
 import '../../../auth/domain/entities/Member.dart';
+import '../../../auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
+import '../../../auth/presentation/bloc/bool/toggle_bool_bloc.dart';
 
 class SettingsComponent {
   static isProfile(SettingsBools state) {
@@ -41,7 +47,7 @@ static isMode(SettingsBools state) {
       padding: paddingSemetricVertical(),
       child: AnimatedContainer(
         decoration: ProfileComponents.boxDecoration,
-        duration: Duration(milliseconds: 800),
+        duration: Duration(milliseconds: 1000),
      curve: Curves.easeIn,
         padding: paddingSemetricVerticalHorizontal(),
         height: isSwitch ?  mediaQuery.size.width/2.3 : 70,
@@ -87,7 +93,7 @@ static isMode(SettingsBools state) {
             );
   }
 
-  static Widget ColumnActions(BuildContext context,Member member) {
+  static Widget ColumnActions(BuildContext context,Member member,TextEditingController pass,TextEditingController cpass,GlobalKey<FormState> key) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: BlocBuilder<ChangeSboolsCubit, ChangeSboolsState>(
@@ -96,7 +102,7 @@ static isMode(SettingsBools state) {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          rowAction(context, "Profile", Icons.person,isProfile(state.settings),Profile(context,member),MediaQuery.of(context),SettingsBools.Profile),
+          rowAction(context, "Profile", Icons.person,isProfile(state.settings),Profile(context,member,pass,cpass,key),MediaQuery.of(context),SettingsBools.Profile),
           MembersAdmin(state),
 
               Language(context, state),
@@ -193,7 +199,7 @@ static isMode(SettingsBools state) {
               )),
         );
   }
- static Widget Profile(BuildContext context,Member member){
+ static Widget Profile(BuildContext context,Member member,TextEditingController password,TextEditingController cpass,GlobalKey<FormState> key ){
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children:[
@@ -212,15 +218,112 @@ static isMode(SettingsBools state) {
         ),
         Padding(
           padding: paddingSemetricVertical(),
-          child: InkWell(child: IconAndTextInfo(Icons.lock, " Change Password")),
+          child: InkWell(
+              onTap: (){
+                changePaswwordWidget(context,password,cpass,key,member);
+                
+                
+              },
+
+
+              child: IconAndTextInfo(Icons.lock, " Change Password")),
         ),
       ]
     );
   }
+
+ static void changePaswwordWidget(BuildContext context,TextEditingController controller,TextEditingController cPassword,GlobalKey<FormState> key,Member newMember ) {
+       showModalBottomSheet(
+       showDragHandle: true,
+       context: context, builder: (builder){
+   return   SizedBox(height: MediaQuery.of(context).size.height,
+     width: MediaQuery.of(context).size.width,
+       child:Padding(
+         padding: paddingSemetricHorizontal(),
+         child: BlocBuilder<ChangeSboolsCubit, ChangeSboolsState>(
+  builder: (context, state) {
+    return Form(
+      key:key,
+      child: Column(
+             crossAxisAlignment: CrossAxisAlignment.start,
+             children: [
+             buildPasswordTextField(controller, state.isObscur, () => context. read<ChangeSboolsCubit>().changeObscur(!state.isObscur), (p0) {
+               if (p0 == null || p0.isEmpty) {
+                 return 'Please enter password';
+               }
+               return null;
+
+             }, 'New Password'), buildPasswordTextField(cPassword, state.isObscur, () => context. read<ChangeSboolsCubit>().changeObscur(!state.isObscur), (p0) {
+               if (p0 == null || p0.isEmpty) {
+                 return 'Please enter password';
+               }
+               if (p0!=controller.text) {
+                 return 'Password does not match';
+               }
+               return null;
+
+             }, ' Confirm New Password'),
+               ProfileComponents.SaveChangesButton(()async{
+                 if (key.currentState!.validate()) {
+                   final language=await context.read<localeCubit>().cachedLanguageCode();
+                   final  Member member=Member(email: newMember.email , password: cPassword.text, id: '', role: '', is_validated: false, cotisation: [], Images: [],teams: [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: [], points: 0, objectifs: [],language: language??'fr');
+
+                   context.read<ResetBloc>().add(ResetSubmitted( member: member));
+                 cPassword.clear();
+                  controller.clear();
+                   Navigator.pop(context);
+
+                 }
+                 else{
+                   return;
+                 }
+
+
+               }),
+            ],),
+    );
+  },
+),
+       )
+
+     );
+
+   });
+
+ }
+
+ static Widget buildPasswordTextField(TextEditingController controller, bool obscureText, Function() toggleObscure,Function(String?) validator,String text) {
+   return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+     children: [
+       Text(text, style: PoppinsNorml(16, textColorBlack)),
+       TextFormField(
+         validator: (value) {
+          validator(value);
+         },
+         textInputAction: TextInputAction.next,
+         controller: controller,
+         style: PoppinsNorml(18, textColorBlack),
+         obscureText: obscureText,
+         decoration: InputDecoration(
+           suffixIcon: IconButton(
+             icon: Icon(obscureText ? Icons.remove_red_eye : Icons.visibility_off),
+             onPressed: toggleObscure,
+           ),
+           focusedBorder: border(PrimaryColor),
+           enabledBorder: border(PrimaryColor),
+           errorBorder: border(Colors.red),
+
+         ),
+       ),
+     ],
+   );
+ }
 static   Widget LanguageButton(BuildContext context,String language,String languageCode,MediaQueryData mediaquery,String flag){
     return GestureDetector(
       onTap: (){
         context.read<localeCubit>().changeLanguage(languageCode);
+        context.read<MemberManagementBloc>().add(ChangeLanguageEvent(language: languageCode));
       },
       child: BlocBuilder<localeCubit, LocaleState>(
   builder: (context, state) {

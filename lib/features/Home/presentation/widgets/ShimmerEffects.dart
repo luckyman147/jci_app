@@ -110,3 +110,40 @@ class ReloadDetailsPage extends StatelessWidget {
     );
   }
 }
+class ShimmerButton {
+  static Widget buildShimmerButton(double width, double height) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!, // Specify base color for shimmer effect
+      highlightColor: Colors.grey[100]!, // Specify highlight color for shimmer effect
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.white, // Optional: Set background color for the button
+          borderRadius: BorderRadius.circular(10), // Optional: Set border radius for the button
+        ),
+      ),
+    );
+  }
+
+  static Widget shimmerparticipants()=>GridView.builder(
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 3,
+      childAspectRatio: 1.5, // Aspect ratio of each grid item
+      // Number of columns in the grid
+    ),
+    itemCount: 4, // Number of items in the grid
+    itemBuilder: (context, index) {
+      return Shimmer.fromColors(
+        baseColor: Colors.grey[300]!, // Specify base color for shimmer effect
+        highlightColor: Colors.grey[100]!, // Specify highlight color for shimmer effect
+        child: Container(
+          margin: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ))) ;
+
+    },
+  );
+}

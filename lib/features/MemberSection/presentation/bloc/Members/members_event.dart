@@ -4,10 +4,11 @@ abstract class MembersEvent extends Equatable {
   const MembersEvent();
 }
 class GetAllMembersEvent extends MembersEvent {
-  const GetAllMembersEvent();
+  final bool isUpdated;
+  const GetAllMembersEvent(this.isUpdated);
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [isUpdated];
 }
 
 class GetMembersOfUser extends MembersEvent {

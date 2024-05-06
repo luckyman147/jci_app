@@ -7,6 +7,7 @@ import { Permission } from "../models/Pemission";
 import { Role } from "../models/role";
 import { CheckObjectif } from "../utility/objectifcheck";
 import { findrole, findroleByid, getActivitiesInfo, getFilesInfoByIds, getMeetingsInfo, GetMemberPermission, getteamsInfo, getTrainingInfo } from "../utility/role";
+import { sendMembershipEmail, sendUpdatedPointsEmail, sendVerifiedMemberEmail } from "../utility/NotificationEmailUtility";
 
 
 //& find member
@@ -40,7 +41,8 @@ export const GetMembers=async( req:Request,res:Response,nex:NextFunction)=>{
 
     
 
-        const members=await Member.find()
+    const members = await Member.find().sort({ createdAt: -1 });
+
         
         if(members.length>0){
             const ALlmembers = await Promise.all(
@@ -146,6 +148,7 @@ console.log(id)
             member.is_validated=true
             const saved=await member.save()
             if (saved){
+                sendVerifiedMemberEmail(member.language,member.firstName,member.email)
                 //!send Email
                 console.log(saved)
                 return res.status(200).json(saved)
@@ -175,6 +178,7 @@ console.log(id)
             
             const saved=await member.save()
             if (saved){
+                sendUpdatedPointsEmail(member.language,member.firstName,saved.Points,member.email)
                 //send email
                 return res.status(200).json(saved)
             }
@@ -208,7 +212,9 @@ else{
                     }
                     
                     const saved=await member.save()
+
                     if (saved){
+                        sendMembershipEmail(saved.language,saved.firstName,saved.email)
                         //send email
                         return res.status(200).json(saved)
                     }

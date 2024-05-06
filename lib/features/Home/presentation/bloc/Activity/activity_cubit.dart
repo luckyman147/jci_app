@@ -10,4 +10,7 @@ class ActivityCubit extends Cubit<ActivityState> {
   void selectActivity(activity activity) {
     emit(ActivityState(activity));
   }
+  void selectIndex(int index) {
+    emit(state.copyWith(index: index));
+  }
 }

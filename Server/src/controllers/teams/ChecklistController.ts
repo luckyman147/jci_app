@@ -7,6 +7,8 @@ import { CheckList } from "../../models/teams/CheckListModel"
 import { Task } from "../../models/teams/TaskModel"
 import { team } from "../../models/teams/team"
 import { getCheckListsInfoByIds, getMembersInfo, getTaskById, getTasksInfo } from "../../utility/role"
+import { Member } from "../../models/Member"
+import { sendSubtaskCreatedEmail } from "../../utility/NotificationEmailUtility"
 
 export const addCheck = async (req: Request, res: Response, next: NextFunction) => {
     const task=await Task.findById(req.params.idTask)
@@ -44,7 +46,13 @@ export const addCheck = async (req: Request, res: Response, next: NextFunction) 
      
     
         await task.save()
-              
+        if (task.AssignTo.length>0){
+          const members=await Member.find({ _id: { $in: task.AssignTo } });
+          if (members.length>0){
+            members.forEach(( member)=>sendSubtaskCreatedEmail(member.language,member.email,task.name,newCheck.name))
+          }
+
+        }
     
 
           res.status(201).json(savedTask);

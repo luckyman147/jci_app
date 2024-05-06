@@ -44,14 +44,14 @@ class ChangeRoleParams{
 
 
 
-class GetAllMembersUseCase extends UseCase<List<Member>, NoParams>{
+class GetAllMembersUseCase extends UseCase<List<Member>, bool>{
   final MemberRepo authRepository;
 
   GetAllMembersUseCase({required this.authRepository});
 
   @override
-  Future<Either<Failure, List<Member>>> call(NoParams) async {
-    return await authRepository.GetMembers();
+  Future<Either<Failure, List<Member>>> call(param) async {
+    return await authRepository.GetMembers(param);
   }
 
 }class GetMemberByname extends UseCase<List<Member>, String >{
@@ -131,6 +131,39 @@ class validateMemberuseCase extends UseCase<Unit, String>{
   @override
   Future<Either<Failure, Unit>> call(String params) async {
     return await authRepository.validateMember(params);
+  }
+
+}
+class ChangeLanguageUseCase extends UseCase<Unit, String>{
+  final MemberRepo authRepository;
+
+  ChangeLanguageUseCase({required this.authRepository});
+
+  @override
+  Future<Either<Failure, Unit>> call(String params) async {
+    return await authRepository.ChangeLanguage(params);
+  }
+
+}
+class SendMembershipReportUseCase extends UseCase<Unit, String>{
+  final MemberRepo authRepository;
+
+  SendMembershipReportUseCase({required this.authRepository});
+
+  @override
+  Future<Either<Failure, Unit>> call(String params) async {
+    return await authRepository.SendMembershipReport(params);
+  }
+
+}
+class SendInactivityReportUseCase extends UseCase<Unit, String>{
+  final MemberRepo authRepository;
+
+  SendInactivityReportUseCase({required this.authRepository});
+
+  @override
+  Future<Either<Failure, Unit>> call(String params) async {
+    return await authRepository.SendInactivityReport(params);
   }
 
 }

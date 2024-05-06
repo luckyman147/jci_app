@@ -101,7 +101,7 @@ class MemberRepoImpl extends MemberRepo {
     if (await networkInfo.isConnected) {
       try {
          if ( status==true ||(await membersLocalDataSource.getMemberById(id)==null && status==false)){
-           log("hahaha");
+
 
            final members = await memberRemote.getMemberByid(id);
         await membersLocalDataSource.saveMemberByID(members,id);
@@ -109,7 +109,7 @@ class MemberRepoImpl extends MemberRepo {
 
          }
           else {
-            log("ddddssssssss");
+
             final members = await membersLocalDataSource.getMemberById(id);
             return Right(members!);
           }
@@ -157,21 +157,30 @@ class MemberRepoImpl extends MemberRepo {
     }
   }
   @override
-  Future<Either<Failure, List<Member>>> GetMembers() async {
+  Future<Either<Failure, List<Member>>> GetMembers(bool isUpdated) async {
     if (await networkInfo.isConnected) {
       try {
         final members = await membersLocalDataSource.GetMembers();
-        if (members.isEmpty) {
+        if (members.isEmpty  ||  isUpdated) {
           final members = await memberRemote.GetMembers();
           membersLocalDataSource.CacheMembers(members);
           return Right(members);
         }
          return Right(members);
       } on ServerException {
-        return Left(ServerFailure());
+
+        final members = await membersLocalDataSource.GetMembers();
+        if (members.isEmpty){
+          return Left(ServerFailure());
+        }
+        return Right(members);
       }
       on UnauthorizedException {
-        return Left(UnauthorizedFailure());
+        final members = await membersLocalDataSource.GetMembers();
+        if (members.isEmpty){
+          return Left(UnauthorizedFailure());
+        }
+        return Right(members);
       }
     } else {
       try {
@@ -199,6 +208,21 @@ class MemberRepoImpl extends MemberRepo {
     }
     else{
     return _getMessageReset(memberRemote.ChangeToSuperAdmin(id));}
+  }
+
+  @override
+  Future<Either<Failure, Unit>> ChangeLanguage(String language) {
+    return _getMessageReset(memberRemote.ChangeLanguage(language));
+  }
+
+  @override
+  Future<Either<Failure, Unit>> SendInactivityReport(String id) {
+    return _getMessageReset(memberRemote.SendInactivityReport(id));
+  }
+
+  @override
+  Future<Either<Failure, Unit>> SendMembershipReport(String id) {
+    return _getMessageReset(memberRemote.SendMembershipReport(id));
   }
 
   }

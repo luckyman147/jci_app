@@ -4,8 +4,11 @@ export class CreateMemberInputs{
     @IsEmail()
     email:string
 
-  
-      
+    @IsNotEmpty()
+    language:string
+
+
+
     @IsNotEmpty()
     @Length(6,20)
 
@@ -27,6 +30,15 @@ export class EditMemberProfileInputs{
  
      @IsNotEmpty()
     phone:string
+
+
+
+
+}export class EditLanguageInputs{
+ 
+  
+     @IsNotEmpty()
+    language:string
 
 
 

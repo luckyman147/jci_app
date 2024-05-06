@@ -1,3 +1,4 @@
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -6,23 +7,22 @@ import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/features/Home/data/model/events/EventModel.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
+
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/CreateTeamWIdgets.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/EventSelection.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../Home/domain/entities/Event.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../../../Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
-import '../../../Home/presentation/widgets/Functions.dart';
-import '../../../Home/presentation/widgets/MemberSelection.dart';
+
 
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
-import '../../../auth/data/models/Member/AuthModel.dart';
+
 import '../../domain/entities/Team.dart';
-import '../widgets/funct.dart';
+
 
 class CreatTeamScreen extends StatefulWidget {
   final Team team;
@@ -43,12 +43,12 @@ if (!widget.team .isEmpty) {
 
 else{
   context.read<TaskVisibleBloc>().add(ChangeImageEvent("assets/images/jci.png",));
-  context.read<MembersBloc>().add(GetAllMembersEvent());
+  context.read<MembersBloc>().add(GetAllMembersEvent(false));
   context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: activity.Events));
   context.read<FormzBloc>().add(EventChanged( eventChanged: EventTest));
 
 
-  context.read<FormzBloc>().add(InitMembers(members: []));
+  context.read<MembersTeamCubit>().initMembers([]);
 }
 
     // TODO: implement initState
@@ -84,7 +84,7 @@ else{
   }
   Widget Members(mediaQuery)=>Padding(
     padding: const EdgeInsets.symmetric(vertical: 8.0),
-    child: BlocBuilder<FormzBloc, FormzState>(
+    child: BlocBuilder<MembersTeamCubit, MembersTeamState>(
       builder: (context, state) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -99,7 +99,7 @@ else{
               ),
             ),
             bottomMembersSheet(context ,mediaQuery,
-                state.membersTeamFormz.value??[]),
+                state.members,assignType.Assign,widget.team),
           ],
         );
       },
@@ -133,15 +133,15 @@ else{
     if (!mounted) {
       return;
     }
-
+    log(widget.team.Members.toString());
 teamNameController.text = widget.team.name;
 teamDescriptionController.text = widget.team.description;
 
     context.read<FormzBloc>().add(EventChanged( eventChanged:Event.fromJson(widget.team.event)));
-
+//context.read<MembersTeamCubit>().initMembers(widget.team.Members);
     context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent(widget.team.status));
-    context.read<MembersBloc>().add(GetAllMembersEvent());
-    context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: activity.Events));
+    context.read<MembersBloc>().add(const GetAllMembersEvent(true));
+    context.read<AcivityFBloc>().add(const GetAllActivitiesEvent(act: activity.Events));
   }
 }
 

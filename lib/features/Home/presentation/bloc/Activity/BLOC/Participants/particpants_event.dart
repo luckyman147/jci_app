@@ -4,11 +4,11 @@ abstract class ParticpantsEvent extends Equatable {
   const ParticpantsEvent();
 }
 
-class GetParticipantsEvent extends ParticpantsEvent {
-  final String id;
-  GetParticipantsEvent({required this.id});
+class CheckAbsenceEvent extends ParticpantsEvent {
+  final ParticipantsParams params;
+  CheckAbsenceEvent({required this.params});
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [params];
 }
 class AddParticipantEvent extends ParticpantsEvent {
   final int index;
@@ -30,10 +30,10 @@ class RemoveParticipantEvent extends ParticpantsEvent {
   List<Object> get props => [index,act];
 }
 class LoadIsParttipatedList extends ParticpantsEvent {
-  final List<Activity> act;
-  LoadIsParttipatedList({required this.act});
+  final String activityId;
+  LoadIsParttipatedList({required this.activityId});
   @override
-  List<Object> get props => [act];
+  List<Object> get props => [activityId];
 }
 class UpdateBoolValue extends ParticpantsEvent {
   final bool newValue;
@@ -58,4 +58,40 @@ class initParticipantList extends ParticpantsEvent {
   initParticipantList({required this.act});
   @override
   List<Object> get props => [act];
+}
+class ConfirmGuestEvent extends ParticpantsEvent {
+  final guestParams params;
+  ConfirmGuestEvent({required this.params});
+  @override
+  List<Object> get props => [params];
+}
+class AddGuestEvent extends ParticpantsEvent {
+  final guestParams params;
+  AddGuestEvent({required this.params});
+  @override
+  List<Object> get props => [params];
+}
+class DeleteGuestEvent extends ParticpantsEvent {
+  final guestParams params;
+  DeleteGuestEvent({required this.params});
+  @override
+  List<Object> get props => [params];
+}
+class UpdateGuestEvent extends ParticpantsEvent {
+  final guestParams params;
+  UpdateGuestEvent({required this.params});
+  @override
+  List<Object> get props => [params];
+}
+class GetGuestsEvent extends ParticpantsEvent {
+  final String activityId;
+  GetGuestsEvent({required this.activityId});
+  @override
+  List<Object> get props => [activityId];
+}
+class SendReminderEvent extends ParticpantsEvent {
+  final String activityId;
+  SendReminderEvent({required this.activityId});
+  @override
+  List<Object> get props => [activityId];
 }

@@ -1,9 +1,9 @@
-import 'dart:async';
+
 
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:jci_app/features/Home/presentation/widgets/MemberSelection.dart';
+import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
 
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
@@ -64,7 +64,7 @@ void getUserPrfile(GetUserProfileEvent event, Emitter<MembersState> emit)async {
       Emitter<MembersState> emit,
       ) async {
     emit(MemberLoading());
-    final result = await getAllMembersUseCase.call(NoParams());
+    final result = await getAllMembersUseCase.call(event.isUpdated);
     emit(_eitherDoneLoadedState(
         result, 'All Members Loaded Successfully'));
   }
@@ -75,7 +75,7 @@ void getUserPrfile(GetUserProfileEvent event, Emitter<MembersState> emit)async {
     emit(MemberLoading());
     if(event.name.isEmpty){
       emit(MemberFailure(message: 'Name cannot be empty'));
-      add(GetAllMembersEvent());
+      add(GetAllMembersEvent(true));
 
     }
     final result = await getMemberByNameUseCase.call(event.name);

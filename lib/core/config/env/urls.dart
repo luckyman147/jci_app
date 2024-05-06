@@ -1,6 +1,6 @@
 import 'dart:io';
 
-  final BaseUrl = "http://192.168.1.4"
+  final BaseUrl = "http://192.168.1.3"
       ":8080";
   final SuperAdminUrl = "$BaseUrl/Super";
   final BoardUrl = "$BaseUrl/Board";
@@ -45,7 +45,7 @@ final getTrainingByMonth= "$BaseUrl/Training/LatestofTheMonth";
  String CotisationUrl(String id )=>"$getMember/$id/UpdateCotisation";
  String validationUrl(String memberid )=>"$getMember/$memberid/validate";
  String PointsUrl(String memberid )=>"$getMember/$memberid/UpdatePoints";
-
+final ChangeLanguageUrl = "$BaseUrl/member/UpdateLanguage";
 final getMeetingByWeek = "$BaseUrl/Meeting/Latestofweek";
 
 final getEventByWeek = "$BaseUrl/Event/Latestofweekend";
@@ -54,7 +54,16 @@ final getEventsUrl = "$BaseUrl/Event/";
 
 
 class Urls{
+  static String guestUrl="$BaseUrl/Activity/guests/";
+  static String SendReminderUrl(String activityId)=> "$BaseUrl/mails/SendReminder/$activityId";
+  static String Addguest(String activityId)=> "$guestUrl$activityId";
+  static String deleteguest(String activityId,String guestId)=> "$guestUrl$activityId/$guestId";
+  static String getAllParticipants(String activityId)=>"$BaseUrl/Activity/members/$activityId";
+  static String CheckAbsence="$BaseUrl/Activity/members";
   static String mailVerify= "$BaseUrl/mails/VerifyEmails";
+  static String mailIcativityReporturl(String id )=>"$BaseUrl/mails/reportInactivity/$id";
+  static String mailMembershipReporturl(String id )=>"$BaseUrl/mails/reportmembership/$id";
   static String ResetPassword= "$BaseUrl/mails/ResetPasswordMails";
   static String TeamMember(String teamId) => "$TeamUrl$teamId/TeamMembers";
+  static String InviteMemberUrl(String teamId,String memberid) => "$TeamUrl$teamId/AddMember/$memberid";
 }

@@ -7,6 +7,8 @@ import { Team, team } from "../../models/teams/team";
 import { getEventNameById, getMembersInfo, getTasksInfo } from "../../utility/role";
 
 import { Member } from "../../models/Member";
+import { CreationOfTeamEmail, sendInvitationEmail, sendKickMemberEmail, sendMemberJoinEmail } from "../../utility/NotificationEmailUtility";
+import { Activity } from "../../models/activities/activitieModel";
 export const AddTeam = async (req: Request, res: Response, next: NextFunction) => {
   const user=req.member
   console.log("ee"+user)
@@ -46,6 +48,22 @@ if (leader){
 await leader?.save()
 await event?.save()
 const show=await  showTeamDetails(savedTeam)
+const members=await Member.find()
+if (members.length>0 ){
+  if(savedTeam.status==true){
+  members.forEach(
+  (member)=>CreationOfTeamEmail(member.language,member.email,savedTeam.name,event?.name??"")
+)}
+else{
+  if (newTeam.Members.length>0){
+    const memberIds=await Member.find({ _id: { $in: newTeam.Members } });
+    memberIds.forEach((member)=>sendInvitationEmail(member.language,member.email,savedTeam.name,event?.name??""))
+  }
+}
+}
+
+
+
 res.json(show);
     } catch (error) {
       console.log('Error adding event:', error);
@@ -338,6 +356,11 @@ export const addMember=async (req:Request,res:Response,next:NextFunction)=>{
     // Add the member to the team's members array
     Team.Members.push(member._id);
 member.Teams.push(Team.id)
+const act=await Activity.findById(Team.Event)
+if (act){
+
+  sendInvitationEmail(member.language,member.email,Team.name,act.name)
+}
     // Save the updated team
     const updatedTeam = await Team.save();
 
@@ -403,6 +426,7 @@ if (membersInput.Status=="add"){
 member.Teams.push(Team._id)
 await member?.save()
     }
+    sendMemberJoinEmail(member?.language??"fr",member!.email,Team.name)
       res.status(200).json({ message:"Completed" , Team });
 }
 //kick Member
@@ -417,7 +441,7 @@ const member=await Member.findById(membersInput.Member)
 member.Teams=member.Teams.filter((mem)=>  mem.toString()!==Team._id.toString())
 await member?.save()
     }    
-
+sendKickMemberEmail(member?.language??"fr",member!.email,Team.name)
 res.status(200).json({ message:"Completed" , Team });
   
 }

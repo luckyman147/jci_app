@@ -21,4 +21,5 @@ Map<String, dynamic> _$MemberModelToJson(MemberModel instance) =>
       'Activities': instance.Activities,
       'IsSelected': instance.IsSelected,
       'role': instance.role,
+      'language': instance.language,
     };

@@ -30,7 +30,7 @@ export const MemberSchema=new Schema({
     firstName:{type:String},
     lastName:{type:String},
     address:{type:String,},
-languange:{type:String,default:'fr'},
+language:{type:String,default:'fr'},
     Points:{type:Number,default:0},
     phone:{type:String},
     is_validated:{type:Boolean},

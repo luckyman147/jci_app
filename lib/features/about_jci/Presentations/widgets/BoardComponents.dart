@@ -3,11 +3,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/about_jci/Domain/entities/BoardRole.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
-import 'package:jci_app/features/about_jci/Presentations/widgets/PresWidgets.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
@@ -297,7 +296,7 @@ else{
   static ElevatedButton ButtomActin( BuildContext context,Function () onTAp,String text,Color color,Color Textcolor,bool isactive) {
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: isactive?color:textColorWhite,
+          backgroundColor: isactive?color:textColorWhite,
           shape: RoundedRectangleBorder(
             side: BorderSide(color: isactive?color:textColorWhite, width: 1),
             borderRadius: BorderRadius.circular(15),
@@ -320,7 +319,7 @@ else{
         controller: _searchController,
         onChanged: (value){
           if (value.isEmpty) {
-            context.read<MembersBloc>().add(GetAllMembersEvent());
+            context.read<MembersBloc>().add(const GetAllMembersEvent(false));
 
           }
           if (value.length>2){

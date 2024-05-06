@@ -1,8 +1,10 @@
 import 'package:dartz/dartz.dart';
+import 'package:jci_app/features/Home/domain/entities/ActivityParticpants.dart';
 
 import '../../../../core/error/Failure.dart';
 import '../../domain/entities/Activity.dart';
 import '../../presentation/bloc/Activity/activity_cubit.dart';
+import '../entities/Guest.dart';
 
 abstract class ActivitiesRepo{
   Future<Either<Failure, List<Activity>>> getAllActvities(activity act);
@@ -13,8 +15,14 @@ abstract class ActivitiesRepo{
   Future<Either<Failure, Unit>> deleteEvent(String id,activity act);
   Future<Either<Failure, Unit>> leaveEvent(String id,activity act);
   Future<Either<Failure, Unit>> participateEvent(String id,activity act);
-
-
+Future<Either<Failure,Unit>> CheckAbsence(String activityId,String memberId,String status);
+Future<Either<Failure,List<ActivityParticipants>>> getAllParticipants(String activityId);
+Future<Either<Failure,List<Guest>>> getAllguest(String activityId);
+Future<Either<Failure,Unit>> addGuest(String activityId,Guest guest);
+Future<Either<Failure,Unit>> deleteGuest(String activityId,String guestId);
+Future<Either<Failure,Unit>> updateGuest(String activityId,Guest guest);
+Future<Either<Failure,Unit>> updateGuestStatus(String activityId,String guestid,bool status);
+Future<Either<Failure,Unit>> SendRemiderActivity(String activityId);
   Future<Either<Failure, bool>> CheckPermissions(activity act);
 
 }

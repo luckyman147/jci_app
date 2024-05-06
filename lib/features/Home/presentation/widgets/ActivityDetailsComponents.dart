@@ -1,13 +1,19 @@
 
 import 'dart:convert';
 
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/ActivityParticpants.dart';
+import 'package:jci_app/features/Home/domain/usercases/ActivityUseCases.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import 'package:jci_app/features/Home/presentation/widgets/MemberSelection.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 
@@ -31,11 +37,34 @@ import 'AddActivityWidgets.dart';
 import 'AddUpdateFunctions.dart';
 import 'Compoenents.dart';
 import 'Functions.dart';
+import 'ShimmerEffects.dart';
 enum actionD { edit, Add }
 
 class ActivityDetailsComponent{
+  static Widget searchField(Function(String )onsearch ,String  hintText,bool isRow)=>Padding(
+    padding: paddingSemetricVerticalHorizontal(),
+    child: SizedBox(
+      height: 50,
+      width:isRow?300: double.infinity,
+
+      child: TextField(
+        onChanged: onsearch,
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: PoppinsRegular(15, textColor),
+          prefixIcon: Icon(Icons.search),
+          border: border(textColorBlack),
+            focusedBorder: border(PrimaryColor),
+            enabledBorder: border(PrimaryColor),
+        ),
+      ),
+    ),
+  );
+  
+  
+  
  static  Widget Description(mediaQuery,Activity activitys) => Padding(
-    padding:  EdgeInsets.symmetric(horizontal:mediaQuery.size.width/20),
+    padding:  EdgeInsets.symmetric(horizontal:mediaQuery.size.width/20,vertical: 10),
     child: Align(
       alignment: Alignment.topLeft,
       child: BlocBuilder<ActivityCubit, ActivityState>(
@@ -51,25 +80,28 @@ class ActivityDetailsComponent{
             children: [
               if (activitys.runtimeType == MeetingModel)
                 AgendaWidget(boxDecoration, context, mediaQuery, activitys),
-              Container(
-                width: mediaQuery.size.width ,
-                decoration: boxDecoration,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${"About".tr(context)} ${state.selectedActivity.name.tr(context)}",
-                        style: PoppinsNorml(mediaQuery.devicePixelRatio * 6,
-                          textColorBlack, ),
-                      ),
+              Padding(
+                padding: paddingSemetricVertical(),
+                child: Container(
+                  width: mediaQuery.size.width ,
+                  decoration: boxDecoration,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${"About".tr(context)} ${state.selectedActivity.name.tr(context)}",
+                          style: PoppinsNorml(mediaQuery.devicePixelRatio * 6,
+                            textColorBlack, ),
+                        ),
 
-                      DescriptionToggle(
-                        description: activitys.description,
-                      ),
-                    ],
+                        DescriptionToggle(
+                          description: activitys.description,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -96,28 +128,114 @@ class ActivityDetailsComponent{
 
    });
  }
- 
- static Widget ParticipantsWidget(mediaQuery,List<dynamic>  partipants)=>
- 
- ListView.separated(itemBuilder: (ctx,index)=>Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 8.0),
 
- child:  ListTile(
-   style: ListTileStyle.list,
-   shape: RoundedRectangleBorder(
-     borderRadius: BorderRadius.circular(10),
-   ),
-   selectedTileColor: SecondaryColor,
-   selected: true,
-   selectedColor: Colors.pink,
-focusColor: Colors.orange,
-   onTap: (){},
-   title: imageWidget(Member.fromImages(partipants[index]), 30, 18),
+ static Widget ParticipantsWidget(List<ActivityParticipants>  partipants,String activityid,BuildContext ctx)=>
 
- ),
- ),
+     Container(
 
-     separatorBuilder: (ctx,index)=>SizedBox(height: 6,), itemCount: partipants.length);
+       decoration: BoxDecoration(
+         border: Border.all(color: textColor,),
+         borderRadius: BorderRadius.circular(10),
+       ),
+       child: Column(
+         children: [
+           ActivityDetailsComponent.searchField((p0) => null, "Search participant",false),
+
+           Expanded(
+             child: Padding(
+               padding: const EdgeInsets.all(8.0),
+               child: GridView.builder(
+                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                   crossAxisCount: 3, // Set to 2 items per row
+                   crossAxisSpacing: 8.0,
+                   mainAxisSpacing: 8.0,
+                   childAspectRatio: 1.2, // Maintain aspect ratio for each item
+                 ),
+                 itemCount: partipants.length,
+                 itemBuilder: (ctx, index) {
+                   final participant = partipants[index];
+
+                   Color tileColor;
+                   switch (participant.status) {
+                     case 'pending':
+                       tileColor = textColorWhite; // Change color for pending status
+                       break;
+                     case 'present':
+                       tileColor = Colors.green; // Change color for present status
+                       break;
+                     case 'absent':
+                       tileColor = Colors.red; // Change color for absent status
+                       break;
+                     default:
+                       tileColor = textColorWhite;
+                   }
+
+                   return PartcipantsBody(tileColor, participant, activityid, ctx);
+                 },
+               ),
+             ),
+           ),
+         ],
+       ),
+     );
+
+ static SingleChildScrollView PartcipantsBody(Color tileColor, ActivityParticipants participant, String activityid, BuildContext ctx) {
+   return SingleChildScrollView(
+             scrollDirection: Axis.horizontal,
+             child: Container(
+               decoration: BoxDecoration(
+                 color: tileColor,
+                 borderRadius: BorderRadius.circular(16),
+               ),
+               child: Padding(
+                 padding: const EdgeInsets.all(8.0),
+                 child: Column(
+                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                   children: [
+                     Row(
+                       mainAxisAlignment: MainAxisAlignment.center,
+                       children: [
+                         imageWidget(Member.fromImages(participant.member[0]), 30, 18,participant.status=="pending"),
+                       ],
+                     ),
+                     Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                       children: [
+                         participant.status!="absent"?
+                         AbsenceButton(participant, activityid, ctx,Icons.close,(){
+                           final param = ParticipantsParams(ActivityId: activityid, partipantId: participant.member[0]["_id"], status: "absent");
+                           ctx.read<ParticpantsBloc>().add(CheckAbsenceEvent(params: param));
+
+                         }):SizedBox(),
+                         participant.status!="present"?
+                         AbsenceButton(participant, activityid, ctx, Icons.check, () {
+                           final param = ParticipantsParams(ActivityId: activityid, partipantId: participant.member[0]["_id"], status: "present");
+                           ctx.read<ParticpantsBloc>().add(CheckAbsenceEvent(params: param));
+                           // Add your logic to check participant
+                         }):SizedBox()
+
+                       ],
+                     ),
+                   ],
+                 ),
+               ),
+             ),
+           );
+ }
+
+ static IconButton AbsenceButton(ActivityParticipants participant, String activityid, BuildContext ctx,IconData icon,Function() onPressed) {
+   return IconButton.outlined(
+                           style: OutlinedButton.styleFrom(
+                               side: BorderSide(color: participant.status == 'pending' ? textColorBlack : textColorWhite)
+                           ),
+                           icon: Icon(icon, color: participant.status == 'pending' ? textColorBlack : textColorWhite),
+                           onPressed: () {
+                            onPressed();
+                             // Add your logic to remove participant
+                           },
+                         );
+ }
+
  
  
  static Container AgendaWidget(BoxDecoration boxDecoration, BuildContext context, mediaQuery, Activity activitys) {
@@ -227,6 +345,8 @@ focusColor: Colors.orange,
         },
         child: GestureDetector(
           onTap: () {
+            context.read<ParticpantsBloc>().add(LoadIsParttipatedList(activityId: activitys.id));
+
             ACtionACtivities(context, mediaQuery, activitys);
           },
           child: Container(
@@ -245,9 +365,7 @@ focusColor: Colors.orange,
      isScrollControlled: true,
 showDragHandle: true,
        useSafeArea: true,
-       constraints: BoxConstraints(
-         maxHeight: mediaQuery.size.height,
-       ),
+
        clipBehavior: Clip.antiAliasWithSaveLayer,
        context: context,
        builder: (context) {
@@ -257,32 +375,46 @@ showDragHandle: true,
              width: double.infinity,
              child: Column(
                children: [
-                 SizedBox(
-                   height: mediaQuery.size.height/ 1.5,
-                   child: Column(
-                     children: [
-                       Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                         children: [
-                           Padding(
-                             padding: const EdgeInsets.all(8.0),
-                             child: Text(
-                               "Participants",
-                               style: PoppinsNorml(mediaQuery.devicePixelRatio * 6,
-                                 textColorBlack, ),
-                             ),
+                 Column(
+                   children: [
+                     Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                       children: [
+                         Padding(
+                           padding: const EdgeInsets.all(8.0),
+                           child: Text(
+                             "Participants",
+                             style: PoppinsNorml(mediaQuery.devicePixelRatio * 6,
+                               textColorBlack, ),
                            ),
-                         ],
-                       ),
-                       SizedBox(
-                           height: mediaQuery.size.height / 4,
-                           child: ActivityDetailsComponent.ParticipantsWidget(mediaQuery, activitys.Participants))
-                     ],
-                   ),
+                         ),Padding(
+                           padding: const EdgeInsets.all(8.0),
+                           child: Text(
+                             "${activitys.Participants.length} member",
+                             style: PoppinsNorml(mediaQuery.devicePixelRatio * 4,
+                               textColorBlack, ),
+                           ),
+                         ),
+                       ],
+                     ),
+
+                     Padding(
+                       padding: paddingSemetricHorizontal(),
+                       child: SizedBox(
+                          height: mediaQuery.size.height / 3.5,
+
+                           child: ShowPartipants(activitys.id)),
+                     )
+                   ],
                  ),
-           
-           
-                 DEleteEditACtivityWidget(mediaQuery, activitys, context),
+
+                 Padding(padding: paddingSemetricVerticalHorizontal(),child:
+                   SizedBox(
+                       height: mediaQuery.size.height / 2.5,
+                       child: ShowGuests(activitys.id)),
+                   ),
+
+                DEleteEditACtivityWidget(mediaQuery, activitys, context),
                ],
              ),
            ),
@@ -290,47 +422,53 @@ showDragHandle: true,
        });
  }
 
- static SizedBox DEleteEditACtivityWidget(MediaQueryData mediaQuery, Activity activitys, BuildContext context) {
-   return SizedBox(
-                 height: mediaQuery.size.height / 4.8,
-                 child: Container(
-                   margin: paddingSemetricVerticalHorizontal(),
-                   decoration: BoxDecoration(
-                     borderRadius: BorderRadius.circular(10),
-border: Border.all(color: Colors.grey),
+ static Widget DEleteEditACtivityWidget(MediaQueryData mediaQuery, Activity activitys, BuildContext context) {
+   return Container(
+     margin: EdgeInsets.symmetric(horizontal: 15),
+                 height: mediaQuery.size.height / 7,
+                 decoration: BoxDecoration(
 
-                   ),
-                   child: Column(
-
-
-                       mainAxisAlignment: MainAxisAlignment.center,
-                       children: [
-                         actionRow(mediaQuery, activitys, textColorBlack,
-                             Icons.edit, "Update".tr(context),
-                                 (){
-                                   AddUpdateFunctions.UpdateAction(context, activitys);
-
-
-
-                             }
-                       ,  context),
-                         BlocBuilder<ActivityCubit, ActivityState>(
-                     builder: (context, state) {
-                       return actionRow(mediaQuery, activitys,Colors.red, Icons.delete, "Delete".tr(context), () {
-                         AddUpdateFunctions. DeleteAction(context, activitys,state);
-
-                         }
-                      ,context   );
-                     },
-                   ),
-                       ]),
+               border: Border.all(color: textColor, width: 1),
+                   borderRadius: BorderRadius.circular(10),
                  ),
+                 child: Row(
+
+
+                     mainAxisAlignment: MainAxisAlignment.center,
+                     children: [
+                       actionRow(mediaQuery, activitys, textColorBlack, Icons.timer_rounded, "Reminder", () => 
+                           context.read<ParticpantsBloc>().add(SendReminderEvent(activityId: activitys.id))
+
+                           , context)
+
+,
+                       actionRow(mediaQuery, activitys, textColorBlack,
+                           Icons.edit, "Update".tr(context),
+                               (){
+                                 AddUpdateFunctions.UpdateAction(context, activitys);
+
+
+
+                           }
+                     ,  context),
+                       BlocBuilder<ActivityCubit, ActivityState>(
+                   builder: (context, state) {
+                     return actionRow(mediaQuery, activitys,Colors.red, Icons.delete, "Delete".tr(context), () {
+                       AddUpdateFunctions. DeleteAction(context, activitys,state);
+
+                       }
+                    ,context   );
+                   },
+                 ),
+
+
+                     ]),
                );
  }
 
 
 
- static  Widget rowName(mediaQuery,BuildContext context,Activity activitys,bool bools,activity act, int index) => Padding(
+ static  Widget rowName(mediaQuery,BuildContext context,Activity activitys,activity act, int index) => Padding(
     padding:  EdgeInsets.symmetric(vertical: mediaQuery.size.height / 40,horizontal: 10),
     child: Align(
       alignment: Alignment.center,
@@ -348,19 +486,23 @@ border: Border.all(color: Colors.grey),
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(
-                width: mediaQuery.size.width / 2.7,
+                width: mediaQuery.size.width / 3,
                 child: Text(
                   activitys.name,
                   overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
+
                   style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 5,
                       textColorBlack, TextDecoration.none),
                 ),
               ),
             //  PriceWidget(mediaQuery, activitys, context),
 
-              ActivityDetailsComponent.PartipantsRow(
-                  mediaQuery, context, activitys, bools, act, index),
+              SizedBox(
+
+                width: mediaQuery.size.width/2,
+                child: ActivityDetailsComponent.PartipantsRow(
+                    mediaQuery, context, activitys, act, index),
+              ),
 
             ],
           ),
@@ -434,18 +576,57 @@ border: Border.all(color: Colors.grey),
                   style: PoppinsRegular(
                       mediaQuery.devicePixelRatio * 6, textColorWhite)))));
 
- static  Widget PartipantsRow(MediaQueryData mediaQuery,BuildContext context,Activity activitys,bools,activity act,int index) => Row(
-   mainAxisAlignment: MainAxisAlignment.end,
+ static  Widget PartipantsRow(MediaQueryData mediaQuery,BuildContext context,Activity activitys,activity act,int index) => Row(
+
    children: [
      DeatailsTeamComponent.membersTeamImage(context,mediaQuery,activitys.Participants.length,activitys.Participants,20,30),
-     Padding(
-       padding: paddingSemetricHorizontal(h:20),
-       child: ParticipateButton(acti: activitys,index: index,
-         isPartFromState: bools, act: act, textSize: mediaQuery.devicePixelRatio*4, containerWidth: mediaQuery.size.width/3                                                 ,),
-     )
+     BlocBuilder<ParticpantsBloc, ParticpantsState>(
+  builder: (context, state) {
+    return Padding(
+       padding: paddingSemetricHorizontal(h:15),
+       child:
+
+       FutureJoinButton(state, index, activitys, act, mediaQuery, mediaQuery.size.width / 3, mediaQuery.devicePixelRatio * 3.5),
+
+     );
+  },
+),
+     
 
    ],
  );
+
+ static AnimatedSwitcher FutureJoinButton(ParticpantsState state, int index, Activity activitys, activity act, MediaQueryData mediaQuery,double width,double textsize) {
+   return AnimatedSwitcher(
+       duration: Duration(milliseconds: 1000), // Set the duration for the animation
+       child: FutureBuilder(
+         future: ActivityAction.checkifMemberExist(state.isParticipantAdded[index]["participants"].cast<Map<String, dynamic>>()),// Your asynchronous function that returns a Future
+         builder: (context, snapshot) {
+           if (snapshot.connectionState == ConnectionState.waiting) {
+             // Show a loading indicator while data is being fetched
+             return ShimmerButton.buildShimmerButton(width, 60);
+           } else if (snapshot.hasError) {
+             // Show an error message if an error occurs
+             return ShimmerButton.buildShimmerButton(width, 60);
+           } else {
+             // Show the ParticipateButton with data when data is available
+             return AnimatedSwitcher(
+               duration: Duration(milliseconds: 500), // Set the duration for the animation
+               child: ParticipateButton(
+                 key: UniqueKey(), // Ensure widget is rebuilt when its properties change
+                 acti: activitys,
+                 index: index,
+                 isPartFromState: snapshot.data!,
+                 act: act,
+                 textSize: textsize,
+                 containerWidth: width,
+               ),
+             );
+           }
+         },
+       ),
+);
+ }
 
  static  Widget kk(mediaQuery,Activity activitys)=>Padding(
    padding: paddingSemetricVerticalHorizontal(h: 20),
@@ -462,13 +643,17 @@ border: Border.all(color: Colors.grey),
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Padding(
-              padding:paddingSemetricVerticalHorizontal(),
-              child: Text(
-                activitys.ActivityAdress,
-              overflow: TextOverflow.ellipsis,
-                style: PoppinsSemiBold(
-                    mediaQuery.devicePixelRatio * 6, textColorBlack,TextDecoration.none),
+            SizedBox(
+              width: mediaQuery.size.width/1.5,
+              height: 60,
+              child: Padding(
+                padding:paddingSemetricVerticalHorizontal(),
+                child: Text(
+                  activitys.ActivityAdress,
+
+                  style: PoppinsSemiBold(
+                      mediaQuery.devicePixelRatio * 5, textColorBlack,TextDecoration.none),
+                ),
               ),
             ),
           ],
@@ -606,27 +791,33 @@ Widget actionRow(
     mediaQuery, Activity activity, Color color,IconData icon, String action,Function() onTap,BuildContext context) =>
     InkWell(
       onTap:onTap ,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: mediaQuery.size.width / 30,
-                vertical: mediaQuery.size.height / 40),
-            child: Icon(
-              icon,
-              color: color,
-              size: 20,
-            ),
+      child: Padding(
+        padding: paddingSemetricVerticalHorizontal(),
+        child: Container(
+          width: mediaQuery.size.width / 4,
+          decoration: BoxDecoration(
+            border: Border.all(color: color),
+            borderRadius: BorderRadius.circular(10),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "${action} ${activity.runtimeType.toString().split("Model")[0].tr(context)}",
-              style: PoppinsRegular(
-                  mediaQuery.devicePixelRatio * 6, color),
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                color: color,
+                size: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "${action} ${activity.runtimeType.toString().split("Model")[0].tr(context)}",
+                  textAlign: TextAlign.center,
+                  style: PoppinsRegular(
+                      mediaQuery.devicePixelRatio * 4, color),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );

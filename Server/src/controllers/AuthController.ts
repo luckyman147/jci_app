@@ -8,7 +8,8 @@ import { TokenInput, forgetPasswordInputs } from '../dto/auth.dto';
 import { Member } from '../models/Member';
 import { GenerateSalt, HashPassword, ValidatePassword, VerifyrefreshToken, generateAccessToken, generateRefreshToken, revokeRefreshToken } from '../utility';
 import { findrole, findroleByid, GetMemberPermission, getPermissionsKeys, getPublicPermissions } from '../utility/role';
-let refreshTokens:any = []
+import { sendNewMemberEmail } from '../utility/NotificationEmailUtility';
+
 //**  Sign Up*/
 export const MemberSignUp= async(req:Request,res:Response,next:NextFunction)=>{
 const memberInputs=plainToClass(CreateMemberInputs,req.body)
@@ -20,7 +21,7 @@ console.log(errors)
 
 }
 
-    const {email,password,firstName,lastName}=memberInputs
+    const {email,password,firstName,lastName,language}=memberInputs
     
     const existmember= await Member.findOne({email:email})
 if (existmember !==null){
@@ -41,6 +42,7 @@ console.log(role)
         is_validated:false,
         adress:'',
         phone:'',
+        language:language,
 
         lastName:lastName,
         role:role,
@@ -53,6 +55,8 @@ console.log(role)
             await role.save()
 
         }
+        console.log(result.language)
+        sendNewMemberEmail(result.language,result.firstName,result.email)
         console.log(result)
         return res.status(201).json({message:"sign up completed " })
 

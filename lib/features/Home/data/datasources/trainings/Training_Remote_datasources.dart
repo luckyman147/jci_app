@@ -8,6 +8,9 @@ import 'package:jci_app/core/config/env/urls.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:jci_app/core/config/services/verification.dart';
+import 'package:jci_app/features/Home/data/model/ActivityParticpantsModel.dart';
+import 'package:jci_app/features/Home/data/model/GuestModel.dart';
+import 'package:jci_app/features/Home/domain/entities/Guest.dart';
 
 
 import '../../../../../core/config/services/MemberStore.dart';
@@ -30,6 +33,22 @@ abstract class TrainingRemoteDataSource {
 
   Future<Unit> leaveTraining(String id);
   Future<Unit> participateTraining(String id);
+
+ Future<Unit> checkAbsence(String activityId, String memberId, String status) ;
+
+  Future<List<ActivityParticipantsModel>> getAllParticipants(String activityId) ;
+
+  Future<Unit> sendReminder(String activityId) ;
+
+ Future<Unit> addGuest(String activityId, GuestModel guest) ;
+
+  Future<Unit>  deleteGuest(String activityId, String guestId) ;
+
+  Future<Unit> updateGuest(String activityId, GuestModel guest) ;
+
+  Future<Unit> updateGuestStatus(String activityId, String guestid, bool status) ;
+
+Future<List<GuestModel>>    getAllGuest(String activityId) ;
 
 }
 
@@ -223,4 +242,218 @@ return await ParticiActivity(id, client, getTrainingsUrl);
   Future<Unit> updateTraining(TrainingModel Training) async {
     final body =Training.toJson();
    return await  EditFunction(Training, body, getTrainingsUrl+Training.id+"/edit", getTrainingsUrl, client);}
+
+  @override
+  Future<Unit>  checkAbsence(String activityId, String memberId, String status) async{
+    final token = await getTokens();
+
+    return client.patch(
+      Uri.parse(Urls.CheckAbsence),
+      headers: {"Content-Type": "application/json",
+        "Authorization":'Bearer ${token[1]}'
+
+      },
+
+      body: json.encode({
+
+        "activityId": activityId,
+        "memberId": memberId,
+        "status": status
+      }),
+    ).then((response) async {
+
+      if (response.statusCode == 200) {
+
+return Future.value(unit);
+
+
+
+      }
+      else if (response.statusCode == 400) {
+        throw WrongCredentialsException();
+      }
+      else if (response.statusCode==401){
+        throw UnauthorizedException();
+      }
+      else {
+        throw ServerException();
+      }
+
+    });
+  }
+
+  @override
+ Future<List<ActivityParticipantsModel>> getAllParticipants(String activityId) {
+
+      return client.get(
+        Uri.parse(Urls.getAllParticipants(activityId)),
+        headers: {"Content-Type": "application/json",
+
+
+        },
+
+      ).then((response) async {
+        if (response.statusCode == 200) {
+          final List<dynamic> decodedJson = json.decode(response.body);
+
+            final List<ActivityParticipantsModel> members = decodedJson
+                .map<ActivityParticipantsModel>((jsonMemberModel) =>
+                ActivityParticipantsModel.fromJson(jsonMemberModel))
+                .toList();
+            return members;
+
+        } else if (response.statusCode == 400) {
+          throw EmptyDataException();
+        }else{
+          throw ServerException();
+     }
+      });
+}
+
+  @override
+  Future<Unit> sendReminder(String activityId) {
+
+    return client.post(
+      Uri.parse(Urls.SendReminderUrl(activityId)),
+      headers: {"Content-Type": "application/json",
+
+
+      },
+
+    ).then((response) async {
+
+      if (response.statusCode == 200) {
+
+        return Future.value(unit);
+
+      }
+      else if (response.statusCode == 400) {
+        throw WrongCredentialsException();
+      }
+      else if (response.statusCode==401){
+        throw UnauthorizedException();
+      }
+      else {
+        throw ServerException();
+      }});
+
+  }
+
+  @override
+  Future<Unit> addGuest(String activityId, GuestModel guest) async{
+    final token = await getTokens();
+    return client.post(
+      Uri.parse(Urls.Addguest(activityId)),
+      headers: {"Content-Type": "application/json",},
+      body: json.encode(guest.toJson()),
+    ).then((response) async {
+      if (response.statusCode == 200) {
+        return Future.value(unit);
+      } else if (response.statusCode == 400) {
+        throw WrongCredentialsException();
+      } else if (response.statusCode == 401) {
+        throw UnauthorizedException();
+      } else {
+        throw ServerException();
+      }
+    });
+
+
+  }
+
+  @override
+  Future<Unit> deleteGuest(String activityId, String guestId)async {
+    final token = await getTokens();
+    return client.delete(
+      Uri.parse(Urls.deleteguest(activityId, guestId)),
+      headers: {"Content-Type": "application/json",
+        "Authorization":'Bearer ${token[1]}'
+      },
+    ).then((response) async {
+      if (response.statusCode == 204) {
+        return Future.value(unit);
+      } else if (response.statusCode == 400) {
+        throw WrongCredentialsException();
+      } else if (response.statusCode == 401) {
+        throw UnauthorizedException();
+      } else {
+        throw ServerException();
+      }
+    });
+
+  }
+
+  @override
+  Future<Unit> updateGuest(String activityId, GuestModel guest)async {
+    final token = await getTokens();
+    return client.patch(
+      Uri.parse(Urls.Addguest(guest.id)),
+      headers: {"Content-Type": "application/json",
+        "Authorization":'Bearer ${token[1]}'
+      },
+      body: json.encode(guest.toJson()),
+    ).then((response) async {
+      if (response.statusCode == 200) {
+        return Future.value(unit);
+      } else if (response.statusCode == 400) {
+        throw WrongCredentialsException();
+      } else if (response.statusCode == 401) {
+        throw UnauthorizedException();
+      } else {
+        throw ServerException();
+      }
+    });
+    }
+
+
+
+  @override
+  Future<Unit> updateGuestStatus(String activityId, String guestid, bool status)async {
+    final token = await getTokens();
+    return client.patch(
+      Uri.parse(Urls.deleteguest(activityId, guestid)),
+      headers: {"Content-Type": "application/json",
+        "Authorization":'Bearer ${token[1]}'
+      },
+      body: json.encode({
+        "confirmed": status
+      }),
+    ).then((response) async {
+      if (response.statusCode == 200) {
+        return Future.value(unit);
+      } else if (response.statusCode == 400) {
+        throw WrongCredentialsException();
+      } else if (response.statusCode == 401) {
+        throw UnauthorizedException();
+      } else {
+        throw ServerException();
+      }
+    });
+  }
+
+  @override
+  Future<List<GuestModel>> getAllGuest(String activityId) async{
+    final token = await getTokens();
+    return client.get(
+      Uri.parse(Urls.Addguest(activityId)),
+      headers: {"Content-Type": "application/json",
+        "Authorization":'Bearer ${token[1]}'
+        },
+    ).then((response) async {
+      if (response.statusCode == 200) {
+        final List<dynamic> decodedJson = json.decode(response.body);
+
+        final List<GuestModel> guests = decodedJson
+            .map<GuestModel>((jsonGuestModel) =>
+            GuestModel.fromJson(jsonGuestModel))
+            .toList();
+        return guests;
+      } else if (response.statusCode == 400) {
+        throw EmptyDataException();
+      }else{
+        throw ServerException();
+      }
+    });
+    }
+
 }

@@ -13,6 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/core/config/services/MemberStore.dart';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -253,7 +254,7 @@ static Future<void> launchURL(BuildContext context, String url) async {
   }
 
   static List<Map<String, dynamic>> mapObjects(List<Activity> objects) {
-    return objects.map((object) => {'id': object.id, 'isPart': object.IsPart})
+    return objects.map((object) => {'id': object.id, 'participants': object.Participants})
         .toList();
   }
 
@@ -312,13 +313,9 @@ static   String DisplayDuration(DateTime beginDateTime, DateTime endDateTime,
 
  static  List<Activity> filterActivityByCurrentMonth(List<Activity> objects) {
     final now = DateTime.now();
-    final firstDayOfMonth = DateTime(now.year, now.month, 1);
-    final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+    final firstDayOfMonth = DateTime(now.year, now.month,now.day,);
 
-    return objects.where((object) =>
-    object.ActivityBeginDate.isAfter(firstDayOfMonth) &&
-        object.ActivityBeginDate.isBefore(lastDayOfMonth))
-        .toList();
+   return objects.where((activity) => activity.ActivityBeginDate.isAfter(now) || activity.ActivityBeginDate.isAtSameMomentAs(now)).toList();
   }
 
  static  Future<List<Team>> fetchData(BuildContext context) async {
@@ -338,5 +335,9 @@ static   String DisplayDuration(DateTime beginDateTime, DateTime endDateTime,
     return Future.value(true);
   }
 
-
+  static Future<bool> checkifMemberExist(List<Map<String,dynamic>> all)async{
+  final member=await MemberStore.getModel();
+  return all.any((element) => element['memberid']==member!.id);
+  }
 }
+

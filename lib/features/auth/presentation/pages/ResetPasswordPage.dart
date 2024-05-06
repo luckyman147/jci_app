@@ -10,6 +10,7 @@ import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc
 import '../../../../core/app_theme.dart';
 import '../../../../core/config/services/store.dart';
 import '../../../../core/util/snackbar_message.dart';
+import '../../../changelanguages/presentation/bloc/locale_cubit.dart';
 import '../bloc/SignUp/sign_up_bloc.dart';
 import '../bloc/bool/toggle_bool_bloc.dart';
 import '../widgets/Text.dart';
@@ -124,10 +125,11 @@ else if(state.status== ResetPasswordStatus. Updated){
             child: InkWell(
 
               onTap:
-                  () {
+                  ()async {
                 if (_key.currentState!.validate()){
 
-                  final  Member member=Member(email: email, password: state.password.value, id: '', role: '', is_validated: false, cotisation: [], Images: [],teams: [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: [], points: 0, objectifs: []);
+final language=await context.read<localeCubit>().cachedLanguageCode();
+                  final  Member member=Member(email: email, password: state.password.value, id: '', role: '', is_validated: false, cotisation: [], Images: [],teams: [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: [], points: 0, objectifs: [],language: language??'fr');
 
                   context.read<ResetBloc>().add(ResetSubmitted( member: member));
 

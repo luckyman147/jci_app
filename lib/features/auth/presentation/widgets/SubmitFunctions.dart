@@ -7,6 +7,7 @@ import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
 import '../../../../core/util/snackbar_message.dart';
+import '../../../changelanguages/presentation/bloc/locale_cubit.dart';
 import '../../domain/entities/Member.dart';
 import '../../domain/usecases/authusecase.dart';
 import '../bloc/ResetPassword/reset_bloc.dart';
@@ -15,10 +16,11 @@ import '../bloc/login/login_bloc.dart';
 import '../pages/pinPage.dart';
 
 class SubmitFunctions{
-  static void SignUp(SignUpState state, GlobalKey<FormState> _key, BuildContext context, void Function() _resetform) {
+  static void SignUp(SignUpState state, GlobalKey<FormState> _key, BuildContext context, void Function() _resetform) async {
     if (_key.currentState!.validate()) {
+      final language=await context.read<localeCubit>().cachedLanguageCode();
       final member =
-      Member.SignUp(state.email.value, state.password.value, state.firstname.value, state.lastname.value,  );
+      Member.SignUp(state.email.value, state.password.value, state.firstname.value, state.lastname.value, language??'fr' );
 
 
       context.read<SignUpBloc>().add(SendVerificationEmailEvent(email:state.email.value));

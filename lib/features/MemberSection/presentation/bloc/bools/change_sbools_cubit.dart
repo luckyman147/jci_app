@@ -8,6 +8,9 @@ class ChangeSboolsCubit extends Cubit<ChangeSboolsState> {
   void changeState(StatesBool value){
     emit(state.copyWith(state: value));
   }
+  void changeObscur(bool value){
+    emit(state.copyWith(isObscur: value));
+  }
   void changeSettings(SettingsBools value){
     emit(state.copyWith(settings: value));
   }

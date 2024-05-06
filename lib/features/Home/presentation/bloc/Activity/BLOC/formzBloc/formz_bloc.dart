@@ -84,7 +84,7 @@ on<EventChanged>(_onEventChanged);
           memberName: name,
           isValid: Formz.validate([state.memberName, name])),
     );
-    debugPrint(state.memberName.value.toString());
+
   }
 
   void _onBeginDateChanged(
@@ -210,7 +210,7 @@ on<EventChanged>(_onEventChanged);
   void _removeMemberFromList(
       RemoveMember event, Emitter<FormzState> emit) {
     final currentMembers = state.membersTeamFormz.value ?? [];
-    log("ssssssscdzfzedf"+currentMembers.toString() + event.member.toString());
+
     final updatedMembers = List<Member>.from(currentMembers)
       ..remove(event.member);
 

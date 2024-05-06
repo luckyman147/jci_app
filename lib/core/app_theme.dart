@@ -81,7 +81,7 @@ color: textColorWhite,
 
 ButtonStyle bottondec(bool value)=>ElevatedButton.styleFrom(
 
-  primary: value?PrimaryColor:BackWidgetColor,
+  backgroundColor: value?PrimaryColor:BackWidgetColor,
   shape: RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(10),
   ),
@@ -90,9 +90,7 @@ ButtonStyle bottondec(bool value)=>ElevatedButton.styleFrom(
 
 ButtonStyle styleFrom(bool isActive) {
   return ElevatedButton.styleFrom(
-    onPrimary: PrimaryColor.withOpacity(.3),
-    onSurface: PrimaryColor,
-    primary: isActive?PrimaryColor:BackWidgetColor,
+
     shadowColor: SecondaryColor.withOpacity(.3),
     splashFactory: InkRipple.splashFactory,
     surfaceTintColor: isActive?PrimaryColor:BackWidgetColor,

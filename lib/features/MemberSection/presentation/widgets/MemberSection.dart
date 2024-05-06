@@ -63,7 +63,7 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
                     children: [
                    ProfileComponents. buildFutureBuilder(  BackButton(color: textColorBlack, onPressed: () {
                       Navigator.of(context).pop();
-                       context.read<MembersBloc>().add(GetAllMembersEvent());
+                       context.read<MembersBloc>().add(GetAllMembersEvent(true));
 
                     },),false,widget.member.id,(po)=>FunctionMember. isOwner(widget.member.id)),
                       Padding(

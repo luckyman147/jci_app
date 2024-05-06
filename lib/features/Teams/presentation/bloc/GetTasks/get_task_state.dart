@@ -3,11 +3,13 @@ enum TaskStatus { initial, success, error,Changed,Loading,SuccessCheck }
  class GetTaskState extends Equatable {
   final TaskStatus status;
   final List<Map<String, dynamic>> tasks;
+  final List<Map<String, dynamic>> clonetasks;
   final String errorMessage;
 
 
 
   GetTaskState( {this.tasks=const [], this.status = TaskStatus.initial, this.errorMessage = "",
+  this.clonetasks=const []
 
 
 }
@@ -17,7 +19,9 @@ enum TaskStatus { initial, success, error,Changed,Loading,SuccessCheck }
 
 
 
+
     List<Map<String, dynamic>>? tasks,
+    List<Map<String, dynamic>>? clonetasks,
 
     TaskStatus? status,
     String? errorMessage,
@@ -26,6 +30,7 @@ enum TaskStatus { initial, success, error,Changed,Loading,SuccessCheck }
 
 
      tasks: tasks ?? this.tasks,
+      clonetasks: clonetasks ?? this.clonetasks,
 
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
@@ -35,7 +40,7 @@ enum TaskStatus { initial, success, error,Changed,Loading,SuccessCheck }
 
   @override
   // TODO: implement props
-  List<Object?> get props => [tasks, status, errorMessage];
+  List<Object?> get props => [tasks, status, errorMessage,clonetasks];
 
 }
 
