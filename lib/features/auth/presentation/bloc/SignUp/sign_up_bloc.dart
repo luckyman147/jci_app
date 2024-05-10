@@ -29,6 +29,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
 required  this.sendVerificationEmailUseCase,
     required this.signUpUseCase,
+    required this.RegisterGoogleUseCase,
 
   })  :
         super( SignUpState.initial()) {
@@ -37,7 +38,7 @@ required  this.sendVerificationEmailUseCase,
     on<LastNameChanged>(_onLastnameChanged);
     on<ConfirmPasswordChanged>(_onCPasswordChanged);
 
-    on<SendVerificationEmailEvent>(_sendVerificationCode);
+    on<SendVerificationEmailEventOrRegister>(_sendVerificationCode);
 
 on <ResetForm>(_reset_form);
 
@@ -48,15 +49,26 @@ on <ResetForm>(_reset_form);
   final SendVerifyCodeUseCases sendVerificationEmailUseCase;
 
 final SignUpUseCase signUpUseCase;
+final GoogleRegisterUseCase RegisterGoogleUseCase;
 
 
 
-  void _sendVerificationCode(SendVerificationEmailEvent event , Emitter<SignUpState> emit) async {
+  void _sendVerificationCode(SendVerificationEmailEventOrRegister event , Emitter<SignUpState> emit) async {
 
     try {
+      if (!event.isGoogle){
       final result = await sendVerificationEmailUseCase( event.email);
       emit(_eitherSentOrFailure(result, 'Verification Email Sent Successfully'));
-      emit(state.copyWith(signUpStatus: SignUpStatus.Initial));
+      emit(state.copyWith(signUpStatus: SignUpStatus.Initial));}
+      else{
+
+        final failureOrDoneMessage = await RegisterGoogleUseCase(
+            event.member!);
+
+        emit(_eitherRegisterGoogle(
+            failureOrDoneMessage, SIGNUP_SUCCESS_MESS));
+
+      }
     } catch (e) {
       emit(state.copyWith(message: e.toString(),signUpStatus: SignUpStatus.ErrorSignUp),);
     }
@@ -166,12 +178,12 @@ void _reset_form(
           emit(state.copyWith(
         signUpStatus: SignUpStatus.Loading
           ));
-          final failureOrDoneMessage = await signUpUseCase(
-              event.signField);
 
-          emit(_eitherDoneMessageOrErrorState(
-              failureOrDoneMessage, SIGNUP_SUCCESS_MESS));
+            final failureOrDoneMessage = await signUpUseCase(
+                event.signField);
 
+            emit(_eitherDoneMessageOrErrorState(
+                failureOrDoneMessage, SIGNUP_SUCCESS_MESS));
 
 
 
@@ -183,6 +195,13 @@ void _reset_form(
     return either.fold(
           (failure) => state.copyWith(message: mapFailureToMessage(failure),signUpStatus: SignUpStatus.ErrorSignUp),
           (_) => state.copyWith(message: message,signUpStatus: SignUpStatus.MessageSignUp),
+    );
+  }
+
+  SignUpState _eitherRegisterGoogle(Either<Failure, Unit> failureOrDoneMessage, String signup_success_mess) {
+    return failureOrDoneMessage.fold(
+          (l) => state.copyWith(message: mapFailureToMessage(l),signUpStatus: SignUpStatus.ErrorSignUp),
+          (r) => state.copyWith(message: signup_success_mess,signUpStatus: SignUpStatus.RegisterGoogle),
     );
   }
 }

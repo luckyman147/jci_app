@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/strings/app_strings.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/screens/BoardPage.dart';
 
 import '../../../../core/app_theme.dart';
@@ -76,49 +77,55 @@ TextButton( onPressed: () {  }, child: Text("View Terms of use",style: PoppinsRe
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            HeaderSection(mediaQuery, "About Us", Icons.info, (){}),
 
-                            BuildPres(
-                                  (){
-
-
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>PresentationsPage()));
-
-                              },'Presentation',context,null
-
-                            ),
-                            BuildPres(
-                                    (){
-
-                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>BoardPage()));
-
-                                    },'Board',context,null
-                            ), BuildPres(
-                                    (){
-                                      context.read<PresidentsBloc>().add(GetAllPresidentsEvent());
-                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>PresidentsPage()));
+                            Padding(
+                              padding: paddingSemetricHorizontal(h: 16),
+                              child: Column(
+                                children: [
+                                  BuildPres(
+                                        (){
 
 
-                                    },'Last Presidants',context,null),
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>PresentationsPage()));
+
+                                    },'Presentation',context,null
+
+                                  ),
+                                  BuildPres(
+                                          (){
+
+                                            Navigator.push(context, MaterialPageRoute(builder: (context)=>BoardPage()));
+
+                                          },'Board',context,null
+                                  ), BuildPres(
+                                          (){
+                                            context.read<PresidentsBloc>().add(GetAllPresidentsEvent());
+                                            Navigator.push(context, MaterialPageRoute(builder: (context)=>PresidentsPage()));
 
 
-                            SizedBox(
-                              width: mediaQuery.size.width/1.2,
-                              height: 60,
-
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Text(
-                                  "Contact Us",
-                                  style: PoppinsSemiBold(
-                                      20, Colors.black, TextDecoration.none),
-                                ),
+                                          },'Last Presidants',context,null),
+                                  SizedBox(
+                                      width: mediaQuery.size.width/1,
+                                      height: 3,
+                                      child: Divider( color: textColor,))
+                                ],
                               ),
                             ),
+
+
+                            HeaderSection(mediaQuery, "Contact Us", Icons.message, (){}),
                             BuildPres(()async => await ActivityAction.launchURL(context,facebookURl), "Facebook", context, BlackFacebook),
                             BuildPres(()async => await ActivityAction.launchURL(context,InstagramURl), "Instagram", context, instagram),
                             BuildPres(() async=> await ActivityAction.launchURL(context,TiktokURl), "Tiktok", context, tiktok)
                         //    BuildPres(() => null, "Facebook", context, Icons.yoo)
-
+                           , Padding(
+                             padding: paddingSemetricHorizontal(h: 16),
+                             child: SizedBox(
+                                  width: mediaQuery.size.width/1,
+                                  height: 3,
+                                  child: Divider( color: textColor,)),
+                           )
 
                           ],
 
@@ -130,25 +137,68 @@ TextButton( onPressed: () {  }, child: Text("View Terms of use",style: PoppinsRe
                 );
  }
 
+ static SizedBox HeaderSection(MediaQueryData mediaQuery,String text,IconData icon,Function()onpress) {
+   return SizedBox(
+                            width: mediaQuery.size.width/1.2,
+                            height: 60,
+
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(icon,color: textColorBlack,)
+                                    ,SizedBox(width: 10,)
+                                    ,Text(
+                                      "$text",
+                                      style: PoppinsSemiBold(
+                                          18, Colors.black, TextDecoration.none),
+                                    ),
+                                  ],
+                                ),
+                                IconButton(onPressed: onpress, icon: Icon(Icons.arrow_downward_rounded,)
+                                )
+                              ],
+                            ),
+                          );
+ }
+
  static Container builderDrawerheader(BuildContext context) {
    return Container(
                   width: MediaQuery.of(context).size.width,
-                  height: 120,
+                  height: 170,
                   decoration:  BoxDecoration(
-              gradient: LinearGrdi(),
+                      gradient: LinearGrdi(),
+image: DecorationImage(
+                      image: AssetImage("assets/images/cap.png"),
+                      fit: BoxFit.cover,
+  opacity: 0.5
+                    ),
+
 
                   ),
                   child: Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: backgroundColored,
-                      ),
-                      child: Image.asset(
-                        "assets/images/jci.png",
-                        height: 100,
-                        width: 100,
-                      ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: backgroundColored,
+                          ),
+
+                          child: Image.asset(
+                            "assets/images/jci.png",
+                            height: 100,
+                            width: 100,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+
+                      ],
                     ),
                   ),
                 );
@@ -156,12 +206,12 @@ TextButton( onPressed: () {  }, child: Text("View Terms of use",style: PoppinsRe
 
  static LinearGradient LinearGrdi() {
    return LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
                 colors: [
+                  PrimaryColor,
 
-                  textColorWhite,
-                  PrimaryColor
+                textColorWhite
 
                 ],
               );
@@ -184,25 +234,19 @@ static   Widget BuildPres(Function() onTap,String text, BuildContext context  ,S
                 children: [
                   icon!=null?Padding(
                     padding: paddingSemetricHorizontal(),
-                    child: SvgPicture.string(icon,height: 30,width: 30,),
+                    child: SvgPicture.string(icon,height: 20,width: 20,color: textColor,),
                   ):SizedBox(),
                   Text(
 
                       text,
                       textAlign: TextAlign.start,
-                      style: PoppinsRegular(18, textColorBlack)
+                      style: PoppinsRegular(MediaQuery.of(context).devicePixelRatio*5, textColor)
                   ),
                 ],
               ),
             ),
-            
-            Container(
 
-height: 2,
-decoration:  BoxDecoration(
-gradient: LinearGrdi()
-            )
-            )],
+   ],
         ),
       ),
     );
@@ -285,20 +329,18 @@ static   Widget buildteam(MediaQueryData mediaQuery, BuildContext context) {
 
 
 static   Widget TeamsWidget(MediaQueryData mediaQuery,BuildContext context) =>
-      FutureBuilder<List<Team>>(
-        future: ActivityAction.fetchData(context),
-        // Call the function that returns a Future
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // Display a loading indicator while waiting for the Future to complete
-            return LoadingWidget();
-          } else if (snapshot.hasError) {
-            // Display an error message if the Future throws an error
-            return SizedBox();
-          } else {
-            // Display the data from the Future
-            return buildTeamWidget(mediaQuery, context, snapshot.data!);
-          }
-        },
-      );
+BlocBuilder<GetTeamsBloc,GetTeamsState>(builder: (ctx,state){
+  switch(state.status){
+    case TeamStatus.Loading:
+      return LoadingWidget();
+    case TeamStatus.error:return SizedBox();
+    case TeamStatus.success:
+    case TeamStatus.IsRefresh:
+    case TeamStatus.DeletedError:
+    case TeamStatus.Deleted:
+    return buildTeamWidget(mediaQuery, context, state.teams);
+    default:return SizedBox();
+  }
+
+});
 }

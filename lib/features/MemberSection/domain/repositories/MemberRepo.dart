@@ -18,6 +18,7 @@ abstract class MemberRepo {
 
 
   Future<Either<Failure, List<Member>>> GetMemberByName(String name);
+  Future<Either<Failure, List<Member>>> GetMembersRank(bool isUpdated, );
 
   Future<Either<Failure, List<Member>>> GetMembers(bool isUpdated);
 

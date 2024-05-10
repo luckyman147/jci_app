@@ -83,15 +83,31 @@ class UpdateGuestEvent extends ParticpantsEvent {
   @override
   List<Object> get props => [params];
 }
-class GetGuestsEvent extends ParticpantsEvent {
+class GetGuestsOfActivityEvent extends ParticpantsEvent {
   final String activityId;
-  GetGuestsEvent({required this.activityId});
+  GetGuestsOfActivityEvent({required this.activityId});
   @override
   List<Object> get props => [activityId];
+}class GetAllGuestsEvent extends ParticpantsEvent {
+
+const   GetAllGuestsEvent ();
+  @override
+  List<Object> get props => [];
 }
 class SendReminderEvent extends ParticpantsEvent {
   final String activityId;
   SendReminderEvent({required this.activityId});
   @override
   List<Object> get props => [activityId];
+}
+class SearchGuestByname extends ParticpantsEvent {
+  final String name;
+  SearchGuestByname({required this.name});
+  @override
+  List<Object> get props => [name];
+}class SearchMemberByname extends ParticpantsEvent {
+  final String name;
+  SearchMemberByname({required this.name});
+  @override
+  List<Object> get props => [name];
 }

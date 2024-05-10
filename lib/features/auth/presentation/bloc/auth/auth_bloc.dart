@@ -3,8 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:formz/formz.dart';
-import 'package:meta/meta.dart';
+import 'package:jci_app/core/config/services/store.dart';
 
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
@@ -44,8 +43,8 @@ _onRefreshToken,
       Emitter<AuthState> emit,
       ) async {
 
-
-      final result = await signoutUseCase.call(NoParams());
+final statu=await Store.getStatus();
+      final result = await signoutUseCase.call(statu);
       emit(_eitherDoneMessageOrErrorState(
           result, 'Signout Successfully'));
 
@@ -78,7 +77,12 @@ _onRefreshToken,
           (failure) => AuthFailureState(
         message: mapFailureToMessage(failure),
       ),
-          (_) => AuthSuccessState(),
+          (vakue) {
+            if (vakue){
+         return   AuthSuccessState();
+          }
+          return AuthFailureState(message: 'Signout Failed');
+          }
     );
   }  AuthState _eitherDoneRefreshedOrErrorState(
       Either<Failure, Unit> either, String message) {

@@ -39,7 +39,7 @@ class AddUpdateFunctions{
   static   void PopFunctions(String work, BuildContext context,String id ) {
     if (work == "edit") {
       activityParams params = activityParams(
-          type: context.read<ActivityCubit>().state.selectedActivity, act: null, id: id);
+          type: context.read<ActivityCubit>().state.selectedActivity, act: null, id: id, name: '');
       context.read<AcivityFBloc>().add(GetActivitiesByid(params:params));
       Navigator.of(context).pop();
     } else {
@@ -122,7 +122,7 @@ class AddUpdateFunctions{
   }
 
   static void ContextActionaAddOrEdit(ActivityState acti, Activity act, String id, String action, BuildContext context) {
-     final param =activityParams(type: acti.selectedActivity, act: act,id: id);
+     final param =activityParams(type: acti.selectedActivity, act: act,id: id, name: '');
     if (action == "edit") {
       context.read<AddDeleteUpdateBloc>().add(
           UpdateActivityEvent(
@@ -229,7 +229,7 @@ class AddUpdateFunctions{
     if (ste is MessageAddDeleteUpdateState) {
       SnackBarMessage.showSuccessSnackBar(
           message: ste.message, context: context);
-      context.go('/home');
+      Navigator.of(context).pop();
     }
     if (ste is ActivityUpdatedState) {
       SnackBarMessage.showSuccessSnackBar(
@@ -239,13 +239,14 @@ class AddUpdateFunctions{
     if (ste is DeletedActivityMessage) {
       SnackBarMessage.showSuccessSnackBar(
           message: ste.message, context: context);
+      context.pop();
     }
     if (ste is LoadingAddDeleteUpdateState) {
       LoadingWidget();
     }
   }
   static void DeleteAction(BuildContext context, Activity activitys,ActivityState state) {
-    final result=activityParams(type: state.selectedActivity, act: activitys,id: activitys.id);
+    final result=activityParams(type: state.selectedActivity, act: activitys,id: activitys.id, name: '');
 
     context.read<AddDeleteUpdateBloc>().add(DeleteActivityEvent(params: result
     ));
@@ -334,7 +335,7 @@ class AddUpdateFunctions{
   }
 
   static void CheckFunctionPerAct(String id, BuildContext context,activity act,Function(String ) fun) {
-       final result = activityParams(type:act, act: null, id: id);
+       final result = activityParams(type:act, act: null, id: id, name: '');
     context.read<AcivityFBloc>().add(GetActivitiesByid(params: result));
     fun(id);
 

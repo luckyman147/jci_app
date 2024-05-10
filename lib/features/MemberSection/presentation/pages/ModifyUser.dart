@@ -76,14 +76,14 @@ class _ModifyUserState extends State<ModifyUser> {
     return BlocListener<MembersBloc,MembersState>(
   listener: (context, state) {
 
-     if(state is MemberUpdated){
+     if(state .userStatus==UserStatus.Updated){
       SnackBarMessage.showSuccessSnackBar(message: "Updated Succefully", context: context);
 
       context.go('/home');
       context.read<MembersBloc>().add(GetUserProfileEvent(true));
     }
-    else if(state is MemberFailure){
-      SnackBarMessage.showErrorSnackBar(message: state.message, context: context);
+    else if(state.userStatus ==UserStatus.Error){
+      SnackBarMessage.showErrorSnackBar(message: state.Errormessage, context: context);
 
     }
 

@@ -1,8 +1,8 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
-import { CreateMemberInputs, MemberLoginInputs } from '../dto/member.dto';
-
+import { CreateMemberInputs, MemberLoginGoogleInputs, MemberLoginInputs } from '../dto/member.dto';
+import { createWorker, Worker } from 'tesseract.js';
 
 import { TokenInput, forgetPasswordInputs } from '../dto/auth.dto';
 import { Member } from '../models/Member';
@@ -214,3 +214,122 @@ catch(err){
 }
 
  }
+ export const LoginWithGoogl=async(req:Request,res:Response)=>{
+    const loginInputs=plainToClass(MemberLoginGoogleInputs,req.body)
+    const errors=await validate(loginInputs,{validationError:{target:false}})
+    if(errors.length>0){
+        return res.status(400).json({message:'validation error'})
+    }
+    const {email}=loginInputs
+    let MemberInfo =await Member.findOne({email:email})
+    if(MemberInfo){
+          const {accessToken}=
+        await  generateAccessToken({
+                _id:MemberInfo._id,
+                email:MemberInfo.email,
+                role:MemberInfo.role._id,
+                
+                
+          
+          }) 
+          const {refreshToken}=
+          await generateRefreshToken({
+            _id:MemberInfo._id,
+          
+         
+               
+                email:MemberInfo.email,
+             
+                
+
+          })
+          sendNewMemberEmail(MemberInfo.language,MemberInfo.firstName,MemberInfo.email)
+          return res.status(200).json({refreshToken:refreshToken,accessToken:accessToken,email:MemberInfo.email,role:await findroleByid(MemberInfo.role._id),
+           status:'logged' ,Permissions: await getPermissionsKeys(
+            MemberInfo.Permissions,MemberInfo.role)})
+         }
+         else{
+                return res.status(400).json({message:'Invalid credentials',status:'NTR'})
+            
+            
+         }
+    
+  
+        }
+ 
+export const MemberGoogleLoginSignUp= async(req:Request,res:Response,next:NextFunction)=>{
+            const memberInputs=plainToClass(CreateMemberInputs,req.body)
+            
+            const errors= await validate(memberInputs,{validationError:{target:true}})
+            if(errors.length>0){
+            console.log(errors)
+                return res.status(400).json({message:'validation error',errors:errors[0].constraints})
+            
+            }
+            
+                const {email,password,firstName,lastName,language}=memberInputs
+                
+                const existmember= await Member.findOne({email:email})
+            if (existmember !==null){
+                return res.status(409).json({message:'A member exist the same '})
+            
+            }
+            const role = await findrole('member')
+            console.log(role)
+                const salt=await GenerateSalt()
+                const UserPassword=await HashPassword(password,salt)
+                const Permissions=await getPublicPermissions()
+                const result=await Member.create({
+                    email:email,
+                    password:UserPassword,
+                    salt:salt,
+                    cotisation:[false,false],
+                    firstName:firstName,
+                    is_validated:false,
+                    adress:'',
+                    phone:'',
+                    language:language,
+            
+                    lastName:lastName,
+                    role:role,
+                    Permissions:Permissions
+            
+                })
+                if (result){
+                    if(role){
+                        role.Members.push(result.id)
+                        await role.save()
+            
+                    }
+                    const {accessToken}=
+        await  generateAccessToken({
+                _id:result._id,
+                email:result.email,
+                role:result.role._id,
+                
+                
+          
+          }) 
+          const {refreshToken}=
+          await generateRefreshToken({
+            _id:result._id,
+          
+         
+               
+                email:result.email,
+             
+                
+
+          })
+          sendNewMemberEmail(result.language,result.firstName,result.email)
+          return res.status(201).json({refreshToken:refreshToken,accessToken:accessToken,email:result.email,role:await findroleByid(result.role._id),
+           status:'logged' ,Permissions: await getPermissionsKeys(
+            result.Permissions,result.role)})
+
+            
+                    
+            }
+            console.log('something')
+            return res.status(500).json({message:'something went wrong'})
+            
+            }

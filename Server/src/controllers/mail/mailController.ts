@@ -5,6 +5,7 @@ import { GenerateOtp, onRequestOTP, onRequestResetPasswordOTP, ReminderActivity,
 import { Member } from "../../models/Member";
 import { Task } from "../../models/teams/TaskModel";
 import { Activity } from "../../models/activities/activitieModel";
+import { Guest } from "../../models/activities/Guests";
 require('dotenv').config();
 
 
@@ -87,6 +88,7 @@ export const SendReminderActivity=async (req:Request,res:Response)=>{
     const {activityId}= req.params
     const activity=await Activity.findById(activityId)
     if (activity ){
+        const guests=await Guest.find({ _id: { $in: activity.guests } });
 
         const members=await Member.find();
         if (members){
@@ -94,6 +96,12 @@ export const SendReminderActivity=async (req:Request,res:Response)=>{
              ReminderActivity(member.language,member.email,activity.name,activity.ActivityBeginDate,activity.ActivityAdress)
             
             )
+        }
+        if (guests.length>0){
+            guests.forEach ((guest)=>
+            ReminderActivity('fr',guest.email,activity.name,activity.ActivityBeginDate,activity.ActivityAdress)
+           
+           )
         }
        return res.status(200).json("email sent succefully")
     }

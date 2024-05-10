@@ -4,6 +4,7 @@ import 'dart:io';
 
 
 import 'package:circle_progress_bar/circle_progress_bar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,6 +40,8 @@ import '../../../auth/domain/entities/Member.dart';
 import '../../domain/usecases/MemberUseCases.dart';
 import '../pages/memberProfilPage.dart';
 import 'BottomShettMember.dart';
+import 'MemberImpl.dart';
+import 'ShimmerEffects.dart';
 
 class ProfileComponents{
 
@@ -388,6 +391,29 @@ static Widget AchivedmentWidget(bool isFinished,String text ) {
             ],
 
           ), true, member.id, (p0) => FunctionMember.isAdminAndSuperAdmin()),
+          buildFutureBuilder(SizedBox(
+
+            child: Padding(
+              padding: paddingSemetricHorizontal(),
+              child: Column(
+
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+               //   Text('Rank  ',style: PoppinsRegular(20, textColor, ),),
+                  Row(
+                    children: [
+                         Text('Rank  ',style: PoppinsRegular(20, textColor, ),),
+
+
+                      Text(' NO.${member.rank}  ',style: PoppinBold(MediaQuery.of(context).devicePixelRatio*6, PrimaryColor,TextDecoration.none ),),
+                      IconButton(onPressed:  (){}, icon: Icon(Icons.stars_rounded, color: PrimaryColor,)),
+                    ],
+                  ),
+                ],
+
+              ),
+            ),
+          ), false, member.id, (p0) => FunctionMember.isAdminAndSuperAdmin()),
         ],
       ),
     );
@@ -396,7 +422,7 @@ static Widget AchivedmentWidget(bool isFinished,String text ) {
     return FutureBuilder(
       builder: (context,asnapshot) {
         if(asnapshot.connectionState==ConnectionState.waiting){
-          return SizedBox();
+          return ShimmerGridView.padding(context,20 , 20);
         }
         if (asnapshot.data==bolean){
           return body;
@@ -702,22 +728,39 @@ static Widget dropNumber()=> Expanded(
   ),
 );
 
-  static Widget MembersWidgetOnlyName(MediaQueryData mediaQuery) {
-    return BlocBuilder<MembersBloc,MembersState>(builder: (context,state){
+  static Widget MembersWidgetOnlyName(MediaQueryData mediaQuery, BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+            height: 60,
+            width: mediaQuery.size.width * 0.8,
+            child: TextField(
 
-      if (state is AllMembersLoadedState) {
-        return SizedBox(
-            height: 200,
-            child: MembersDetailsOnly(state.members, mediaQuery, ));
-      } else {
-        return LoadingWidget();
-      }
-    });
+                onChanged: (value) {
+                  context.read<MembersBloc>().add(GetMemberByNameEvent( name: value));
+                },
+
+                style: PoppinsRegular( 18, textColorBlack),
+
+                decoration: decorationTextField(null)
+
+            )),
+    SizedBox(height: 10,),
+        SizedBox(
+            height: 10,
+            width: mediaQuery.size.width * 0.8,
+
+        child: Divider()),
+ MemberImpl.       MembersAdminWidget(mediaQuery),
+      ],
+    );
   }
 
+
+
   static Widget MembersDetailsOnly(List<Member> members, MediaQueryData mediaQuery) {
-    return ListView.separated(
-      scrollDirection: Axis.vertical,
+    return GridView.builder(
+
       itemCount: members.length,
       itemBuilder: (context, index) {
         return BlocBuilder<ChangeSboolsCubit, ChangeSboolsState>(
@@ -744,9 +787,12 @@ static Widget dropNumber()=> Expanded(
           },
         );
       },
-      separatorBuilder: (BuildContext context, int index) {
-        return const SizedBox(height: 10,);
-      },
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount:2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 5,
+      ),
     );
   }
 }

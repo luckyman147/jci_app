@@ -11,7 +11,7 @@ import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/memb
 final sl = GetIt.instance;
 
 Future<void> initMembers() async {
-  sl.registerFactory(() => MembersBloc(sl(), sl(),sl(),sl(),sl()));
+  sl.registerFactory(() => MembersBloc(sl(), sl(),sl(),sl(),sl(),sl()));
   sl.registerFactory(() => MemberManagementBloc(sl(), sl(),sl(),sl(),sl(),sl(),sl()));
 
   sl.registerFactory(()=>ChangeSboolsCubit());
@@ -22,6 +22,7 @@ Future<void> initMembers() async {
   //Repositories
 
   //UseCases
+sl.registerLazySingleton(() => GetMembersByRanksUseCases( authRepository: sl()));
 sl.registerLazySingleton(() => SendInactivityReportUseCase( authRepository: sl()));
 sl.registerLazySingleton(() => SendMembershipReportUseCase( authRepository: sl()));
   sl.registerLazySingleton(() => GetAllMembersUseCase( authRepository: sl()));

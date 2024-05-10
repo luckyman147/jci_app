@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
-import 'package:jci_app/core/app_theme.dart';
-import 'package:jci_app/core/config/services/TeamStore.dart';
-import 'package:jci_app/core/util/snackbar_message.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
+
+
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/TaskFilter/taskfilter_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/widgets/DetailTeamWidget.dart';
+
 import 'package:jci_app/features/Teams/presentation/widgets/TeamImpl.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
-
-import '../../../../core/strings/app_strings.dart';
 
 class TeamDetailsScreen extends StatefulWidget {
   final String id;

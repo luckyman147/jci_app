@@ -50,6 +50,126 @@ class ReloadDetailsPage extends StatelessWidget {
       ),
     );
   }
+static  Widget buildshimmerreventlist(){
+  return   ListView.separated(
+      itemCount: 3,
+      itemBuilder: (context, index) {
+        return SingleChildScrollView(
+         scrollDirection: Axis.horizontal,
+          child: Padding(
+            padding: paddingSemetricHorizontal(h: 10),
+            child: Container(
+              height: MediaQuery.of(context).size.height/3.5,
+              width: MediaQuery.of(context).size.width/1.05,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+               border: Border.all(color: Colors.grey[300]!),
+
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    buildShimmerContainer(200,MediaQuery.of(context).size.width/3),
+                    Padding(
+                      padding: paddingSemetricHorizontal(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          buildShimmerContainer(20, MediaQuery.of(context).size.width/2.2),
+                          buildShimmerContainer(20, MediaQuery.of(context).size.width/2.3),
+                          buildShimmerContainer(20, MediaQuery.of(context).size.width/2.5),
+                          buildShimmerContainer(20, MediaQuery.of(context).size.width/2.5),
+
+                          buildShimmerContainer(40, MediaQuery.of(context).size.width/3),
+
+                        ],
+                      ),
+                    )],
+                ),
+              ),
+            ),
+          ),
+        );
+      }, separatorBuilder: (BuildContext context, int index) {
+        return SizedBox(height: 10,);
+
+  },
+    );
+  }
+ static Widget ActivityMonth() {
+    return SizedBox(
+      height: 400, // Adjust the height as per your requirement
+      child: ListView.separated(
+        itemCount: 3,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Container(
+                height: 400,
+                width: MediaQuery.of(context).size.width / 1.3,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      buildShimmerContainer(150, MediaQuery.of(context).size.width/1.2),
+                      buildShimmerContainer(10, MediaQuery.of(context).size.width/1.5),
+                      buildShimmerContainer(20, MediaQuery.of(context).size.width/1.5),
+                      buildShimmerContainer(10, MediaQuery.of(context).size.width/1.5),
+                      buildShimmerContainer(10, MediaQuery.of(context).size.width/3),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          buildShimmerContainer(50, MediaQuery.of(context).size.width/2.5),
+                        ],
+                      ),
+
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return SizedBox(width: 10);
+        },
+      ),
+    );
+  }
+
+  static Widget buildShimmerContainer(double height, double width) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Container(
+              height: height,
+              width: width,
+
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
+            direction: ShimmerDirection.rtl,
+            period: Duration(milliseconds: 1000),
+          ),
+    );
+  }
 
   Widget buildShimmerRow() {
     return Padding(

@@ -16,16 +16,27 @@ import '../bloc/login/login_bloc.dart';
 import '../pages/pinPage.dart';
 
 class SubmitFunctions{
-  static void SignUp(SignUpState state, GlobalKey<FormState> _key, BuildContext context, void Function() _resetform) async {
+  static void SignUp(SignUpState state, GlobalKey<FormState> _key, BuildContext context, void Function() _resetform,bool isGoogle) async {
     if (_key.currentState!.validate()) {
       final language=await context.read<localeCubit>().cachedLanguageCode();
       final member =
       Member.SignUp(state.email.value, state.password.value, state.firstname.value, state.lastname.value, language??'fr' );
 
+if (!isGoogle) {
 
-      context.read<SignUpBloc>().add(SendVerificationEmailEvent(email:state.email.value));
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  Pincode(member: member, verifyEvent: VerifyEvent.RegisterEvent, email:state.email.value ,)));
+  log('dddddd');
+  context.read<SignUpBloc>().add(SendVerificationEmailEventOrRegister(
+      false, null, email: state.email.value));
+  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+      Pincode(member: member,
+        verifyEvent: VerifyEvent.RegisterEvent,
+        email: state.email.value,)));
+}
+else{
+  context.read<SignUpBloc>().add(SendVerificationEmailEventOrRegister(
+      true, member, email: state.email.value));
 
+}
       //
 //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  Pincode(member: member, verifyEvent: VerifyEvent.RegisterEvent,)));
     //  _resetform();

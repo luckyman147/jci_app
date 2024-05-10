@@ -1,5 +1,7 @@
 
 
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
@@ -21,39 +23,57 @@ class MembersBloc extends Bloc<MembersEvent, MembersState> {
   final GetUserProfile getUserProfileUseCase;
   final UpdateMemberUseCase updateMemberUseCase;
   final GetMemberByIdUseCase getMemberByIdUseCase;
-
-  MembersBloc(this.getAllMembersUseCase, this.getMemberByNameUseCase, this.getUserProfileUseCase, this.updateMemberUseCase, this.getMemberByIdUseCase, ) : super(MembersInitial()) {
+final GetMembersByRanksUseCases getMembersByRanksUseCases;
+  MembersBloc(this.getAllMembersUseCase, this.getMemberByNameUseCase, this.getUserProfileUseCase, this.updateMemberUseCase, this.getMemberByIdUseCase, this.getMembersByRanksUseCases, ) : super(MembersInitial()) {
     on<MembersEvent>((event, emit) {
       // TODO: implement event handler
     });
 
 on<GetUserProfileEvent>(getUserPrfile);
     on<GetAllMembersEvent>(_getAllMembers);
+
     on<GetMemberByNameEvent>(_getMemberByName);
     on<UpdateMemberProfileEvent>(_updateuser);
     on<GetMemberByIdEvent>(getMemberByid);
+    on<getRanksOfMembers>(getMembersByRanks);
 
+  }
+  void getMembersByRanks(getRanksOfMembers event, Emitter<MembersState> emit)async{
+
+    try {
+      emit(state.copyWith(userStatus: UserStatus.Loading));
+      final result= await getMembersByRanksUseCases(event.isUpdated);
+      emit(_eitherRanksOrFailure(
+          result));
+    } on Exception catch (e) {
+      log(e.toString());
+      log(e.toString());
+      log(e.toString());
+      // TODO
+    }
   }
 
 void _updateuser(UpdateMemberProfileEvent event ,Emitter<MembersState> emit)async{
-    emit(MemberLoading());
-    try {
+  emit(state.copyWith(userStatus: UserStatus.Loading));
+
+  try {
       final result = await updateMemberUseCase(event.member);
       emit(_eitherDoneUpdatedMemberState(
           result, 'User Profile Updated Successfully'));
     } catch (e) {
-      emit(MemberFailure(message: 'Failed to update user profile'));
+      emit(state.copyWith(Errormessage: 'Failed to update user profile',userStatus: UserStatus.Error));
     }
 }
 void getMemberByid(GetMemberByIdEvent event, Emitter<MembersState> emit)async{
-    emit(MemberLoading());
+    emit(state.copyWith(userStatus: UserStatus.Loading));
     final result= await getMemberByIdUseCase(event.para);
     emit(_eitherDoneUserState(
         result, 'User Profile Loaded Successfully'));
   }
 
 void getUserPrfile(GetUserProfileEvent event, Emitter<MembersState> emit)async {
-    emit(MemberLoading());
+  emit(state.copyWith(userStatus: UserStatus.Loading));
+
     final result= await getUserProfileUseCase(event.isUpdated );
     emit(_eitherDoneUserState(
         result, 'User Profile Loaded Successfully'));
@@ -63,7 +83,8 @@ void getUserPrfile(GetUserProfileEvent event, Emitter<MembersState> emit)async {
       GetAllMembersEvent event,
       Emitter<MembersState> emit,
       ) async {
-    emit(MemberLoading());
+    emit(state.copyWith(userStatus: UserStatus.Loading));
+
     final result = await getAllMembersUseCase.call(event.isUpdated);
     emit(_eitherDoneLoadedState(
         result, 'All Members Loaded Successfully'));
@@ -72,9 +93,11 @@ void getUserPrfile(GetUserProfileEvent event, Emitter<MembersState> emit)async {
       GetMemberByNameEvent event,
       Emitter<MembersState> emit,
       ) async {
-    emit(MemberLoading());
+    emit(state.copyWith(userStatus: UserStatus.Loading));
+
     if(event.name.isEmpty){
-      emit(MemberFailure(message: 'Name cannot be empty'));
+      emit(state.copyWith(userStatus: UserStatus.Error));
+
       add(GetAllMembersEvent(true));
 
     }
@@ -88,11 +111,11 @@ void getUserPrfile(GetUserProfileEvent event, Emitter<MembersState> emit)async {
     return either.fold(
           (failure) =>
 
-              MemberFailure(
-        message: mapFailureToMessage(failure),
+              state.copyWith(
+        Errormessage: mapFailureToMessage(failure),
 
       ),
-          (act) => AllMembersLoadedState(members:act ),
+          (act) => state.copyWith(members:act,userStatus: UserStatus.MembersLoaded,memberByName: act ),
     );
   }
    MembersState _eitherDoneUserState(
@@ -100,11 +123,12 @@ void getUserPrfile(GetUserProfileEvent event, Emitter<MembersState> emit)async {
     return either.fold(
           (failure) =>
 
-              MemberFailure(
-        message:failure.toString(),
+              state.copyWith(
+                Errormessage: mapFailureToMessage(failure),
 
-      ),
-          (act) => UserLoaded(user:act ),
+
+              ),
+          (act) => state.copyWith(user:act,userStatus: UserStatus.userLoaded),
     );
   }
 
@@ -117,22 +141,32 @@ void getUserPrfile(GetUserProfileEvent event, Emitter<MembersState> emit)async {
     return either.fold(
           (failure) =>
 
-              MemberFailure(
-        message: mapFailureToMessage(failure),
+              state.copyWith(
+                Errormessage: mapFailureToMessage(failure),
 
-      ),
-          (act) => MemberByNameLoadedState(members:act ),
+              ),
+          (act) => state.copyWith(userStatus: UserStatus.MemberByname,memberByName: act ),
     );
   }  MembersState _eitherDoneUpdatedMemberState(
       Either<Failure, Unit> either, String message) {
     return either.fold(
           (failure) =>
 
-              MemberFailure(
-        message: failure.toString()
+              state.copyWith(
+                Errormessage: mapFailureToMessage(failure),
 
+              ),
+          (act) => state.copyWith(userStatus: UserStatus.Updated),
+    );
+  }
+
+  MembersState _eitherRanksOrFailure(Either<Failure, List<Member>> result) {
+    return result.fold(
+          (failure) => state.copyWith(
+        Errormessage: mapFailureToMessage(failure),
+            userStatus: UserStatus.ErrorMembers,
       ),
-          (act) => MemberUpdated( ),
+          (act) => state.copyWith(userStatus: UserStatus.MembersRanksLoaded, membersWithRanks: act),
     );
   }
 

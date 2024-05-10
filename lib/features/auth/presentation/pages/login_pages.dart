@@ -5,6 +5,7 @@ import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
+import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/bool/toggle_bool_bloc.dart';
 import 'package:jci_app/features/intro/presentation/bloc/internet/internet_bloc.dart';
 
@@ -51,7 +52,26 @@ class _LoginPageState extends State<LoginPage> {
             },
             child: BlocConsumer<LoginBloc, LoginState>(
               listener: (context, state) {
+if (state is LoadingLogin) {
+                showDialog(context: context, builder:(context)=>AlertDialog(
+                    content: SingleChildScrollView(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight: 170,
+                          ),
+                          child: Column(
+                            children: [
+                              LoadingWidget(),
+                              const SizedBox(height: 10),
+                              Text(
+                                "Loading",
+                                style: PoppinsRegular(16, textColorBlack),
+                              ),
+                            ],
+                          ),
+                        ))));
 
+}
                 if (state is MessageLogin) {
 
                   SnackBarMessage.showSuccessSnackBar(
@@ -61,10 +81,17 @@ class _LoginPageState extends State<LoginPage> {
                   context.go('/home');
 
                   context.read<PageIndexBloc>().add(SetIndexEvent(index:0));
-                  context.read<AcivityFBloc>().add(GetActivitiesOfMonthEvent(act:activity.Events));
-                  context.read<MembersBloc>().add(GetUserProfileEvent(true));
 
+                  context.read<MembersBloc>().add(GetUserProfileEvent(true));
+                  context.read<AcivityFBloc>().add(GetActivitiesOfMonthEvent(act:activity.Events));
                 }
+                else if (state is RegisterGoogle) {
+
+            final name=state.user.displayName!.split(" ");
+            context.read<SignUpBloc>().add(SignUpEmailnameChanged(state.user.email!));
+            context.read<SignUpBloc>().add(FirstNameChanged(name[0]));
+            context.read<SignUpBloc>().add(LastNameChanged(name[1]));
+            context.go('/signup/${state.user.email}/${state.user.displayName}');       }
                 else if (state is ErrorLogin) {
 
 

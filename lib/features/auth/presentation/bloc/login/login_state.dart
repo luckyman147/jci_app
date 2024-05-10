@@ -54,6 +54,14 @@ class ErrorLogin extends LoginState{
 
 
 }
+class RegisterGoogle extends LoginState{
+  final User user;
+
+  RegisterGoogle({required this.user});
+  @override
+  List<Object> get props =>
+      [user];
+}
 class MessageLogin extends LoginState{
   final String message;
   MessageLogin({ required this.message});

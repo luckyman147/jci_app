@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../../core/error/Failure.dart';
 import '../../../../core/usescases/usecase.dart';
@@ -17,14 +18,14 @@ class RefreshTokenUseCase extends UseCase<Unit, NoParams> {
     return await authRepository.refreshToken();
   }
 }
-class SignOutUseCase extends UseCase<bool, NoParams> {
+class SignOutUseCase extends UseCase<bool, bool> {
   final AuthRepo authRepository;
 
   SignOutUseCase({required this.authRepository});
 
   @override
-  Future<Either<Failure, bool>> call(NoParams params) async {
-    return await authRepository.signOut();
+  Future<Either<Failure, bool>> call(bool params) async {
+    return await authRepository.signOut(params);
   }
 }
 class UpdatePasswordUseCase extends UseCase<Unit, Member> {
@@ -116,6 +117,25 @@ class CheckOtpUseCase extends UseCase<bool, String>{
   @override
   Future<Either<Failure, bool>> call(String otp) async {
     return await _loginRepo.checkOtp(otp);
+  }
+
+}
+class GoogleSignUseCase extends UseCase<User?, NoParams>{
+  final AuthRepo _loginRepo;
+
+  GoogleSignUseCase(this._loginRepo);
+  @override
+  Future<Either<Failure, User?>> call(NoParams params) async {
+    return await _loginRepo.signinWithGoogle();
+  }
+
+}class GoogleRegisterUseCase extends UseCase<Unit, Member>{
+  final AuthRepo _loginRepo;
+
+  GoogleRegisterUseCase(this._loginRepo);
+  @override
+  Future<Either<Failure, Unit>> call(Member params) async {
+    return await _loginRepo.RegisterInWithGoogle(params);
   }
 
 }

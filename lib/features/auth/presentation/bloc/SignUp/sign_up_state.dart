@@ -1,6 +1,6 @@
 part of 'sign_up_bloc.dart';
 enum SignUpStatus{Initial,
-  EmailSuccessState,MessageSignUp,Loading,ErrorSignUp
+  EmailSuccessState,MessageSignUp,Loading,ErrorSignUp,RegisterGoogle
 }
 class SignUpState extends Equatable {
   const SignUpState({

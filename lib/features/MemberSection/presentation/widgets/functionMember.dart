@@ -64,7 +64,7 @@ static Future<List<Member>> getMembers(){
           IsSelected: member.IsSelected,
           role: 'member ',
           is_validated: member.is_validated,
-          password: 'password', objectifs: [], language: member.language,
+          password: 'password', objectifs: [], language: member.language, rank: 0,
         );
         context.read<MembersBloc>().add(
             UpdateMemberProfileEvent(memberUpdate));

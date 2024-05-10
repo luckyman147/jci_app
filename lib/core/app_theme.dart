@@ -68,7 +68,7 @@ final ActivityDecoration=  BoxDecoration(
 
 borderRadius:  BorderRadius.only(
 bottomLeft: Radius.circular(43),
-bottomRight: Radius.circular(43),
+bottomRight: Radius.circular(20),
 topLeft: Radius.circular(15),
 topRight: Radius.circular(15),
 ),

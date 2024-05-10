@@ -1,15 +1,19 @@
 import 'dart:convert';
 
+import 'package:circle_progress_bar/circle_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/Home/presentation/widgets/AddActivityWidgets.dart';
+import 'package:jci_app/features/Home/presentation/widgets/MemberSelection.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/MemberImpl.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/auth/presentation/widgets/Components.dart';
@@ -24,6 +28,7 @@ import '../../../auth/domain/entities/Member.dart';
 import '../../../auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
 import '../../../auth/presentation/bloc/bool/toggle_bool_bloc.dart';
+import 'BestMembersWidget.dart';
 
 class SettingsComponent {
   static isProfile(SettingsBools state) {
@@ -42,36 +47,54 @@ static isMode(SettingsBools state) {
   }
 
   static Widget rowAction(BuildContext context, String title, IconData data,bool isSwitch,Widget body,MediaQueryData mediaQuery
-    , SettingsBools state) {
+    , SettingsBools state,IconData? iconData,double height) {
     return Padding(
       padding: paddingSemetricVertical(),
       child: AnimatedContainer(
+
         decoration: ProfileComponents.boxDecoration,
         duration: Duration(milliseconds: 1000),
      curve: Curves.easeIn,
         padding: paddingSemetricVerticalHorizontal(),
-        height: isSwitch ?  mediaQuery.size.width/2.3 : 70,
+        height: isSwitch ?  height: 70,
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconAndTextInfo(data, title),
-                IconButton(
-                  onPressed:isSwitch?
-                      ()=>context.read<ChangeSboolsCubit>().changeSettings(SettingsBools.Initial):
-                      ()=>context.read<ChangeSboolsCubit>().changeSettings(state) ,
-                  icon: Icon(isSwitch?Icons.arrow_downward_rounded: Icons.arrow_forward_rounded),
+                Row(
+                  children: [
+                    iconData!=null?    Padding(
+                      padding: paddingSemetricHorizontal(),
+                      child: IconButton(  icon:Icon(iconData),onPressed: (){
+
+                     BestMembersComponent.ShowRankMembers(mediaQuery, context);
+
+
+                      },),
+                    ):SizedBox(),
+                    IconButton(
+                      onPressed:isSwitch?
+                          ()=>context.read<ChangeSboolsCubit>().changeSettings(SettingsBools.Initial):
+                          ()=>context.read<ChangeSboolsCubit>().changeSettings(state) ,
+                      icon: Icon(isSwitch?Icons.arrow_downward_rounded: Icons.arrow_forward_rounded),
+                    ),
+                  ],
                 )
               ],
             ),
 
-            isSwitch ? Expanded(child: SingleChildScrollView(child: body)) : SizedBox()
+            isSwitch ? Expanded(
+
+                child: SingleChildScrollView(child: body)) : SizedBox()
           ],
         ),
       ),
     );
   }
+
+
 
   static Row IconAndTextInfo(IconData data, String title) {
     return Row(
@@ -102,7 +125,7 @@ static isMode(SettingsBools state) {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          rowAction(context, "Profile", Icons.person,isProfile(state.settings),Profile(context,member,pass,cpass,key),MediaQuery.of(context),SettingsBools.Profile),
+          rowAction(context, "Profile", Icons.person,isProfile(state.settings),Profile(context,member,pass,cpass,key),MediaQuery.of(context),SettingsBools.Profile,null,200),
           MembersAdmin(state),
 
               Language(context, state),
@@ -140,7 +163,7 @@ static isMode(SettingsBools state) {
                   }
 
                  return rowAction(context, "Language (${snat.data})", Icons.language,
-                     isLanguage(state.settings),WidgetChangeLanguageWidget(context,MediaQuery.of(context)),MediaQuery.of(context),SettingsBools.Language);
+                     isLanguage(state.settings),WidgetChangeLanguageWidget(context,MediaQuery.of(context)),MediaQuery.of(context),SettingsBools.Language,null,200);
                }
              );
   }
@@ -149,7 +172,7 @@ static isMode(SettingsBools state) {
     return FutureBuilder(
           builder: (context,snap) {
             if(snap.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
+              return LoadingWidget();
             }
           else if (snap.data != null) {
             if (snap.data==true) {
@@ -159,9 +182,9 @@ static isMode(SettingsBools state) {
                   Icons.people,
                   isMem(state.settings),
                   ProfileComponents.MembersWidgetOnlyName(
-                      MediaQuery.of(context)),
+                      MediaQuery.of(context),context),
                   MediaQuery.of(context),
-                  SettingsBools.Members);
+                  SettingsBools.Members,Icons.emoji_events,300);
             }
           else{return SizedBox();}
           }
@@ -266,7 +289,7 @@ static isMode(SettingsBools state) {
                ProfileComponents.SaveChangesButton(()async{
                  if (key.currentState!.validate()) {
                    final language=await context.read<localeCubit>().cachedLanguageCode();
-                   final  Member member=Member(email: newMember.email , password: cPassword.text, id: '', role: '', is_validated: false, cotisation: [], Images: [],teams: [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: [], points: 0, objectifs: [],language: language??'fr');
+                   final  Member member=Member(email: newMember.email , password: cPassword.text, id: '', role: '', is_validated: false, cotisation: [], Images: [],teams: [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: [], points: 0, objectifs: [],language: language??'fr', rank: 0);
 
                    context.read<ResetBloc>().add(ResetSubmitted( member: member));
                  cPassword.clear();
@@ -363,4 +386,7 @@ static   Widget LanguageButton(BuildContext context,String language,String langu
       ],
     );
   }
+
+
+
 }

@@ -14,6 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
+import 'package:jci_app/features/Home/domain/entities/ActivityParticpants.dart';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -28,8 +29,11 @@ import '../../../Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import '../../../auth/domain/entities/Member.dart';
 
 import '../../domain/entities/Activity.dart';
+import '../../domain/entities/Guest.dart';
+import '../../domain/usercases/ActivityUseCases.dart';
 import '../bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 
+import '../bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../bloc/Activity/activity_cubit.dart';
 import '../bloc/IsVisible/bloc/visible_bloc.dart';
@@ -37,6 +41,123 @@ import '../bloc/textfield/textfield_bloc.dart';
 
 
 class ActivityAction {
+ static void ConfirmPreence(Guest guest, BuildContext context, String activityId) {
+
+      final param=guestParams(guest: guest, guestId: guest.id, isConfirmed:! guest.isConfirmed, activityid: activityId);
+      context.read<ParticpantsBloc>().add(ConfirmGuestEvent(params: param));
+
+  }
+
+ static void DeleteGestFunction(BuildContext context, Guest guest,String activityId) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            "Delete Guest",
+            style: PoppinsRegular(19, textColorBlack),
+          ),
+          contentPadding: EdgeInsets.symmetric(vertical: 20.0), // Adjust vertical padding
+          content: SizedBox(
+            height: 100, // Set the desired height
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Ensure the column takes minimum space
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Are you sure you want to delete ${guest.name}",
+                    style: PoppinsRegular(17, textColorBlack),
+                  ),
+                ),
+                if (guest.id.isEmpty)
+                  Text(
+                    "This guest has not been saved to the database",
+                    style: PoppinsSemiBold(
+                      17,
+                      Colors.red,
+                      TextDecoration.underline,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("No", style: PoppinsRegular(15, textColor)),
+            ),
+            TextButton(
+              onPressed: () {
+                if (guest.id.isNotEmpty) {
+                  final param = guestParams(
+                    guest: guest,
+                    guestId: guest.id,
+                    isConfirmed: true,
+                    activityid: activityId,
+                  );
+                  context.read<ParticpantsBloc>().add(DeleteGuestEvent(
+                    params: param,
+                  ));
+                  Navigator.pop(context);
+                }
+              },
+              child: Text("Yes", style: PoppinsRegular(15, PrimaryColor)),
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  static void showGuestDetails(BuildContext context, Guest guest) {
+    showDialog(
+
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+
+          title: Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Email:',style: PoppinsLight(15, textColor),),
+                Text(' ${guest.email}',style: PoppinsLight(17, textColorBlack),),
+                Text('Phone Number: ',style: PoppinsLight(15, textColor),),
+                Text('${guest.phone}',style: PoppinsLight(17, textColorBlack),),
+
+              ],
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.start,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close',style: PoppinsRegular(15, PrimaryColor),),
+            ),
+          ],
+        );
+      },
+    );
+  }
+ static void AddGuest(GlobalKey<FormState> formKey, TextEditingController controller, TextEditingController controller2, TextEditingController controller3, BuildContext context,String activityId) {
+    if (formKey.currentState!.validate()) {
+      final guest=Guest(name: controller.text, email: controller2.text, phone: controller3.text,isConfirmed: true, id: '');
+      final guestP=guestParams(guest: guest, guestId: guest.id, isConfirmed: true, activityid: activityId);
+      context.read<ParticpantsBloc>().add(AddGuestEvent(params: guestP));
+      controller.clear();
+      controller2.clear();
+      controller3.clear();
+      context.read<ActivityCubit>().selectIndex(0);
+
+    }
+  }
 static   Future<void> DatePicker(BuildContext context, DateTime time,
       bool mounted) async {
     final temp = await showDatePicker(
@@ -339,5 +460,22 @@ static   String DisplayDuration(DateTime beginDateTime, DateTime endDateTime,
   final member=await MemberStore.getModel();
   return all.any((element) => element['memberid']==member!.id);
   }
+ static List<Guest> searchGuestsByName(List<Guest> objects, String? name) {
+   if (name == null || name.isEmpty) {
+     return objects;
+   } else {
+     return objects.where((obj) => obj.name.toLowerCase().contains(name.toLowerCase())
+         || obj.phone.toLowerCase().contains(name.toLowerCase()) ||
+         obj.email.toLowerCase().contains(name.toLowerCase())  ).toList();
+   }
+ }
+ static List<ActivityParticipants> searchMembersByName(List<ActivityParticipants> objects, String? name) {
+   if (name == null || name.isEmpty) {
+     return objects;
+   } else {
+     return objects.where((obj) => Member.toMember(obj.member[0].cast<String,dynamic>()).firstName.toLowerCase().contains(name.toLowerCase())
+      ).toList();
+   }
+ }
 }
 

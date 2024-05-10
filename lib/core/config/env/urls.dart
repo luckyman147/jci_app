@@ -1,6 +1,5 @@
-import 'dart:io';
 
-  final BaseUrl = "http://192.168.1.3"
+  final BaseUrl = "http://192.168.1.11"
       ":8080";
   final SuperAdminUrl = "$BaseUrl/Super";
   final BoardUrl = "$BaseUrl/Board";
@@ -18,7 +17,9 @@ import 'dart:io';
    String RemoveBoardRoleUrl(String id)=> "$BoardRoleUrl/$id";
 String RemovePostUrl(String id,String year)=> "$PositionUrl/$id/$year";
 final LoginUrl = "$BaseUrl/auth/login";
+final LoginGoogleUrl = "$BaseUrl/auth/google";
 final SignUpUrl = "$BaseUrl/auth/signup";
+final SignUpGoogleUrl = "$BaseUrl/auth/google/register";
 final ForgetPasswordUrl = "$BaseUrl/auth/forgetPassword";
 final RefreshTokenUrl = "$BaseUrl/auth/RefreshToken";
 final LogoutUrl = "$BaseUrl/auth/logout";
@@ -55,6 +56,9 @@ final getEventsUrl = "$BaseUrl/Event/";
 
 class Urls{
   static String guestUrl="$BaseUrl/Activity/guests/";
+  static String ALLGuestsAllUrl="$BaseUrl/Activity/guestsALL";
+  static String getMembersWithRank="$BaseUrl/member/Members";
+  static String activitySearch="$BaseUrl/Activity/SearchName/get";
   static String SendReminderUrl(String activityId)=> "$BaseUrl/mails/SendReminder/$activityId";
   static String Addguest(String activityId)=> "$guestUrl$activityId";
   static String deleteguest(String activityId,String guestId)=> "$guestUrl$activityId/$guestId";
@@ -66,4 +70,5 @@ class Urls{
   static String ResetPassword= "$BaseUrl/mails/ResetPasswordMails";
   static String TeamMember(String teamId) => "$TeamUrl$teamId/TeamMembers";
   static String InviteMemberUrl(String teamId,String memberid) => "$TeamUrl$teamId/AddMember/$memberid";
+  static String JoinTeam(String teamId,) => "$TeamUrl$teamId/JoinTeam";
 }

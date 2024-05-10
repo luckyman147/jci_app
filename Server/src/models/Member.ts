@@ -21,6 +21,7 @@ is_validated:boolean
 cotisation:boolean[]
     salt:string
    role:any
+   rank:number
 }
 export const MemberSchema=new Schema({
     email:{type:String,required:true},
@@ -40,6 +41,7 @@ language:{type:String,default:'fr'},
         ref:"Permission",default:[]
     },
     Images:{type:[Schema.Types.ObjectId],ref:'File'},
+    rank:{type:String,default:0},
 
 
     refreshTokenRevoked:{type:[String],default:[]},

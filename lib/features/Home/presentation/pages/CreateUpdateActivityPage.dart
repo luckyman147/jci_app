@@ -105,12 +105,9 @@ class _CreateUpdateActivityPageState extends State<CreateUpdateActivityPage> {
       body: SafeArea(
         child: BlocBuilder<AcivityFBloc, AcivityFState>(
   builder: (context, state) {
-   if (State is ActivityLoadingState){
-return      LoadingWidget();
-   }
-   else{
+
      return body(mediaQuery);
-   }
+
   },
 ),
       ),

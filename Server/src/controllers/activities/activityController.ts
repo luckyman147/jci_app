@@ -1,9 +1,12 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
-import { ActivityMemberStatus, GuestInput } from '../../dto/activity.dto';
+import { ActivityMemberStatus, GuestInput, SeachActivityInputs, SearchType } from '../../dto/activity.dto';
 import { Activity } from '../../models/activities/activitieModel';
+import { Event } from '../../models/activities/eventModel';
 import { Guest } from '../../models/activities/Guests';
+import { Meeting } from '../../models/activities/meetingModel';
+import { Training } from '../../models/activities/TrainingModel';
 import { Member } from '../../models/Member';
 import { ConfirmGuestPartGuestEmail, participationEmail, sendAbsenceEmail, sendAddGuestEmail, sendPresenceEmail } from '../../utility/NotificationEmailUtility';
 import { getMembersInfo } from '../../utility/role';
@@ -94,9 +97,26 @@ export const GetActivityByid= async (req: Request, res: Response, next: NextFunc
   
   export const GetActivityByname= async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const name = req.params.name;
-      const activitie = await Activity.findOne({name});
-      if (activitie) {
+      const eventInputs=plainToClass(SeachActivityInputs,req.body)
+      // Validate the inputs
+      const errors = await validate(eventInputs, { validationError: { target: false } });
+      if (errors.length > 0) {
+        return res.status(400).json({ message: 'Invalid input', errors });
+      }
+      let activitie;
+      if (eventInputs.type==SearchType.Training){
+         activitie = await Training.find({ name: { $regex: eventInputs.name, $options: 'i' }});
+      }
+      else if (eventInputs.type==SearchType.Event){
+          activitie = await Event.find({ name: { $regex: eventInputs.name, $options: 'i' } });
+      }
+      else if (eventInputs.type==SearchType.Meeting){
+          activitie = await Meeting.find({ name: { $regex: eventInputs.name, $options: 'i' }});
+      }
+      else{
+        activitie = await Activity.find({ name: { $regex: eventInputs.name, $options: 'i' } });
+      }
+      if (activitie.length>0) {
         res.json(activitie);
       } else {
         res.status(404).json({ message: "No event found with this name" });
@@ -216,6 +236,12 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
       if (errors.length > 0) {
         return res.status(400).json({ message: 'Invalid input', errors });
       }
+
+      // find guest by email 
+      let guest = await Guest.find({email:eventInputs.email})
+      if (guest.length>0){
+        return res.status(409).json({ message: 'Guest already exists' });
+      }
       const {activityId}=req.params
       const activity=await Activity.findById(activityId)
       if (!activity){
@@ -255,6 +281,17 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
     
     } catch (error) {
       console.error('Error fetching guests of activity:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+    export const getAllGuests = async (req: Request, res: Response) => {
+    try {
+
+      const guests = await Guest.find();
+      res.status(200).json( guests );
+    
+    } catch (error) {
+      console.error('Error fetching guests :', error);
       res.status(500).json({ message: 'Internal server error' });
     }
   };

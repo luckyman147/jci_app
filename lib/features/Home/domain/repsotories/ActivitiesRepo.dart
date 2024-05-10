@@ -8,6 +8,7 @@ import '../entities/Guest.dart';
 
 abstract class ActivitiesRepo{
   Future<Either<Failure, List<Activity>>> getAllActvities(activity act);
+  Future<Either<Failure, List<Activity>>> getActivityByname(String name,activity act);
   Future<Either<Failure, Activity>> getActivityById(String id,activity act);
 
   Future<Either<Failure, Unit>> createEvent(Activity event,activity act);
@@ -17,7 +18,8 @@ abstract class ActivitiesRepo{
   Future<Either<Failure, Unit>> participateEvent(String id,activity act);
 Future<Either<Failure,Unit>> CheckAbsence(String activityId,String memberId,String status);
 Future<Either<Failure,List<ActivityParticipants>>> getAllParticipants(String activityId);
-Future<Either<Failure,List<Guest>>> getAllguest(String activityId);
+Future<Either<Failure,List<Guest>>> getAllguestOfActivity(String activityId);
+Future<Either<Failure,List<Guest>>> getAllguest(bool isupdated);
 Future<Either<Failure,Unit>> addGuest(String activityId,Guest guest);
 Future<Either<Failure,Unit>> deleteGuest(String activityId,String guestId);
 Future<Either<Failure,Unit>> updateGuest(String activityId,Guest guest);

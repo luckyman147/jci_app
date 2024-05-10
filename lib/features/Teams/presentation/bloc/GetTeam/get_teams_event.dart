@@ -92,6 +92,15 @@ final TeamInput teamfi;
   // TODO: implement props
   List<Object?> get props => [teamfi];
 }
+class JoinTeam extends GetTeamsEvent{
+  final String Teamid ;
 
+  JoinTeam({required this.Teamid});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [Teamid];
+
+}
 
 

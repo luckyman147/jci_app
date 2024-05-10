@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:formz/formz.dart';
+import 'package:jci_app/core/config/services/store.dart';
 
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
+
 
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
@@ -20,15 +23,16 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc({required this.loginUseCase,})
+  LoginBloc({required this.loginUseCase,required this.googleSignUseCase})
       : super(const LoginState()) {
     on<LoginEmailnameChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
     on<LoginSubmitted>(_onSubmitted);
 
     on<ResetFormLogin>(_reset_form);
+    on<SignInWithGoogleEvent>(_onGoogleSign);
   }
-
+final GoogleSignUseCase googleSignUseCase;
   final LoginUseCase loginUseCase;
   void _reset_form(
     ResetFormLogin event,
@@ -36,7 +40,23 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ) {
     emit(LoginState.initial());
   }
+void _onGoogleSign(
+    SignInWithGoogleEvent event,
+    Emitter<LoginState> emit,
+  ) async {
+    try {
+      emit(LoadingLogin());
+    final result = await googleSignUseCase.call(NoParams());
+final status=await Store.getStatus();
+    emit(_eithSignOrNTR(
+        result, 'Login Successful',status));
 
+    }
+        catch (e) {
+      log(e.toString());
+        emit(ErrorLogin(message: "Something went wrong ${e.toString()}"));
+        }
+  }
   void _onEmailChanged(
     LoginEmailnameChanged event,
     Emitter<LoginState> emit,
@@ -68,18 +88,17 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) async {
     if (state.isValid) {
-      print('event' + event.toString());
 
       try {
-        print(' ya said im here');
+
         final failureOrDoneMessage =
             await loginUseCase.LoginCredentials(event.email, event.password);
 
-        print("login" + failureOrDoneMessage.toString());
+
 
         emit(_eitherDoneMessageOrErrorState(
             failureOrDoneMessage, 'Login Successful'));
-        await Future.delayed(const Duration(seconds: 1));
+
 
         emit(state.copyWith(status: FormzSubmissionStatus.success));
       } catch (e) {
@@ -107,4 +126,25 @@ LoginState _eitherDoneMessageOrErrorState(
     ),
     (_) => MessageLogin(message: message),
   );
-}}
+}
+
+  LoginState _eithSignOrNTR(Either<Failure, User?> result, String s, bool status) {
+    return result.fold(
+      (failure) => ErrorLogin(
+        message: mapFailureToMessage(failure),
+      ),
+      (user) {
+        if (user == null || status ) {
+          return MessageLogin(message: "Login Successful");
+        }
+        else{
+        return  RegisterGoogle(user: user );}
+      }
+
+
+    );
+
+  }
+}
+
+

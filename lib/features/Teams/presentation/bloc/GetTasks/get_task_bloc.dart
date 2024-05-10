@@ -76,29 +76,29 @@ try{
 }
 catch(e){
   log(e.toString());
-  emit(state.copyWith(status: TaskStatus.error, errorMessage: "An error occurred"));
+  emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "An error occurred"));
 }
   }
  void _deleteFile(DeleteFileEvent event ,Emitter<GetTaskState> emit)async {
     if (event.fields.taskid == null) {
-      emit(state.copyWith(status: TaskStatus.error, errorMessage: "An error occurred"));
+      emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "An error occurred"));
       return;
     }
     if (event.fields.fileid == null) {
-      emit(state.copyWith(status: TaskStatus.error, errorMessage: "An error occurred"));
+      emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "An error occurred"));
       return;
     }
     try{
       final result = await deleteFileUseCase(event.fields);
       _eitherdeleteFileorFailure(result, emit, event);
     } catch (e) {
-      emit(state.copyWith(status: TaskStatus.error, errorMessage: "$e + error occurred"));
+      emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "$e + error occurred"));
     }
  }
 
  void _eitherdeleteFileorFailure(Either<Failure, Unit> result, Emitter<GetTaskState> emit, DeleteFileEvent event) {
    result.fold((l) {
-     emit(state.copyWith(status: TaskStatus.error, errorMessage: "$l + error occurred"));
+     emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "$l + error occurred"));
    }, (r) {
 
      final updatedTasks = [...state.tasks.map((task) {
@@ -119,19 +119,16 @@ catch(e){
 
 
 void _updateFiles(UpdateFile event, Emitter<GetTaskState> emit) async {
-    if (event.fields.fileid== null) {
-      emit(state.copyWith(status: TaskStatus.error, errorMessage: "EMPTY occurred"));
-      return;
-    }
+
     if (event.fields.taskid == null) {
-      emit(state.copyWith(status: TaskStatus.error, errorMessage: "An error occurred"));
+      emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "An error occurred"));
       return;
     }
 
     try {
       final result = await updateFileUseCase(event.fields);
       result.fold((l) {
-        emit(state.copyWith(status: TaskStatus.error, errorMessage: "$l + error occurred"));
+        emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "$l + error occurred"));
       }, (r) {
 
         List<Map<String, dynamic>> updatedTasks = AddSousFieldAction(event.fields.taskid,
@@ -206,7 +203,7 @@ checkState(emit, updatedTasks);
 
     }
      catch (e) {
-      emit(state.copyWith(status: TaskStatus.error, errorMessage: "An error occurred"));
+      emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "An error occurred"));
     }
   }
   void _initTasks(initTasks event, Emitter<GetTaskState> emit) {
@@ -301,7 +298,7 @@ void                        UpdateTimelineFun(UpdateTimeline event, Emitter<GetT
 void checkState(Emitter<GetTaskState> emit, List<Map<String, dynamic>> updatedTasks) {
    if (state.status == TaskStatus.success){
   emit (    state.copyWith(tasks: updatedTasks,status: TaskStatus.Changed ));
-  log(state.status.toString());
+
   }
   else {
   emit (    state.copyWith(tasks: updatedTasks,status: TaskStatus.success,clonetasks: updatedTasks ));
@@ -315,7 +312,7 @@ void _ChecklistStatusUpdated(UpdateChecklistStatus event, Emitter<GetTaskState> 
     }
     catch(e){
       log(e.toString());
-      emit(state.copyWith(status: TaskStatus.error, errorMessage: "An error occurred"));
+      emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "An error occurred"));
     }
   }
 void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
@@ -333,7 +330,8 @@ void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
 
   GetTaskState _mapFailureOrTaskByIdToState(Either<Failure, Tasks> either) {
     return either.fold(
-          (failure) => GetTaskError(message:mapFailureToMessage(failure)),
+          (failure) =>         state.copyWith(status: TaskStatus.error, errorMessage: mapFailureToMessage(failure))
+      ,
           (act) =>
           GetTaskByIdLoaded(
             task:act,
@@ -347,7 +345,8 @@ void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
       emit(_mapFailureOrAddedToState(result,emit));
 
     } catch (error) {
-      emit(AddTaskError(message: "An error occurred"));
+      emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "$error + error occurred"));
+
     }
   }
 
@@ -358,14 +357,16 @@ void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
       emit(_mapFailureOrAddedChecklistToState(result,emit,event.checklist.taskid!));
 
     } catch (error) {
-      emit(AddTaskError(message: "No Tasks found, "));
+      emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "$error + error occurred"));
+
     }
   }
 
 
   GetTaskState _mapFailureOrAddedToState(Either<Failure, Tasks> either,Emitter<GetTaskState> emit) {
     return either.fold(
-            (failure) => AddTaskError(message: mapFailureToMessage(failure),),
+            (failure) => state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: mapFailureToMessage(failure))
+    ,
             (act) {
               final updated=UnmodifiableListView(
                 [
@@ -383,7 +384,8 @@ void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
   }
   GetTaskState _mapFailureOrAddedChecklistToState(Either<Failure, CheckList> either,Emitter<GetTaskState> emit,String id) {
     return either.fold(
-            (failure) => AddTaskError(message: 'No task found ',),
+            (failure) =>         state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: mapFailureToMessage(failure))
+        ,
             (act) {
               List<Map<String, dynamic>> updatedTasks = AddSousFieldAction(id, TeamFunction.toMapChecklist(act),"CheckLists");
 
@@ -408,7 +410,7 @@ void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
     return either.fold(
             (failure) {
               log(failure.toString());
-              return state.copyWith(status: TaskStatus.error,errorMessage: mapFailureToMessage(failure),);
+              return state.copyWith(status: TaskStatus.ErrorUpdate,errorMessage: mapFailureToMessage(failure),);
             },
             (act) {
           Map<String, dynamic> updatedTask = TeamFunction.findTaskById(state.tasks, id);

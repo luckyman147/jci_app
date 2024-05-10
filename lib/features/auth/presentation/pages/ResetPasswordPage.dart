@@ -129,7 +129,7 @@ else if(state.status== ResetPasswordStatus. Updated){
                 if (_key.currentState!.validate()){
 
 final language=await context.read<localeCubit>().cachedLanguageCode();
-                  final  Member member=Member(email: email, password: state.password.value, id: '', role: '', is_validated: false, cotisation: [], Images: [],teams: [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: [], points: 0, objectifs: [],language: language??'fr');
+                  final  Member member=Member(email: email, password: state.password.value, id: '', role: '', is_validated: false, cotisation: [], Images: [],teams: [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: [], points: 0, objectifs: [],language: language??'fr', rank: 0);
 
                   context.read<ResetBloc>().add(ResetSubmitted( member: member));
 

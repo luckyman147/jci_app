@@ -12,8 +12,7 @@ class EventStore{
   const EventStore._();
   static const String _CachedEventsKey= 'CachedEvents';
   static const String _eventPermissionsKey= 'eventPermissions';
-  static const String _CachedEventsOfTheWeekKey= 'CachedEventsOfTheWeek';
-  static const String _CachedEventsOfTheMonthKey= 'CachedEventsOfTheMonth';
+
   static Future<void> cacheEvents(List<EventModel> events) async{
     final pref = await SharedPreferences.getInstance();
     List EventsModelToJson=events.map((e) => e.toJson()).toList();

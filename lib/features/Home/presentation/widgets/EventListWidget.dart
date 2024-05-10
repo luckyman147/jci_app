@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:math';
 
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/core/app_theme.dart';
@@ -52,11 +53,11 @@ class _ActivityWidgetState extends State<ActivityWidget> {
               context.go('/activity/${widget.Activities[index].id}/${state.selectedActivity.name}/$index');
             },
             child: SingleChildScrollView(
-scrollDirection: Axis.horizontal,
+scrollDirection: Axis.vertical,
               child: Container(
 
               margin: paddingSemetricHorizontal(),
-                height: mediaQuery.size.height / 4.4,
+                height: 250,
               width: mediaQuery.size.width,
                 decoration: BoxDecoration(
                   border: Border.all(color: textColor),
@@ -115,23 +116,14 @@ scrollDirection: Axis.horizontal,
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(DateFormat('EEE, MMM, d').format(
-                                        widget.Activities[index].ActivityBeginDate),
-                                        style: PoppinsRegular(13, textColorBlack)),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0),
-                                      child: Text(
-                                          "${"Start At".tr(context)} ${DateFormat('h:mm').format(
-                                              widget.Activities[index]
-                                                  .ActivityBeginDate)}",
-                                          style: PoppinsRegular(13, textColorBlack)
-                                      ),
-                                    ),
-                                  ],
+                                SizedBox(
+                                  width: mediaQuery.size.width / 2.5,
+
+                                  child:Text(
+                                    "${DateFormat('EEE, MMM, d').format(widget.Activities[index].ActivityBeginDate)} ${"Start At".tr(context)} ${DateFormat('h:mm').format(widget.Activities[index].ActivityBeginDate)}",
+                                    style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColorBlack),
+                                  ),
+
                                 ), Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -141,8 +133,8 @@ scrollDirection: Axis.horizontal,
                                           overflow: TextOverflow.ellipsis,
                                           style: PoppinsSemiBold(
                                               widget.Activities[index].name.length < 10
-                                                  ? mediaQuery.devicePixelRatio * 6
-                                                  : mediaQuery.devicePixelRatio *5
+                                                  ? mediaQuery.devicePixelRatio * 7
+                                                  : mediaQuery.devicePixelRatio *6
 
                                               , textColorBlack, TextDecoration.none),)),
                                   ],
@@ -207,7 +199,7 @@ required   BuildContext   context}) {
   return BlocBuilder<ParticpantsBloc, ParticpantsState>(
 
       builder: (context, state) {
-        log('ddd'+state.isParticipantAdded[index]["participants"].runtimeType.toString());
+
         return AnimatedSwitcher(
           duration: Duration(milliseconds: 500), // Set the duration for the animation
           child: FutureBuilder(
@@ -274,30 +266,30 @@ class ActivityOfMonthListWidget extends StatelessWidget {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
 
-      itemCount: Activities.length,
+      itemCount: min(3, Activities.length),
       itemBuilder: (context, index) {
         return GestureDetector(
 
           onTap: (){
 
-            context.go('/activity/${ Activities[index].id}/${state.selectedActivity.name}/${index} ');
+            context.go('/activity/${ Activities[index].id}/${state.selectedActivity.name}/${index}');
 
           },
           child: Container(
 
-              height:mediaQuery.size.height/9,
-            width: mediaQuery.size.width / 1.1,
+              height:mediaQuery.size.height/7,
+            width: mediaQuery.size.width / 1.3,
             decoration: ActivityDecoration,
             child: Stack(
 
               children:[
-                 images(mediaQuery, Activities, index, mediaQuery.size.height / 4.2,mediaQuery.size.width / 1.1),
+                 images(mediaQuery, Activities, index, mediaQuery.size.height /5.2,mediaQuery.size.width / 1.1),
                 // Widget above the background
                 PosCard(mediaQuery, Activities, index),
 
 
                     details(mediaQuery, Activities, index,context),
-    ButtonComponent(Activities: Activities, index: index, top:  mediaQuery.size.width /1.6, left: mediaQuery.size.height /4.3 , mediaQuery: mediaQuery, act: act)
+    ButtonComponent(Activities: Activities, index: index, top:  mediaQuery.size.height /3.1, left: mediaQuery.size.width/8 , mediaQuery: mediaQuery, act: act)
 
               ]
             ),
@@ -338,7 +330,7 @@ ClipRRect images(mediaQuery,List<Activity> activity,int index,double height,doub
 
 Positioned details(MediaQueryData mediaQuery, List<Activity> activity,int index,BuildContext context)=>Positioned(
 
-  top: mediaQuery.size.height / 3.7,
+  top: mediaQuery.size.height / 4.9,
   child: Padding(
     padding: const EdgeInsets.symmetric(horizontal: 30.0),
     child: Center(
@@ -346,38 +338,32 @@ Positioned details(MediaQueryData mediaQuery, List<Activity> activity,int index,
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-
           SizedBox(
-              width: mediaQuery.size.width/2,
-              child: Text(activity[index].name,style: PoppinsSemiBold(
-                  activity[index].name.length<20?mediaQuery.devicePixelRatio*6:mediaQuery.devicePixelRatio*5
-
-              , textColorBlack, TextDecoration.none),)),
-          Row(
-            children: [
-              SvgPicture.string(PlaceSvg,color: SecondaryColor,),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: SizedBox(
-                      child: Text(activity[index].ActivityAdress,style: PoppinsLight(
-                        activity[index].ActivityAdress.length<20?mediaQuery.devicePixelRatio*5:
-
-                mediaQuery.devicePixelRatio*4, textColorBlack,),)),
-              ),
-            ],
-          ),
-          Padding(
-            padding:paddingSemetricVertical(),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(Icons.access_time_rounded,color: SecondaryColor, size:19,),
-                Text(" ${DateFormat('h:mm a').format(activity[index].ActivityBeginDate)}",
-                  style: PoppinsNorml(mediaQuery.devicePixelRatio*4.5, textColorBlack,),),
-              ],
+            child: Text(
+              "le ${DateFormat('dd MMMM yyyy').format(activity[index].ActivityBeginDate)} à ${DateFormat('HH:mm').format(activity[index].ActivityBeginDate)}",
+              style: PoppinsNorml(mediaQuery.devicePixelRatio * 4.5, textColorBlack),
             ),
           ),
+          SizedBox(
+              width: mediaQuery.size.width,
+              child: Text(activity[index].name,
+                overflow: TextOverflow.ellipsis,
+                style: PoppinsSemiBold(
+                  mediaQuery.devicePixelRatio*5
+
+              , textColorBlack, TextDecoration.none),)),
+          SizedBox(
+              width: mediaQuery.size.width,
+                child: Text(activity[index].ActivityAdress,
+                  overflow: TextOverflow.ellipsis,
+                  style: PoppinsLight(
+                  activity[index].ActivityAdress.length<20?mediaQuery.devicePixelRatio*5:
+
+          mediaQuery.devicePixelRatio*4, textColorBlack,),)),
+          SizedBox(
+                child: Text("${activity[index].Participants.length}  Participants",style: PoppinsNorml(
+               mediaQuery.devicePixelRatio*4, textColorBlack,),)),
+
         ],
       ),
     ),

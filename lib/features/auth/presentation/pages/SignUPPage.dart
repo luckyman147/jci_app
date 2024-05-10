@@ -21,7 +21,9 @@ import '../widgets/Form.dart';
 
 class SignUpPage extends StatefulWidget {
 
-  const SignUpPage({super.key});
+final String? email;
+final String? name;
+  const SignUpPage({super.key, this.email, this.name});
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -52,7 +54,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
             }
 
-            if (state.signUpStatus ==SignUpStatus. MessageSignUp) {
+            if (state.signUpStatus ==SignUpStatus. RegisterGoogle) {
 
 SnackBarMessage.showSuccessSnackBar(message: state.message, context: context);
 context.go('/login');
@@ -70,8 +72,8 @@ context.go('/login');
                   alignment: Alignment.center,
                   child: LoadingWidget());
             }
-            return const SingleChildScrollView(
-                child: SignUpForm()
+            return  SingleChildScrollView(
+                child: SignUpForm(name: widget.name, gmail:  widget.email,)
             );
           },
         ),

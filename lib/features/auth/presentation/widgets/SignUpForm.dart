@@ -24,7 +24,9 @@ import 'inputs.dart';
 
 
 class SignUpForm extends StatefulWidget {
-  const SignUpForm({super.key});
+  const SignUpForm({super.key, required this.gmail, required this.name});
+  final String? gmail;
+  final String? name;
 
   @override
   State<SignUpForm> createState() => _SignUpFormState();
@@ -46,6 +48,17 @@ void _resetform(){
   _passwordController.clear();
   _confirmPasswordController.clear();
 }
+@override
+  void initState() {
+  if (widget.gmail !="null" && widget.name != null) {
+    _emailController.text = widget.gmail!;
+    final name = widget.name!.split(' ');
+    _firstnameController.text = name[0];
+    _lastnameController.text = name[0];
+  }
+    // TODO: implement initState
+    super.initState();
+  }
 
 
   @override
@@ -177,8 +190,11 @@ BlocBuilder<SignUpBloc, SignUpState>(
                 onTap:
                     () {
 
-
-        SubmitFunctions.SignUp(state, _key, context, _resetform);
+if (widget.gmail != null && widget.name != null&& widget.gmail !="null"&& widget.name != "null") {
+        SubmitFunctions.SignUp(state, _key, context, _resetform,true);}
+else{
+  SubmitFunctions.SignUp(state, _key, context, _resetform,false);
+}
                   },
 
                 child:  Center(child: Text('SignUp'.tr(context),style: PoppinsSemiBold(24, textColorWhite, TextDecoration.none) ,)),

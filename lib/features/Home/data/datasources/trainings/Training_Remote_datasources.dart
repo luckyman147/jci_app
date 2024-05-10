@@ -48,7 +48,8 @@ abstract class TrainingRemoteDataSource {
 
   Future<Unit> updateGuestStatus(String activityId, String guestid, bool status) ;
 
-Future<List<GuestModel>>    getAllGuest(String activityId) ;
+Future<List<GuestModel>>    getAllGuestOfACtivity(String activityId) ;
+Future<List<GuestModel>>    getAllGuest() ;
 
 }
 
@@ -69,20 +70,24 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
       if (response.statusCode == 200) {
         final Map<String, dynamic> decodedJson = json.decode(response.body) ;
 
-
-        final upload_response=await uploadImages(decodedJson['_id'], Training.CoverImages.first,getTrainingsUrl,"CoverImages");
-        if (upload_response.statusCode==200){
-          return Future.value(unit);
-        }
-        else if (upload_response.statusCode==400){
-          debugPrint(upload_response.reasonPhrase.toString());
-          deleteTraining(decodedJson["_id"]);
-          throw EmptyDataException();
-
-        }else {
-          throw ServerException();
-        }
-
+if (Training.CoverImages[0]!=null) {
+  final upload_response = await uploadImages(
+      decodedJson['_id'], Training.CoverImages.first, getTrainingsUrl,
+      "CoverImages");
+  if (upload_response.statusCode == 200) {
+    return Future.value(unit);
+  }
+  else if (upload_response.statusCode == 400) {
+    debugPrint(upload_response.reasonPhrase.toString());
+    deleteTraining(decodedJson["_id"]);
+    throw EmptyDataException();
+  } else {
+    throw ServerException();
+  }
+}
+else{
+  return Future.value(unit);
+}
       }
       else if (response.statusCode == 400) {
         throw WrongCredentialsException();
@@ -349,7 +354,7 @@ return Future.value(unit);
     ).then((response) async {
       if (response.statusCode == 200) {
         return Future.value(unit);
-      } else if (response.statusCode == 400) {
+      } else if (response.statusCode == 400 || response.statusCode==409) {
         throw WrongCredentialsException();
       } else if (response.statusCode == 401) {
         throw UnauthorizedException();
@@ -432,7 +437,7 @@ return Future.value(unit);
   }
 
   @override
-  Future<List<GuestModel>> getAllGuest(String activityId) async{
+  Future<List<GuestModel>> getAllGuestOfACtivity(String activityId) async{
     final token = await getTokens();
     return client.get(
       Uri.parse(Urls.Addguest(activityId)),
@@ -455,5 +460,31 @@ return Future.value(unit);
       }
     });
     }
+
+  @override
+  Future<List<GuestModel>> getAllGuest() async {
+    final token = await getTokens();
+    return client.get(
+      Uri.parse(Urls.ALLGuestsAllUrl),
+      headers: {"Content-Type": "application/json",
+        "Authorization":'Bearer ${token[1]}'
+      },
+    ).then((response) async {
+      if (response.statusCode == 200) {
+        final List<dynamic> decodedJson = json.decode(response.body);
+
+        final List<GuestModel> guests = decodedJson
+            .map<GuestModel>((jsonGuestModel) =>
+            GuestModel.fromJson(jsonGuestModel))
+            .toList();
+        return guests;
+      } else if (response.statusCode == 400) {
+        throw EmptyDataException();
+      }else{
+        throw ServerException();
+      }
+    });
+
+  }
 
 }

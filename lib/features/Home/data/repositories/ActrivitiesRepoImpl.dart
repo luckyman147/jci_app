@@ -56,6 +56,8 @@ class ActivityRepoImpl implements ActivitiesRepo{
 
         switch(type){
           case activity.Events:
+          case activity.All:
+
             final event=EventModel.fromEntity(act as Event);
        await eventRemoteDataSource.createEvent(event);
 
@@ -97,6 +99,8 @@ final result= MeetingModel.fromEntities(act as Meeting);
 
         switch(act){
           case activity.Events:
+          case activity.All:
+
           await eventRemoteDataSource.deleteEvent(id);
 
             return Right(unit);
@@ -136,6 +140,8 @@ final result= MeetingModel.fromEntities(act as Meeting);
 
         switch(act){
           case activity.Events:
+          case activity.All:
+
             final result=await eventRemoteDataSource.getEventById(id);
 
             return Right(result);
@@ -177,6 +183,8 @@ final result= MeetingModel.fromEntities(act as Meeting);
 
         switch(act){
           case activity.Events:
+          case activity.All:
+
             final result=await eventRemoteDataSource.getAllEvents();
             eventLocalDataSource.cacheEvents(result);
             return Right(result);
@@ -208,6 +216,7 @@ final result= MeetingModel.fromEntities(act as Meeting);
     else {
       switch (act) {
         case activity.Trainings:
+
           final localTrainings = await trainingLocalDataSource
               .getAllCachedTrainings();
           return Right(localTrainings);
@@ -216,6 +225,8 @@ final result= MeetingModel.fromEntities(act as Meeting);
               .getAllCachedMeetings();
           return Right(localTrainings);
         case activity.Events:
+        case activity.All:
+
           final localTrainings = await eventLocalDataSource
               .getAllCachedEvents();
           return Right(localTrainings);
@@ -234,6 +245,8 @@ final result= MeetingModel.fromEntities(act as Meeting);
 
         switch(act){
           case activity.Events:
+          case activity.All:
+
             await eventRemoteDataSource.leaveEvent(id);
 
             return Right(unit);
@@ -273,6 +286,8 @@ final result= MeetingModel.fromEntities(act as Meeting);
 
         switch(act){
           case activity.Events:
+          case activity.All:
+
             await eventRemoteDataSource.participateEvent(id);
 
             return Right(unit);
@@ -312,6 +327,8 @@ final result= MeetingModel.fromEntities(act as Meeting);
 
         switch(type){
           case activity.Events:
+          case activity.All:
+
             final event=EventModel.fromEntity(act as Event);
             await eventRemoteDataSource.updateEvent(event);
 
@@ -417,10 +434,10 @@ final guestmodel=GuestModel.fromEntity(guest);
   }
 
   @override
-  Future<Either<Failure, List<Guest>>> getAllguest(String activityId)async {
+  Future<Either<Failure, List<Guest>>> getAllguestOfActivity(String activityId)async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await trainingRemoteDataSource.getAllGuest(activityId);
+        final result = await trainingRemoteDataSource.getAllGuestOfACtivity(activityId);
         return Right(result);
       } on EmptyDataException {
         return Left(EmptyDataFailure());
@@ -448,6 +465,70 @@ final guestmodel=GuestModel.fromEntity(guest);
   Future<Either<Failure, Unit>> updateGuestStatus(String activityId, String guestid, bool status) async{
     return _response( trainingRemoteDataSource.updateGuestStatus(activityId, guestid, status));
   }
+
+  @override
+  Future<Either<Failure, List<Activity>>> getActivityByname(String name, activity act)async {
+    try {
+
+     final result=await eventRemoteDataSource.GetactivityByName(name,act);
+      return Right(result);
+
+
+    }
+
+    on EmptyDataException {
+      return Left(EmptyDataFailure());
+    } on WrongCredentialsException {
+      return Left(WrongCredentialsFailure());
+    }
+    on ServerException {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Guest>>> getAllguest(bool isUpdated) async{
+    if (await networkInfo.isConnected) {
+      final localguests=await trainingLocalDataSource.getAllCachedGuests();
+      try {
+        if (isUpdated){
+        final result = await trainingRemoteDataSource.getAllGuest();
+        return Right(result); }
+        else{
+          return Right(localguests);
+        }
+      } on EmptyDataException {
+        if (localguests.isNotEmpty) {
+          return Right(localguests);
+        }
+        return Left(EmptyDataFailure());
+      } on WrongCredentialsException {
+        if (localguests.isNotEmpty) {
+          return Right(localguests);
+        }
+
+
+        return Left(WrongCredentialsFailure());
+      } on ServerException {
+        if (localguests.isNotEmpty) {
+          return Right(localguests);
+        }
+
+        return Left(ServerFailure());
+      }
+    } else {
+      final localguests=await trainingLocalDataSource.getAllCachedGuests();
+
+      if (localguests.isNotEmpty) {
+        return Right(localguests);
+      }
+      return Left(OfflineFailure());
+    }
+    // TODO: implement getAllguest
+
+  }
+
+
 
 
 

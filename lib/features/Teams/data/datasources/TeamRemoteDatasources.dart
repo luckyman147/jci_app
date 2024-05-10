@@ -31,6 +31,8 @@ Future<Unit> updateMembers(String teamid, String memberid, String Status);
 
   Future<Unit> inviteMember(String id, String memberid) ;
 
+  Future<Unit> joinTeam(String id) ;
+
 }
 
 class TeamRemoteDataSourceImpl implements TeamRemoteDataSource{
@@ -276,5 +278,28 @@ body: json.encode({"Member":memberid,"Status":Status}),
         }
       });
      }
+
+  @override
+  Future<Unit> joinTeam(String id) async {
+    final tokens=await Store.GetTokens();
+    return client.post(
+      Uri.parse( Urls.JoinTeam(id)),
+      headers: {"Content-Type": "application/json",
+        "Authorization": "Bearer ${tokens[1]}"
+      },
+
+
+    ).then((response) async {
+      if (response.statusCode == 200) {
+        return Future.value(unit);
+      } else if (response.statusCode == 400) {
+        throw EmptyDataException();
+      }else if (response.statusCode == 404) {
+        throw EmptyDataException();
+      }else{
+        throw ServerException();
+      }
+    });
+  }
   }
 

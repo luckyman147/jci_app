@@ -11,6 +11,8 @@ import 'package:jci_app/core/config/env/urls.dart';
 import 'package:http/http.dart' as http;
 import 'package:jci_app/core/config/services/EventStore.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
+import 'package:jci_app/features/Home/data/model/ActivityModel.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 
 
 import '../../../../../core/config/services/store.dart';
@@ -26,9 +28,11 @@ abstract class EventRemoteDataSource {
   Future<EventModel> getEventById(String id);
   Future<List<EventModel>> getEventsOfTheWeek();
   Future<List<EventModel>> getEventsOfTheMonth();
+  Future<List<ActivityModel>> GetactivityByName(String name,activity act);
   Future<Unit> createEvent(EventModel event);
   Future<Unit> updateEvent(EventModel event);
   Future<Unit> deleteEvent(String id);
+
 
   Future<Unit> leaveEvent(String id);
   Future<Unit> participateEvent(String id);
@@ -56,7 +60,7 @@ final token = await getTokens();
       if (response.statusCode == 200) {
         final Map<String, dynamic> decodedJson = json.decode(response.body) ;
 
-
+if (event.CoverImages[0]!="assets/images/jci.png"){
         final upload_response=await uploadImages(decodedJson['_id'], event.CoverImages.first,getEventsUrl,"CoverImages");
         if (upload_response.statusCode==200){
           return Future.value(unit);
@@ -70,6 +74,10 @@ final token = await getTokens();
           throw ServerException();
         }
 
+      }
+      else{
+        return Future.value(unit);
+      }
       }
       else if (response.statusCode == 400) {
         throw WrongCredentialsException();
@@ -230,6 +238,33 @@ print(eventModels.first.name);
     final body =event.toJson();
 
     return await EditFunction(event, body,getEventsUrl+event.id+"/edit",getEventsUrl,client);
+  }
+
+  @override
+  Future<List<ActivityModel>> GetactivityByName(String name, activity act)async {
+
+    final response = await client.post(
+      Uri.parse(Urls.activitySearch),
+      headers: {"Content-Type": "application/json"},
+      body:jsonEncode({"type": act.name,"name":name}),
+    );
+
+    if (response.statusCode == 200) {
+      final List decodedJson = json.decode(response.body) ;
+
+        final List<ActivityModel> activityModels = decodedJson
+            .map<ActivityModel>((jsonActivityModel) =>
+            ActivityModel.fromJson(jsonActivityModel))
+            .toList();
+
+        return activityModels;
+
+    } else if (response.statusCode == 400) {
+      throw EmptyDataException();
+    }else{
+      throw ServerException();
+    }
+
   }
 
 

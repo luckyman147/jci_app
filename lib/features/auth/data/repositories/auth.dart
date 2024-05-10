@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:jci_app/core/error/Exception.dart';
 
 import 'package:jci_app/core/error/Failure.dart';
@@ -78,8 +80,8 @@ final NetworkInfo networkInfo;
   }
 
   @override
-  Future<Either<Failure, bool>> signOut() {
-return _getMessage(api.signOut());
+  Future<Either<Failure, bool>> signOut(bool value) {
+return _getMessage(api.signOut(value));
   }
 
   @override
@@ -161,6 +163,40 @@ Future<Either<Failure, Unit>> signUpWithCredentials(Member member,String otp)asy
     else{
       return Left(WrongVerificationCodeFailure());
     }
+  }
+
+  @override
+  Future<Either<Failure, User?>> signinWithGoogle()async {
+if (await networkInfo.isConnected){
+  try{
+    final googleSignInAccount=await api.signInWithGoogle();
+    return Right(googleSignInAccount);
+  }
+  catch(e){
+    return Left(ServerFailure());
+  }
+}
+else{
+  return Left(OfflineFailure());
+}
+  }
+
+  @override
+  Future<Either<Failure, Unit>> updateOtp(String otp) async{
+    try{
+      await local.updateOtp(otp);
+      return Right(unit);
+    }
+    catch(e){
+      return Left(ServerFailure());
+}
+  }
+
+  @override
+  Future<Either<Failure, Unit>> RegisterInWithGoogle(Member member) async{
+    final MemberModel memberModel=MemberModel.fromEntity(member);
+    return await _getMessageReset(api.RegisterInWithGoogle(memberModel));
+
   }
 
 

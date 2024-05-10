@@ -23,7 +23,7 @@ class Member extends Equatable {
  final String language;
  final int points;
  final List<dynamic> objectifs;
-
+final int rank;
   final String role;
 
   factory Member.SignUp(String email,String password,String firstName,String lastName,String language) {
@@ -43,7 +43,7 @@ class Member extends Equatable {
       teams: [],
       IsSelected: false,
       role: '',
-      objectifs: [],
+      objectifs: [], rank: 0,
     );
   }
 
@@ -78,7 +78,7 @@ class Member extends Equatable {
       Activities: data['Activities']??[],
       teams: data['teams']??[],
       IsSelected: data['IsSelected']??false,
-      role: data['role']??'', objectifs: [],
+      role: data['role']??'', objectifs: [], rank: data['rank']??-1,
     );
   }
 
@@ -87,7 +87,7 @@ class Member extends Equatable {
       language: "fr",
 
       IsSelected: false, id: "id", role: "role", is_validated: false,
-      cotisation:[false] , Images: [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password", Activities: [], teams: [], points: 0, objectifs: []);
+      cotisation:[false] , Images: [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password", Activities: [], teams: [], points: 0, objectifs: [], rank: 0);
 
   static Member toMember(Map<String, dynamic> json) {
     return Member(
@@ -108,7 +108,7 @@ class Member extends Equatable {
       password: json['password']??'',
       is_validated: json['is_validated']??false,
       cotisation: json['cotisation']??[],
-      role: json['role']??'',
+      role: json['role']??'', rank: json['rank']??-1
 
     );
   }
@@ -132,6 +132,7 @@ class Member extends Equatable {
          required this.phone,
         required this.email,
         required this.password,
+         required this.rank
        });
 
 
@@ -139,6 +140,6 @@ class Member extends Equatable {
   // TODO: implement props
   List<Object?> get props => [email, password,teams,points,
     id, role, is_validated, cotisation, Images, firstName, lastName, phone,
-    IsSelected, Activities
+    IsSelected, Activities,rank
 
   ];}

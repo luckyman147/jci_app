@@ -53,16 +53,18 @@ final SignField signField;
 
   const SignUpSubmitted({required this.signField});
   @override
-  List<Object> get props => [signField];
+  List<Object> get props => [signField,];
 }
 class ResetForm extends SignUpEvent {
   const ResetForm();
 }
-class SendVerificationEmailEvent extends SignUpEvent{
-  final String email;
 
-  SendVerificationEmailEvent({required this.email});
+class SendVerificationEmailEventOrRegister extends SignUpEvent{
+  final String email;
+  final bool isGoogle;
+  final Member? member;
+  SendVerificationEmailEventOrRegister(this.isGoogle, this.member, {required this.email});
   @override
-  List<Object> get props => [email];
+  List<Object> get props => [email,isGoogle];
 
 }

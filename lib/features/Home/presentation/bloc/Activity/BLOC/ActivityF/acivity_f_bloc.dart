@@ -34,11 +34,12 @@ class AcivityFBloc extends Bloc<AcivityFEvent, AcivityFState> {
 final GetActivityByIdUseCases getActivityByIdUseCases;
   final GetEventsOfTheMonthUseCase getEventsOfTheMonthUseCase;
   final GetTrainingsOfTheMonthUseCase getTrainingsOfTheMonthUseCase;
-
+final GetActivityByNameUseCases getActivityByNameUseCases;
   final ParticpantsBloc participantBloc;
   final GetAllActivitiesUseCases getAllActivitiesUseCases;
 
   AcivityFBloc({required  this.getTrainingsOfTheMonthUseCase,
+    required  this.getActivityByNameUseCases,
 
     required  this.participantBloc,
     required this.getActivityByIdUseCases,
@@ -58,6 +59,7 @@ on<RefreshActivities>(refresh);
 on<GetActivitiesByid>(_getActivityByid);
 on<GetAllActivitiesEvent>(_getAllActivities);
 on<SearchTextChanged>(SearchCat);
+on<GetActivitiesByName>(_getActivityByName);
   }
   void refresh(
       RefreshActivities event ,
@@ -97,7 +99,16 @@ on<SearchTextChanged>(SearchCat);
 
 
   }
+void _getActivityByName(
+    GetActivitiesByName event,
+      Emitter<AcivityFState> emit
 
+      )async {
+    emit(ActivityLoadingState());
+
+    final failureOrEvents= await getActivityByNameUseCases(event.params);
+    emit(_mapFailureOrActivityToState(failureOrEvents));
+  }
 
 void _getActivityOfMonth(
       GetActivitiesOfMonthEvent event,

@@ -1,5 +1,5 @@
 part of 'get_task_bloc.dart';
-enum TaskStatus { initial, success, error,Changed,Loading,SuccessCheck }
+enum TaskStatus { initial, success, error,Changed,Loading,SuccessCheck,ErrorUpdate }
  class GetTaskState extends Equatable {
   final TaskStatus status;
   final List<Map<String, dynamic>> tasks;

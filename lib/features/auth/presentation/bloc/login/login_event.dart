@@ -15,6 +15,9 @@ final class LoginEmailnameChanged extends LoginEvent {
   @override
   List<Object> get props => [email];
 }
+final class SignInWithGoogleEvent extends LoginEvent {
+  const SignInWithGoogleEvent();
+}
 
 final class LoginPasswordChanged extends LoginEvent {
   const LoginPasswordChanged(this.password);

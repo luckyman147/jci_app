@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:formz/formz.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:jci_app/features/auth/presentation/pages/pinPage.dart';
 
 import '../../../../core/app_theme.dart';
-import '../../../../core/strings/app_strings.dart';
+
 import '../../../../core/widgets/backbutton.dart';
-import '../bloc/login/login_bloc.dart';
+
 import '../widgets/Text.dart';
 import '../widgets/formText.dart';
 

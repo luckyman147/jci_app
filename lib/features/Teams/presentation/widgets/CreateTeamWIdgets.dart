@@ -19,7 +19,8 @@ import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart'
 import '../../../Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
 import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 
-import '../../../Home/presentation/widgets/Functions.dart';
+
+
 import '../../../auth/domain/entities/Member.dart';
 import '../../domain/entities/Team.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
@@ -73,42 +74,7 @@ Widget DoneActions(TextEditingController TeamName, TextEditingController descrip
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: InkWell(
               onTap:()async {
-                if (key.currentState!.validate()) {
-                  if (team.isEmpty) {
-                    final Team team = Team(
-                        name: TeamName.text,
-                        description: description.text,
-                        CoverImage: form.image,
-                        event: state.eventFormz.value == null ? "" : state
-                            .eventFormz.value!.id,
-                        id: '',
-                        TeamLeader: '',
-                        status: Visstate.isPaid,
-                        tasks: [],
-                        Members: TeamFunction. getIds( te.members));
-                    context.read<GetTeamsBloc>().add(AddTeam(team));
-                  }
-                  else {
-
-
-
-                    final Team ha = Team(
-                        name: TeamName.text,
-                        description: description.text,
-                        CoverImage: form.image,
-                        event: state.eventFormz.value == null ? "" : state
-                            .eventFormz.value!.id,
-                        id: team.id,
-                        TeamLeader: team.TeamLeader,
-                        status: Visstate.isPaid,
-                        tasks: team.tasks,
-                        Members:TeamFunction. getIds(te.members));
-                   context.read<GetTeamsBloc>().add(UpdateTeam(ha));
-                  }
-                }
-                else{
-                  SnackBarMessage.showErrorSnackBar(message: "Please fill all fields", context: context);
-                }
+                AddUpdateFunction(key, team, TeamName, description, form, state, Visstate, te, context);
               },
               child:  Text(
                   "Done",style: PoppinsSemiBold(21, PrimaryColor, TextDecoration.none)
@@ -123,6 +89,45 @@ Widget DoneActions(TextEditingController TeamName, TextEditingController descrip
 );
   },
 );
+
+void AddUpdateFunction(GlobalKey<FormState> key, Team team, TextEditingController TeamName, TextEditingController description, TaskVisibleState form, FormzState state, VisibleState Visstate, MembersTeamState te, BuildContext context) {
+      if (key.currentState!.validate()) {
+    if (team.isEmpty) {
+      final Team team = Team(
+          name: TeamName.text,
+          description: description.text,
+          CoverImage: form.image,
+          event: state.eventFormz.value == null ? "" : state
+              .eventFormz.value!.id,
+          id: '',
+          TeamLeader: '',
+          status: Visstate.isPaid,
+          tasks: [],
+          Members: TeamFunction. getIds( te.members));
+      context.read<GetTeamsBloc>().add(AddTeam(team));
+    }
+    else {
+
+
+
+      final Team ha = Team(
+          name: TeamName.text,
+          description: description.text,
+          CoverImage: form.image,
+          event: state.eventFormz.value == null ? "" : state
+              .eventFormz.value!.id,
+          id: team.id,
+          TeamLeader: team.TeamLeader,
+          status: Visstate.isPaid,
+          tasks: team.tasks,
+          Members:TeamFunction. getIds(te.members));
+     context.read<GetTeamsBloc>().add(UpdateTeam(ha));
+    }
+  }
+  else{
+    SnackBarMessage.showErrorSnackBar(message: "Please fill all fields", context: context);
+  }
+}
 
 
 Row Header(BuildContext context,String text) {

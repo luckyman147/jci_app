@@ -227,5 +227,10 @@ return _getMessageUnit(teamRemoteDataSource.updateMembers(teamid, memberid, Stat
     return _getMessageUnit(teamRemoteDataSource.inviteMember(id, memberid));
   }
 
+  @override
+  Future<Either<Failure, Unit>> JoinTeam(String id) {
+    return _getMessageUnit(teamRemoteDataSource.joinTeam(id));
+  }
+
 
 }

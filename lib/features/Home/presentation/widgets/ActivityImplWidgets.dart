@@ -49,13 +49,13 @@ Widget BlocMonthlyWeeklyActivity(activity act,MediaQueryData mediaQuery) =>
     return BlocConsumer<AcivityFBloc, AcivityFState>(
       builder: (context, state) {
         if (state is ActivityLoadingState) {
-          return LoadingWidget();
+          return  ReloadDetailsPage.ActivityMonth();;
         } else if (state is ActivityLoadedMonthState) {
 
 
           return RefreshIndicator(
               onRefresh: () {
-                print(state.activitys.length);
+
 
                 return
 
@@ -68,9 +68,9 @@ Widget BlocMonthlyWeeklyActivity(activity act,MediaQueryData mediaQuery) =>
           );
         }
         else if (state is ErrorActivityState) {
-          return MessageDisplayWidget(message: state.message);
+          return  ReloadDetailsPage.ActivityMonth();
         }
-        return LoadingWidget();
+        return  ReloadDetailsPage.ActivityMonth();
       }, listener: (BuildContext context, AcivityFState state) {
 
     },
@@ -109,7 +109,7 @@ Widget ALLActivities(activity act) =>
     BlocConsumer<AcivityFBloc, AcivityFState>(
       builder: (context, state) {
         if (state is ActivityLoadingState) {
-          return LoadingWidget();
+          return ReloadDetailsPage.buildshimmerreventlist();
         } else if (state is ActivityLoadedState) {
 
 
@@ -129,13 +129,13 @@ switch (ste.status){
 
   case ParticpantsStatus.initial:
     context.read<ParticpantsBloc>().add(initstateList(act: ActivityAction.mapObjects(state.activitys)));
-    return LoadingWidget();
+    return ReloadDetailsPage.buildshimmerreventlist();
 
   case ParticpantsStatus.loading:
-    return LoadingWidget();
+    return ReloadDetailsPage.buildshimmerreventlist();
 
   case ParticpantsStatus.failed:
-    return LoadingWidget();
+    return ReloadDetailsPage.buildshimmerreventlist();
 
   case ParticpantsStatus.success:
   case ParticpantsStatus.changed:
@@ -151,11 +151,11 @@ switch (ste.status){
     else{
 
       context.read<ParticpantsBloc>().add(initstateList(act: ActivityAction.mapObjects(state.activitys)));
-      return LoadingWidget();
+      return ReloadDetailsPage.buildshimmerreventlist();
     }
     break;
   default:
-    return LoadingWidget();
+    return ReloadDetailsPage.buildshimmerreventlist();
 
 }
 
@@ -166,9 +166,9 @@ switch (ste.status){
           );
         }
         else if (state is ErrorActivityState) {
-          return MessageDisplayWidget(message: state.message);
+          return ReloadDetailsPage.buildshimmerreventlist();
         }
-        return LoadingWidget();
+        return ReloadDetailsPage.buildshimmerreventlist();
       }, listener: (BuildContext context, AcivityFState state) {
 
     },
@@ -246,14 +246,14 @@ Widget ShowGuests(String activityId){
       case ParticpantsStatus.loading:
         return ShimmerButton.shimmerparticipants();
       case ParticpantsStatus.failed:
-        context.read<ParticpantsBloc>().add(GetGuestsEvent(activityId: activityId));
+        context.read<ParticpantsBloc>().add(GetGuestsOfActivityEvent(activityId: activityId));
 
         return ShimmerButton.shimmerparticipants();
       case ParticpantsStatus.loaded:
-        context.read<ParticpantsBloc>().add(GetGuestsEvent(activityId: activityId));
+        context.read<ParticpantsBloc>().add(GetGuestsOfActivityEvent(activityId: activityId));
 return ShimmerButton.shimmerparticipants();
         case ParticpantsStatus.changed:
-          context.read<ParticpantsBloc>().add(GetGuestsEvent(activityId: activityId));
+          context.read<ParticpantsBloc>().add(GetGuestsOfActivityEvent(activityId: activityId));
           return ShimmerButton.shimmerparticipants();
           
           
@@ -264,10 +264,10 @@ return ShimmerButton.shimmerparticipants();
           case ParticpantsStatus.LoadedGuests:
             
             
-            log("sssss"+state.guests.toString());
-        return GuestWidget(guests: state.guests, activityId: activityId,);
+
+        return GuestWidget(guests: state.guestsSearch, activityId: activityId, index: 0,);
       default:
-        context.read<ParticpantsBloc>().add(GetGuestsEvent(activityId: activityId));
+        context.read<ParticpantsBloc>().add(GetGuestsOfActivityEvent(activityId: activityId));
 
         return ShimmerButton.shimmerparticipants();
     }

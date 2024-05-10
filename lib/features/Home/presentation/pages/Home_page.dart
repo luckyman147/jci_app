@@ -10,6 +10,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.
 import 'package:jci_app/features/Home/presentation/pages/ActivityPage.dart';
 import 'package:jci_app/features/Home/presentation/widgets/HomeWidget.dart';
 import 'package:jci_app/features/MemberSection/presentation/pages/memberProfilPage.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/screens/AllTeamsScreen.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
@@ -74,6 +75,9 @@ class _HomePageState extends State<HomePage > {
                 currentIndex: state.index,
                 onTap: (index) {
                   context.read<PageIndexBloc>().add(SetIndexEvent(index:index));
+                  if (index==0){
+                    context.read<GetTeamsBloc>().add(GetTeams(isPrivate: true));
+                  }
                   if (index==3){
                     context.read<MembersBloc>().add(GetUserProfileEvent(true));
                     context.read<ChangeSboolsCubit>().ChangePages("/home","/memberSection/id");

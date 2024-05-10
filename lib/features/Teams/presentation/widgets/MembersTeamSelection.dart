@@ -185,11 +185,11 @@ class MemberTeamSelection{
                 child: BlocBuilder<GetTaskBloc, GetTaskState>(
                   builder: (context, state) {
 
-                    if (state.status==TaskStatus.success|| state.status==TaskStatus.Changed){
+                    if (state.status==TaskStatus.success|| state.status==TaskStatus.Changed ||state.status==TaskStatus.ErrorUpdate){
                       return MembersDetails(
                           members, mediaQuery, onRemoveTap, onAddTap, ff);}
                     else{
-                      return Center(child: CircularProgressIndicator(),);}
+                      return Center(child: LoadingWidget());}
 
                   },
                 )
@@ -235,9 +235,9 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
         builder: (context, ste) {
           return BlocConsumer<MembersBloc, MembersState>(
             builder: (context, state) {
-              if (state is MemberLoading) {
+              if (state .userStatus==UserStatus.Loading) {
                 return LoadingWidget();
-              } else if (state is AllMembersLoadedState) {
+              } else if (state.userStatus==UserStatus.MembersLoaded ) {
 
                 return RefreshIndicator(
                     onRefresh: () {
@@ -255,7 +255,7 @@ type==assignType.Assign ?
 
                 );
               }
-              else if (state is MemberByNameLoadedState) {
+              else if (state. userStatus==UserStatus.MemberByname || state.userStatus==UserStatus.MembersLoaded) {
                 if (name.isNotEmpty) {
                   return RefreshIndicator(
                       onRefresh: () {
@@ -267,20 +267,20 @@ type==assignType.Assign ?
                       child:type==assignType.Assign ?
                       MembersDetails(
                           state.members, mediaQuery, (po){}, (po){},
-                          ste.members ): BuildInviteComp(state.members,ste.members,team)
+                          ste.members ): BuildInviteComp(state.memberByName,ste.members,team)
 
                   );
-                }
+              }
                 else {
                   context.read<MembersBloc>().add(const GetAllMembersEvent(false));
                 }
               }
-              else if (state is MemberFailure) {
-                return MessageDisplayWidget(message: state.message);
+              else if (state .userStatus==UserStatus.Error) {
+                return MessageDisplayWidget(message: state.Errormessage);
               }
               return LoadingWidget();
             }, listener: (BuildContext context, MembersState state) {
-            if (state is MemberFailure) {
+            if (state .userStatus==UserStatus.Error) {
               context.read<MembersBloc>().add(const GetAllMembersEvent(false));
             }
           },

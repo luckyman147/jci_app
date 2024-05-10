@@ -27,6 +27,15 @@ class GetActivityByIdUseCases extends UseCase<Activity,activityParams >{
   Future<Either<Failure, Activity>> call(activityParams params) {
     return activitiesRepo.getActivityById(params.id!, params.type);
   }
+}class GetActivityByNameUseCases extends UseCase<List<Activity>,activityParams >{
+  final ActivitiesRepo activitiesRepo;
+
+  GetActivityByNameUseCases({required this.activitiesRepo});
+
+  @override
+  Future<Either<Failure, List<Activity>>> call(activityParams params) {
+    return activitiesRepo.getActivityByname(params.name!, params.type);
+  }
 }
 
 class CreateActivityUseCases extends UseCase<Unit,activityParams >{
@@ -109,6 +118,15 @@ class GetGuestsUseCases extends UseCase<List<Guest>,String > {
 
   @override
   Future<Either<Failure, List<Guest>>> call( params) {
+    return activitiesRepo.getAllguestOfActivity(params);
+  }
+}class GetAllGuestsUseCases extends UseCase<List<Guest>,bool > {
+  final ActivitiesRepo activitiesRepo;
+
+  GetAllGuestsUseCases({required this.activitiesRepo});
+
+  @override
+  Future<Either<Failure, List<Guest>>> call( params) {
     return activitiesRepo.getAllguest(params);
   }
 }
@@ -188,5 +206,6 @@ class activityParams {
   final Activity? act;
   final activity type;
 final String? id;
-  activityParams( {required this.act, required this.type,required this.id,});
+final String? name;
+  activityParams( {required this.act, required this.type,required this.id,required this.name});
 }

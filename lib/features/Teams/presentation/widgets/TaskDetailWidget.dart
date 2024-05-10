@@ -388,27 +388,36 @@ if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])){
   void buildAssignBottomSheetBuilderFunction(BuildContext context, MediaQueryData mediaQuery, GetTaskState state) {
     return AssignBottomSheetBuilder(context, mediaQuery, (member) {
                         //delete memberr
-      final inputFields input=inputFields(taskid: state.tasks[widget.index]['id'], teamid: widget.team.id, file: null, memberid: member.id, status: false, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: member, fileid: null, );
-
-                        context.read<GetTaskBloc>().add(
-
-                            UpdateMember(
-
-                              input));
-                        context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+      DerleteAssignTo(state, member, context);
 
     }, (member) {
-      final inputFields input=inputFields(taskid: state.tasks[widget.index]['id'], teamid: widget.team.id, file: null, memberid: member.id, status: true, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: member, fileid: null, );
-
-      //add member
-                        context.read<GetTaskBloc>().add(UpdateMember(
-                            input));
-                        context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+      AddAssignTo(state, member, context);
 
     },widget.team,
                           widget.index
 
                       );
+  }
+
+  void DerleteAssignTo(GetTaskState state, Member member, BuildContext context) {
+                    //delete memberr
+    final inputFields input=inputFields(taskid: state.tasks[widget.index]['id'], teamid: widget.team.id, file: null, memberid: member.id, status: false, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: member, fileid: null, );
+
+                      context.read<GetTaskBloc>().add(
+
+                          UpdateMember(
+
+                            input));
+                      context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+  }
+
+  void AddAssignTo(GetTaskState state, Member member, BuildContext context) {
+      final inputFields input=inputFields(taskid: state.tasks[widget.index]['id'], teamid: widget.team.id, file: null, memberid: member.id, status: true, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: member, fileid: null, );
+
+    //add member
+                      context.read<GetTaskBloc>().add(UpdateMember(
+                          input));
+                      context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
   }
 
   Widget buildAttachedfile(BuildContext context, MediaQueryData mediaQuery,Team  team,Map<String, dynamic> task) {

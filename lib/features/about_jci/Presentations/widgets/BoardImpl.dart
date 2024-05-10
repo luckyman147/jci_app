@@ -118,18 +118,18 @@ class BoardImpl{
       builder: (context, state) {
         if (state is MembersInitial) {
           return ShimmerMember();
-        } else if (state is MemberLoading) {
+        } else if (state.userStatus == UserStatus.MembersLoaded) {
           return ShimmerMember();
 
         }
 
-        else if (state is MemberByNameLoadedState){
+        else if (state.userStatus == UserStatus.MembersLoaded ) {
           return MemberGridView(members:state.members, postId: postid,);
         }
-        else if (state is AllMembersLoadedState) {
+        else if (state .userStatus == UserStatus.MemberByname) {
 
-          return MemberGridView(members:state.members, postId: postid,);
-        } else if (state is MemberFailure) {
+          return MemberGridView(members:state.memberByName, postId: postid,);
+        } else if (state .userStatus==UserStatus.Error) {
           return ShimmerMember();
         }
         return ShimmerMember();

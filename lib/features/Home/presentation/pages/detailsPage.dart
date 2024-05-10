@@ -22,16 +22,16 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
   @override
   void initState() {
     if (widget.Activity == 'Meetings') {
-      final result=        activityParams(type: activity.Meetings, act: null,id: widget.id);
+      final result=        activityParams(type: activity.Meetings, act: null,id: widget.id, name: '');
       context.read<AcivityFBloc>().add(GetActivitiesByid(params: result));
     }
     else if (widget.Activity == 'Trainings') {
-      final result=        activityParams(type: activity.Trainings, act: null,id: widget.id);
+      final result=        activityParams(type: activity.Trainings, act: null,id: widget.id, name: '');
       context.read<AcivityFBloc>().add(GetActivitiesByid(params: result));
 
     }
     else if (widget.Activity == 'Events') {
-      final result=        activityParams(type: activity.Events, act: null,id: widget.id);
+      final result=        activityParams(type: activity.Events, act: null,id: widget.id, name: '');
       context.read<AcivityFBloc>().add(GetActivitiesByid(params: result));
     }
 

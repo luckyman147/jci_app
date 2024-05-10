@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "651392688142",
+    "project_id": "jci-app-e8e4c",
+    "storage_bucket": "jci-app-e8e4c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:651392688142:android:951e992ea8e6d93ee25c5f",
+        "android_client_info": {
+          "package_name": "com.example.jci_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZmpFXZ3JrUdLbWLGCu7200Gfvsfwir70"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

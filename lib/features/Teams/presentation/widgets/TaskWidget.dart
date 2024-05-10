@@ -127,12 +127,12 @@ if (state.WillAdded==false && await FunctionMember.isAssignedOrLoyal(widget.team
                       width: mediaQuery.size.width / 2.5,
                       child: Text(widget.tasks[index]['name'],overflow:
                       TextOverflow.ellipsis, maxLines: 1
-                          ,style:PoppinsSemiBold(mediaQuery.devicePixelRatio*5, textColorBlack, TextDecoration.none)),
+                          ,style:PoppinsSemiBold(mediaQuery.devicePixelRatio*6, textColorBlack, TextDecoration.none)),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(DateFormat('MMM,dd').format(widget.tasks[index]['Deadline']),style:PoppinsRegular(mediaQuery.devicePixelRatio*4, textColor),),
+                        Text(DateFormat('MMM,dd').format(widget.tasks[index]['Deadline']),style:PoppinsRegular(mediaQuery.devicePixelRatio*6, textColor),),
 
 
                         Row(

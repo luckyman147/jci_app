@@ -101,9 +101,13 @@ final mediaquery = MediaQuery.of(context);
               child: Column(
 
                 children: [
-                  authButton(onPressed: (){}, text: 'Login With Google'.tr(context), string: google),
+                  authButton(onPressed: (){
 
-                  authButton(onPressed: (){}, text: 'Login With Facebook'.tr(context), string: facebook),
+                    context.read<LoginBloc>().add(SignInWithGoogleEvent());
+
+                  }, text: 'Login With Google'.tr(context), string: google),
+
+                // authButton(onPressed: (){}, text: 'Login With Facebook'.tr(context), string: facebook),
                 ],
 
               ),
@@ -121,7 +125,7 @@ final mediaquery = MediaQuery.of(context);
         radius: 10.0,
         borderRadius: BorderRadius.circular(10.0),
         onTap: (){
-          context.go('/SignUp');
+          context.go('/SignUp/${null}/${null}');
         },
         child: LinkedText(text: "SignUp".tr(context), size: mediaquery.size.width/30.5
         ),

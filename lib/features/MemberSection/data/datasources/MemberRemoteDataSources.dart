@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
@@ -20,6 +21,7 @@ abstract class MemberRemote {
       );
 
   Future<List<MemberModel>> GetMembers();
+  Future<List<MemberModel>> getMembersWithRanks();
   Future<Unit> deleteAccount();
   Future<MemberModel> getMemberByid(String id);
 
@@ -148,7 +150,7 @@ class MemberRemoteImpl implements MemberRemote {
 
     // replace with your API endpoint
     final  AccessToken =  tokens[1];
-    log("ss"+AccessToken.toString());// replace with your actual access token
+
     try {
       final Response = await client.get(
         Uri.parse(getallMembers),
@@ -158,7 +160,7 @@ class MemberRemoteImpl implements MemberRemote {
         },
 
       );
-      print(" ya gedededededet ${Response.statusCode}");
+
       if (Response.statusCode == 200) {
         final model=await MemberStore.getModel();
         final decodedJson = json.decode(Response.body) as List<dynamic>;
@@ -445,6 +447,42 @@ body: json.encode(body)
 
         throw ServerException();
       }
+    } catch (e) {
+
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<List<MemberModel>> getMembersWithRanks() async{
+    final tokens=await getTokens();
+
+    // replace with your API endpoint
+    final  AccessToken =  tokens[1];
+
+    try {
+      final Response = await client.get(
+        Uri.parse(Urls.getMembersWithRank),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $AccessToken',
+        },
+
+      );
+
+      if (Response.statusCode == 200) {
+
+        final decodedJson = json.decode(Response.body) as List<dynamic>;
+        final membermodels = decodedJson.map<MemberModel>((jsonMember) => MemberModel.fromJson(jsonMember)).toList();
+        return membermodels;
+      }
+      else  if (Response.statusCode==401){
+        throw UnauthorizedException();
+      }
+      else {
+        throw ServerException();
+      }
+
     } catch (e) {
 
       throw ServerException();

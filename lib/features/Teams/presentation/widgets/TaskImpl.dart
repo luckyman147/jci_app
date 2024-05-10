@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/util/snackbar_message.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
@@ -35,9 +36,17 @@ Widget GetTasksWidget(Team team, MediaQueryData mediaQuery,
               case TaskStatus.initial:
                 return LoadingWidget();
               case TaskStatus.error:
-                return MessageDisplayWidget(message: state.errorMessage);
+                return Center(
+child :Column(
+  children: [Text("Add your first Task".tr(context),style:PoppinsRegular(15, textColorBlack)),
+    Image.asset("assets/images/task.jpg", height: mediaQuery.size.height * 0.5, width: mediaQuery.size.width * 0.5,),
+
+  ],
+)
+                );
               case TaskStatus.success:
               case TaskStatus.Changed:
+              case TaskStatus.ErrorUpdate:
                 if (st.selectedFilter==TaskFilter.All) {
                   return TaskWidget(tasks: state.tasks, team: team,);
                 }

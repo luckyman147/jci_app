@@ -1,12 +1,9 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/util/snackbar_message.dart';
-import 'package:open_file/open_file.dart';
+import 'package:jci_app/core/widgets/loading_widget.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
@@ -18,7 +15,7 @@ import '../bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../bloc/Timeline/timeline_bloc.dart';
 import 'MembersTeamSelection.dart';
 import 'funct.dart';
-import 'package:path_provider/path_provider.dart';
+
 Widget BuildActions(Function( )act1,Function()act2)=>Row(
   mainAxisAlignment: MainAxisAlignment.spaceAround,
   children: [
@@ -246,12 +243,10 @@ void AssignBottomSheetBuilder(BuildContext context, MediaQueryData mediaQuery,
 
     List<Member> membersList = members.map((e) => Member.fromImages(e)).toList();
     List<Member> ListAssignTo = ff.map((e) => Member.fromImages(e)).toList();
-    if (state.status== TaskStatus.Loading || state.status== TaskStatus.error) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
+    if (state.status== TaskStatus.Loading || state.status== TaskStatus.error ) {
+      return Text("");
     }
-    else if  (state.status== TaskStatus.success || state.status== TaskStatus.Changed){
+    else if  (state.status== TaskStatus.success || state.status== TaskStatus.Changed || state.status== TaskStatus.ErrorUpdate ){
     return MemberTeamSelection. MembersAssignToBottomSheet(mediaQuery, onRemoveTap, onAddTap,membersList,ListAssignTo);}
     else return Container();
   },

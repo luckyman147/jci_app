@@ -64,6 +64,16 @@ class GetAllMembersUseCase extends UseCase<List<Member>, bool>{
     return await authRepository.GetMemberByName(params);
   }
 
+}class GetMembersByRanksUseCases extends UseCase<List<Member>, bool >{
+  final MemberRepo authRepository;
+
+  GetMembersByRanksUseCases({required this.authRepository});
+
+  @override
+  Future<Either<Failure, List<Member>>> call( params) async {
+    return await authRepository.GetMembersRank(params);
+  }
+
 }
 class UpdateMemberUseCase extends UseCase<Unit, Member>{
   final MemberRepo authRepository;

@@ -1,5 +1,5 @@
 import express from 'express'
-import { EditmemberProfile, GetmemberProfile, MemberVerifyEmail,updateImageProfile, updateLanguage } from '../controllers'
+import { EditmemberProfile, GetmemberProfile, getMembersWithRank, MemberVerifyEmail,updateImageProfile, updateLanguage } from '../controllers'
 import { Authenticate } from '../middleware/CommonAuth'
 import multer from 'multer'
 
@@ -17,6 +17,7 @@ router.patch('/verify',MemberVerifyEmail)
 
 //?profil
 router.get('/profile',GetmemberProfile)
+router.get('/Members',getMembersWithRank)
 
 router.patch('/profile',Authenticate,EditmemberProfile)
 router.patch('/updateLanguage',Authenticate,updateLanguage)

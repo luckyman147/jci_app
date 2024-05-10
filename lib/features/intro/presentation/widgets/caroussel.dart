@@ -49,6 +49,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
             return Column(
               children: [
                 Expanded(
+                  flex: 2,
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: BlocBuilder<IndexBloc, IndexState>(

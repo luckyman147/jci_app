@@ -8,6 +8,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.
 
 
 import '../../../../core/app_theme.dart';
+import '../../../Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import '../../../auth/data/models/Member/AuthModel.dart';
 import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
 
@@ -36,9 +37,7 @@ class _HomeWidgetState extends State<HomeWidget> {
   }
 
 
-  Future<MemberModel?> _loadMemberModel() async {
-    return await MemberStore.getModel();
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +56,12 @@ class _HomeWidgetState extends State<HomeWidget> {
           shadowColor: textColorWhite,
 
 
-          actions: const [
+      /*    actions: const [
             CalendarButton(color: BackWidgetColor,
               IconColor: textColorBlack,),
             SearchButton(color: BackWidgetColor,
               IconColor: textColorBlack,),
-          ],
+          ],*/
         ),
         body: BlocConsumer<ActivityCubit, ActivityState>(
           listener: (context, state) {},

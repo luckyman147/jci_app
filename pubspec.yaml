@@ -35,7 +35,10 @@ dependencies:
   image:
   # Service locator
   get_it: ^7.6.0
-  
+  firebase_core:
+  firebase_auth:
+  google_sign_in:
+
   # Remote API
   internet_connection_checker: ^1.0.0+1
   http:
@@ -94,8 +97,11 @@ flutter:
     - assets/images/jciHammem.webp
     - assets/images/jciTunisie.jpg
     - assets/images/Person_Vip.png
+    - assets/images/task.jpg
 
     - assets/images/blankjci.jpeg
+    - assets/images/classement.jpg
+    - assets/images/cap.png
     - assets/json/
     - assets/lang/en.json
     - assets/lang/fr.json

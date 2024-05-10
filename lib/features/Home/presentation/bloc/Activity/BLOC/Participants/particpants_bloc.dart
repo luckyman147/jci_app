@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
@@ -13,6 +15,7 @@ import '../../../../../data/model/ActivityParticpantsModel.dart';
 import '../../../../../data/model/GuestModel.dart';
 import '../../../../../domain/entities/Guest.dart';
 import '../../../../../domain/usercases/ActivityUseCases.dart';
+import '../../../../widgets/Functions.dart';
 
 
 part 'particpants_event.dart';
@@ -23,7 +26,8 @@ class ParticpantsBloc extends Bloc<ParticpantsEvent, ParticpantsState> {
   final LeaveActivityUseCases leaveActivityUseCases;
 final CheckAbsenceUseCases checkPermissionsUseCases;
 final GetAllParticipantsUseCases getAllParticipantsUseCases;
-final GetGuestsUseCases getAllGuestsUseCases;
+final GetGuestsUseCases getAllGuestsOfActivityUseCases;
+final GetAllGuestsUseCases getAllGuestsUseCases;
 final AddGuestUseCases addGuestUseCases;
 final DeleteGuestUseCases removeGuestUseCases;
 final UpdateGuestUseCases updateGuestUseCases;
@@ -32,9 +36,10 @@ final SendReminderUseCases sendReminderUseCases;
 
   ParticpantsBloc({required this.leaveActivityUseCases, required this.participateActivityUseCases,
     required this.checkPermissionsUseCases, required this.getAllParticipantsUseCases,
-    required this.getAllGuestsUseCases, required this.addGuestUseCases,
+    required this.getAllGuestsOfActivityUseCases, required this.addGuestUseCases,
     required this.removeGuestUseCases, required this.updateGuestUseCases,
     required this.confirmGuestUseCases, required this.sendReminderUseCases,
+    required this.getAllGuestsUseCases
 
   })
       : super(ParticpantsInitial( isParticipantAdded: [])) {
@@ -49,10 +54,30 @@ final SendReminderUseCases sendReminderUseCases;
     on<RemoveParticipantEvent>(_RemoveParticipent);
     on<initstateList>(init);
     on<CheckAbsenceEvent>(changeStatus);
-on<GetGuestsEvent>(getAllguests);
+on<GetGuestsOfActivityEvent>(getAllguests);
 on<AddGuestEvent>(AddGuest);
 on<DeleteGuestEvent>(RemoveGuest);
 on<ConfirmGuestEvent>(confirmGuest);
+on<SearchGuestByname>(seachGuesusByname);
+on<SearchMemberByname>(seachMembersByname);
+
+
+  }
+  
+  void GetAllGuests(GetAllGuestsEvent event, Emitter<ParticpantsState> emit) async {
+    final result = await getAllGuestsUseCases();
+    emit(_eitherGetAllGuestOrFailure(result));
+  }
+  void seachGuesusByname(SearchGuestByname event, Emitter<ParticpantsState> emit) async {
+final filtered=ActivityAction.searchGuestsByName(state.guests, event.name);
+log(filtered.length.toString());
+emit(state.copyWith(guestsSearch: filtered,status: ParticpantsStatus.LoadedGuests));
+
+
+  }  void seachMembersByname(SearchMemberByname event, Emitter<ParticpantsState> emit) async {
+final filtered=ActivityAction.searchMembersByName(state.membersSearch, event.name);
+log(filtered.length.toString());
+emit(state.copyWith(membersSearch: filtered,status: ParticpantsStatus.loaded));
 
 
   }
@@ -123,10 +148,10 @@ void AddGuest(AddGuestEvent event,
   emit(_eitherAddedDeleteGuestOrFailure(result,event.params,true));
   }
 void getAllguests(
-    GetGuestsEvent event,
+    GetGuestsOfActivityEvent event,
     Emitter<ParticpantsState> emit
     ) async {
-  final result = await getAllGuestsUseCases(event.activityId);
+  final result = await getAllGuestsOfActivityUseCases(event.activityId);
   emit(_eitherGuestLoadedOrFailure(result));
     }
 
@@ -186,7 +211,7 @@ void getAllguests(
     return either.fold(
           (failure) => state.copyWith(status: ParticpantsStatus.failed, ),
           (act) {
-        return state.copyWith(members: act,status: ParticpantsStatus.loaded);
+        return state.copyWith(members: act,status: ParticpantsStatus.loaded,membersSearch: act);
       }
     );
   }
@@ -203,7 +228,7 @@ void getAllguests(
        map['status']= params.status;
        final newParticipant=ActivityParticipantsModel.fromJson(map);
           act[memberIndex] = newParticipant;
-       return state.copyWith(status: ParticpantsStatus.changed, members:act);
+       return state.copyWith(status: ParticpantsStatus.changed, members:act,membersSearch:act );
         } else {
           return state.copyWith(status: ParticpantsStatus.failed );
         }
@@ -219,7 +244,7 @@ void getAllguests(
           (failure) => state.copyWith(status: ParticpantsStatus.failed),
           (guests) {
 
-        return state.copyWith(guests: guests, status: ParticpantsStatus.LoadedGuests);
+        return state.copyWith(guests: guests, status: ParticpantsStatus.LoadedGuests,guestsSearch: guests);
       },
     );
   }
@@ -230,13 +255,13 @@ void getAllguests(
           (failure) => state.copyWith(status: ParticpantsStatus.failed),
           (_) {
         if (bool) {
-          final List<Guest> guests = state.guests;
+          final List<Guest> guests = List.of(state.guests);
           guests.add(params.guest!);
-          return state.copyWith(status: ParticpantsStatus.success, guests: guests);
+          return state.copyWith(status: ParticpantsStatus.success, guests: guests,guestsSearch: guests);
         } else {
-          final List<Guest> guests = state.guests;
+          final List<Guest> guests = List.of(state.guests);
           guests.removeWhere((guest) => guest.id == params.guestId);
-          return state.copyWith(status: ParticpantsStatus.success, guests: guests);
+          return state.copyWith(status: ParticpantsStatus.success, guests: guests, guestsSearch: guests);
         }
       },
     );
@@ -255,7 +280,7 @@ void getAllguests(
           guest['isConfirmed'] = params.isConfirmed;
           guests[guestIndex] = GuestModel.fromJson(guest);
 
-          return state.copyWith(status: ParticpantsStatus.changed, guests: guests);
+          return state.copyWith(status: ParticpantsStatus.changed, guests: guests, guestsSearch: guests);
         } else {
           return state.copyWith(status: ParticpantsStatus.failed);
         }
@@ -274,5 +299,7 @@ void getAllguests(
       },
     );
   }
+
+  ParticpantsState _eitherGetAllGuestOrFailure(Either<Failure, List<Guest>> result) {}
 
   }

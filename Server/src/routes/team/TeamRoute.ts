@@ -2,7 +2,7 @@ import express, { Response } from "express";
                                            import multer from "multer";
                                            import { addCheck, deleteChecklist, updateChecklistName, updateIsCompletedChecklist } from "../../controllers/teams/ChecklistController";
                                            import { GetTaskById, GetTasksOFTeam, addTask, deleteFile, deleteTask, updateDeadline, updateFiles, updateIsCompleted, updateMembers, updateTask, updateTaskName } from "../../controllers/teams/taskController";
-                                           import { AddTeam, GetTeams, UpdateTeamMembers, addMember, deleteTeam, getTeamById, getTeamByName, updateImage, updateTeam, uploadTeamImage } from "../../controllers/teams/teamsController";
+                                           import { AddTeam, GetTeams, JoinTeam, UpdateTeamMembers, addMember, deleteTeam, getTeamById, getTeamByName, updateImage, updateTeam, uploadTeamImage } from "../../controllers/teams/teamsController";
 
                                            import { Authenticate, AuthenticateAdmin } from "../../middleware/CommonAuth";
                                            interface CustomResponse extends Response {
@@ -20,6 +20,7 @@ import express, { Response } from "express";
                                            router.post('/', AuthenticateAdmin, AddTeam);//create team
                                            router.put('/:teamid/TeamMembers', Authenticate, UpdateTeamMembers);//create team
                                            router.post('/:id/AddMember/:memberId',AuthenticateAdmin, addMember);//*add member
+                                           router.post('/:id/JoinTeam',AuthenticateAdmin, JoinTeam);//*join member
                                            router.put('/:id',updateTeam);//update team
                                            router.delete('/:id',deleteTeam)//!delete team
                                            router.patch('/:id/UpdateImage',upload.single("CoverImages"),updateImage)

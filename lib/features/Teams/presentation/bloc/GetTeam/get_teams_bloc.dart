@@ -40,7 +40,8 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
   final InviteMemberUseCase inviteMemberUseCase;
   final getTeamByNameUseCase TeamByNameUseCase;
   final UpdateTeamMembersUseCase updateTeamMembersUseCase;
-  GetTeamsBloc(this.getAllTeamsUseCase, this.getTeamByIdUseCase, this.addTeamUseCase, this.updateTeamUseCase, this.deleteTeamUseCase, this.TeamByNameUseCase, this.updateTeamMembersUseCase, this.inviteMemberUseCase)
+  final JoinTeamUseCase joinTeamUseCase;
+  GetTeamsBloc(this.getAllTeamsUseCase, this.getTeamByIdUseCase, this.addTeamUseCase, this.updateTeamUseCase, this.deleteTeamUseCase, this.TeamByNameUseCase, this.updateTeamMembersUseCase, this.inviteMemberUseCase, this.joinTeamUseCase)
       : super(GetTeamsInitial()) {
     on<GetTeams>(onGetTeams,transformer: throttleDroppable(throttleDuration));
    on<GetTeamById>(onGetTeamById);
@@ -52,6 +53,16 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
     on<GetTeamByName>(getByname);
     on<UpdateTeamMember>(_updateMember);
     on<InviteMembers>(_inviteMember);
+    on<JoinTeam>(_joinTeam);
+  }
+
+  void _joinTeam(JoinTeam event, Emitter<GetTeamsState> emit) async {
+    try {
+      final result = await joinTeamUseCase(event.Teamid);
+      emit(_mapFailureOrJoinTeamToState(result));
+    } catch (error) {
+      emit(state.copyWith(status: TeamStatus.error));
+    }
   }
 
   void _inviteMember(InviteMembers event, Emitter<GetTeamsState> emit) async {
@@ -298,6 +309,13 @@ void _updateMember(UpdateTeamMember event ,Emitter<GetTeamsState> emit) async {
       updatedMember.add(fields.member!);
       state.teamById['Members'] = updatedMember;
               return  state.copyWith(status: TeamStatus.success);}
+    );
+  }
+
+  GetTeamsState _mapFailureOrJoinTeamToState(Either<Failure, Unit> result) {
+    return result.fold(
+            (failure) => state.copyWith(status: TeamStatus.error, errorMessage: mapFailureToMessage(failure)),
+            (act) => state.copyWith(status: TeamStatus.success)
     );
   }
 }

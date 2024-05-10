@@ -185,9 +185,9 @@ Widget MembersBottomSheet(String text,
 );
 Widget MembersWidget(MediaQueryData mediaQuery,String name)=>BlocConsumer<MembersBloc, MembersState>(
   builder: (context, state) {
-    if (state is MemberLoading) {
+    if (state .userStatus==UserStatus.Loading) {
       return LoadingWidget();
-    } else if (state is AllMembersLoadedState) {
+    } else if (state.userStatus == UserStatus.MembersLoaded) {
       return RefreshIndicator(
           onRefresh: () {
             print(state.members.length);
@@ -203,7 +203,7 @@ Widget MembersWidget(MediaQueryData mediaQuery,String name)=>BlocConsumer<Member
       );
 
     }
-    else if (state is MemberByNameLoadedState){
+    else if (state .userStatus==UserStatus.MemberByname){
 
 
       if (name.isNotEmpty){
@@ -221,12 +221,12 @@ Widget MembersWidget(MediaQueryData mediaQuery,String name)=>BlocConsumer<Member
       }
 
     }
-    else if (state is MemberFailure) {
-      return MessageDisplayWidget(message: state.message);
+    else if (state .userStatus==UserStatus.Error) {
+      return MessageDisplayWidget(message: state.Errormessage);
     }
     return LoadingWidget();
   }, listener: (BuildContext context, MembersState state) {
-  if (state is MemberFailure) {
+  if (state .userStatus==UserStatus.Error) {
     context.read<MembersBloc>().add(GetAllMembersEvent(true));
   }
 
@@ -284,30 +284,34 @@ if (item.Images.isNotEmpty){
 }
   return Row(
     children: [
-      item.Images.isEmpty
-          ?  ClipRRect(
-        borderRadius: BorderRadius.circular(100),
-        child: Container(
-          height: height,
-          width: height,
-          child:Image.asset(vip)
-        ),
-
-      )
-          :
-      ClipRRect(
-
-
-        borderRadius: BorderRadius.circular(100),
-        child: Image.memory(
-          base64Decode(item.Images[0]['url']),
-          width: height,
-          height: height,
-          fit: BoxFit.cover,
-        ),
-      ),
+      PhotoReeact(item, height),
       const SizedBox(width: 8),
       Text(item.firstName, style: PoppinsSemiBold(size, bools?textColorBlack:textColorWhite, TextDecoration.none)),]);}
+
+ClipRRect PhotoReeact(Member item, double height) {
+  return item.Images.isEmpty
+        ?  ClipRRect(
+      borderRadius: BorderRadius.circular(100),
+      child: Container(
+        height: height,
+        width: height,
+        child:Image.asset(vip)
+      ),
+
+    )
+        :
+    ClipRRect(
+
+
+      borderRadius: BorderRadius.circular(100),
+      child: Image.memory(
+        base64Decode(item.Images[0]['url']),
+        width: height,
+        height: height,
+        fit: BoxFit.cover,
+      ),
+    );
+}
 
 
 

@@ -1,6 +1,6 @@
 import express from "express";
 import passport from "passport";
-import { MemberLogin, MemberSignUp, RefreshTokenAccess, forgetPassword, logout } from "../controllers";
+import { LoginWithGoogl, MemberGoogleLoginSignUp, MemberLogin, MemberSignUp, RefreshTokenAccess, forgetPassword, logout } from "../controllers";
 import { Authenticate, AuthenticateSuperAdmin } from "../middleware/CommonAuth";
 
 
@@ -8,12 +8,8 @@ const router =express.Router()
 
 //!Signup
 router.post('/signup',MemberSignUp)
-router.get('/google', passport.authenticate("google", {
-    scope: ["email", "profile"],
-  }))
-  router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
-    res.send("This is the callback route");
-  });
+router.post('/google', LoginWithGoogl);
+router.post('/google/Register', MemberGoogleLoginSignUp);
   
 // router.post('/signupWithFacebook',MemberSignUp)
 

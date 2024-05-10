@@ -7,7 +7,7 @@ import { Team, team } from "../../models/teams/team";
 import { getEventNameById, getMembersInfo, getTasksInfo } from "../../utility/role";
 
 import { Member } from "../../models/Member";
-import { CreationOfTeamEmail, sendInvitationEmail, sendKickMemberEmail, sendMemberJoinEmail } from "../../utility/NotificationEmailUtility";
+import { CreationOfTeamEmail, participationTeamEmail, sendInvitationEmail, sendKickMemberEmail, sendMemberJoinEmail } from "../../utility/NotificationEmailUtility";
 import { Activity } from "../../models/activities/activitieModel";
 export const AddTeam = async (req: Request, res: Response, next: NextFunction) => {
   const user=req.member
@@ -361,6 +361,8 @@ if (act){
 
   sendInvitationEmail(member.language,member.email,Team.name,act.name)
 }
+
+
     // Save the updated team
     const updatedTeam = await Team.save();
 
@@ -370,6 +372,46 @@ if (act){
     res.status(500).json({ error: 'Internal server error' });
   }
 }
+export const JoinTeam = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const teamId = req.params.id;
+    const memberId = req.member._id;
+
+    // Check if the team exists
+    const Team = await team.findById(teamId);
+    if (!Team) {
+      return res.status(404).json({ error: 'Team not found' });
+    }
+
+    const member = await Member.findById(memberId)
+    if (!member) {
+      return res.status(404).json({ error: 'Member not found' });
+    }
+
+    // Check if the member's ID already exists in the team's members array
+    if (Team.Members.includes(member._id)) {
+      return res.status(400).json({ error: 'Member already belongs to the team' });
+    }
+
+    // Add the member to the team's members array
+    Team.Members.push(member._id);
+    member.Teams.push(Team.id);
+
+    const act = await Activity.findById(Team.Event);
+   
+      participationTeamEmail(Team.name, member.language, member.firstName, member.email);
+   
+
+    // Save the updated team
+    const updatedTeam = await Team.save();
+
+    res.status(200).json({ member: member, team: updatedTeam });
+  } catch (error) {
+
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
 
 const showTeamDetails = async (team:Team) => {
   try {
@@ -415,8 +457,7 @@ const showTeamDetails = async (team:Team) => {
  //invite members
 if (membersInput.Status=="add"){
 
-  console.log(membersInput.Member)  
-  console.log(membersInput.Status)  
+
    
   await Team.Members.push(membersInput.Member)
 

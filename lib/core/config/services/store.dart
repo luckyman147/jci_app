@@ -14,11 +14,22 @@ class Store{
 static const String _FirstEntryKey="firstEntry";
 static const String _isLogged="isLoggedIn";
 static const String Otp="Otp";
+static const String status="status";
+
   static Future<void> setTokens(String RefreshToke,String AccessToken)async{
     final pref =await SecureSharedPref.getInstance();
     await pref.putString(_RefreshTokenKey, RefreshToke);
     await pref.putString(_AccessTokenKey, AccessToken);
 
+  }
+  static Future<void> setStatus(bool isLogged)async{
+    final pref =await SharedPreferences.getInstance();
+    await pref.setBool(status, isLogged);
+  }
+
+  static Future<bool> getStatus()async{
+    final pref =await SharedPreferences.getInstance();
+    return pref.getBool(status)??false;
   }
   static Future<void> setPermissions(List<String> permissions)async{
     final pref =await SecureSharedPref.getInstance();

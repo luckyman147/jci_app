@@ -225,6 +225,44 @@ class MemberRepoImpl extends MemberRepo {
     return _getMessageReset(memberRemote.SendMembershipReport(id));
   }
 
+  @override
+  Future<Either<Failure, List<Member>>> GetMembersRank(bool isUpdated)async {
+    if (await networkInfo.isConnected) {
+      try {
+        final members = await membersLocalDataSource.GetMembersWithRanks
+    ();
+        if (members.isEmpty  ||  isUpdated) {
+          final members = await memberRemote.getMembersWithRanks();
+          membersLocalDataSource.CacheMemberwithRanks(members);
+          return Right(members);
+        }
+        return Right(members);
+      } on ServerException {
+
+        final members = await membersLocalDataSource.GetMembersWithRanks();
+        if (members.isEmpty){
+          return Left(ServerFailure());
+        }
+        return Right(members);
+      }
+      on UnauthorizedException {
+        final members = await membersLocalDataSource.GetMembersWithRanks();
+        if (members.isEmpty){
+          return Left(UnauthorizedFailure());
+        }
+        return Right(members);
+      }
+    } else {
+      try {
+        final members = await membersLocalDataSource.GetMembersWithRanks();
+        return Right(members);
+      } on EmptyCacheException {
+        return Left(EmptyCacheFailure());
+      }
+
+    }
+  }
+
   }
 
 

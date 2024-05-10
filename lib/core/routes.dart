@@ -181,8 +181,15 @@ GoRoute(
 
     GoRoute(path: '/login',
       builder: (BuildContext context, GoRouterState state)=>LoginPage(),
-    ),GoRoute(path: '/SignUp',
-      builder: (BuildContext context, GoRouterState state)=>SignUpPage(),
+    ),GoRoute(path: '/SignUp/:email/:name',
+      builder: (BuildContext context, GoRouterState state){
+        final userJson = state.pathParameters['name'];
+        final gmail = state.pathParameters['email'];
+        return
+
+SignUpPage(email: gmail!, name: userJson
+
+      );}
     )
 
 

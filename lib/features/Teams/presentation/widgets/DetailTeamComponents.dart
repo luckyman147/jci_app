@@ -1,13 +1,11 @@
-import 'dart:convert';
-import 'dart:developer';
 
+import 'dart:convert';
 import 'package:circle_progress_bar/circle_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:jci_app/core/strings/app_strings.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/Teams/domain/usecases/TeamUseCases.dart';
@@ -15,7 +13,6 @@ import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.d
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 
 import '../../../../core/app_theme.dart';
-import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import '../../../Home/presentation/widgets/Functions.dart';
 
@@ -26,7 +23,6 @@ import '../../../auth/domain/entities/Member.dart';
 import '../../domain/entities/Team.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/GetTeam/get_teams_bloc.dart';
-import '../bloc/TaskFilter/taskfilter_bloc.dart';
 import '../bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'CreateTeamWIdgets.dart';
 import 'MembersTeamSelection.dart';
@@ -135,7 +131,9 @@ width: mediaQuery.size.width,
                 child: membersTeamImage(
                     context, mediaQuery, team.Members.length, team.Members,30,40),
               ),
-              ProfileComponents.buildFutureBuilder(elevatedButtonBuildAction("Join",(){}), true, "", (p0) => FunctionMember.IsNotExistedAndPublic(team)),
+              ProfileComponents.buildFutureBuilder(elevatedButtonBuildAction("Join",(){
+                context. read<GetTeamsBloc>().add(JoinTeam(Teamid: team.id));
+              }), true, "", (p0) => FunctionMember.IsNotExistedAndPublic(team)),
               ProfileComponents.buildFutureBuilder(InviteBuitton(context,team), true, "", (p0) => FunctionMember.ischefAndExisted(team))
             ],
           ),
@@ -162,8 +160,10 @@ width: mediaQuery.size.width,
     return ElevatedButton(
 
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: PrimaryColor,
 
                   shape: RoundedRectangleBorder(
+
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -192,7 +192,7 @@ static   Future<dynamic> TeamMembersShett(BuildContext context, mediaQuery,Team 
                         padding:paddingSemetricHorizontal(),
                         child: Text("Board members ( ${team.Members.length} )",style: PoppinsSemiBold(17, textColorBlack, TextDecoration.none),),
                       ),
-                MemberTeamSelection.      SeachMemberWidget(mediaQuery, context,(value){}),
+
                       Padding(
                         padding: paddingSemetricVertical(),
                         child: SizedBox(
@@ -457,7 +457,7 @@ static   Column ModelShowBottomActions(mediaQuery, BuildContext context,Team tea
 
             context.read<TaskVisibleBloc>().add(ChangeImageEvent(
                 image!=null?
-                image!.path:"assets/images/jci.png"));
+                image.path:"assets/images/jci.png"));
 
           })
 
@@ -501,7 +501,7 @@ static Widget Circle(Team team, DateTime parse, MediaQueryData mediaQuery,
 
 
 static Widget ImageCard(mediaQuery, String image,double height) =>
-    image!=null&& image.isNotEmpty
+     image.isNotEmpty
         ? ClipRRect(
         borderRadius: BorderRadius.circular(100),
 

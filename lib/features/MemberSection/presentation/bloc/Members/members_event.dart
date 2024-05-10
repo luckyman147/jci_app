@@ -68,3 +68,10 @@ class ChangeToAdminEvent extends MembersEvent {
   @override
   List<Object?> get props => [id];
 }
+class getRanksOfMembers extends MembersEvent {
+final bool isUpdated;
+  getRanksOfMembers(this.isUpdated);
+
+  @override
+  List<Object?> get props => [isUpdated];
+}

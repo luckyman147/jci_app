@@ -4,11 +4,8 @@ import nodemailer from 'nodemailer';
 import { transporter, transporterContact } from '../config/mailer';
 import { convertAgendaItemsStringsToObjects } from './objectifcheck';
 export const footer=` <footer style="display: flex; justify-content: center;">
-<img src="cid:jci-logo" alt="JCI Logo" style="display:block; margin-top:20px; width: 100px; height: auto;">
-<div style="display: flex; justify-content: center;">
-    <a href="https://www.facebook.com/JCIHammamSousse"><img src="cid:facebook-icon" alt="Facebook" style="width: 25px; height: 25px; margin:5px"></a>
-    <a href="https://www.instagram.com/jci_hammam_sousse/"><img src="cid:instagram-icon" alt="Instagram" style="width: 25px; height: 25px; margin:5px"></a>
-</div>
+<img src="https://raw.githubusercontent.com/luckyman147/jci_app/testing/assets/jciblanc/jci.png" alt="JCI Logo">
+
 </footer>`;
 
 export const GenerateOtp = () => {
@@ -34,46 +31,16 @@ export const emailConfig=async (language:string, englishhtml:string,Frenshhtml:s
             to: participants, // List of recipients
             subject: language === 'en' ? englishheader : frenshHeader, // Subject line
             html: htmlContent, // HTML content based on language
-            attachments: [
-                {
-                    filename: 'jci.png',
-                    path: imagePath,
-                    cid: 'jci-logo' // Content ID for the image
-                },
-                {
-                    filename: 'facebook.png',
-                    path: '.\\uploads\\Events\\facebook.png',
-                    cid: 'facebook-icon' // Content ID for the image
-                },
-                {
-                    filename: 'instagram.png',
-                    path: '.\\uploads\\Events\\insta.png',
-                    cid: 'instagram-icon' // Content ID for the image
-                }
-            ]
+        
+             
+         
         });} else {
             await transporter.sendMail({
                 from: process.env.EMAIL, // Sender address
                 to: participants, // List of recipients
                 subject: language === 'en' ? englishheader : frenshHeader, // Subject line
                 html: htmlContent, // HTML content based on language
-                attachments: [
-                    {
-                        filename: 'jci.png',
-                        path: imagePath,
-                        cid: 'jci-logo' // Content ID for the image
-                    },
-                    {
-                        filename: 'facebook.png',
-                        path: '.\\uploads\\Events\\facebook.png',
-                        cid: 'facebook-icon' // Content ID for the image
-                    },
-                    {
-                        filename: 'instagram.png',
-                        path: '.\\uploads\\Events\\insta.png',
-                        cid: 'instagram-icon' // Content ID for the image
-                    }
-                ]
+                
             });
         }
 
@@ -301,6 +268,51 @@ export const participationEmail=async(eventname:string, eventTime: Date, locatio
     <p>Votre implication active et vos contributions ont contribué au succès de l'événement. Nous apprécions sincèrement votre enthousiasme et votre dévouement.</p>
     
     <p>Merci encore une fois d'avoir été partie prenante de cette occasion mémorable. Nous avons hâte de vous voir lors de futurs événements !</p>
+
+    <p>Meilleures salutations,</p>
+        
+       ${footer}
+    </body>
+    </html>`;
+    emailConfig(language,englishHTMLContent,frenchHTMLContent,`About your participation to ${eventname}`,`A Propos votre participation: ${eventname}`,participants,false)
+
+}
+export const participationTeamEmail=async(eventname:string,language:string,nomPartipant:string,participants:string)=> {
+    
+   
+   // Format eventTime to display month, day, and year
+ 
+    // English HTML content
+    const englishHTMLContent = `
+    <html>
+    <body style="font-family: Arial, sans-serif;">
+    <h1 style="color: #0056b3;">Thank You for Participating!</h1>
+    <p>Dear ${nomPartipant},</p>
+    
+    <p>We wanted to express our sincere gratitude for your participation in the event "<strong>${eventname}</strong>" </p>
+    
+    <p>Your active involvement and contributions made the team a great success. We truly appreciate your enthusiasm and dedication.</p>
+    
+    <p> We look forward to seeing you at future team!</p>
+
+    <p>Best regards,</p>
+       
+     ${footer}
+    </body>
+    </html>`;
+
+    // French HTML content
+    const frenchHTMLContent = `
+    <html>
+    <body style="font-family: Arial, sans-serif;">
+    <h1 style="color: #0056b3;">Merci d'avoir participé !</h1>
+    <p>Cher(e) ${nomPartipant},</p>
+    
+    <p>Nous tenons à vous exprimer notre sincère gratitude pour votre participation à l'équipe "<strong>${eventname}</strong> "</p>
+    
+    <p>Votre implication active et vos contributions ont contribué au succès de l'équipe. Nous apprécions sincèrement votre enthousiasme et votre dévouement.</p>
+    
+    <p>> Nous avons hâte de vous voir lors de futurs équipes !</p>
 
     <p>Meilleures salutations,</p>
         

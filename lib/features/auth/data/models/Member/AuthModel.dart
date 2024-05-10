@@ -22,16 +22,15 @@ factory MemberModel.fromEntity(Member member) {
       password: member.password,
       IsSelected: member.IsSelected,
       teams: member.teams,
-      Activities: member.Activities, objectifs: member.objectifs, language: member.language,
+      Activities: member.Activities, objectifs: member.objectifs, language: member.language, rank: member.rank,
     );
   }
 
   factory MemberModel.fromJson(Map<String, dynamic> json) {
-  log('message');
 
   return    MemberModel(
         objectifs: json['objectifs'] == null ? [] :json['objectifs'] as List<dynamic>,
-        points: json['points'] ?? 0,
+        points: json['points'] ?? json['Points'] ?? 0,
         id: json['_id']!=null ? json['_id']as String : json['id'] as String,
         role: json['role'] != null ? json['role'] as String : "member" ,
         is_validated: json['is_validated'] ?? false,
@@ -53,9 +52,9 @@ factory MemberModel.fromEntity(Member member) {
 
         (json['Activities'] as List<dynamic>)
             .map((e) => e )
-            .toList(), language: json['language'] ?? 'fr'
+            .toList(), language: json['language'] ?? 'fr', rank: json['rank'] ?? json['Rank'] ?? 0,
       );}
-  MemberModel({required super.id, required super.role, required super.is_validated, required super.cotisation, required super.Images, required super.firstName, required super.lastName, required super.phone, required super.email, required super.password, required super.IsSelected, required super.Activities, required super.teams, required super.points, required super.objectifs, required super.language});
+  MemberModel({required super.id, required super.role, required super.is_validated, required super.cotisation, required super.Images, required super.firstName, required super.lastName, required super.phone, required super.email, required super.password, required super.IsSelected, required super.Activities, required super.teams, required super.points, required super.objectifs, required super.language, required super.rank});
 
   Map<String, dynamic> toJson() => _$MemberModelToJson(this);
 

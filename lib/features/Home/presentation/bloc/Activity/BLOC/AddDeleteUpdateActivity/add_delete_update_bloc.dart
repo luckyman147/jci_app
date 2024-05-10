@@ -93,6 +93,7 @@ void checkPermissions(
       )async {
     switch (event.act){
       case activity.Events:
+        case activity.All:
         final failureOrEvents= await checkPermissionsUseCase(NoParams());
         emit(_checkPermissionsOrFailure(failureOrEvents));
 

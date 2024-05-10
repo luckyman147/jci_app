@@ -349,3 +349,15 @@ export const getPublicPermissions = async (): Promise<Permission[]> => {
     throw error;
   }
 };
+export const getRank=async(id:string)=>{
+  
+  const roles = await Role.find({ name: { $nin: ["superadmin", "admin"] }});
+  const members = await Member.find({ role: { $in: roles.map(role => role._id) } }).sort({Points:-1})
+  const member=await members.find(member=>member._id==id)
+  const memberrole=await Role.findById(member?.role)
+  
+  if(!member || !memberrole){return -1}
+  else if (memberrole.name in ["superadmin","admin"]){return -1}
+  return members.indexOf(member)+1
+
+}

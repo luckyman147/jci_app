@@ -11,13 +11,21 @@ import 'package:jci_app/features/Home/presentation/widgets/AddActivityWidgets.da
 import '../../../../core/strings/app_strings.dart';
 import '../bloc/Activity/activity_cubit.dart';
 import 'ActivityDetailsComponents.dart';
+import 'Functions.dart';
 
 class GuestWidget extends StatelessWidget {
   final List<Guest> guests;
   final String activityId;
- 
-   GuestWidget({Key? key, required this.guests, required this.activityId}) : super(key: key);
-  PageController pageController = PageController();
+  final int index  ;
+
+
+   GuestWidget({ required this.guests, required this.activityId, required this.index}) ;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(debugLabel: 'guestFormKey0');  PageController pageController = PageController();
+  TextEditingController controller = TextEditingController();
+  TextEditingController controller2 = TextEditingController();
+  TextEditingController controller3 = TextEditingController();
+
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -44,10 +52,11 @@ class GuestWidget extends StatelessWidget {
           child: BlocBuilder<ActivityCubit, ActivityState>(
   builder: (context, state) {
     return PageView.builder(
-            scrollBehavior: ScrollBehavior(),
 
-            scrollDirection: Axis.horizontal,
-            controller: pageController,
+
+        scrollDirection: Axis.horizontal,
+        physics: NeverScrollableScrollPhysics(),
+
             itemCount: 2,
             onPageChanged: (int page) {
            context.read<ActivityCubit>().selectIndex(page);
@@ -57,7 +66,7 @@ class GuestWidget extends StatelessWidget {
               if (state.index == 0)
               return buildguests(context);
               else {
-                return buildAddGuest(context, TextEditingController(), "Name", "Enter Name");
+                return buildAddGuest(context, controller, controller2, controller3);
               }
               },
          
@@ -69,36 +78,81 @@ class GuestWidget extends StatelessWidget {
       ],
     );
   }
-Widget buildAddGuest(BuildContext context, TextEditingController controller, String name, String HintText) {
+Widget buildAddGuest(BuildContext context, TextEditingController controller, TextEditingController controller2, TextEditingController controller3 ) {
     return SingleChildScrollView(
-      child: Column(
-        children:[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              IconButton.outlined(onPressed: (){
-                context.read<ActivityCubit>().selectIndex(0);
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children:[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton.outlined(onPressed: (){
+                  context.read<ActivityCubit>().selectIndex(0);
 
-              }, icon: Icon(Icons.arrow_back)),
-              Text("Add Guest",textAlign: TextAlign.center, style: PoppinsRegular(15, textColorBlack, )),
-          ]),
-          TextfieldNormal(context, name, HintText, controller, (p0) => null),
-          TextfieldNormal(context, name, HintText, controller, (p0) => null),
-          TextfieldNormal(context, name, HintText, controller, (p0) => null),
-          TextButton(onPressed: (){}, child: Text("Add Guest"))
+                }, icon: Icon(Icons.arrow_back)),
+                Text("Add Guest",textAlign: TextAlign.center, style: PoppinsRegular(16, textColorBlack, )),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(onPressed: ()=>null, child: Text("Already Exists",style: PoppinsSemiBold(15, PrimaryColor, TextDecoration.underline),)),
+                  ],
+                )
+            ]),
+            biuildguiestfiels(controller, "Enter Name", TextInputType.text, "Name"),
+            biuildguiestfiels(controller2, "Enter Email", TextInputType.emailAddress, "Email"),
+            biuildguiestfiels(controller3, "Enter Phone Number", TextInputType.phone, "Phone Number"),
+            TextButton(onPressed: (){
 
-        ]
+              ActivityAction.  AddGuest(_formKey, controller, controller2, controller3, context,activityId);
+            }, child: Text("Add Guest", style: PoppinsRegular(15, PrimaryColor,))
+            )
+          ]
+        ),
       ),
     );
+}
+
+
+
+Padding biuildguiestfiels(TextEditingController controller, String HintText, TextInputType keyboardType,String labetext) {
+  return Padding(
+            padding: paddingSemetricVerticalHorizontal(),
+            child: TextFormField(
+              style: PoppinsRegular(15, textColorBlack, ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
+              keyboardType: keyboardType,
+
+              controller: controller,
+              decoration: InputDecoration(
+                labelText: '$labetext',
+                border: border(PrimaryColor),
+                hintText: HintText,
+                hintStyle: PoppinsRegular(15, textColor, ),
+                focusColor: PrimaryColor,
+                focusedBorder: border(PrimaryColor),
+
+                labelStyle: PoppinsRegular(15, textColorBlack, ),
+              ),
+            ),
+          );
 }
   Column buildguests(BuildContext context) {
     return Column(
               children: [
                 SingleChildScrollView(
+                  key: PageStorageKey("guests"),
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      ActivityDetailsComponent.searchField((p0) => null, "Search Guest",true),
+                      ActivityDetailsComponent.searchField((p0) {
+                        context.read<ParticpantsBloc>().add(SearchGuestByname(name: p0));
+                      }, "Search Guest",true),
                       IconButton.outlined(onPressed: (){
                         context.read<ActivityCubit>().selectIndex(1);
                   
@@ -108,13 +162,8 @@ Widget buildAddGuest(BuildContext context, TextEditingController controller, Str
                 ),
             guests.isNotEmpty?
                 Expanded(
-                  child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, // Adjust as needed
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                      childAspectRatio: 1.6,
-                    ),
+                  child: ListView.builder(
+
                     itemCount: guests.length,
                     itemBuilder: (context, index) {
                       return _buildGuestCard(context, guests[index]);
@@ -138,101 +187,76 @@ Widget buildAddGuest(BuildContext context, TextEditingController controller, Str
   }
 
   Widget _buildGuestCard(BuildContext context, Guest guest) {
-    return Container(
-      margin: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: guest.isConfirmed ? Colors.green : textColorWhite,
-        borderRadius: BorderRadius.circular(15),
-
-      ),
-
-      child: Padding(
-        padding: EdgeInsets.all(8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-        Row(
-          children: [
-            ClipRRect(
-            borderRadius: BorderRadius.circular(100),
-            child: Container(
-                height: 30,
-                width: 30,
-                child:Image.asset(vip)
-            )),
-            Text(guest.name,style:  PoppinsSemiBold(15, guest.isConfirmed?textColorWhite:textColorBlack, TextDecoration.none),)
-          ],
-        ),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-
-                SizedBox(width: 4),
-                IconButton(
-                  icon: Icon(
-                    !guest.isConfirmed ? Icons.check_circle : Icons.cancel,
-color: guest.isConfirmed ? textColorWhite: textColorBlack,
-
-                  ),
-                  onPressed: () {
-                    if (guest.isConfirmed) {
-                      final param=guestParams(guest: guest, guestId: guest.id, isConfirmed: false, activityid: activityId);
-                   context.read<ParticpantsBloc>().add(ConfirmGuestEvent(params: param));
-                    } else {
-                      final param=guestParams(guest: guest, guestId: guest.id, isConfirmed: true, activityid: activityId);
-                      context.read<ParticpantsBloc>().add(ConfirmGuestEvent(params: param));
-                    }
-
-                  },
-                ), IconButton(
-                                onPressed: () {
-                                  _showGuestDetails(context, guest);
-                                },
-                                icon: Icon(Icons.contact_support,color:
-                                  guest.isConfirmed ? textColorWhite: textColorBlack,
-                                  ),
-                              ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showGuestDetails(BuildContext context, Guest guest) {
-    showDialog(
-
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-
-          title: Container(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Email: ${guest.email}'),
-                Text('Phone Number: ${guest.phone}'),
-
-              ],
-            ),
-          ),
-          actionsAlignment: MainAxisAlignment.start,
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Close'),
-            ),
-          ],
-        );
+    return InkWell(
+      splashColor: Colors.transparent,
+      onLongPress: (){
+ActivityAction.        DeleteGestFunction(context, guest,activityId);
       },
+      child: Container(
+        margin: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: guest.isConfirmed ? Colors.green : textColorWhite,
+          borderRadius: BorderRadius.circular(15),
+
+        ),
+
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Row(
+
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+          Row(
+            children: [
+              ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: Container(
+                  height: 30,
+                  width: 30,
+                  child:Image.asset(vip)
+              )),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 3.5,
+                child: Text(guest.name,
+                  overflow: TextOverflow.ellipsis,
+                  style:  PoppinsSemiBold(15, guest.isConfirmed?textColorWhite:textColorBlack, TextDecoration.none),),
+              )
+            ],
+          ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+
+                  SizedBox(width: 4),
+                  IconButton(
+                    icon: Icon(
+                      !guest.isConfirmed ? Icons.check_circle : Icons.cancel,
+      color: guest.isConfirmed ? textColorWhite: textColorBlack,
+
+                    ),
+                    onPressed: () {
+                ActivityAction.      ConfirmPreence(guest, context,activityId);
+
+                    },
+                  ), IconButton(
+                                  onPressed: () {
+                                    ActivityAction.showGuestDetails(context, guest);
+                                  },
+                                  icon: Icon(Icons.contact_support,color:
+                                    guest.isConfirmed ? textColorWhite: textColorBlack,
+                                    ),
+                                ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
+
+
 }
 
 

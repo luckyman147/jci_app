@@ -4,11 +4,12 @@ import { NextFunction, Request, Response } from 'express';
 
 import { File } from "../models/FileModel";
 
+import path from 'path';
 import { EditLanguageInputs, EditMemberProfileInputs } from '../dto/member.dto';
 import { Member } from '../models/Member';
-import { findroleByid, getActivitiesInfo, getFilesInfoByIds, getMeetingsInfo, getteamsInfo, getTrainingInfo } from '../utility/role';
-import path from 'path';
+import { Role } from '../models/role';
 import { CheckObjectif } from '../utility/objectifcheck';
+import { findroleByid, getActivitiesInfo, getFilesInfoByIds, getMeetingsInfo, getRank, getteamsInfo, getTrainingInfo } from '../utility/role';
 
 
 //& Verify email
@@ -45,11 +46,11 @@ export const GetmemberProfile= async(req:Request,res:Response,next:NextFunction)
     if(member){
         const profile=await Member.findById(member?._id)
         if(profile){
-            const [role, teamsInfo, activitiesInfo, trainingsinfo,meetingsInfo,FilesInfo,objectifs] = await Promise.all([
+            const [role, teamsInfo, activitiesInfo, trainingsinfo,meetingsInfo,FilesInfo,objectifs,rank] = await Promise.all([
                 findroleByid(profile.role),
                 getteamsInfo(profile.Teams),
                 getActivitiesInfo(profile.Activities),getTrainingInfo(profile.Activities),
-                getMeetingsInfo(profile.Activities),getFilesInfoByIds(profile.Images),CheckObjectif(profile.id)
+                getMeetingsInfo(profile.Activities),getFilesInfoByIds(profile.Images),CheckObjectif(profile.id),getRank(profile.id)
             ]);
 
             const info = {      teams: teamsInfo,  Activities: [{"Events" : activitiesInfo,"Trainings":trainingsinfo,"Meetings":meetingsInfo}],
@@ -64,7 +65,8 @@ export const GetmemberProfile= async(req:Request,res:Response,next:NextFunction)
                 points: profile.Points,
                 is_validated: profile.is_validated,
 
-                objectifs:objectifs
+                objectifs:objectifs,
+                rank:rank
             
             };
 
@@ -182,4 +184,35 @@ if (profile){
         }
         return res.status(404).json({message:'member not found'})
     }
+}
+export const getMembersWithRank=async(req:Request,res:Response)=>{
+  try {
+      const roles = await Role.find({ name: { $nin: ["superadmin", "admin"] }});
+      const members = await Member.find({ role: { $in: roles.map(role => role._id) } }).sort({Points:-1})
+      if (members.length>0){
+        const ALlmembers = await Promise.all(
+            members// Filtering teams with status true
+                .map(async (member) => ({
+                    id: member._id,
+                    firstName: member.firstName,
+                    email: member.email,
+                    Images:await getFilesInfoByIds(member.Images),
+                    Points: member.Points,
+              
+
+                }))
+        );
+  
+          res.status(200).json(ALlmembers)
+      }
+      else{
+          res.status(404).json({message:'no members found'})
+      }
+          
+  } catch (error) {
+        console.log(error)
+        res.status(500).json({message:'error with server'})
+    
+  }
+
 }

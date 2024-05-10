@@ -1,22 +1,18 @@
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:jci_app/core/app_theme.dart';
 
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/TeamComponent.dart';
-//import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
+
 import 'package:jci_app/features/Teams/presentation/widgets/TeamImpl.dart';
 
-import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
-import '../../../Home/presentation/widgets/Compoenents.dart';
-import '../../domain/entities/Team.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
-import '../widgets/funct.dart';
+
 
 
 class AllTeamsScreen extends StatefulWidget {

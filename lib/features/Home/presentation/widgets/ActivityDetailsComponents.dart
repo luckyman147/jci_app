@@ -139,18 +139,17 @@ class ActivityDetailsComponent{
        ),
        child: Column(
          children: [
-           ActivityDetailsComponent.searchField((p0) => null, "Search participant",false),
+           ActivityDetailsComponent.searchField((p0) {
+     ctx.read<ParticpantsBloc>().add(SearchMemberByname(name: p0));
+     }
+
+               , "Search participant",false),
 
            Expanded(
              child: Padding(
                padding: const EdgeInsets.all(8.0),
-               child: GridView.builder(
-                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                   crossAxisCount: 3, // Set to 2 items per row
-                   crossAxisSpacing: 8.0,
-                   mainAxisSpacing: 8.0,
-                   childAspectRatio: 1.2, // Maintain aspect ratio for each item
-                 ),
+               child: ListView.separated(
+
                  itemCount: partipants.length,
                  itemBuilder: (ctx, index) {
                    final participant = partipants[index];
@@ -171,7 +170,9 @@ class ActivityDetailsComponent{
                    }
 
                    return PartcipantsBody(tileColor, participant, activityid, ctx);
-                 },
+                 }, separatorBuilder: (BuildContext context, int index) {
+                   return SizedBox(height: 11,);
+               },
                ),
              ),
            ),
@@ -183,23 +184,24 @@ class ActivityDetailsComponent{
    return SingleChildScrollView(
              scrollDirection: Axis.horizontal,
              child: Container(
+               width: MediaQuery.of(ctx).size.width * 0.9,
                decoration: BoxDecoration(
                  color: tileColor,
                  borderRadius: BorderRadius.circular(16),
                ),
                child: Padding(
                  padding: const EdgeInsets.all(8.0),
-                 child: Column(
+                 child: Row(
                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                    children: [
                      Row(
-                       mainAxisAlignment: MainAxisAlignment.center,
+                       mainAxisAlignment: MainAxisAlignment.start,
                        children: [
                          imageWidget(Member.fromImages(participant.member[0]), 30, 18,participant.status=="pending"),
                        ],
                      ),
                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
                        children: [
                          participant.status!="absent"?
                          AbsenceButton(participant, activityid, ctx,Icons.close,(){
@@ -380,13 +382,23 @@ showDragHandle: true,
                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                        children: [
-                         Padding(
-                           padding: const EdgeInsets.all(8.0),
-                           child: Text(
-                             "Participants",
-                             style: PoppinsNorml(mediaQuery.devicePixelRatio * 6,
-                               textColorBlack, ),
-                           ),
+                         Row(
+                           children: [
+                             BackButton(
+                               color: textColorBlack,
+                               onPressed: () {
+                                 Navigator.pop(context);
+                               },
+                             ),
+                             Padding(
+                               padding: const EdgeInsets.all(8.0),
+                               child: Text(
+                                 "Participants",
+                                 style: PoppinsNorml(mediaQuery.devicePixelRatio * 6,
+                                   textColorBlack, ),
+                               ),
+                             ),
+                           ],
                          ),Padding(
                            padding: const EdgeInsets.all(8.0),
                            child: Text(
@@ -576,24 +588,27 @@ showDragHandle: true,
                   style: PoppinsRegular(
                       mediaQuery.devicePixelRatio * 6, textColorWhite)))));
 
- static  Widget PartipantsRow(MediaQueryData mediaQuery,BuildContext context,Activity activitys,activity act,int index) => Row(
+ static  Widget PartipantsRow(MediaQueryData mediaQuery,BuildContext context,Activity activitys,activity act,int index) => SingleChildScrollView(
+   scrollDirection: Axis.horizontal,
+   child: Row(
 
-   children: [
-     DeatailsTeamComponent.membersTeamImage(context,mediaQuery,activitys.Participants.length,activitys.Participants,20,30),
-     BlocBuilder<ParticpantsBloc, ParticpantsState>(
-  builder: (context, state) {
-    return Padding(
-       padding: paddingSemetricHorizontal(h:15),
-       child:
+     children: [
+       DeatailsTeamComponent.membersTeamImage(context,mediaQuery,activitys.Participants.length,activitys.Participants,20,30),
+       BlocBuilder<ParticpantsBloc, ParticpantsState>(
+    builder: (context, state) {
+      return Padding(
+         padding: paddingSemetricHorizontal(h:15),
+         child:
 
-       FutureJoinButton(state, index, activitys, act, mediaQuery, mediaQuery.size.width / 3, mediaQuery.devicePixelRatio * 3.5),
+         FutureJoinButton(state, index, activitys, act, mediaQuery, mediaQuery.size.width / 3, mediaQuery.devicePixelRatio * 3.5),
 
-     );
-  },
-),
-     
+       );
+    },
+   ),
 
-   ],
+
+     ],
+   ),
  );
 
  static AnimatedSwitcher FutureJoinButton(ParticpantsState state, int index, Activity activitys, activity act, MediaQueryData mediaQuery,double width,double textsize) {
@@ -672,55 +687,57 @@ showDragHandle: true,
 
 
 
- static  Widget infoCircle(mediaQuery,Activity activitys) => SizedBox(
-   height: mediaQuery.size.height/6.5,
-
-   child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-crossAxisAlignment: CrossAxisAlignment.start,
-
-      children: [
-        Padding(
-          padding: paddingSemetricHorizontal(h:20),
-          child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-
-            children: [
-              IconInfo(Icons.calendar_month),
-
-              Padding(
-                padding: paddingSemetricHorizontal(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      DateFormat('EEE MMM yyyy').format(activitys.ActivityBeginDate),
-                      style: PoppinsSemiBold(
-                          mediaQuery.devicePixelRatio * 4.5, textColorBlack,TextDecoration.none),
-                    ),
-                    Row(
-                      children: [
-
-                        Text(
-                            ActivityAction. calculateDurationhour(activitys.ActivityBeginDate, activitys.ActivityEndDate),
-                          style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 3.5,
-                              textColor, TextDecoration.none),
-                        ),
-                      ],
-                    ),
-                  ],
+ static  Widget infoCircle(mediaQuery,Activity activitys) => SingleChildScrollView(
+   child: SizedBox(
+     height: mediaQuery.size.height/5.5,
+   
+     child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+   crossAxisAlignment: CrossAxisAlignment.start,
+   
+        children: [
+          Padding(
+            padding: paddingSemetricHorizontal(h:20),
+            child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+   
+              children: [
+                IconInfo(Icons.calendar_month),
+   
+                Padding(
+                  padding: paddingSemetricHorizontal(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        DateFormat('EEE MMM yyyy').format(activitys.ActivityBeginDate),
+                        style: PoppinsSemiBold(
+                            mediaQuery.devicePixelRatio * 4.5, textColorBlack,TextDecoration.none),
+                      ),
+                      Row(
+                        children: [
+   
+                          Text(
+                              ActivityAction. calculateDurationhour(activitys.ActivityBeginDate, activitys.ActivityEndDate),
+                            style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 3.5,
+                                textColor, TextDecoration.none),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-
-
-       kk(mediaQuery,activitys),
-
-      ],
-    ),
+   
+   
+         kk(mediaQuery,activitys),
+   
+        ],
+      ),
+   ),
  );
 
  static Container IconInfo(IconData icon) {

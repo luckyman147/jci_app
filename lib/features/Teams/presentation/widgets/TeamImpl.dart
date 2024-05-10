@@ -30,7 +30,7 @@ Widget allTeams(String id,ScrollController scrollController,bool isHome) {
               case TeamStatus.error:
                 return ShimmerListView(itemCount: 3,);
                 case TeamStatus.success:
-                case TeamStatus.IsRefresh:
+              case TeamStatus.IsRefresh:
 
                   if (state.teams.isEmpty) {
                     return ShimmerListView(itemCount: 3);
@@ -40,7 +40,7 @@ Widget allTeams(String id,ScrollController scrollController,bool isHome) {
                     return Future.value(true);
                   },
                   child:
-                  isHome?TeamHomeWidget(teams: state.teams):
+
 
                   TeamWidget(teams: state.teams,scrollController: scrollController,hasReachedMax: state.teams.length<=3?true: state.hasReachedMax,));
 case TeamStatus.initial:
@@ -77,7 +77,7 @@ Widget GetTeamByid(String id,TextEditingController taskController,int index) {
                 child: TeamDetailWidget(team:TeamModel.fromJson( state.teamById), taskController: taskController,),
               );
             }else if (state.status ==TeamStatus.error ) {
-        return MessageDisplayWidget(message: "Error");
+        return LoadingWidget();
       }
       return LoadingWidget();
     },

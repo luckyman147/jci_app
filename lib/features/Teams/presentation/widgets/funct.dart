@@ -276,7 +276,7 @@ class TeamFunction{
     context.read<MembersTeamCubit>().nameChanged(value);
     if (state.name.length > 1){
       context.read<MembersBloc>().add(GetMemberByNameEvent( name: state.name));}
-    else if (state.name.isEmpty|| state.name==null ){
+    else if (state.name.isEmpty ){
       context.read<MembersBloc>().add(const GetAllMembersEvent(false));
     }
   }
@@ -443,11 +443,9 @@ class TeamFunction{
 
   final taskFile=TaskFile(url: "url", id: "", path: file.path!, extension: file.extension!, );
   if (!mounted) return;
-  final inputFields input=inputFields(taskid: id, teamid: null, file: taskFile, memberid: null, status: null, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: null, fileid: null, );
-
+  final inputFields input=inputFields(taskid: id, teamid:"", file: taskFile, memberid: null, status: null, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: null, fileid: null, );
   context.read<GetTaskBloc>().add(UpdateFile(input));
-  log(result.toString());
-  // Use the file as needed
+
   }
 
   }

@@ -1,0 +1,212 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../core/app_theme.dart';
+import '../../../Home/presentation/widgets/MemberSelection.dart';
+import '../../../auth/domain/entities/Member.dart';
+import '../bloc/Members/members_bloc.dart';
+import 'MemberImpl.dart';
+
+class BestMembersComponent{
+  static  Widget MembersRanksBody(BuildContext context, List<Member> members) {
+    return Column(
+      children: [
+        BestMembersWidget(members, context),
+
+        RowInfo(),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: ListView.separated(
+            itemCount: members.length,
+            itemBuilder: (context, index) {
+              final member = members[index];
+              return SizedBox(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    minVerticalPadding: 10,
+
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(color: textColor),
+                    ),
+                    leading: Text(
+                      (index + 1).toString(),
+                      style: PoppinsRegular( index>2?20:24,index==0?Colors.yellow:index==1?Colors.grey:index==2?Colors.brown:Colors.grey.shade400, ),
+                    ),
+                    title:Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        imageWidget(member, 30, 18,true ),
+                        Text(member.points.toString(), style: PoppinsSemiBold(20, textColorBlack, TextDecoration.none)),
+
+                      ],
+                    ),
+
+                  ),
+                ),
+              );
+            }, separatorBuilder: (BuildContext context, int index) {
+            return SizedBox(
+              height: 10,
+            );
+          },
+          ),
+        ),
+      ],
+    );
+  }
+
+  static Widget BestMembersWidget(List<Member> members, BuildContext context) {
+    return members.length>=3?
+    Container(
+      height: MediaQuery.of(context).size.height * 0.43,
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+
+        image: DecorationImage(
+          image: AssetImage("assets/images/classement.jpg"),
+          fit: BoxFit.cover,
+          opacity: 0.1,
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+      ),
+      child: Column(
+
+        children: [
+          Header(context,textColorBlack),
+          Text("Best Members",style: PoppinBold(30, SecondaryColor,TextDecoration.none),),
+          Padding(
+            padding: paddingSemetricVertical(),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+
+                Padding(
+                  padding: const EdgeInsets.only(top: 50.0),
+                  child: ColumBestMembers(members[1],Colors.grey,"2",78,context),
+                ),
+                ColumBestMembers(members[0],Color(0xFFFFD700),"1",78,context),
+                Padding(
+                  padding: const EdgeInsets.only(top: 50.0),
+                  child: ColumBestMembers(members[2],Colors.brown,"3",78,context),
+                ),
+
+
+              ],
+            ),
+          )
+
+
+        ],
+      ),
+
+    ):              Header(context,textColorBlack);
+  }
+
+  static Container ColumBestMembers(Member members,Color color,String index,double siez,BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.3,
+      decoration: BoxDecoration(
+        color: textColorWhite,
+        borderRadius: BorderRadius.circular(20),
+      ),
+
+      child: Padding(
+        padding: paddingSemetricVerticalHorizontal(v: 10, h: 13),
+        child: Column(
+          children: [
+            ImageRank(members, color, index,siez),
+            Text(members.firstName.toString(), style: PoppinsSemiBold(15, textColor, TextDecoration.none)),
+            // Text(members.firstName.toString(), style: PoppinsSemiBold(15, textColor, TextDecoration.none)),
+            Text(members.lastName.toString(), style: PoppinsSemiBold(15, textColor, TextDecoration.none)),
+            Text(members.points.toString()+ "Pts", style: PoppinsSemiBold(16, PrimaryColor, TextDecoration.none)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static SizedBox ImageRank(Member members,Color color,String index,double size) {
+    return SizedBox(
+      height: 80,
+      child: Stack(
+        children: [
+          PhotoReeact(members, size),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: color, // Adjust color as needed
+              ),
+              // Adjust color as needed
+              child: Center(child: Text(index, style: PoppinsRegular(15, textColorWhite))), // Adjust content as needed
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Row Header(BuildContext context,Color color) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        BackButton(color: color,onPressed: (){Navigator.pop(context);},),
+        Padding(
+          padding: paddingSemetricHorizontal(h: 17),
+          child: Text("Ranks",style: PoppinsSemiBold(20, color, TextDecoration.none),),
+        )
+      ],);
+  }
+
+  static Row RowInfo() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Padding(
+          padding: paddingSemetricHorizontal(),
+          child: Text("Rank",style: PoppinsSemiBold(15, textColor, TextDecoration.none),),
+        ),
+        Padding(
+          padding: paddingSemetricHorizontal(),
+          child: Text("Member",style: PoppinsSemiBold(15, textColor, TextDecoration.none),),
+        ), Padding(
+          padding: paddingSemetricHorizontal(),
+          child: Text("Points",style: PoppinsSemiBold(15, textColor, TextDecoration.none),),
+        ),
+      ],
+    );
+  }
+  static void ShowRankMembers(MediaQueryData mediaQuery, BuildContext context) {
+
+    context.read<MembersBloc>().add(getRanksOfMembers(true));
+
+    showModalBottomSheet(
+        useSafeArea: true,
+        isScrollControlled: true,
+        backgroundColor: backgroundColored,
+
+        constraints: BoxConstraints(
+            maxHeight: mediaQuery.size.height,
+            minHeight: mediaQuery.size.height/2
+        ),
+        context: context, builder: (context) => SizedBox(
+        height: mediaQuery.size.height ,
+        child: Column(
+          children: [
+
+            MemberImpl.MembersWithRanks(mediaQuery),
+
+          ],
+        )));
+  }
+}

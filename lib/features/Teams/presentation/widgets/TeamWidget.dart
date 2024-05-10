@@ -139,18 +139,7 @@ Widget details(List<Team> teams, int index,MediaQueryData mediaQuery) =>
                       child: Images(teams, index),
                     ),
 
-                    BlocBuilder<GetTeamsBloc, GetTeamsState>(
-                      builder: (context, state) {
-                        if (state.isExisted.isEmpty) {
-                          return buildAddButton(() => null);
-                        }
-                        if (!state.isExisted[index]){
-                        return buildAddButton(() => null);}
-                        else{
-                          return SizedBox();
-                        }
-                      },
-                    ),
+
                   ],
                 )
               ],

@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
 
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/core/config/services/TeamStore.dart';
 import 'package:jci_app/features/auth/data/models/Member/AuthModel.dart';
@@ -21,12 +24,13 @@ import '../../domain/entities/Member.dart';
 import '../models/MemberSIgnUP/MerberSignUp.dart';
 
 abstract class  AuthRemote {
-  Future<bool>  signOut();
+  Future<bool>  signOut(bool value);
   Future<Either<Failure, MemberModel>> sendPasswordResetEmail(String email);
   Future<Either<Failure, MemberModel>> verifyEmail();
   Future<Unit> updatePassword(MemberModel member);
   Future<Unit> refreshToken();
-
+Future<User?> signInWithGoogle();
+Future<Unit> RegisterInWithGoogle(MemberModel memberModelGoogleSignUp);
   Future<Unit> Login(String email,String password);
   Future<Unit> SendVerificationEmail(String email,bool isReset);
 
@@ -37,8 +41,9 @@ class AuthRemoteImpl implements AuthRemote {
 
 final http.Client client;
 
-
-  AuthRemoteImpl({required this.client});
+final FirebaseAuth auth ;
+final GoogleSignIn googleSignIn ;
+  AuthRemoteImpl(this.auth, this.googleSignIn,  {required this.client});
 
 
 
@@ -46,11 +51,7 @@ final http.Client client;
   Future<Unit> refreshToken() async {
 
     final tokens=await Store.GetTokens();
-    if (tokens[0] == null || tokens[0].toString().isEmpty ) {
 
-throw EmptyCacheException();
-
-    }
     // replace with your actual access token
 
     try {
@@ -85,9 +86,8 @@ throw EmptyCacheException();
 
 
   @override
-  Future<bool> signOut()async {
-
-    final tokens=await Store.GetTokens();
+  Future<bool> signOut(value)async {
+  final tokens=await Store.GetTokens();
 
 
 
@@ -108,6 +108,10 @@ throw EmptyCacheException();
           'refreshToken': '${tokens[0]}', // replace with your actual refresh token
         }),
       );
+      if (value){
+        await googleSignIn.signOut();
+        await auth.signOut();
+      }
 
       if (Response.statusCode == 200) {
         final Map<String, dynamic> response = jsonDecode(Response.body);
@@ -116,17 +120,8 @@ throw EmptyCacheException();
      await    Store.setLoggedIn(false);
      await TeamStore.clearCache();
         return true;
-      } else  if (Response.statusCode == 400 ){
-        final Map<String, dynamic> response = jsonDecode(Response.body);
-if (response['message']=='Already logged out'){
-        throw AlreadyLogoutException();
-      }
-      else if ( Response.statusCode==401){
-      throw UnauthorizedException()  ;
-      }
-      else {
-
-        throw ServerException();}
+      } else  if (Response.statusCode == 400 ) {
+         return false;
       }
       else {
 
@@ -136,15 +131,15 @@ if (response['message']=='Already logged out'){
       }
     } catch (e) {
       // Exception occurred during the request
-      print('Exception during request: $e');
+
       await    Store.setLoggedIn(false);
 
       throw UnauthorizedException()  ;
 
 
-    }
 
-  }
+
+  }}
 
   @override
   Future<Unit> updatePassword(MemberModel member)async {
@@ -312,5 +307,99 @@ Map<String, dynamic> filterMap(Map<String, dynamic> user) {
     log(e.toString());
     throw ServerException();
     }}
+
+  @override
+  Future<User?> signInWithGoogle()async  {
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
+    if (googleSignInAccount != null) {
+      final GoogleSignInAuthentication googleSignInAuthentication =
+      await googleSignInAccount.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+      final UserCredential authResult =
+      await auth.signInWithCredential(credential);
+
+      final User? user = authResult.user;
+
+
+      final Response = await client.post(
+        Uri.parse(LoginGoogleUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"email":user!.email,}),
+      );
+
+
+      final response = jsonDecode(Response.body);
+
+      if (Response.statusCode == 200) {
+
+
+
+
+        await Store.setTokens(response['refreshToken'],response['accessToken'] );
+
+        await Store.setLoggedIn(true);
+
+        List<String> stringList = (response['Permissions'] as List).map((element) => element.toString()).toList();
+        await Store.setPermissions(stringList);
+        await Store.setStatus(true);
+        return null;
+
+      } else if (Response.statusCode == 400 && response['status'].toString().toUpperCase()=="NTR") {
+        await Store.setStatus(false);
+        return user;
+      } else {
+        throw ServerException();
+      }
+
+
+  }
+    else {
+      throw ServerException();
+    }
+
+  }
+
+  @override
+  Future<Unit> RegisterInWithGoogle(MemberModel memberModelGoogleSignUp)async {
+
+    final body = jsonEncode(memberModelGoogleSignUp.toJson());
+    final Response=await client.post(
+      Uri.parse(SignUpGoogleUrl),
+
+      headers: {"Content-Type": "application/json"},
+
+      body: body,);
+
+
+    final response = jsonDecode(Response.body);
+
+    if (Response.statusCode == 201) {
+      await Store.setTokens(response['refreshToken'],response['accessToken'] );
+      await Store.setLoggedIn(true);
+
+      List<String> stringList = (response['Permissions'] as List).map((element) => element.toString()).toList();
+      await Store.setPermissions(stringList);
+      await Store.setStatus(true);
+      return Future.value(unit);
+    } else if (Response.statusCode==400){
+
+
+      throw ServerException();
+    }
+    else if (Response.statusCode==409){
+
+
+      throw IsEmailException();
+    }
+    else{
+
+      throw ServerException();
+    }
+
+  }
 
 }

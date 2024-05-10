@@ -54,6 +54,13 @@ export class MemberLoginInputs{
     @Length(6,12)
     password:string
 }
+export class MemberLoginGoogleInputs{
+    @IsEmail()
+    email:string
+}
+
+
+
 export interface MemberPayload{
     _id:string
     email:string 

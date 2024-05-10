@@ -47,6 +47,12 @@ enum ActivityStatus {
     PRESENT = 'present',
     ABSENT = 'absent',
   }
+ export enum SearchType{
+    Event="Events",
+    Meeting="Meetings",
+    Training="Trainings",
+    All="All"
+  }
   
   export class ActivityMemberStatus {
     @IsNotEmpty()
@@ -57,6 +63,13 @@ enum ActivityStatus {
   
     @IsEnum(ActivityStatus)
     status: ActivityStatus;
+  }    
+  export class SeachActivityInputs {
+    @IsEnum(SearchType)
+    type: SearchType;
+  
+    @IsNotEmpty()
+    name: string;
   }  
   export class GuestInput {
     @IsNotEmpty()

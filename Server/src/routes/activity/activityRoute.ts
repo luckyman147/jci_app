@@ -1,5 +1,5 @@
 import express from "express";
-import { addGuestToActivity, changeMemberStatus, deleteGuest, GetActivityByid, GetActivityByname, getActivityMembers, getAllGuestsOfActivity, updateGuest, updateGuestConfirmation } from "../../controllers/activities/activityController";
+import { addGuestToActivity, changeMemberStatus, deleteGuest, GetActivityByid, GetActivityByname, getActivityMembers, getAllGuests, getAllGuestsOfActivity, updateGuest, updateGuestConfirmation } from "../../controllers/activities/activityController";
 
 const router=express.Router()
 
@@ -22,10 +22,11 @@ router.get('/:id',GetActivityByid)
  *       404:
  *         description: Activity not found
  */
-router.get('/:name',GetActivityByname)
+router.post('/SearchName/get',GetActivityByname)
 router.get('/members/:activityId',getActivityMembers)
 router.patch('/members',changeMemberStatus)
 router.get('/guests/:activityId',getAllGuestsOfActivity)
+router.post('/guestsALL',getAllGuests)
 router.post('/guests/:activityId',addGuestToActivity)
 router.delete('/guests/:activityId/:guestId',deleteGuest)
 router.patch('/guests/:guestId',updateGuest)

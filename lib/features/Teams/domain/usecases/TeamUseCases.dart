@@ -13,7 +13,7 @@ class GetAllTeamsUseCase {
 
 
 
-  Future<Either<Failure, List<Team>>> call({String page="0",String limit="5",isPrivate=false,updated=true}) async {
+  Future<Either<Failure, List<Team>>> call({String page="0",String limit="4",isPrivate=false,updated=true}) async {
     return await _teamRepository.getTeams(page, limit, isPrivate, updated);
   }
 }
@@ -89,6 +89,16 @@ class InviteMemberUseCase  extends UseCase<Unit, TeamInput>{
   @override
   Future<Either<Failure, Unit>> call( params) {
     return _teamRepository.InviteMember(params.id,params.memberid!);
+  }
+}
+class JoinTeamUseCase  extends UseCase<Unit, String>{
+  final TeamRepo _teamRepository;
+
+  JoinTeamUseCase(this._teamRepository);
+
+  @override
+  Future<Either<Failure, Unit>> call( params) {
+    return _teamRepository.JoinTeam(params);
   }
 }
 class TeamInput{

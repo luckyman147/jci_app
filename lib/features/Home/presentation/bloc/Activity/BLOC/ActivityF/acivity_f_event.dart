@@ -42,3 +42,11 @@ class SearchTextChanged extends AcivityFEvent {
   @override
   List<Object> get props => [searchText];
 }
+class GetActivitiesByName extends AcivityFEvent {
+final activityParams params;
+
+  const GetActivitiesByName(this.params);
+
+  @override
+  List<Object> get props => [params];
+}
