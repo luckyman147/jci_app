@@ -84,7 +84,7 @@ class TrainingLocalDataSourceImpl implements TrainingLocalDataSource{
     if (guests.isNotEmpty) {
       return guests;
     } else {
-      throw EmptyCacheException();
+      return [];
     }
 
   }

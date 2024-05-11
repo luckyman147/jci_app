@@ -71,4 +71,6 @@ class Urls{
   static String TeamMember(String teamId) => "$TeamUrl$teamId/TeamMembers";
   static String InviteMemberUrl(String teamId,String memberid) => "$TeamUrl$teamId/AddMember/$memberid";
   static String JoinTeam(String teamId,) => "$TeamUrl$teamId/JoinTeam";
+
+  static String AddGuestToActivity(String activityId, String guestId) => "$BaseUrl/Activity/guests/$activityId/$guestId";
 }

@@ -9,7 +9,7 @@ import { Meeting } from '../../models/activities/meetingModel';
 import { Training } from '../../models/activities/TrainingModel';
 import { Member } from '../../models/Member';
 import { ConfirmGuestPartGuestEmail, participationEmail, sendAbsenceEmail, sendAddGuestEmail, sendPresenceEmail } from '../../utility/NotificationEmailUtility';
-import { getMembersInfo } from '../../utility/role';
+import { getGuestInfo, getMembersInfo } from '../../utility/role';
 
 
 export const GetActivityByid= async (req: Request, res: Response, next: NextFunction) => {
@@ -227,7 +227,7 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
   };
 
 
-  export const addGuestToActivity=async(req:Request,res:Response)=>{
+  export const addGuest=async(req:Request,res:Response)=>{
 
     try {
       const eventInputs=plainToClass(GuestInput,req.body)
@@ -255,7 +255,11 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
       }  )
 
       await newguest.save()
-      activity.guests.push(newguest.id)
+      
+      
+      activity.guests.push({ guest: newguest?.id, status: 'pending' }); // Assuming the default status is 'pending'
+  
+
       await activity.save()
       sendAddGuestEmail(newguest.email,activity.name,newguest.name,activity.ActivityAdress,activity.ActivityBeginDate)
       res.status(200).json({message:"Guest added successfully",guest:newguest})
@@ -268,6 +272,42 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
       
     }
   }
+  export const addGuestToAct=async(req:Request,res:Response)=>{
+
+    try {
+   
+  const {activityId,guestId}=req.params
+      // find guest by email 
+      let guest = await Guest.findById(guestId)
+
+    
+      const activity=await Activity.findById(activityId)
+      if (!activity){
+        return res.status(404).json({message:"Activity not found"})
+      }
+      //check if al ready exists
+      if (activity.guests.includes(
+        (guest: any)=>guest.guest.equals(guestId)
+      )){
+        return res.status(409).json({ message: 'Guest already exists' });
+      }
+     
+        
+      activity.guests.push({ guest: guest!.id, status: 'present' }); // Assuming the default status is 'pending'
+  
+      await activity.save()
+      sendAddGuestEmail(guest!.email,activity.name,guest!.name,activity.ActivityAdress,activity.ActivityBeginDate)
+      res.status(200).json({message:"Guest added successfully"})
+        
+    
+      
+    } catch (error) {
+      console.error('Error adding guest to activity:', error);
+      res.status(500).json({ message: "Internal server error" });
+      
+    }
+  }
+
 
   export const getAllGuestsOfActivity = async (req: Request, res: Response) => {
     try {
@@ -276,8 +316,12 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
       if (!activity) {
         return res.status(404).json({ message: 'Activity not found' });
       }
-      const guests = await Guest.find({ _id: { $in: activity.guests } });
-      res.status(200).json( guests );
+      const formated=await Promise.all(activity.guests.map(async(partipant)=>({
+        guest:await getGuestInfo(partipant.guest),
+        status:partipant.status
+      })))
+
+      res.status(200).json( formated );
     
     } catch (error) {
       console.error('Error fetching guests of activity:', error);
@@ -333,7 +377,11 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
       if (!activity){
         return res.status(404).json({ message: 'activity not found' });
       }
-      activity.guests=activity.guests.filter((guest)=>guest._id!=guestId)
+      const guestIndex = activity.guests.findIndex(guest => guest.guest.equals(guestId));
+      if (guestIndex === -1) {
+        return res.status(404).json({ message: 'Guest not found in activity' });
+      }
+      activity.guests.splice(guestIndex, 1);
       await activity.save()
 
 
@@ -352,6 +400,7 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
       const { guestId,activityId } = req.params;
       
       const { confirmed } = req.body;
+      console.log(confirmed)
       const guest = await Guest.findById(guestId);
       if (!guest) {
         return res.status(404).json({ message: 'Guest not found' });
@@ -360,9 +409,14 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
       if (!activity){
         return res.status(404).json({ message: 'activity not found' });
       }
-      guest.isConfirmed = confirmed;
+      const guestIndex = activity.guests.findIndex(guest => guest.guest.equals(guestId));
+      if (guestIndex === -1) {
+        return res.status(404).json({ message: 'Guest not found in activity' });
+      }
+      activity.guests[guestIndex].status = confirmed;
       await guest.save();
-      if (confirmed=='true' || confirmed){
+        await activity.save();
+      if (confirmed=='present'){
       ConfirmGuestPartGuestEmail(guest.email,activity.name,guest.name,activity.ActivityAdress,activity.ActivityBeginDate)}
       res.status(200).json({ message: 'Guest confirmation updated successfully', guest });
     } catch (error) {

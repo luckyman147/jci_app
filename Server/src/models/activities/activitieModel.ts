@@ -31,9 +31,15 @@ export const ActivitySchema=new Schema({
 
     
       guests:[{
+        guest: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Guest',
-        default:[]
+        },
+        status: {
+        type: String,
+        enum: ['pending', 'present', 'absent'],
+        default: 'pending',
+        },
       
       }],
     categorie:{type:String,required:true},

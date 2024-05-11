@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { File } from '../models/FileModel';
 import { Member } from "../models/Member";
 import { Permission } from '../models/Pemission';
+import { Guest } from '../models/activities/Guests';
 import { Training } from '../models/activities/TrainingModel';
 import { Event } from "../models/activities/eventModel";
 import { Meeting } from '../models/activities/meetingModel';
@@ -90,6 +91,22 @@ export const getTeamByEvent= async () =>{
   console.log(membersInfo)
 
       return membersInfo;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal server error');
+    }
+  };  export const getGuestInfo = async (memberIds: string): Promise<any> => {
+    try {
+      // Query the database to find members by their IDs
+      const members = await Guest.findById(memberIds);
+
+      
+  console.log(members)
+if (members){
+      return members;}
+      else{
+        return null
+      }
     } catch (error) {
       console.error(error);
       throw new Error('Internal server error');

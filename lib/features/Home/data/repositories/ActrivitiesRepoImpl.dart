@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 
 import 'package:jci_app/core/error/Failure.dart';
@@ -5,6 +7,7 @@ import 'package:jci_app/features/Home/data/model/TrainingModel/TrainingModel.dar
 import 'package:jci_app/features/Home/data/model/meetingModel/MeetingModel.dart';
 
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/ActivityGuest.dart';
 import 'package:jci_app/features/Home/domain/entities/ActivityParticpants.dart';
 import 'package:jci_app/features/Home/domain/entities/Guest.dart';
 
@@ -434,7 +437,7 @@ final guestmodel=GuestModel.fromEntity(guest);
   }
 
   @override
-  Future<Either<Failure, List<Guest>>> getAllguestOfActivity(String activityId)async {
+  Future<Either<Failure, List<ActivityGuest>>> getAllguestOfActivity(String activityId)async {
     if (await networkInfo.isConnected) {
       try {
         final result = await trainingRemoteDataSource.getAllGuestOfACtivity(activityId);
@@ -462,7 +465,7 @@ final guestmodel=GuestModel.fromEntity(guest);
   }
 
   @override
-  Future<Either<Failure, Unit>> updateGuestStatus(String activityId, String guestid, bool status) async{
+  Future<Either<Failure, Unit>> updateGuestStatus(String activityId, String guestid, String status) async{
     return _response( trainingRemoteDataSource.updateGuestStatus(activityId, guestid, status));
   }
 
@@ -491,6 +494,7 @@ final guestmodel=GuestModel.fromEntity(guest);
     if (await networkInfo.isConnected) {
       final localguests=await trainingLocalDataSource.getAllCachedGuests();
       try {
+        log("message"+isUpdated.toString());
         if (isUpdated){
         final result = await trainingRemoteDataSource.getAllGuest();
         return Right(result); }
@@ -524,8 +528,13 @@ final guestmodel=GuestModel.fromEntity(guest);
       }
       return Left(OfflineFailure());
     }
-    // TODO: implement getAllguest
+    // TODO: imàplement getAllguest
 
+  }
+
+  @override
+  Future<Either<Failure, Unit>> addGuestToActivity(String activityId, String guestId) {
+    return _response(trainingRemoteDataSource.addGuestToActivity(activityId, guestId));
   }
 
 

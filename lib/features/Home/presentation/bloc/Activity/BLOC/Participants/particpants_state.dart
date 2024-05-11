@@ -6,20 +6,36 @@ final List<dynamic> particpants ;
 final List<ActivityParticipants> members;
 final List<ActivityParticipants> membersSearch;
 final ParticpantsStatus status ;
-final List<Guest> guests;
-final List<Guest> guestsSearch;
+final List<ActivityGuest> Activeguests;
+final List<Guest> Allguests;
+final String message;
+final List<ActivityGuest> guestsSearch;
+final List<Guest> guestsAllSearch;
 
-  const ParticpantsState({required this.isParticipantAdded, this.particpants = const [], this.members = const [], this.status = ParticpantsStatus.initial, this.guests = const [], this.guestsSearch = const [], this.membersSearch = const []});
 
-  ParticpantsState copyWith({List<Map<String, dynamic>>? isParticipantAdded, List<dynamic>? particpants, List<ActivityParticipants>? members, ParticpantsStatus? status,List<Guest>? guests,List<Guest>? guestsSearch,List<ActivityParticipants>? membersSearch}) {
+  const ParticpantsState({required this.isParticipantAdded, this.particpants = const [],
+    this.message = '',
+    this.guestsAllSearch=const [],
+
+
+    this.members = const [], this.status = ParticpantsStatus.initial, this.Activeguests = const [], this.guestsSearch = const [], this.membersSearch = const [], this.Allguests = const []});
+
+  ParticpantsState copyWith({List<Map<String, dynamic>>? isParticipantAdded, List<dynamic>? particpants, List<ActivityParticipants>? members, ParticpantsStatus? status,List<ActivityGuest>? Activeguests,List<ActivityGuest>? guestsSearch,List<ActivityParticipants>? membersSearch,List<Guest>? Allguests, String? message,
+
+    List<Guest>? guestsAllSearch
+
+  }) {
 
     return ParticpantsState(
+      message: message ?? this.message,
       isParticipantAdded: isParticipantAdded ?? this.isParticipantAdded,
+      guestsAllSearch: guestsAllSearch??this.guestsAllSearch,
 
 
       particpants: particpants ?? this.particpants,
       membersSearch: membersSearch ?? this.membersSearch,
-      guests: guests ?? this.guests,
+      Activeguests: Activeguests ?? this.Activeguests,
+      Allguests: Allguests ?? this.Allguests,
       guestsSearch: guestsSearch ?? this.guestsSearch,
       members: members ?? this.members,
       status: status ?? this.status,
@@ -27,7 +43,7 @@ final List<Guest> guestsSearch;
   }
 
   @override
-  List<Object> get props => [isParticipantAdded, particpants, members, status,guests,guestsSearch,membersSearch];
+  List<Object> get props => [isParticipantAdded, particpants, members, status,Activeguests,guestsSearch,membersSearch,Allguests,message,guestsAllSearch];
 }
 
 class ParticpantsInitial extends ParticpantsState {

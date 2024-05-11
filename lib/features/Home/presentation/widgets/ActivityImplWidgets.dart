@@ -275,6 +275,43 @@ return ShimmerButton.shimmerparticipants();
   );
 
 }
+Widget ShowAllGuests(String activityId){
+  return BlocBuilder<ParticpantsBloc, ParticpantsState>(
+    builder: (context, state) {
+    switch(state.status){
+      case ParticpantsStatus.initial:
+
+        return ShimmerButton.shimmerparticipants();
+      case ParticpantsStatus.loading:
+        return ShimmerButton.shimmerparticipants();
+      case ParticpantsStatus.failed:
+        context.read<ParticpantsBloc>().add(GetAllGuestsEvent(isUpdated: true));
+
+        return ShimmerButton.shimmerparticipants();
+      case ParticpantsStatus.loaded:
+        context.read<ParticpantsBloc>().add(GetAllGuestsEvent());
+
+        return ShimmerButton.shimmerparticipants();
+        case ParticpantsStatus.changed:
+          context.read<ParticpantsBloc>().add(GetAllGuestsEvent(isUpdated: true));
+          return ShimmerButton.shimmerparticipants();
+
+
+          case ParticpantsStatus.empty:
+          return SizedBox();
+
+            case ParticpantsStatus.success:
+          case ParticpantsStatus.LoadedGuests:
+        return GuestWidget.GuestALL(context,state.Allguests,activityId);
+      default:
+        context.read<ParticpantsBloc>().add(GetAllGuestsEvent());
+
+        return ShimmerButton.shimmerparticipants();
+    }
+    },
+  );
+
+}
 
 
 

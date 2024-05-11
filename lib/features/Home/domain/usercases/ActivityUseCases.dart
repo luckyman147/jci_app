@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/core/usescases/usecase.dart';
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/ActivityGuest.dart';
 import 'package:jci_app/features/Home/domain/entities/Guest.dart';
 import 'package:jci_app/features/Home/domain/repsotories/ActivitiesRepo.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
@@ -111,13 +112,13 @@ class GetAllParticipantsUseCases extends UseCase<List<ActivityParticipants>,Stri
     return activitiesRepo.getAllParticipants(params);
   }
 }
-class GetGuestsUseCases extends UseCase<List<Guest>,String > {
+class GetGuestsUseCases extends UseCase<List<ActivityGuest>,String > {
   final ActivitiesRepo activitiesRepo;
 
   GetGuestsUseCases({required this.activitiesRepo});
 
   @override
-  Future<Either<Failure, List<Guest>>> call( params) {
+  Future<Either<Failure, List<ActivityGuest>>> call( params) {
     return activitiesRepo.getAllguestOfActivity(params);
   }
 }class GetAllGuestsUseCases extends UseCase<List<Guest>,bool > {
@@ -137,7 +138,16 @@ class AddGuestUseCases extends UseCase<Unit,guestParams > {
 
   @override
   Future<Either<Failure, Unit>> call(guestParams params) {
-    return activitiesRepo.addGuest(params.activityid!, params.guest!);
+    return activitiesRepo.addGuest(params.activityid!, params.guest!.guest);
+  }
+}class AddGuestToActivityUseCases extends UseCase<Unit,guestParams > {
+  final ActivitiesRepo activitiesRepo;
+
+  AddGuestToActivityUseCases({required this.activitiesRepo});
+
+  @override
+  Future<Either<Failure, Unit>> call(guestParams params) {
+    return activitiesRepo.addGuestToActivity(params.activityid!, params.guestId!);
   }
 }
 class ConfirmGuestUseCases extends UseCase<Unit,guestParams > {
@@ -147,7 +157,7 @@ class ConfirmGuestUseCases extends UseCase<Unit,guestParams > {
 
   @override
   Future<Either<Failure, Unit>> call(guestParams params) {
-    return activitiesRepo.updateGuestStatus(params.activityid!, params.guestId!, params.isConfirmed!);
+    return activitiesRepo.updateGuestStatus(params.activityid!, params.guestId!, params.status!);
   }
 }
 class DeleteGuestUseCases extends UseCase<Unit,guestParams > {
@@ -167,7 +177,7 @@ class UpdateGuestUseCases extends UseCase<Unit,guestParams > {
 
   @override
   Future<Either<Failure, Unit>> call(guestParams params) {
-    return activitiesRepo.updateGuest(params.activityid!, params.guest!);
+    return activitiesRepo.updateGuest(params.activityid!, params.guest!.guest);
   }
 }
 class SendReminderUseCases extends UseCase<Unit,String > {
@@ -183,12 +193,12 @@ class SendReminderUseCases extends UseCase<Unit,String > {
 
 
 class guestParams {
-  final Guest? guest;
+  final  ActivityGuest? guest;
   final String? guestId;
-  final bool? isConfirmed;
+  final String? status;
   final String? activityid;
 
-  guestParams({required this.guest, required this.guestId, required this.isConfirmed, required this.activityid});
+  guestParams({required this.guest, required this.guestId, required this.status, required this.activityid});
 
 }
 

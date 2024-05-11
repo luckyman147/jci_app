@@ -45,7 +45,7 @@ class ActivityDetailsComponent{
     padding: paddingSemetricVerticalHorizontal(),
     child: SizedBox(
       height: 50,
-      width:isRow?300: double.infinity,
+      width:isRow?250: double.infinity,
 
       child: TextField(
         onChanged: onsearch,

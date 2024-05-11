@@ -6,6 +6,9 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:jci_app/core/config/services/MemberStore.dart';
+import 'package:jci_app/core/strings/failures.dart';
+import 'package:jci_app/features/Home/data/model/ActivityGuestsModel.dart';
+import 'package:jci_app/features/Home/domain/entities/ActivityGuest.dart';
 import 'package:jci_app/features/Home/domain/entities/ActivityParticpants.dart';
 
 import '../../../../../../../core/error/Failure.dart';
@@ -33,13 +36,16 @@ final DeleteGuestUseCases removeGuestUseCases;
 final UpdateGuestUseCases updateGuestUseCases;
 final ConfirmGuestUseCases confirmGuestUseCases;
 final SendReminderUseCases sendReminderUseCases;
+final AddGuestToActivityUseCases addGuestToActivityUseCases;
 
   ParticpantsBloc({required this.leaveActivityUseCases, required this.participateActivityUseCases,
     required this.checkPermissionsUseCases, required this.getAllParticipantsUseCases,
     required this.getAllGuestsOfActivityUseCases, required this.addGuestUseCases,
     required this.removeGuestUseCases, required this.updateGuestUseCases,
     required this.confirmGuestUseCases, required this.sendReminderUseCases,
-    required this.getAllGuestsUseCases
+    required this.getAllGuestsUseCases,
+    required this.addGuestToActivityUseCases
+
 
   })
       : super(ParticpantsInitial( isParticipantAdded: [])) {
@@ -60,21 +66,35 @@ on<DeleteGuestEvent>(RemoveGuest);
 on<ConfirmGuestEvent>(confirmGuest);
 on<SearchGuestByname>(seachGuesusByname);
 on<SearchMemberByname>(seachMembersByname);
+on<GetAllGuestsEvent>(GetAllGuests);
+on<AddGuestToActivityEvent>(_addGuestToActivity);
+on<SearchGuestActByname>(seachAllGuesusByname);
 
 
   }
-  
+  void _addGuestToActivity(AddGuestToActivityEvent event, Emitter<ParticpantsState> emit) async {
+    final result = await addGuestToActivityUseCases(event.params);
+    emit(_eitheraddedorFailure(result));
+  }
   void GetAllGuests(GetAllGuestsEvent event, Emitter<ParticpantsState> emit) async {
-    final result = await getAllGuestsUseCases();
+    final result = await getAllGuestsUseCases(event.isUpdated);
     emit(_eitherGetAllGuestOrFailure(result));
   }
   void seachGuesusByname(SearchGuestByname event, Emitter<ParticpantsState> emit) async {
-final filtered=ActivityAction.searchGuestsByName(state.guests, event.name);
+final filtered=ActivityAction.searchGuestsByName(state.Activeguests, event.name);
 log(filtered.length.toString());
 emit(state.copyWith(guestsSearch: filtered,status: ParticpantsStatus.LoadedGuests));
 
 
-  }  void seachMembersByname(SearchMemberByname event, Emitter<ParticpantsState> emit) async {
+  }
+  void seachAllGuesusByname(SearchGuestActByname event, Emitter<ParticpantsState> emit) async {
+final filtered=ActivityAction.searchAllGuestsByName(state.guestsAllSearch, event.name);
+
+emit(state.copyWith(Allguests: filtered,status: ParticpantsStatus.success));
+
+
+  }
+  void seachMembersByname(SearchMemberByname event, Emitter<ParticpantsState> emit) async {
 final filtered=ActivityAction.searchMembersByName(state.membersSearch, event.name);
 log(filtered.length.toString());
 emit(state.copyWith(membersSearch: filtered,status: ParticpantsStatus.loaded));
@@ -239,12 +259,12 @@ void getAllguests(
     );
   }
 
-  ParticpantsState _eitherGuestLoadedOrFailure(Either<Failure, List<Guest>> result) {
+  ParticpantsState _eitherGuestLoadedOrFailure(Either<Failure, List<ActivityGuest>> result) {
     return result.fold(
           (failure) => state.copyWith(status: ParticpantsStatus.failed),
           (guests) {
 
-        return state.copyWith(guests: guests, status: ParticpantsStatus.LoadedGuests,guestsSearch: guests);
+        return state.copyWith(Activeguests: guests, status: ParticpantsStatus.LoadedGuests,guestsSearch: guests);
       },
     );
   }
@@ -255,13 +275,14 @@ void getAllguests(
           (failure) => state.copyWith(status: ParticpantsStatus.failed),
           (_) {
         if (bool) {
-          final List<Guest> guests = List.of(state.guests);
+          final List<ActivityGuest> guests = List.of(state.Activeguests
+          );
           guests.add(params.guest!);
-          return state.copyWith(status: ParticpantsStatus.success, guests: guests,guestsSearch: guests);
+          return state.copyWith(status: ParticpantsStatus.success, Activeguests: guests,guestsSearch: guests);
         } else {
-          final List<Guest> guests = List.of(state.guests);
-          guests.removeWhere((guest) => guest.id == params.guestId);
-          return state.copyWith(status: ParticpantsStatus.success, guests: guests, guestsSearch: guests);
+          final List<ActivityGuest> guests = List.of(state.Activeguests);
+          guests.removeWhere((guest) => guest.guest.id == params.guestId);
+          return state.copyWith(status: ParticpantsStatus.success, Activeguests: guests, guestsSearch: guests);
         }
       },
     );
@@ -273,14 +294,14 @@ void getAllguests(
     {
 //change isconfirm
 
-        final List<Guest> guests = state.guests;
-        final guestIndex = guests.indexWhere((guest) => guest.id == params.guestId);
+        final List<ActivityGuest> guests = state.Activeguests;
+        final guestIndex = guests.indexWhere((guest) => guest.guest.id == params.guestId);
         if (guestIndex != -1) {
-          final guest =GuestModel. fromEntity(guests[guestIndex]).toJson();
-          guest['isConfirmed'] = params.isConfirmed;
-          guests[guestIndex] = GuestModel.fromJson(guest);
+          final guest =ActivityguestModel. fromEntity(guests[guestIndex]).toMap();
+          guest['status'] = params.status;
+          guests[guestIndex] = ActivityguestModel.fromJson(guest);
 
-          return state.copyWith(status: ParticpantsStatus.changed, guests: guests, guestsSearch: guests);
+          return state.copyWith(status: ParticpantsStatus.changed, Activeguests: guests, guestsSearch: guests);
         } else {
           return state.copyWith(status: ParticpantsStatus.failed);
         }
@@ -300,6 +321,24 @@ void getAllguests(
     );
   }
 
-  ParticpantsState _eitherGetAllGuestOrFailure(Either<Failure, List<Guest>> result) {}
+  ParticpantsState _eitherGetAllGuestOrFailure(Either<Failure, List<Guest>> result) {
+    return result.fold(
+          (failure) => state.copyWith(status: ParticpantsStatus.failed),
+          (guests) {
+        return state.copyWith(Allguests: guests, status: ParticpantsStatus.LoadedGuests,guestsAllSearch: guests);
+      },
+    );
+  }
+
+  ParticpantsState _eitheraddedorFailure(Either<Failure, Unit> result) {
+    return result.fold(
+          (failure) => state.copyWith(status: ParticpantsStatus.failed,message: mapFailureToMessage(failure)),
+          (_) {
+
+
+        return state.copyWith(status: ParticpantsStatus.changed,message: 'Guest Added');
+      },
+    );
+  }
 
   }

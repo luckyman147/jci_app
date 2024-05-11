@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:jci_app/core/config/services/verification.dart';
 import 'package:jci_app/features/Home/data/model/ActivityParticpantsModel.dart';
 import 'package:jci_app/features/Home/data/model/GuestModel.dart';
+import 'package:jci_app/features/Home/domain/entities/ActivityGuest.dart';
 import 'package:jci_app/features/Home/domain/entities/Guest.dart';
 
 
@@ -18,6 +19,7 @@ import '../../../../../core/config/services/store.dart';
 import '../../../../../core/config/services/uploadImage.dart';
 import '../../../../../core/error/Exception.dart';
 
+import '../../model/ActivityGuestsModel.dart';
 import '../../model/TrainingModel/TrainingModel.dart';
 import '../activities/ActivityRemote.dart';
 
@@ -46,10 +48,12 @@ abstract class TrainingRemoteDataSource {
 
   Future<Unit> updateGuest(String activityId, GuestModel guest) ;
 
-  Future<Unit> updateGuestStatus(String activityId, String guestid, bool status) ;
+  Future<Unit> updateGuestStatus(String activityId, String guestid, String status) ;
 
-Future<List<GuestModel>>    getAllGuestOfACtivity(String activityId) ;
+Future<List<ActivityguestModel>>    getAllGuestOfACtivity(String activityId) ;
 Future<List<GuestModel>>    getAllGuest() ;
+
+  Future<Unit> addGuestToActivity(String activityId, String guestId) ;
 
 }
 
@@ -413,7 +417,7 @@ return Future.value(unit);
 
 
   @override
-  Future<Unit> updateGuestStatus(String activityId, String guestid, bool status)async {
+  Future<Unit> updateGuestStatus(String activityId, String guestid, String status)async {
     final token = await getTokens();
     return client.patch(
       Uri.parse(Urls.deleteguest(activityId, guestid)),
@@ -437,7 +441,7 @@ return Future.value(unit);
   }
 
   @override
-  Future<List<GuestModel>> getAllGuestOfACtivity(String activityId) async{
+  Future<List<ActivityguestModel>> getAllGuestOfACtivity(String activityId) async{
     final token = await getTokens();
     return client.get(
       Uri.parse(Urls.Addguest(activityId)),
@@ -448,9 +452,9 @@ return Future.value(unit);
       if (response.statusCode == 200) {
         final List<dynamic> decodedJson = json.decode(response.body);
 
-        final List<GuestModel> guests = decodedJson
-            .map<GuestModel>((jsonGuestModel) =>
-            GuestModel.fromJson(jsonGuestModel))
+        final List<ActivityguestModel> guests = decodedJson
+            .map<ActivityguestModel>((jsonGuestModel) =>
+            ActivityguestModel.fromJson(jsonGuestModel))
             .toList();
         return guests;
       } else if (response.statusCode == 400) {
@@ -464,7 +468,7 @@ return Future.value(unit);
   @override
   Future<List<GuestModel>> getAllGuest() async {
     final token = await getTokens();
-    return client.get(
+    return client.post(
       Uri.parse(Urls.ALLGuestsAllUrl),
       headers: {"Content-Type": "application/json",
         "Authorization":'Bearer ${token[1]}'
@@ -487,4 +491,26 @@ return Future.value(unit);
 
   }
 
-}
+  @override
+  Future<Unit> addGuestToActivity(String activityId, String guestId)async {
+    final token =await getTokens();
+    return client.post(
+      Uri.parse(Urls.AddGuestToActivity(activityId, guestId)),
+      headers: {"Content-Type": "application/json",
+        "Authorization":'Bearer ${token[1]}'},
+    ).then((response) async {
+      if (response.statusCode == 200) {
+        return Future.value(unit);
+      } else if (response.statusCode == 400) {
+        throw WrongCredentialsException();
+      } else if (response.statusCode == 401) {
+        throw UnauthorizedException();
+      } else {
+        throw ServerException();
+      }
+    });
+    }
+
+  }
+
+

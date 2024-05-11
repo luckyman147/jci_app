@@ -9,7 +9,7 @@ class GuestModel extends Guest{
       name: json['name'],
       email: json['email'],
       phone: json['phone'],
-      isConfirmed: json['isConfirmed']
+      isConfirmed: json['isConfirmed']??false
     );
   }
   //tojson

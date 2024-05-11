@@ -14,6 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
+import 'package:jci_app/features/Home/domain/entities/ActivityGuest.dart';
 import 'package:jci_app/features/Home/domain/entities/ActivityParticpants.dart';
 
 import 'package:path_provider/path_provider.dart';
@@ -41,9 +42,9 @@ import '../bloc/textfield/textfield_bloc.dart';
 
 
 class ActivityAction {
- static void ConfirmPreence(Guest guest, BuildContext context, String activityId) {
-
-      final param=guestParams(guest: guest, guestId: guest.id, isConfirmed:! guest.isConfirmed, activityid: activityId);
+ static void ConfirmPreence(Guest guest, BuildContext context, String activityId,String status) {
+final guestA=ActivityGuest(guest: guest, status: status);
+      final param=guestParams(guest: guestA, guestId: guest.id, status:status, activityid: activityId);
       context.read<ParticpantsBloc>().add(ConfirmGuestEvent(params: param));
 
   }
@@ -92,10 +93,14 @@ class ActivityAction {
             TextButton(
               onPressed: () {
                 if (guest.id.isNotEmpty) {
-                  final param = guestParams(
+                  final guestofActivity = ActivityGuest(
                     guest: guest,
+                    status: "pending",
+                  );
+                  final param = guestParams(
+                    guest: guestofActivity,
                     guestId: guest.id,
-                    isConfirmed: true,
+                    status: guestofActivity.status,
                     activityid: activityId,
                   );
                   context.read<ParticpantsBloc>().add(DeleteGuestEvent(
@@ -149,7 +154,8 @@ class ActivityAction {
  static void AddGuest(GlobalKey<FormState> formKey, TextEditingController controller, TextEditingController controller2, TextEditingController controller3, BuildContext context,String activityId) {
     if (formKey.currentState!.validate()) {
       final guest=Guest(name: controller.text, email: controller2.text, phone: controller3.text,isConfirmed: true, id: '');
-      final guestP=guestParams(guest: guest, guestId: guest.id, isConfirmed: true, activityid: activityId);
+      final guestOfActivity=ActivityGuest(guest: guest, status: "pending");
+      final guestP=guestParams(guest: guestOfActivity, guestId: guest.id, status: guestOfActivity.status, activityid: activityId);
       context.read<ParticpantsBloc>().add(AddGuestEvent(params: guestP));
       controller.clear();
       controller2.clear();
@@ -460,7 +466,15 @@ static   String DisplayDuration(DateTime beginDateTime, DateTime endDateTime,
   final member=await MemberStore.getModel();
   return all.any((element) => element['memberid']==member!.id);
   }
- static List<Guest> searchGuestsByName(List<Guest> objects, String? name) {
+ static List<ActivityGuest> searchGuestsByName(List<ActivityGuest> objects, String? name) {
+   if (name == null || name.isEmpty) {
+     return objects;
+   } else {
+     return objects.where((obj) => obj.guest.name.toLowerCase().contains(name.toLowerCase())
+         || obj.guest.phone.toLowerCase().contains(name.toLowerCase()) ||
+         obj.guest.email.toLowerCase().contains(name.toLowerCase())  ).toList();
+   }
+ } static List<Guest> searchAllGuestsByName(List<Guest> objects, String? name) {
    if (name == null || name.isEmpty) {
      return objects;
    } else {
@@ -477,5 +491,13 @@ static   String DisplayDuration(DateTime beginDateTime, DateTime endDateTime,
       ).toList();
    }
  }
+ static String? CheckIfGuestExist(List<ActivityGuest> objects, Guest guest) {
+    final guestExist = objects.indexWhere((obj) => obj.guest.id == guest.id);
+    if (guestExist != -1) {
+      return objects[guestExist].status;
+    } else {
+      return null;
+    }
+  }
 }
 

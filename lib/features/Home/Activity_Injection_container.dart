@@ -38,7 +38,7 @@ Future<void> initActivities() async {
     getEventsOfTheMonthUseCase: sl(),
  participantBloc: sl(), getAllActivitiesUseCases: sl(), getActivityByIdUseCases: sl(), getActivityByNameUseCases: sl(), ));
   sl.registerFactory(() => ParticpantsBloc(leaveActivityUseCases: sl(), participateActivityUseCases: sl(), checkPermissionsUseCases: sl(), getAllParticipantsUseCases: sl(), getAllGuestsUseCases: sl(), addGuestUseCases: sl(),
-    updateGuestUseCases: sl(), removeGuestUseCases: sl(), confirmGuestUseCases: sl(), sendReminderUseCases: sl(), getAllGuestsOfActivityUseCases: sl(),
+    updateGuestUseCases: sl(), removeGuestUseCases: sl(), confirmGuestUseCases: sl(), sendReminderUseCases: sl(), getAllGuestsOfActivityUseCases: sl(), addGuestToActivityUseCases: sl(),
 
 
 
@@ -98,9 +98,11 @@ sl.registerLazySingleton(() => GetActivityByNameUseCases(activitiesRepo:  sl()))
   sl.registerLazySingleton(
       () => GetTrainingsOfTheMonthUseCase(TrainingRepository: sl()));
 
+  sl.registerLazySingleton(() => AddGuestToActivityUseCases( activitiesRepo: sl()));
   sl.registerLazySingleton(() => GetAllActivitiesUseCases( activitiesRepo: sl()));
   sl.registerLazySingleton(() => SendReminderUseCases( activitiesRepo: sl()));
   sl.registerLazySingleton(() => GetGuestsUseCases( activitiesRepo: sl()));
+  sl.registerLazySingleton(() => GetAllGuestsUseCases( activitiesRepo: sl()));
   sl.registerLazySingleton(() => AddGuestUseCases( activitiesRepo: sl()));
   sl.registerLazySingleton(() => DeleteGuestUseCases( activitiesRepo: sl()));
   sl.registerLazySingleton(() => UpdateGuestUseCases( activitiesRepo: sl()));

@@ -1,5 +1,5 @@
 import express from "express";
-import { addGuestToActivity, changeMemberStatus, deleteGuest, GetActivityByid, GetActivityByname, getActivityMembers, getAllGuests, getAllGuestsOfActivity, updateGuest, updateGuestConfirmation } from "../../controllers/activities/activityController";
+import { addGuest, addGuestToAct, changeMemberStatus, deleteGuest, GetActivityByid, GetActivityByname, getActivityMembers, getAllGuests, getAllGuestsOfActivity, updateGuest, updateGuestConfirmation } from "../../controllers/activities/activityController";
 
 const router=express.Router()
 
@@ -27,7 +27,8 @@ router.get('/members/:activityId',getActivityMembers)
 router.patch('/members',changeMemberStatus)
 router.get('/guests/:activityId',getAllGuestsOfActivity)
 router.post('/guestsALL',getAllGuests)
-router.post('/guests/:activityId',addGuestToActivity)
+router.post('/guests/:activityId',addGuest)
+router.post('/guests/:activityId/:guestId',addGuestToAct)
 router.delete('/guests/:activityId/:guestId',deleteGuest)
 router.patch('/guests/:guestId',updateGuest)
 router.patch('/guests/:activityId/:guestId',updateGuestConfirmation)
