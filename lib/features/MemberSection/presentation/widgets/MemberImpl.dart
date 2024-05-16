@@ -81,4 +81,25 @@ class MemberImpl{
 
     });
   }
+  static BlocBuilder<MembersBloc, MembersState> MemberWithHighestRanks(MediaQueryData mediaQuery) {
+    return BlocBuilder<MembersBloc,MembersState>(builder: (context,state){
+
+      switch (state.userStatus) {
+        case UserStatus.Loading:
+          return ShimmerGridView();
+        case UserStatus.MembersLoaded:
+        case UserStatus.MemberByname:
+        case UserStatus.MembersRanksLoaded:
+        case UserStatus.userLoaded:
+
+if (state.memberWithRank == null) {
+  return LoadingWidget();
+}
+          return BestMembersComponent.showHighestRankMembers(context, state.memberWithRank!,);
+        default:
+          return Text("data");
+      }
+
+    });
+  }
 }

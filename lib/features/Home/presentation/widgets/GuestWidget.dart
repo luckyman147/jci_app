@@ -36,10 +36,10 @@ class GuestWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Guests", style: PoppinsRegular(20, textColorBlack, )),
+            Text("Random Visitors", style: PoppinsRegular(20, textColorBlack, )),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("${guests.length} guests", style: PoppinsLight(15, textColorBlack, )),
+              child: Text("${guests.length} visitors", style: PoppinsLight(15, textColorBlack, )),
             ),
           ],
         ),
@@ -205,6 +205,15 @@ ActivityAction.        DeleteGestFunction(context, guest.guest,activityId);
         decoration: BoxDecoration(
           color: guest.status=="present" ? Colors.green : textColorWhite,
           borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: textColorBlack),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],
 
         ),
 
@@ -332,6 +341,15 @@ static Widget GuestALL(BuildContext context,List<Guest> guests,String activityId
         decoration: BoxDecoration(
           color: status==null? textColorWhite : status=="present" || status=='pending'? Colors.green:Colors.red,
           borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: textColorBlack),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],
 
         ),
 

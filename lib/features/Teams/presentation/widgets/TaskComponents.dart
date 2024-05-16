@@ -29,15 +29,15 @@ Widget buildAddButton(Function() onadd) {
     height: 30,
     width: 30,
     child: InkWell(
-     onTap: onadd,
+      onTap: onadd,
 
       child: Container(
 
           decoration: BoxDecoration(
             border: Border.all(color: textColorWhite,width:1),
             shape: BoxShape.circle,
-              color: PrimaryColor,
-             ),
+            color: PrimaryColor,
+          ),
 
           child: Center(child: Icon(Icons.add_rounded,color: textColorWhite,))), ),
   );
@@ -113,7 +113,7 @@ Padding buildtextfield(FocusNode taskNode,bool isTrue,TextEditingController Task
       controller:TaskName,
 
 
-enabled: isTrue,
+      enabled: isTrue,
       decoration: InputDecoration(
 
           border: InputBorder.none,
@@ -169,7 +169,7 @@ Widget BottomShetTaskBody(
 
               context.read<TimelineBloc>().add(onStartDateChanged(startdate: value));
 
-                }
+            }
 
             );
 
@@ -230,28 +230,28 @@ Widget BottomShetTaskBody(
 
 void AssignBottomSheetBuilder(BuildContext context, MediaQueryData mediaQuery,
     Function(Member) onRemoveTap, Function(Member) onAddTap,Team team,
-   int index,
+    int index,
     ) {
 
   showModalBottomSheet(
     context: context,
     builder: (ctx) {
       return  BlocBuilder<GetTaskBloc, GetTaskState>(
-  builder: (context, state) {
-    List<Map<String, dynamic>> members = List<Map<String, dynamic>>.from(team.Members);
-    List<Map<String, dynamic>> ff = List<Map<String, dynamic>>.from(state.tasks[index]['AssignTo']);
+        builder: (context, state) {
+          List<Map<String, dynamic>> members = List<Map<String, dynamic>>.from(team.Members);
+          List<Map<String, dynamic>> ff = List<Map<String, dynamic>>.from(state.tasks[index]['AssignTo']);
 
-    List<Member> membersList = members.map((e) => Member.fromImages(e)).toList();
-    List<Member> ListAssignTo = ff.map((e) => Member.fromImages(e)).toList();
-    if (state.status== TaskStatus.Loading || state.status== TaskStatus.error ) {
-      return Text("");
-    }
-    else if  (state.status== TaskStatus.success || state.status== TaskStatus.Changed || state.status== TaskStatus.ErrorUpdate ){
-    return MemberTeamSelection. MembersAssignToBottomSheet(mediaQuery, onRemoveTap, onAddTap,membersList,ListAssignTo);}
-    else return Container();
-  },
-);
+          List<Member> membersList = members.map((e) => Member.fromImages(e)).toList();
+          List<Member> ListAssignTo = ff.map((e) => Member.fromImages(e)).toList();
+          if (state.status== TaskStatus.Loading || state.status== TaskStatus.error ) {
+            return Text("");
+          }
+          else if  (state.status== TaskStatus.success || state.status== TaskStatus.Changed || state.status== TaskStatus.ErrorUpdate ){
+            return MemberTeamSelection. MembersAssignToBottomSheet(mediaQuery, onRemoveTap, onAddTap,membersList,ListAssignTo);}
+          else return Container();
         },
+      );
+    },
 
 
   );
@@ -319,24 +319,24 @@ class AttachedFileWidget extends StatelessWidget {
                   onPressed: ()async {
 
 
-                final result=await FileStorage.writeCounter(fileData['url'], fileData['path']!);
-                if (result){
+                    final result=await FileStorage.writeCounter(fileData['url'], fileData['path']!);
+                    if (result){
 
-                SnackBarMessage.showSuccessSnackBar(message: "dowloaded succefully", context: context);}
-                else{
-                  SnackBarMessage.showErrorSnackBar(message: "error dowloading file", context: context);
-                }
-              }, icon: Icon(Icons.save_alt,color: textColor,size: 30,)),
+                      SnackBarMessage.showSuccessSnackBar(message: "dowloaded succefully", context: context);}
+                    else{
+                      SnackBarMessage.showErrorSnackBar(message: "error dowloading file", context: context);
+                    }
+                  }, icon: Icon(Icons.save_alt,color: textColor,size: 30,)),
               IconButton(
 
                   onPressed: (){
                     final inputFields input=inputFields(taskid: idTask, teamid:null, file: null, memberid: null, status: null, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: null, fileid: fileData['id'], );
 
                     context.read<GetTaskBloc>().add(DeleteFileEvent(input));
-                context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+                    context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
 
 
-              }, icon: Icon(Icons. delete,color: textColor,size: 30,)),
+                  }, icon: Icon(Icons. delete,color: textColor,size: 30,)),
             ],
           ),
 
@@ -366,7 +366,7 @@ class AttachedFileWidget extends StatelessWidget {
       case '.aac':
       case '.m4a':
       case '.ogg':
-        case '.flac':
+      case '.flac':
 
         return Icons.music_note; // Music icon
       default:
@@ -375,5 +375,3 @@ class AttachedFileWidget extends StatelessWidget {
   }
 
 }
-
-

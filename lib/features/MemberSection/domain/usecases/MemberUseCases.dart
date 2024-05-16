@@ -97,6 +97,17 @@ class GetMemberByIdUseCase extends UseCase<Member, MemberInfoParams>{
   }
 
 }
+class GetMemberByRankUseCase extends UseCase<Member, bool>{
+  final MemberRepo authRepository;
+
+  GetMemberByRankUseCase({required this.authRepository});
+
+  @override
+  Future<Either<Failure, Member>> call( params) async {
+    return await authRepository.GetMembeWithHighestRank(params);
+  }
+
+}
 class MemberInfoParams {
   final String id;
   final bool status;

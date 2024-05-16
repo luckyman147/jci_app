@@ -76,7 +76,7 @@ else if(state.status== ResetPasswordStatus. Updated){
               child: SizedBox(
                   width: mediaquery.size.width/1.32,
 
-                  child: TextWidget(text: "reset password".tr(context), size: 43)),
+                  child: TextWidget(text: "Reset Password".tr(context).toUpperCase(), size: 43)),
             ),
             Padding(
 

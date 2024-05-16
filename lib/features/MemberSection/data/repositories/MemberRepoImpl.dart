@@ -263,6 +263,50 @@ class MemberRepoImpl extends MemberRepo {
     }
   }
 
+  @override
+  Future<Either<Failure, Member>> GetMembeWithHighestRank(bool isUpdated)async  {
+    if (await networkInfo.isConnected) {
+      try {
+        final members = await membersLocalDataSource.GetMemberWithRanks();
+          ();
+        if (members==null  ||  isUpdated) {
+          final members = await memberRemote.getMemberWithHightRank();
+          membersLocalDataSource.CacheMembewithRanks(members);
+          return Right(members);
+        }
+        return Right(members);
+      } on ServerException {
+
+        final members = await membersLocalDataSource.GetMemberWithRanks();
+
+        if (members==null){
+          return Left(ServerFailure());
+        }
+        return Right(members);
+      }
+      on UnauthorizedException {
+        final members = await membersLocalDataSource.GetMemberWithRanks();
+
+        if (members==null){
+          return Left(UnauthorizedFailure());
+        }
+        return Right(members);
+      }
+    } else {
+      try {
+        final members = await membersLocalDataSource.GetMemberWithRanks();
+        if (members==null){
+          return Left(EmptyCacheFailure());
+        }
+
+        return Right(members);
+      } on EmptyCacheException {
+        return Left(EmptyCacheFailure());
+      }
+
+    }
+  }
+
   }
 
 

@@ -32,7 +32,8 @@ class TrainingLocalDataSourceImpl implements TrainingLocalDataSource{
 
   @override
   Future<Unit> cacheTrainingsOfTheMonth(List<TrainingModel> Training) async {
-    throw UnimplementedError();
+    await TrainingStore.cacheTrainingsOfThemonth(Training);
+    return Future.value(unit);
 
   }
 
@@ -60,7 +61,12 @@ class TrainingLocalDataSourceImpl implements TrainingLocalDataSource{
 
   @override
   Future<List<TrainingModel>> getCachedTrainingsOfTheMonth() async{
-    throw UnimplementedError();
+    final Trainings=await TrainingStore.getCachedTrainingsOfTheMonth();
+    if (Trainings.isNotEmpty) {
+      return Trainings;
+    } else {
+      throw EmptyCacheException();
+    }
 
   }
 

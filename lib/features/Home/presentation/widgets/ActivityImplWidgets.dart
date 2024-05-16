@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 //import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ACtivityOfweek/activity_ofweek_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
+import 'package:jci_app/features/Home/presentation/widgets/CalendarPage.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Compoenents.dart';
 import 'package:jci_app/features/Home/presentation/widgets/GuestWidget.dart';
 
@@ -103,6 +104,25 @@ Widget ActivityDetails(activity Act, String id,index) {
     },
   );
 }
+Widget ShowCalendarWidget()=>BlocBuilder<AcivityFBloc, AcivityFState>(
+builder: (context, state) {
+if (state is ActivityLoadingState) {
+return SizedBox();
+} else if (state is ActivityLoadedState) {
+
+  return CalendarPage(activities: state.activitys,);
+
+}
+else if (state is ActivityLoadedMonthState){
+return CalendarPage(activities: state.activitys,);
+}
+else if (state is ErrorActivityState) {
+  return SizedBox();
+}
+return SizedBox();
+},
+);
+
 
 
 Widget ALLActivities(activity act) =>
@@ -131,10 +151,10 @@ switch (ste.status){
     context.read<ParticpantsBloc>().add(initstateList(act: ActivityAction.mapObjects(state.activitys)));
     return ReloadDetailsPage.buildshimmerreventlist();
 
-  case ParticpantsStatus.loading:
-    return ReloadDetailsPage.buildshimmerreventlist();
 
-  case ParticpantsStatus.failed:
+
+
+  case ParticpantsStatus.failed:  case ParticpantsStatus.loading:
     return ReloadDetailsPage.buildshimmerreventlist();
 
   case ParticpantsStatus.success:
@@ -211,12 +231,9 @@ Widget ShowPartipants(String activityId){
   return BlocBuilder<ParticpantsBloc, ParticpantsState>(
     builder: (context, state) {
     switch(state.status){
-      case ParticpantsStatus.initial:
-        context.read<ParticpantsBloc>().add(LoadIsParttipatedList(activityId: activityId));
-        return ShimmerButton.shimmerparticipants();
       case ParticpantsStatus.loading:
         return ShimmerButton.shimmerparticipants();
-      case ParticpantsStatus.failed:
+      case ParticpantsStatus.initial:      case ParticpantsStatus.failed:
         context.read<ParticpantsBloc>().add(LoadIsParttipatedList(activityId: activityId));
 
         return ShimmerButton.shimmerparticipants();
@@ -241,20 +258,14 @@ Widget ShowGuests(String activityId){
     builder: (context, state) {
     switch(state.status){
       case ParticpantsStatus.initial:
-
         return ShimmerButton.shimmerparticipants();
       case ParticpantsStatus.loading:
         return ShimmerButton.shimmerparticipants();
-      case ParticpantsStatus.failed:
-        context.read<ParticpantsBloc>().add(GetGuestsOfActivityEvent(activityId: activityId));
-
-        return ShimmerButton.shimmerparticipants();
-      case ParticpantsStatus.loaded:
+      case ParticpantsStatus.loaded:  case ParticpantsStatus.changed: case ParticpantsStatus.failed:
         context.read<ParticpantsBloc>().add(GetGuestsOfActivityEvent(activityId: activityId));
 return ShimmerButton.shimmerparticipants();
-        case ParticpantsStatus.changed:
-          context.read<ParticpantsBloc>().add(GetGuestsOfActivityEvent(activityId: activityId));
-          return ShimmerButton.shimmerparticipants();
+
+
           
           
           case ParticpantsStatus.empty:
@@ -280,23 +291,15 @@ Widget ShowAllGuests(String activityId){
     builder: (context, state) {
     switch(state.status){
       case ParticpantsStatus.initial:
-
-        return ShimmerButton.shimmerparticipants();
       case ParticpantsStatus.loading:
         return ShimmerButton.shimmerparticipants();
-      case ParticpantsStatus.failed:
+      case ParticpantsStatus.failed:  case ParticpantsStatus.changed:
         context.read<ParticpantsBloc>().add(GetAllGuestsEvent(isUpdated: true));
 
         return ShimmerButton.shimmerparticipants();
       case ParticpantsStatus.loaded:
         context.read<ParticpantsBloc>().add(GetAllGuestsEvent());
-
         return ShimmerButton.shimmerparticipants();
-        case ParticpantsStatus.changed:
-          context.read<ParticpantsBloc>().add(GetAllGuestsEvent(isUpdated: true));
-          return ShimmerButton.shimmerparticipants();
-
-
           case ParticpantsStatus.empty:
           return SizedBox();
 

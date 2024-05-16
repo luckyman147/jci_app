@@ -8,6 +8,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.
 import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/DescriptionBoolean/description_bool_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/calendar/calendar_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
@@ -63,6 +64,7 @@ List<SingleChildWidget> providersList = [
   BlocProvider(create: (_) => di.sl<BoordBloc>()),
 
   BlocProvider(create: (_) => localeCubit()..getSavedLanguage()),
+  BlocProvider(create: (_) => CalendarCubit()),
   BlocProvider(create: (_) => ActivityCubit()),
 
   BlocProvider(create: (_) => di.sl<FormzBloc>()),

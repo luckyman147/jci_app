@@ -1,6 +1,6 @@
-import { NextFunction } from "express";
+
 import mongoose, { Document, Schema } from "mongoose";
-import { CheckList } from "./CheckListModel";
+
 
 export interface Task extends Document{
 
@@ -12,6 +12,9 @@ export interface Task extends Document{
     CheckList: any[]
     isCompleted:boolean
     description:string
+    comments:any[]
+
+
     
 }
 export const TaskSchema=new Schema({
@@ -39,6 +42,12 @@ export const TaskSchema=new Schema({
         ref: 'CheckList',default:[]},
     
     ],
+    comments:[
+        {type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment',
+        default:[]}
+    
+    ]
 
 }
 

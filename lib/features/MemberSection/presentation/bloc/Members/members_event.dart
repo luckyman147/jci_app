@@ -26,6 +26,14 @@ class GetMemberByNameEvent extends MembersEvent {
 
   @override
   List<Object?> get props => [name];
+}class GetMemberByHighestRAnkEvent extends MembersEvent {
+  final bool isUpdated;
+
+
+  GetMemberByHighestRAnkEvent({required this.isUpdated});
+
+  @override
+  List<Object?> get props => [isUpdated];
 }
 class MemberAddEvent extends MembersEvent {
   final int index;

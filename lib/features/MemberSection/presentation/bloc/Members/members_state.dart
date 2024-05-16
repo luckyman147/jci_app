@@ -7,9 +7,9 @@ final List<Member> memberByName;
   final UserStatus userStatus;
   final Member? user;
   final List<Member> membersWithRanks;
-
+final Member? memberWithRank  ;
     const MembersState({
-
+this.memberWithRank,
       this.user,
     this.members=const[],
       this.membersWithRanks=const[],
@@ -23,6 +23,7 @@ final List<Member> memberByName;
     MembersState copyWith({
       List<Member>? membersWithRanks,
       Member? user,
+      Member? memberWithRank,
 
     List<Member>? members,  List<Member>? memberByName,
 
@@ -31,6 +32,7 @@ final List<Member> memberByName;
   }) {
     return MembersState(
       user: user ?? this.user,
+      memberWithRank: memberWithRank ?? this.memberWithRank,
       memberByName: memberByName ?? this.memberByName,
       members: members ?? this.members,
       Errormessage: Errormessage ?? this.Errormessage,
@@ -41,7 +43,7 @@ final List<Member> memberByName;
 
   @override
   // TODO: implement props
-  List<Object?> get props => [members,Errormessage,userStatus,memberByName,user,membersWithRanks];
+  List<Object?> get props => [memberWithRank,members,Errormessage,userStatus,memberByName,user,membersWithRanks];
 }
 
 class MembersInitial extends MembersState {

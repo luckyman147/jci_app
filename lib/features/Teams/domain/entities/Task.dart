@@ -1,4 +1,7 @@
+
 import 'package:flutter/material.dart';
+import 'package:jci_app/features/Teams/data/models/CommentsModel.dart';
+import 'package:jci_app/features/Teams/domain/entities/Comment.dart';
 import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 
 import '../../data/models/CheckListModel.dart';
@@ -15,6 +18,7 @@ class Tasks{
   final List<TaskFile> attachedFile;
   final List<CheckList> CheckLists;
   final bool isCompleted;
+  final List<Comment>comments;
 
 
   //empty task
@@ -30,6 +34,7 @@ class Tasks{
       'attachedFile': attachedFile,
       'CheckLists': CheckLists,
       'isCompleted': isCompleted,
+      "comments":comments
     };
   }
 
@@ -37,6 +42,9 @@ class Tasks{
   //from json
   factory Tasks.fromJson(Map<String, dynamic> json) {
     return Tasks(
+      comments: json['comments'] == null
+          ? []
+          : (json['comments'] as List<dynamic>).map((e) => CommentModel.fromJson(e as Map<String, dynamic>)).toList().cast(),
       name: json['name'] as String,
       AssignTo:   json['AssignTo'] == null ? [] : (json['AssignTo'] as List<dynamic>)
       ,
@@ -64,7 +72,7 @@ class Tasks{
 
   Tasks( {required this.id,required this.name, required this.AssignTo, required this.Deadline, required this.attachedFile, required this.CheckLists,
      required this.StartDate, required this.description
-    ,required this.isCompleted});
+    ,required this.isCompleted,required this.comments});
 
 }
 

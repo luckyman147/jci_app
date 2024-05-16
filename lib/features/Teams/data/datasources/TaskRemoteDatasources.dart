@@ -43,6 +43,12 @@ Future<Unit> deleteCheckList(String checkListId);
 Future<Unit> deleteTask(String taskid);
 Future<FileModel> UpdateFiles(String taskId, FileModel file );
 
+  Future<Unit> AddComment(String taskid, String comment) ;
+
+  Future<Unit> DeleteComment(String taskid, String commentId) ;
+
+  Future<Unit> UpdateComment(String taskid, String commentId, String comment);
+
 }
 
 class TaskRemoteDataSourceImpl implements TaskRemoteDataSource{
@@ -398,6 +404,43 @@ body: jsonEncode({"IsCompleted":"$isCompleted"})
 
 
 
+  }
+
+  @override
+  Future<Unit> AddComment(String taskid, String comment) async {
+final response = await client.post(
+      Uri.parse(Urls.AddCommentUrl(taskid)),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"comment": "$comment"}),
+    );
+    log(response.statusCode.toString());
+    log(response.body);
+    if (response.statusCode == 201) {
+      return Future.value(unit);
+    } else if (response.statusCode == 404) {
+      throw EmptyDataException();
+    }
+    else if (response.statusCode == 400) {
+      throw WrongCredentialsException();
+    }
+
+    else {
+      throw ServerException();
+    }
+
+
+  }
+
+  @override
+  Future<Unit> DeleteComment(String taskid, String commentId) {
+    // TODO: implement DeleteComment
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Unit> UpdateComment(String taskid, String commentId, String comment) {
+    // TODO: implement UpdateComment
+    throw UnimplementedError();
   }
 
 

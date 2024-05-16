@@ -3,14 +3,15 @@ import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
 import moment from 'moment';
 import * as path from "path";
-import { IsCompletedInput, MembersInput, TaskInput, TimelineInput, firstTaskInput } from "../../dto/teams.dto";
+import { CommentInput, IsCompletedInput, MembersInput, TaskInput, TimelineInput, firstTaskInput } from "../../dto/teams.dto";
 import { File } from "../../models/FileModel";
+import { Member } from "../../models/Member";
 import { CheckList } from "../../models/teams/CheckListModel";
+import { Comment } from "../../models/teams/commentModel";
 import { Task } from "../../models/teams/TaskModel";
 import { team } from "../../models/teams/team";
-import { getCheckListsInfoByIds, getFilesInfoByIds, getMembersInfo, getTaskById, getTasksInfo } from "../../utility/role";
 import { sendTaskAssignmentEmail, sendTaskCompletedEmail } from "../../utility/NotificationEmailUtility";
-import { Member } from "../../models/Member";
+import { getCheckListsInfoByIds, getCommentsInfo, getFilesInfoByIds, getMembersInfo, getTaskById, getTasksInfo } from "../../utility/role";
 
 export const GetTasksOFTeam=async(req:Request,res:Response,next:NextFunction)=>{
 
@@ -48,7 +49,7 @@ export const GetTaskById=async(req:Request,res:Response,next:NextFunction)=>{
      StartDate:task.StartDate,
             isCompleted: task.isCompleted,
             CheckList:await  getCheckListsInfoByIds(task.CheckList),
-        
+            comments:await getCommentsInfo(task.comments)
 
           })
       }
@@ -242,7 +243,113 @@ await   file.save()
     }
   };
 
+  export const addComment=async(req:Request,res:Response)=>{
 
+try {
+      const taskId=req.params.taskId
+      const member=req.member
+  
+      const task=await Task.findById(taskId)
+      const taskInput = plainToClass(CommentInput, req.body);
+      const errors = await validate(taskInput, { validationError: { target: false } });
+      if (errors.length > 0) {
+        return res.status(400).json({ message: 'Input validation failed', errors });
+      }
+      if (!task){
+        return res.status(404).json({ error: 'task not found' });
+      }
+      const newComment=new Comment({
+        comment:taskInput.comment,
+        MemberId:member._id,
+        TaskId:taskId,
+        Created_At:moment.utc(Date.now()).toDate(),
+      })
+      await newComment.save()
+  
+      task.comments.push(newComment._id)
+      await task.save()
+  return res.status(201).json("Added succefully")
+  
+} catch (error) {
+  console.error(error);
+  res.status(500).json(error);
+  
+}
+    
+  }
+
+  export const deleteComment = async (req: Request, res: Response) => {
+    try {
+      const taskId = req.params.taskId;
+      const commentId = req.params.commentId;
+      const member = req.member;
+  
+      const task = await Task.findById(taskId);
+      if (!task) {
+        return res.status(404).json({ error: 'task not found' });
+      }
+  
+      const comment = await Comment.findById(commentId);
+      if (!comment) {
+        return res.status(404).json({ error: 'comment not found' });
+      }
+  
+      // Check if the member has permission to delete the comment
+      if (comment.MemberId.toString() !== member._id.toString()) {
+        return res.status(403).json({ error: 'Forbidden: Member does not have permission to delete this comment' });
+      }
+  
+      await comment.deleteOne();
+  
+      // Remove the comment reference from the task
+      task.comments = task.comments.filter((id) => id.toString() !== commentId);
+      await task.save();
+  
+      return res.status(204).json({ message: 'Comment deleted successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+
+  
+  export const updateComment = async (req: Request, res: Response) => {
+    try {
+      const taskId = req.params.taskId;
+      const commentId = req.params.commentId;
+      const member = req.member;
+  
+      const task = await Task.findById(taskId);
+      if (!task) {
+        return res.status(404).json({ error: 'task not found' });
+      }
+  
+      const comment = await Comment.findById(commentId);
+      if (!comment) {
+        return res.status(404).json({ error: 'comment not found' });
+      }
+  
+      // Check if the member has permission to update the comment
+      if (comment.MemberId.toString() !== member._id.toString()) {
+        return res.status(403).json({ error: 'Forbidden: Member does not have permission to update this comment' });
+      }
+  
+      const taskInput = plainToClass(CommentInput, req.body);
+      const errors = await validate(taskInput, { validationError: { target: false } });
+      if (errors.length > 0) {
+        return res.status(400).json({ message: 'Input validation failed', errors });
+      }
+  
+      comment.comment = taskInput.comment;
+      comment.Updated_At= new Date(Date.now());
+      await comment.save();
+  
+      return res.status(200).json({ message: 'Comment updated successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
 
 
   export const updateIsCompleted = async (req: Request, res: Response, next: NextFunction) => {

@@ -1,3 +1,4 @@
+
 import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
@@ -21,16 +22,16 @@ Widget allTeams(String id,ScrollController scrollController,bool isHome) {
   return BlocBuilder<NumPagesBloc, NumPagesState>(
     builder: (context, ste) {
       return BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
-  builder: (context, sta) {
-    return BlocConsumer<GetTeamsBloc, GetTeamsState>(
-          builder: (context, state) {
+        builder: (context, sta) {
+          return BlocConsumer<GetTeamsBloc, GetTeamsState>(
+            builder: (context, state) {
 
 
-            switch (state.status){
-              case TeamStatus.error:
-                return ShimmerListView(itemCount: 3,);
+              switch (state.status){
+                case TeamStatus.error:
+                  return ShimmerListView(itemCount: 3,);
                 case TeamStatus.success:
-              case TeamStatus.IsRefresh:
+
 
                   if (state.teams.isEmpty) {
                     return ShimmerListView(itemCount: 3);
@@ -39,24 +40,24 @@ Widget allTeams(String id,ScrollController scrollController,bool isHome) {
                     context.read<GetTeamsBloc>().add(GetTeams(isPrivate: isHome?true:false ));
                     return Future.value(true);
                   },
-                  child:
+                      child:
 
 
-                  TeamWidget(teams: state.teams,scrollController: scrollController,hasReachedMax: state.teams.length<=3?true: state.hasReachedMax,));
-case TeamStatus.initial:
+                      TeamWidget(teams: state.teams,scrollController: scrollController,hasReachedMax: state.teams.length<=3?true: state.hasReachedMax,));
+                case TeamStatus.initial:
+                case TeamStatus.IsRefresh:
+                  return ShimmerListView(itemCount: 3);
 
-                return ShimmerListView(itemCount: 3);
+                  ;
+                default:
+                  return ShimmerListView(itemCount: 3);}
 
-;
-              default:
-                return ShimmerListView(itemCount: 3);}
-
-          }, listener: (BuildContext context, GetTeamsState state) {
+            }, listener: (BuildContext context, GetTeamsState state) {
 
 
-    },);
-  },
-);
+          },);
+        },
+      );
     },
   );
 }
@@ -69,14 +70,14 @@ Widget GetTeamByid(String id,TextEditingController taskController,int index) {
         return LoadingWidget();
       }   else if (state.status ==TeamStatus.success ) {
 
-              return RefreshIndicator(
-                onRefresh: () async {
-                  context.read<GetTeamsBloc>().add(GetTeamById({"id": id,"isUpdated":false}));
-                },
+        return RefreshIndicator(
+          onRefresh: () async {
+            context.read<GetTeamsBloc>().add(GetTeamById({"id": id,"isUpdated":false}));
+          },
 
-                child: TeamDetailWidget(team:TeamModel.fromJson( state.teamById), taskController: taskController,),
-              );
-            }else if (state.status ==TeamStatus.error ) {
+          child: TeamDetailWidget(team:TeamModel.fromJson( state.teamById), taskController: taskController,),
+        );
+      }else if (state.status ==TeamStatus.error ) {
         return LoadingWidget();
       }
       return LoadingWidget();

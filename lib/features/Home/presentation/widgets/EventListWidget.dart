@@ -11,7 +11,6 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/core/strings/app_strings.dart';
 
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
 
@@ -103,7 +102,7 @@ scrollDirection: Axis.vertical,
                               child: Container(
                                   height: mediaQuery.size.height / 5.8,
 
-                                  color: backgroundColored,
+
                         width: 120,
                                 child: Image.asset('assets/images/jci.png', fit: BoxFit.contain, scale: 0.1,),
 
@@ -320,10 +319,13 @@ ClipRRect images(mediaQuery,List<Activity> activity,int index,double height,doub
       child: Container(
         height: height,
         width: width,
-        color: ThirdColor,
-        child: Center(
-          child: Text(activity[index].runtimeType.toString().split('Model').first,style: PoppinsSemiBold(20, textColorWhite, TextDecoration.none),),
-        ),
+       decoration: BoxDecoration(
+         image: DecorationImage(
+           image: AssetImage('assets/images/jci.png'),
+           fit: BoxFit.cover
+         )
+       ),
+
       ),
     );
 

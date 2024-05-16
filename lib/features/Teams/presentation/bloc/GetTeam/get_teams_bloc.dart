@@ -5,10 +5,10 @@ import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+
 import 'package:jci_app/core/config/services/MemberStore.dart';
-import 'package:jci_app/core/config/services/store.dart';
-import 'package:jci_app/core/usescases/usecase.dart';
+
+
 import 'package:jci_app/features/Teams/domain/usecases/TeamUseCases.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -16,9 +16,7 @@ import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
 import '../../../../auth/domain/entities/Member.dart';
 import '../../../domain/entities/Team.dart';
-import '../../../domain/usecases/TaskUseCase.dart';
-import '../../../domain/usecases/TeamUseCases.dart';
-import '../../../domain/usecases/TeamUseCases.dart';
+
 import '../../widgets/funct.dart';
 
 part 'get_teams_event.dart';
@@ -131,10 +129,10 @@ void deleteTeam(DeleteTeam event, Emitter<GetTeamsState> emit) async {
 
   Future<void> onGetTeams(GetTeams event, Emitter<GetTeamsState> emit) async {
 
-    if (state.hasReachedMax) return;
+  //  if (state.hasReachedMax ) return;
     try {
       if (state.status == TeamStatus.initial || state.status == TeamStatus.error|| state.status == TeamStatus.IsRefresh||state.teams.isEmpty) {
-
+        state.copyWith(status: TeamStatus.Loading);
       final result = await getAllTeamsUseCase.call(isPrivate: event.isPrivate,updated: event.isUpdated);
       final teams= result.getOrElse(() => []);
 
@@ -153,22 +151,13 @@ members: members ,
 isExisted: UpdatedExisted ,
           hasReachedMax: false,
    ));}
-
-
+      state.copyWith(status: TeamStatus.Loading);
       final result = await getAllTeamsUseCase.call(page: state.teams.length.toString(), isPrivate: event.isPrivate);
       final teams= result.getOrElse(() => []);
-
       final members=teams.isEmpty?[]:teams.map((e) => e.Members).toList();
-
-
       final UpdatedMembers=List.of(state.members)..addAll(members );
-
-
       final store=await MemberStore.getModel();
-
       final UpdatedExisted=UpdatedMembers.map((e) => e.any((element) => element['_id']==store!.id)).toList() ;
-
-
       emit(result.getOrElse(() => []).isEmpty
           ? state.copyWith(hasReachedMax: true)
           : state.copyWith(
@@ -179,8 +168,9 @@ isExisted: UpdatedExisted ,
         teams: List.of(state.teams)..addAll(result.getOrElse(() => [])),
         hasReachedMax: false,
       ));
-    } catch (error) {
 
+    } catch (error) {
+log(error.toString());
       emit(state.copyWith(status: TeamStatus.error));
 
     }

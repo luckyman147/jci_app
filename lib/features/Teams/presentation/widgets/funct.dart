@@ -104,7 +104,7 @@ class TeamFunction{
     }
     return objects.map((obj) => obj.id ).toList();
   }
- static  void changeInitTeams(BuildContext context,Privacy privacy,bool isPrivate) {
+  static  void changeInitTeams(BuildContext context,Privacy privacy,bool isPrivate) {
 
     context.read<TaskVisibleBloc>().add(changePrivacyEvent(privacy));
 
@@ -112,7 +112,7 @@ class TeamFunction{
     context.read<GetTeamsBloc>().add(initStatus());
     context.read<GetTeamsBloc>().add(GetTeams(isPrivate: isPrivate));
   }
- static  void searchFunction(String value, BuildContext context,bool isPrivate) {
+  static  void searchFunction(String value, BuildContext context,bool isPrivate) {
     if (value.isEmpty){
       context.read<GetTeamsBloc>().add(GetTeams(isPrivate: isPrivate));
     }
@@ -121,7 +121,7 @@ class TeamFunction{
       context.read<GetTeamsBloc>().add(GetTeamByName(
           {"name": value}));}
   }
- static  List<int> generateNumbers(int num) {
+  static  List<int> generateNumbers(int num) {
     return List.generate(num, (index) => num - index + 1).reversed.toList();
   }
   static List<Map<String, dynamic>> mapObjects(List<Tasks> objects) {
@@ -139,7 +139,7 @@ class TeamFunction{
 
       'description': objects.description, 'status': objects.status, 'Members': objects.Members,};
   }
- static List<Map<String, dynamic>> filterCompletedTasks(List<Map<String, dynamic>> tasks) {
+  static List<Map<String, dynamic>> filterCompletedTasks(List<Map<String, dynamic>> tasks) {
     List<Map<String, dynamic>> completedTasks = [];
 
     for (var task in tasks) {
@@ -178,7 +178,7 @@ class TeamFunction{
   static Map<String, dynamic> toMapFile(TaskFile object) {
     return {'id': object.id, 'path': object.path, 'url': object.url, 'extension':object.extension};
   }
- static  Map<String, dynamic> toMapChecklist(CheckList object) {
+  static  Map<String, dynamic> toMapChecklist(CheckList object) {
     return {'id': object.id, 'isCompleted': object.isCompleted, 'name': object.name,};
   }
   static Map<String, dynamic> toMapMember(Member object) {
@@ -272,7 +272,7 @@ class TeamFunction{
   }
 
 
- static  void SearchAction(BuildContext context, String value, MembersTeamState state) {
+  static  void SearchAction(BuildContext context, String value, MembersTeamState state) {
     context.read<MembersTeamCubit>().nameChanged(value);
     if (state.name.length > 1){
       context.read<MembersBloc>().add(GetMemberByNameEvent( name: state.name));}
@@ -289,7 +289,7 @@ class TeamFunction{
               status: true)));
       //   context.read<MemberManagementBloc>().add(initMemberEvent(.id, isUpdated: null));
 
-  /*    if (state.upcomingPages.isNotEmpty) {
+      /*    if (state.upcomingPages.isNotEmpty) {
         context.read<ChangeSboolsCubit>().ChangePages(
             state.upcomingPages.last,
             "/memberSection/${member.id}");
@@ -338,7 +338,7 @@ class TeamFunction{
 
     }
   }
- static Future<File> saveBase64AsFile(String base64String, String fileName) async {
+  static Future<File> saveBase64AsFile(String base64String, String fileName) async {
     // Decode the base64 string
     List<int> bytes = base64.decode(base64String);
 
@@ -370,7 +370,7 @@ class TeamFunction{
 
     file.writeAsString(decodedString);
   }
- static  Future<void> openFile(Map<String, dynamic> fileData, String fileName) async {
+  static  Future<void> openFile(Map<String, dynamic> fileData, String fileName) async {
     try {
       // Save the base64 string as a file
       File tempFile = await saveBase64AsFile(fileData['url'], fileName);
@@ -381,79 +381,73 @@ class TeamFunction{
       log(e.toString());
     }
   }}
-  class FileStorage {
+class FileStorage {
   static Future<String> getExternalDocumentPath() async {
-  // To check whether permission is given for this app or not.
-  var status = await Permission.storage.status;
-  if (!status.isGranted) {
-  // If not we will ask for permission first
-  await Permission.storage.request();
-  }
-  Directory _directory = Directory("");
-  if (Platform.isAndroid) {
-  // Redirects it to download folder in android
-  _directory = Directory("/storage/emulated/0/Download");
-  } else {
-  _directory = await getApplicationDocumentsDirectory();
-  }
+    // To check whether permission is given for this app or not.
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      // If not we will ask for permission first
+      await Permission.storage.request();
+    }
+    Directory _directory = Directory("");
+    if (Platform.isAndroid) {
+      // Redirects it to download folder in android
+      _directory = Directory("/storage/emulated/0/Download");
+    } else {
+      _directory = await getApplicationDocumentsDirectory();
+    }
 
-  final exPath = _directory.path;
-  print("Saved Path: $exPath");
-  await Directory(exPath).create(recursive: true);
-  return exPath;
+    final exPath = _directory.path;
+    print("Saved Path: $exPath");
+    await Directory(exPath).create(recursive: true);
+    return exPath;
   }
 
   static Future<String> get _localPath async {
-  // final directory = await getApplicationDocumentsDirectory();
-  // return directory.path;
-  // To get the external path from device of download folder
-  final String directory = await getExternalDocumentPath();
-  return directory;
+    // final directory = await getApplicationDocumentsDirectory();
+    // return directory.path;
+    // To get the external path from device of download folder
+    final String directory = await getExternalDocumentPath();
+    return directory;
   }
 
   static Future<bool> writeCounter(String base64,String name) async {
-  try {
-  final path = await _localPath;
-  // Create a file for the path of
-  // device and file name with extension
-  final result= await ActivityAction.convertBase64ToXFile(base64);
-  File file= File('$path/$name');
+    try {
+      final path = await _localPath;
+      // Create a file for the path of
+      // device and file name with extension
+      final result= await ActivityAction.convertBase64ToXFile(base64);
+      File file= File('$path/$name');
 
 
 
 
-  // Write the data in the file you have created
-  file.writeAsString(base64Encode(await result!.readAsBytes()));
-  log( file.toString());
-  return true;
-  } on Exception catch (e) {
-  throw Exception('Failed to write file: $e');
+      // Write the data in the file you have created
+      file.writeAsString(base64Encode(await result!.readAsBytes()));
+      log( file.toString());
+      return true;
+    } on Exception catch (e) {
+      throw Exception('Failed to write file: $e');
 
-  //
-  }
+      //
+    }
 
 
   }
   static pickFile(mounted,BuildContext context,String id)async{
-  FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-  if (result != null) {
-  // Get the file
-  PlatformFile file = result.files.first;
+    if (result != null) {
+      // Get the file
+      PlatformFile file = result.files.first;
 
-  final taskFile=TaskFile(url: "url", id: "", path: file.path!, extension: file.extension!, );
-  if (!mounted) return;
-  final inputFields input=inputFields(taskid: id, teamid:"", file: taskFile, memberid: null, status: null, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: null, fileid: null, );
-  context.read<GetTaskBloc>().add(UpdateFile(input));
+      final taskFile=TaskFile(url: "url", id: "", path: file.path!, extension: file.extension!, );
+      if (!mounted) return;
+      final inputFields input=inputFields(taskid: id, teamid:"", file: taskFile, memberid: null, status: null, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: null, fileid: null, );
+      context.read<GetTaskBloc>().add(UpdateFile(input));
 
-  }
-
-  }
+    }
 
   }
 
-
-
-
-
-
+}

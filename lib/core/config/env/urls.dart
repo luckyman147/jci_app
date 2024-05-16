@@ -1,5 +1,5 @@
 
-  final BaseUrl = "http://192.168.1.11"
+  final BaseUrl = "http://192.168.1.12"
       ":8080";
   final SuperAdminUrl = "$BaseUrl/Super";
   final BoardUrl = "$BaseUrl/Board";
@@ -55,9 +55,12 @@ final getEventsUrl = "$BaseUrl/Event/";
 
 
 class Urls{
+  static String AddCommentUrl(String id)=>"$TeamUrl/$id/Comment";
+
   static String guestUrl="$BaseUrl/Activity/guests/";
   static String ALLGuestsAllUrl="$BaseUrl/Activity/guestsALL";
   static String getMembersWithRank="$BaseUrl/member/Members";
+  static String getMemberWithHightRank="$BaseUrl/member/Member";
   static String activitySearch="$BaseUrl/Activity/SearchName/get";
   static String SendReminderUrl(String activityId)=> "$BaseUrl/mails/SendReminder/$activityId";
   static String Addguest(String activityId)=> "$guestUrl$activityId";

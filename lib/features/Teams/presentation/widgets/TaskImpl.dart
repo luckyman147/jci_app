@@ -37,12 +37,12 @@ Widget GetTasksWidget(Team team, MediaQueryData mediaQuery,
                 return LoadingWidget();
               case TaskStatus.error:
                 return Center(
-child :Column(
-  children: [Text("Add your first Task".tr(context),style:PoppinsRegular(15, textColorBlack)),
-    Image.asset("assets/images/task.jpg", height: mediaQuery.size.height * 0.5, width: mediaQuery.size.width * 0.5,),
+                    child :Column(
+                      children: [Text("Add your first Task".tr(context),style:PoppinsRegular(15, textColorBlack)),
+                        Image.asset("assets/images/task.jpg", height: mediaQuery.size.height * 0.5, width: mediaQuery.size.width * 0.5,),
 
-  ],
-)
+                      ],
+                    )
                 );
               case TaskStatus.success:
               case TaskStatus.Changed:
@@ -50,7 +50,7 @@ child :Column(
                 if (st.selectedFilter==TaskFilter.All) {
                   return TaskWidget(tasks: state.tasks, team: team,);
                 }
-else if (st.selectedFilter==TaskFilter.Completed) {
+                else if (st.selectedFilter==TaskFilter.Completed) {
                   return TaskWidget(tasks: TeamFunction.filterCompletedTasks(state.tasks), team: team,);
                 }
                 else  {
@@ -170,7 +170,7 @@ Widget TaskAddField(TextEditingController controller, String id) =>
                           final inputFields input=inputFields(taskid: '', teamid: id, file: null, memberid: null, status: false, Deadline: null, StartDate: null, name: controller.text, task: null, isCompleted: null, member: null, fileid: null, );
 
                           context.read<GetTaskBloc>().add(CreateTask(
-                        input
+                              input
                           ));
 
                           controller.clear();

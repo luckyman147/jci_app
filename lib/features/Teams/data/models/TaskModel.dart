@@ -2,21 +2,26 @@ import 'package:jci_app/features/Teams/domain/entities/Checklist.dart';
 import 'package:jci_app/features/Teams/domain/entities/Task.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../domain/entities/Comment.dart';
 import 'CheckListModel.dart';
+import 'CommentsModel.dart';
 import 'FileModel.dart';
 
 @JsonSerializable()
 class TaskModel extends Tasks{
   TaskModel({required super.name, required super.AssignTo,
-    required super.Deadline, required super.attachedFile, required super.CheckLists, required super.isCompleted, required super.id, required super.StartDate, required super.description});
+    required super.Deadline, required super.attachedFile, required super.CheckLists, required super.isCompleted, required super.id, required super.StartDate, required super.description, required super.comments});
 
   factory TaskModel.fromJson(Map<String, dynamic> json) =>
       TaskModel(
+    comments: json['comments'] == null
+        ? []
+        : (json['comments'] as List<dynamic>).map((e) => CommentModel.fromJson(e as Map<String, dynamic>)).toList().cast(),
         name: json['name'] as String,
         AssignTo:   json['AssignTo'] == null ? [] : (json['AssignTo'] as List<dynamic>)
            ,
 
-        Deadline: DateTime.parse(json['Deadline'] as String),
+        Deadline: json['Deadline'] != null  ?  json['Deadline'].runtimeType!=DateTime  ?     DateTime.parse(json['Deadline']) :json["Deadline"]: DateTime.now() ,
         attachedFile:
         json['attachedFile'] == null ? [] : (json['attachedFile'] as List<dynamic>)
             .map((e) => FileModel.fromJson(e as Map<String, dynamic>))
@@ -27,9 +32,12 @@ class TaskModel extends Tasks{
         id: json['id'] !=null? json['id'] as String : json['_id'] as String,
 
 
-         StartDate: json['StartDate'] !=null ?  DateTime.parse(json['StartDate'] as String) : DateTime.now(),
+        StartDate: json['StartDate'] != null ?  json["StartDate"].runtimeType!=DateTime?       DateTime.parse(json['StartDate']):json['StartDate'] : DateTime.now(),
         description: json['description'] != null ? json['description'] as String : "",
-        CheckLists: json['CheckList'] == null ? [] : (json['CheckList'] as List<dynamic>)
+        CheckLists: json['CheckList'] == null ? [] :
+
+
+        (json['CheckList'] as List<dynamic>)
             .map((e) => CheckListModel.fromJson(e as Map<String, dynamic>))
             .toList(),
       );

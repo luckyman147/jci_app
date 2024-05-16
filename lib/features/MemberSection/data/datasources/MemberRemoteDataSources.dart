@@ -40,6 +40,7 @@ Future<Unit> validateCotisation(String memberid,int type, bool cotisation);
 
   Future<Unit> SendMembershipReport(String id);
 
+ Future<MemberModel> getMemberWithHightRank() ;
 
 }
 class MemberRemoteImpl implements MemberRemote {
@@ -487,6 +488,42 @@ body: json.encode(body)
 
       throw ServerException();
     }
+  }
+
+  @override
+  Future<MemberModel> getMemberWithHightRank()async  {
+    final tokens=await getTokens();
+
+    final  AccessToken =  tokens[1]; // replace with your actual access token
+
+    try {
+      final Response = await client.get(
+        Uri.parse(Urls.getMemberWithHightRank),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $AccessToken',
+        },
+
+      );
+
+      if (Response.statusCode == 200) {
+        final Map<String, dynamic> response = jsonDecode(Response.body);
+
+        final  MemberModel member=MemberModel.fromJson(response);
+
+        return Future.value(member);
+      }
+
+
+      else {
+
+        throw ServerException();
+      }
+    } catch (e) {
+
+        throw ServerException();
+    }
+
   }
 
 }

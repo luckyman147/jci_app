@@ -21,6 +21,7 @@ import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart'
 import '../../../Home/presentation/widgets/MemberSelection.dart';
 
 
+import '../../domain/entities/Task.dart';
 import '../../domain/entities/Team.dart';
 
 import '../../domain/usecases/TaskUseCase.dart';
@@ -30,7 +31,7 @@ import 'TaskComponents.dart';
 
 
 class TaskDetailsWidget extends StatefulWidget {
-  final Map<String, dynamic> task;
+  final Map<String,dynamic> task;
   final int index;
   final Team team;
 
@@ -83,6 +84,10 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
                   child: buildDescriBody(
                     mediaQuery, state, TaskName, context,),
                 ),
+
+                SizedBox(height: 10,),
+
+                buildChecklist(mediaQuery, context, checklistFocus),
                 SizedBox(height: 10,),
                 Container(
                   decoration: taskdex,
@@ -101,8 +106,6 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
                     ],
                   ),
                 ),
-                SizedBox(height: 10,),
-                buildChecklist(mediaQuery, context, checklistFocus),
 
 
               ],
@@ -137,7 +140,12 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
         child: ListView(
           shrinkWrap: true, keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: [
-
+Row(
+  children: [
+    buildChangeSection(mediaQuery, context,( ){},true,"Checklist"),
+    buildChangeSection(mediaQuery, context,( ){},false,"Comments")
+  ],
+),
 
             Padding(
               padding: paddingSemetricVertical(),
@@ -146,28 +154,32 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
             ),
             BlocBuilder<GetTaskBloc, GetTaskState>(
               builder: (context, state) {
-                final i = state.tasks[widget.index]['CheckLists'].length;
+                final i =  state.tasks[widget.index]['CheckLists'].length;
+
                 if (state.status == TaskStatus.Loading) {
                   return AnimatedContainer(
-                      height: state.tasks[widget.index]['CheckLists'].length *
-                          89,
+                      height:
+                      i<3?
+                      i *
+                          89:276,
 
                       duration: Duration(milliseconds: 100),
                       child: CheckListWidget(
-                        checkList: List<Map<String, dynamic>>.from(
-                            state.tasks[widget.index]['CheckLists']),
-                        id: state.tasks[widget.index]["id"], tasks: state.tasks[widget.index], team: widget.team,));
+                        checkList:
+                            state.tasks[widget.index]['CheckLists'],
+                        id: state.tasks[widget.index]['id'], tasks: state.tasks[widget.index], team: widget.team,));
                 }
                 else {
                   return  AnimatedContainer
                     (
 
-                      height: i * 89.6,
+                      height:i<3? i * 89.6:277,
                       duration: Duration(milliseconds: 100),
                       child: CheckListWidget(
-                        checkList: List<Map<String, dynamic>>.from(
+                        checkList:
+                        List<Map<String, dynamic>>.from(
                             state.tasks[widget.index]['CheckLists']),
-                        id: state.tasks[widget.index]["id"], tasks: state.tasks[widget.index], team: widget.team,));
+                        id: state.tasks[widget.index]['id'], tasks: state.tasks[widget.index], team: widget.team,));
                 }
               },
             ),
@@ -175,6 +187,31 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
         ),
       ),
     );
+  }
+
+  Padding buildChangeSection(MediaQueryData mediaQuery, BuildContext context,Function()onTap,bool isSelected,String text) {
+    return Padding(
+padding: const EdgeInsets.all(8.0),
+child: SizedBox(
+
+  width: mediaQuery.size.width/2.5,
+  child: InkWell(
+
+      onTap: onTap, child: Card(
+    color: isSelected?PrimaryColor:Colors.white,
+
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      side: BorderSide(color: isSelected?PrimaryColor:textColorWhite, width: 1.0),
+      ),
+
+
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(text,style: PoppinsRegular(MediaQuery.devicePixelRatioOf(context)*5, isSelected?textColorWhite:textColorBlack),),
+      ))),
+),
+);
   }
 
   Padding buildTimeline(BuildContext context, MediaQueryData mediaQuery,Team team ,Map<String,dynamic> task) {
@@ -186,13 +223,13 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
           buildText("Timeline",mediaQuery),
           InkWell(
             onTap: ()async  {
-if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])){
-              context.read<TimelineBloc>().add(initTimeline({
-                'StartDate': widget.task['StartDate'],
-                'Deadline': widget.task['Deadline']
-              }));
+              if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])){
+                context.read<TimelineBloc>().add(initTimeline({
+                  'StartDate': widget.task['StartDate'],
+                  'Deadline': widget.task['Deadline']
+                }));
 
-              modeltimelinebottomsheetbody(context, mediaQuery);}
+                modeltimelinebottomsheetbody(context, mediaQuery);}
             },
             child: BlocBuilder<GetTaskBloc, GetTaskState>(
               builder: (context, state)
@@ -238,7 +275,7 @@ if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])){
                       ste.timeline['Deadline'],
                       "Start Date",
                       "Deadline",
-                      widget.task['id'],),
+                      widget.task ["id"],),
                   );
                 },
               );
@@ -281,7 +318,7 @@ if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])){
                 state.textFieldsTitle == TextFieldsTitle.Active,
                 TaskName, ()async  {
 
-                  if (await FunctionMember.isAssignedOrLoyal(widget.team, widget.task['AssignTo'])){
+                  if (await FunctionMember.isAssignedOrLoyal(widget.team, widget.task["AssignTo"])){
               context.read<TaskVisibleBloc>().add(
                   ChangeTextFieldsTitle(TextFieldsTitle.Active));
               FocusScope.of(context).requestFocus(taskNameFocusNode);}
@@ -354,7 +391,7 @@ if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])){
                 Row(
                   children: [
                     state.tasks[widget.index]['AssignTo'].isEmpty ||
-                        state.tasks[widget.index]['AssignTo'] == null ? SizedBox() :
+                        state.tasks[widget.index]['AssignTo']== null ? SizedBox() :
 
                     GestureDetector(
                       onTap: (){
@@ -362,8 +399,8 @@ if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])){
 
                       },
                       child: DeatailsTeamComponent.membersTeamImage(
-                          context, mediaQuery, state.tasks[widget.index]['AssignTo'].length,
-                          state.tasks[widget.index]['AssignTo'],30,40),
+                          context, mediaQuery,     state.tasks[widget.index]["AssignTo"].length,
+                          state.tasks[widget.index]["AssignTo"],30,40),
                     ),
           ProfileComponents.buildFutureBuilder(AddAssignToWidget(context, mediaQuery, state), true, "", (p0) => FunctionMember.isAssignedOrLoyal(team,task["AssignTo"] ))
 
@@ -442,7 +479,7 @@ if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])){
 
                     }
                     ),
-                  ), true, "", (p0) => FunctionMember.isAssignedOrLoyal(team,task["AssignTo"] ))
+                  ), true, "", (p0) => FunctionMember.isAssignedOrLoyal(team,task['AssignTo'] ))
 
 
                 ],

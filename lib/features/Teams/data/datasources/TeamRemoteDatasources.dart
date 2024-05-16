@@ -57,7 +57,7 @@ final tokens= await Store.GetTokens();
     if (response.statusCode == 200) {
       final Map<String, dynamic> decodedJson = json.decode(response.body) ;
 
-
+      if (Team.CoverImage!="assets/images/jci.png"){
       final upload_response=await uploadImages(decodedJson['id'], Team.CoverImage,TeamUrl,"CoverImage");
     if (upload_response.statusCode==200){
       final bodyStream = upload_response.stream;
@@ -75,6 +75,10 @@ final tokens= await Store.GetTokens();
       }
 
     }
+
+      return  TeamModel.fromJson(decodedJson);
+    }
+
     else if (response.statusCode == 400) {
       throw WrongCredentialsException();
     }

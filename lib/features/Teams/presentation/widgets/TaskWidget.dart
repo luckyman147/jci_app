@@ -45,64 +45,64 @@ class _TaskWidgetState extends State<TaskWidget> {
       child: ListView.separated(itemBuilder: (BuildContext context, int index) {
 
         return BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
-  builder: (context, state) {
-    return InkWell(
-          onLongPress: ()async{
+          builder: (context, state) {
+            return InkWell(
+              onLongPress: ()async{
 
-if (state.WillAdded==false && await FunctionMember.isAssignedOrLoyal(widget.team, widget.tasks[index]['AssignTo'])) {
-  context.read<TaskVisibleBloc>().add(DeletedTaskedEvent(false));
-}
+                if (state.WillAdded==false && await FunctionMember.isAssignedOrLoyal(widget.team, widget.tasks[index]['AssignTo'])) {
+                  context.read<TaskVisibleBloc>().add(DeletedTaskedEvent(false));
+                }
 
-},
-          onTap: (){
+              },
+              onTap: (){
 
-           buildShowModalBottomSheet(context, mediaQuery, widget.tasks,index,widget.team);
+                buildShowModalBottomSheet(context, mediaQuery, widget.tasks,index,widget.team);
+              },
+              child:  Container(
+                decoration: taskDecoration
+                ,
+
+                child: Padding(
+                  padding: paddingSemetricVerticalHorizontal(),
+                  child: BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
+                    builder: (context, state) {
+                      return Row(
+
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                        children: [
+                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+
+                              buildCheckBox(task: widget.tasks[index], index: index, team: widget.team,),
+                              buildPadding(index, mediaQuery),
+                            ],
+                          ),
+                          Visibility(
+                              visible: !state.WillDeleted,
+                              child:DeatailsTeamComponent.membersTeamImage(context, mediaQuery, widget.tasks[index]['AssignTo'].length,
+                                  widget.tasks[index]['AssignTo'],30,40)
+                          ), Visibility(
+                              visible: state.WillDeleted,
+                              child:IconButton( icon: Icon(Icons.delete, color: Colors.red, size: 30,), onPressed: () {
+
+                                context.read<GetTaskBloc>().add(DeleteTask(widget.tasks[index]['id'], ));
+                                context.read<TaskVisibleBloc>().add(DeletedTaskedEvent(true));
+                                context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+
+
+                              },)
+                          ),
+                        ],);
+                    },
+                  ),
+                ),
+
+
+              ),
+            );
           },
-          child:  Container(
-            decoration: taskDecoration
-            ,
-
-            child: Padding(
-              padding: paddingSemetricVerticalHorizontal(),
-              child: BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
-  builder: (context, state) {
-    return Row(
-
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-
-                 buildCheckBox(task: widget.tasks[index], index: index, team: widget.team,),
-                  buildPadding(index, mediaQuery),
-                ],
-              ),
-              Visibility(
-                visible: !state.WillDeleted,
-                child:DeatailsTeamComponent.membersTeamImage(context, mediaQuery, widget.tasks[index]['AssignTo'].length,
-                    widget.tasks[index]['AssignTo'],30,40)
-              ), Visibility(
-                visible: state.WillDeleted,
-                child:IconButton( icon: Icon(Icons.delete, color: Colors.red, size: 30,), onPressed: () {
-
-                  context.read<GetTaskBloc>().add(DeleteTask(widget.tasks[index]['id'], ));
-                  context.read<TaskVisibleBloc>().add(DeletedTaskedEvent(true));
-                  context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
-
-
-                },)
-              ),
-                    ],);
-  },
-),
-            ),
-
-
-),
         );
-  },
-);
       }, separatorBuilder: (BuildContext context, int index) {
 
         return SizedBox(height: 10,);
@@ -117,44 +117,45 @@ if (state.WillAdded==false && await FunctionMember.isAssignedOrLoyal(widget.team
 
 
   Padding buildPadding(int index, MediaQueryData mediaQuery) {
+    final bool datetime = widget.tasks[index]['Deadline'].isAfter(DateTime.now());
     return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
 
+        children: [
+          SizedBox(
+            width: mediaQuery.size.width / 2.5,
+            child: Text(widget.tasks[index]['name'],overflow:
+            TextOverflow.ellipsis, maxLines: 1
+                ,style:PoppinsSemiBold(mediaQuery.devicePixelRatio*6, textColorBlack, TextDecoration.none)),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(DateFormat('MMM,dd').format(widget.tasks[index]['Deadline']),style:PoppinsRegular(mediaQuery.devicePixelRatio*6,!datetime?Colors.red:textColor ),),
+
+
+              Row(
+                children: [widget.tasks[index]['CheckLists'].isEmpty?SizedBox():
+                Row(
                   children: [
-                    SizedBox(
-                      width: mediaQuery.size.width / 2.5,
-                      child: Text(widget.tasks[index]['name'],overflow:
-                      TextOverflow.ellipsis, maxLines: 1
-                          ,style:PoppinsSemiBold(mediaQuery.devicePixelRatio*6, textColorBlack, TextDecoration.none)),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(DateFormat('MMM,dd').format(widget.tasks[index]['Deadline']),style:PoppinsRegular(mediaQuery.devicePixelRatio*6, textColor),),
-
-
-                        Row(
-                          children: [widget.tasks[index]['CheckLists'].isEmpty?SizedBox():
-                            Row(
-                              children: [
-                                SvgPicture.string(hierarchy),
-                                Text(widget.tasks[index]['CheckLists'].length.toString(),style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColorBlack), ),
-Icon(Icons.attach_file_rounded, color: textColorBlack,),
-                                Text(widget.tasks[index]['attachedFile'].length.toString(),style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColorBlack), ),
-                              ],
-                            ),
-                            builddesc( widget.tasks,12,index),
-                          ],
-                        )
-
-                      ],
-
-                    ),
+                    SvgPicture.string(hierarchy),
+                    Text(widget.tasks[index]['CheckLists'].length.toString(),style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColorBlack), ),
+                    Icon(Icons.attach_file_rounded, color: textColorBlack,),
+                    Text(widget.tasks[index]['attachedFile'].length.toString(),style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColorBlack), ),
                   ],
                 ),
-              );
+                  builddesc( widget.tasks,12,index),
+                ],
+              )
+
+            ],
+
+          ),
+        ],
+      ),
+    );
   }
 
 
@@ -174,7 +175,7 @@ Padding WithPhoto(Map<String,dynamic> tasks, MediaQueryData mediaQuery) {
         child: Image.memory(
           base64Decode(   tasks["AssignTo"][0]['Images'][0]['url']),
           fit: BoxFit.cover,
-       height:20,
+          height:20,
           width: 20,
 
 
@@ -186,12 +187,12 @@ Future<dynamic> buildShowModalBottomSheet(BuildContext context, MediaQueryData m
       backgroundColor: textColorWhite,
       barrierColor: textColorWhite,
       useSafeArea: true,
-isScrollControlled: true,
+      isScrollControlled: true,
 
 
 
 
-    
+
       context: context, builder: (BuildContext context) {
 
     return Scaffold(
@@ -223,60 +224,60 @@ Widget BottomTaskSheet(MediaQueryData mediaQuery,List<Map<String, dynamic>> task
     height: mediaQuery.size.height / .9,
     width: double.infinity,
     child: Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 8.0,
-        vertical: 10,
-      ),
-      child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8.0,
+          vertical: 10,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
 
 
-            children: [
-
-
-
+          children: [
 
 
 
-              Expanded(child: Padding(
-                padding:paddingSemetricVertical(),
-                child: BottomTasks(tasks: tasks, team: team,),
-              ))
 
-            ],
-          )
 
-      ),
+
+            Expanded(child: Padding(
+              padding:paddingSemetricVertical(),
+              child: BottomTasks(tasks: tasks, team: team,),
+            ))
+
+          ],
+        )
+
+    ),
 
   );
 }
 Widget builddesc(List<Map<String, dynamic>> tasks,double size,int index) {
   return BlocBuilder<GetTaskBloc, GetTaskState>(
-  builder: (context, state) {
-    return SizedBox(
-      width: 100,
-      height: 40,
-      child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-
-      child: Container(
-        decoration: BoxDecoration(
-            color: tasks[index]['isCompleted']?Colors.green.withOpacity(.1):SecondaryColor,
-            borderRadius: BorderRadius.circular(10)
-        ),
+    builder: (context, state) {
+      return SizedBox(
+        width: 100,
+        height: 40,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(
-            child: Text(tasks[index]['isCompleted']?"Completed" :"Pending",style: PoppinsSemiBold(size,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
 
-                tasks[index]['isCompleted']?Colors.green:Colors.white
-                , TextDecoration.none), ),
-          ),
-        ),),
+          child: Container(
+            decoration: BoxDecoration(
+                color: tasks[index]['isCompleted']?Colors.green.withOpacity(.1):SecondaryColor,
+                borderRadius: BorderRadius.circular(10)
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(tasks[index]['isCompleted']?"Completed" :"Pending",style: PoppinsSemiBold(size,
+
+                    tasks[index]['isCompleted']?Colors.green:Colors.white
+                    , TextDecoration.none), ),
+              ),
+            ),),
         ),
-    );
-  },
-);}
+      );
+    },
+  );}
 class BottomTasks extends StatelessWidget {
   final List<Map<String, dynamic>> tasks;
   final Team team;
@@ -306,10 +307,10 @@ class BottomTasks extends StatelessWidget {
 
           },
           leading: BlocBuilder<GetTaskBloc, GetTaskState>(
-  builder: (context, state) {
+            builder: (context, state) {
 
-    return buildCheckBox(task: tasks[index], index: index, team: team,);},
-),
+              return buildCheckBox(task: tasks[index], index: index, team: team,);},
+          ),
           title: SizedBox(
               width: mediaQuery.size.width / 20.5,
 
@@ -342,7 +343,7 @@ class BottomTasks extends StatelessWidget {
 }
 
 class buildCheckBox extends StatefulWidget {
-final Team team;
+  final Team team;
   final  Map<String,dynamic> task;
   final int index;
   const buildCheckBox({Key? key, required this.task, required this.index, required this.team}) : super(key: key);
@@ -357,28 +358,28 @@ class _buildCheckBoxState extends State<buildCheckBox> {
   Widget build(BuildContext context) {
     return
       BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
-  builder: (context, ste) {
-    return BlocBuilder<GetTaskBloc, GetTaskState>(
-  builder: (context, state) {
-
-    
-    return
-    ste.WillDeleted?Padding(
-      padding:paddingSemetricHorizontal(),
-      child: InkWell(
-          onTap: (){
-            context.read<TaskVisibleBloc>().add(DeletedTaskedEvent( true));
-
-          },
-
-          child: Icon(Icons.cancel,color:SecondaryColor)),
-    ):
-   ProfileComponents.buildFutureBuilder(buildCheckbox(context, state), true, '', (p0) => FunctionMember.isAssignedOrLoyal(widget.team, widget.task['AssignTo']))  ; }
+        builder: (context, ste) {
+          return BlocBuilder<GetTaskBloc, GetTaskState>(
+              builder: (context, state) {
 
 
-);
-  },
-);;
+                return
+                  ste.WillDeleted?Padding(
+                    padding:paddingSemetricHorizontal(),
+                    child: InkWell(
+                        onTap: (){
+                          context.read<TaskVisibleBloc>().add(DeletedTaskedEvent( true));
+
+                        },
+
+                        child: Icon(Icons.cancel,color:SecondaryColor)),
+                  ):
+                  ProfileComponents.buildFutureBuilder(buildCheckbox(context, state), true, '', (p0) => FunctionMember.isAssignedOrLoyal(widget.team, widget.task['AssignTo']))  ; }
+
+
+          );
+        },
+      );;
   }
 
   Checkbox buildCheckbox(BuildContext context, GetTaskState state) {

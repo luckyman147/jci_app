@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -44,7 +45,9 @@ class HomeComponents{
                   drawerbody(mediaQuery),
 
 
-TextButton( onPressed: () {  }, child: Text("View Terms of use",style: PoppinsRegular(16, textColorBlack),),)
+Align(
+    alignment: Alignment.bottomCenter,
+    child: TextButton( onPressed: () {  }, child: Text("View Terms of use",style: PoppinsRegular(16, textColorBlack),),))
 
                 ],
               ),
@@ -79,45 +82,42 @@ TextButton( onPressed: () {  }, child: Text("View Terms of use",style: PoppinsRe
                           children: [
                             HeaderSection(mediaQuery, "About Us", Icons.info, (){}),
 
-                            Padding(
-                              padding: paddingSemetricHorizontal(h: 16),
-                              child: Column(
-                                children: [
-                                  BuildPres(
+                            Column(
+                              children: [
+                                BuildPres(
+                                      (){
+
+
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>PresentationsPage()));
+
+                                  },'Presentation',context,null
+
+                                ,Icons.apartment),
+                                BuildPres(
                                         (){
 
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>BoardPage()));
 
-                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>PresentationsPage()));
-
-                                    },'Presentation',context,null
-
-                                  ),
-                                  BuildPres(
-                                          (){
-
-                                            Navigator.push(context, MaterialPageRoute(builder: (context)=>BoardPage()));
-
-                                          },'Board',context,null
-                                  ), BuildPres(
-                                          (){
-                                            context.read<PresidentsBloc>().add(GetAllPresidentsEvent());
-                                            Navigator.push(context, MaterialPageRoute(builder: (context)=>PresidentsPage()));
+                                        },'Board',context,null,Icons.group
+                                ), BuildPres(
+                                        (){
+                                          context.read<PresidentsBloc>().add(GetAllPresidentsEvent());
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>PresidentsPage()));
 
 
-                                          },'Last Presidants',context,null),
-                                  SizedBox(
-                                      width: mediaQuery.size.width/1,
-                                      height: 3,
-                                      child: Divider( color: textColor,))
-                                ],
-                              ),
+                                        },'Last Presidants',context,null,Icons.person_pin_rounded),
+                                SizedBox(
+                                    width: mediaQuery.size.width/1,
+                                    height: 3,
+                                    child: Divider( color: textColor,))
+                              ],
                             ),
 
 
                             HeaderSection(mediaQuery, "Contact Us", Icons.message, (){}),
-                            BuildPres(()async => await ActivityAction.launchURL(context,facebookURl), "Facebook", context, BlackFacebook),
-                            BuildPres(()async => await ActivityAction.launchURL(context,InstagramURl), "Instagram", context, instagram),
-                            BuildPres(() async=> await ActivityAction.launchURL(context,TiktokURl), "Tiktok", context, tiktok)
+                            BuildPres(()async => await ActivityAction.launchURL(context,facebookURl), "Facebook", context, BlackFacebook,null),
+                            BuildPres(()async => await ActivityAction.launchURL(context,InstagramURl), "Instagram", context, instagram,null),
+                            BuildPres(() async=> await ActivityAction.launchURL(context,TiktokURl), "Tiktok", context, tiktok,null)
                         //    BuildPres(() => null, "Facebook", context, Icons.yoo)
                            , Padding(
                              padding: paddingSemetricHorizontal(h: 16),
@@ -156,8 +156,8 @@ TextButton( onPressed: () {  }, child: Text("View Terms of use",style: PoppinsRe
                                     ),
                                   ],
                                 ),
-                                IconButton(onPressed: onpress, icon: Icon(Icons.arrow_downward_rounded,)
-                                )
+                             //   IconButton(onPressed: onpress, icon: Icon(Icons.arrow_downward_rounded,)
+
                               ],
                             ),
                           );
@@ -217,7 +217,7 @@ image: DecorationImage(
               );
  }
 
-static   Widget BuildPres(Function() onTap,String text, BuildContext context  ,String? icon) {
+static   Widget BuildPres(Function() onTap,String text, BuildContext context  ,String? icon,IconData? iconData) {
     return Padding(
       padding: paddingSemetricVerticalHorizontal(h: 15),
       child: InkWell(
@@ -235,12 +235,15 @@ static   Widget BuildPres(Function() onTap,String text, BuildContext context  ,S
                   icon!=null?Padding(
                     padding: paddingSemetricHorizontal(),
                     child: SvgPicture.string(icon,height: 20,width: 20,color: textColor,),
-                  ):SizedBox(),
+                  ):Padding(
+                    padding:paddingSemetricHorizontal(),
+                    child: Icon(iconData,color: textColor,size: 20,),
+                  ),
                   Text(
 
                       text,
                       textAlign: TextAlign.start,
-                      style: PoppinsRegular(MediaQuery.of(context).devicePixelRatio*5, textColor)
+                      style: PoppinsSemiBold(MediaQuery.of(context).devicePixelRatio*5.6, textColor,TextDecoration.none)
                   ),
                 ],
               ),
@@ -295,7 +298,7 @@ static   Widget buildteam(MediaQueryData mediaQuery, BuildContext context) {
                   changePrivacyEvent(Privacy.Private));
             },
             child: Text("See more".tr(context), style: PoppinsSemiBold(
-                mediaQuery.devicePixelRatio * 5, PrimaryColor,
+                mediaQuery.devicePixelRatio * 4.5, PrimaryColor,
                 TextDecoration.underline),),
           ),
         ],

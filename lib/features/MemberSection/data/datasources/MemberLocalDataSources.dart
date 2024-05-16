@@ -16,10 +16,12 @@ abstract class MemberLocalDatasoources{
       );
   Future<List<MemberModel>> GetMembers();
   Future<List<MemberModel>> GetMembersWithRanks();
+  Future<MemberModel?> GetMemberWithRanks();
 
 
   Future<Unit> CacheMembers(List<MemberModel> members);
   Future<Unit> CacheMemberwithRanks(List<MemberModel> members);
+  Future<Unit> CacheMembewithRanks(MemberModel members);
 
 
 
@@ -81,6 +83,18 @@ final member= MemberStore.getMemberByID(id);
   Future<Unit> CacheMemberwithRanks(List<MemberModel> members) {
     MemberStore.cacheMembersWithRanks(members);
     return Future.value(unit);
+  }
+
+  @override
+  Future<Unit> CacheMembewithRanks(MemberModel members) {
+    MemberStore.cacheMemberRank(members);
+    return Future.value(unit);
+  }
+
+  @override
+  Future<MemberModel?> GetMemberWithRanks() {
+    final members = MemberStore.getCachedMemberRank();
+    return members;
   }
 }
 

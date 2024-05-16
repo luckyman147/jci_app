@@ -59,7 +59,7 @@ static  Widget buildshimmerreventlist(){
           child: Padding(
             padding: paddingSemetricHorizontal(h: 10),
             child: Container(
-              height: MediaQuery.of(context).size.height/3.5,
+              height: 250,
               width: MediaQuery.of(context).size.width/1.05,
               decoration: BoxDecoration(
                 color: Colors.white,

@@ -21,6 +21,9 @@ abstract class TaskRepo {
 Future <Either<Failure,Unit>> UpdateMembers(String taskid, bool Status, String memberid);
   Future<Either<Failure,Unit>> updateChecklist(String id, String taskid, String checklistid, CheckList checklist);
   Future<Either<Failure,Unit>> updateChecklistName( String taskid, String checklistid, String name);
+  Future<Either<Failure,Unit>> AddComment( String taskid, String comment);
+  Future<Either<Failure,Unit>> UpdateComment( String taskid,String commentId, String comment);
+  Future<Either<Failure,Unit>> DeleteComment( String taskid, String commentId);
 
   Future<Either<Failure,Unit>> deleteChecklist(String checklistid);
   Future<Either<Failure,TaskFile>> UpdateFiles(String taskid, TaskFile file);

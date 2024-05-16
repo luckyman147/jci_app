@@ -23,6 +23,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participan
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/calendar/calendar_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/textfield/textfield_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
 
@@ -43,6 +44,7 @@ Future<void> initActivities() async {
 
 
   ));
+  sl.registerFactory(() => CalendarCubit());
 
 
 

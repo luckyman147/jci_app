@@ -11,6 +11,12 @@ class GetTasks extends GetTaskEvent {
   @override
   List<Object> get props => [id,filter];
 }
+class AddCommentEvent extends GetTaskEvent {
+  final CommentInput comment;
+  AddCommentEvent(this.comment);
+  @override
+  List<Object> get props => [comment];
+}
 class GetTaskById extends GetTaskEvent {
  final inputFields ids;
   GetTaskById({required this.ids,});
@@ -84,7 +90,7 @@ class initCompletedList extends GetTaskEvent {
   List<Object> get props => [IsCompleted];
 }
 class initTasks extends GetTaskEvent {
-  final List<Map<String, dynamic>> tasksInit;
+  final List<Map<String, dynamic>>tasksInit;
   initTasks(this.tasksInit);
   @override
   List<Object> get props => [tasksInit];

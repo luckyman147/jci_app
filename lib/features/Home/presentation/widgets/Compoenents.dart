@@ -1,8 +1,12 @@
 
+import 'dart:developer';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 
 import 'package:jci_app/core/app_theme.dart';
@@ -14,9 +18,12 @@ import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/Home/domain/usercases/ActivityUseCases.dart';
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/calendar/calendar_cubit.dart';
 import 'package:jci_app/features/Home/presentation/widgets/ActivityDetailsComponents.dart';
+import 'package:jci_app/features/Home/presentation/widgets/CalendarPage.dart';
 //import 'package:jci_app/features/auth/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import '../../../../core/strings/app_strings.dart';
 
@@ -32,10 +39,11 @@ import '../bloc/PageIndex/page_index_bloc.dart';
 import 'ActivityImplWidgets.dart';
 import 'ErrorDisplayMessage.dart';
 import 'EventListWidget.dart';
-import 'EventOfweek.dart';
-import 'Functions.dart';
-import 'SearchWidget.dart';
 
+
+import 'Functions.dart';
+
+import 'package:table_calendar/table_calendar.dart';
 
 class MyDropdownButton extends StatefulWidget {
   @override
@@ -130,7 +138,7 @@ class _MyDropdownButtonState extends State<MyDropdownButton> {
                   return DropdownMenuItem<activity>(
                     alignment: AlignmentDirectional.centerStart,
                     value: value,
-                    child: Text(value.name.tr(context),style: PoppinsSemiBold(MediaQuery.of(context).devicePixelRatio*5, textColorBlack, TextDecoration.none),),
+                    child: Text(value.name.tr(context),style: PoppinsSemiBold(MediaQuery.of(context).devicePixelRatio*6, textColorBlack, TextDecoration.none),),
 
                   );
                 }).toList(),
@@ -191,24 +199,63 @@ class SearchButton extends StatelessWidget {
     );
   }
 }
-class CalendarButton extends StatelessWidget {
+class CalendarButton extends StatefulWidget {
   final Color color;
   final Color IconColor ;
-  const CalendarButton({super.key, required this.color, required this.IconColor});
 
+  const CalendarButton({super.key, required this.color, required this.IconColor, });
+
+  @override
+  State<CalendarButton> createState() => _CalendarButtonState();
+}
+
+class _CalendarButtonState extends State<CalendarButton> {
+  DateTime today = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 60,
-      width: 49,
+
       child: IconButton(
 
         onPressed: () {
-          context.go('/search');
+          showModalBottomSheet(
+            useSafeArea: true,
+              showDragHandle: true,
+              isScrollControlled: true,
+              context: context, builder: (builder)=>
+          SizedBox(
+            height: MediaQuery.of(context).size.height,
+
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    BackButton(onPressed: (){
+                      Navigator.pop(context);
+                    },),
+
+                    Text("Calendar ",style: PoppinsSemiBold(20, textColorBlack, TextDecoration.none),),
+                  ],
+                ),
+                Padding(
+                  padding: paddingSemetricVertical(),
+                  child: MyActivityButtons(),
+                ),
+                SingleChildScrollView(child: ShowCalendarWidget()),
+              ],
+            ),
+          )
+          );
+
           // Navigator.pushNamed(context, Routes.search);
+
+
         },
-        icon: Icon(Icons.calendar_month_rounded,color: IconColor,),
+
+          // Navigator.pushNamed(context, Routes.search);
+
+        icon: Icon(Icons.calendar_month_rounded,color: widget.IconColor,),
       ),
     );
   }
@@ -240,6 +287,7 @@ class MyActivityButtons extends StatelessWidget {
           padding:paddingSemetricHorizontal(),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
+              elevation: 7,
               backgroundColor: state.selectedActivity == act
                   ? PrimaryColor
                   : Colors.white,
@@ -256,7 +304,7 @@ class MyActivityButtons extends StatelessWidget {
               _handleActivityButtonClick(context, act);
             },
             child: Text(
-              act.toString().split('.').last,
+              act.toString().split('.').last.tr(context)  ,
               style: PoppinBold(
                   mediaQuery.size.width / 30,
                   state.selectedActivity == act

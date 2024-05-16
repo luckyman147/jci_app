@@ -3,10 +3,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:jci_app/features/Home/data/model/events/EventModel.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
@@ -14,6 +13,7 @@ import 'package:jci_app/features/Teams/presentation/widgets/CreateTeamWIdgets.da
 import 'package:jci_app/features/Teams/presentation/widgets/EventSelection.dart';
 
 import '../../../../core/app_theme.dart';
+import '../../../../core/util/snackbar_message.dart';
 import '../../../Home/domain/entities/Event.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../../../Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
@@ -61,25 +61,32 @@ else{
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     return Scaffold(
-      body:SafeArea(
+      body:BlocListener<GetTeamsBloc, GetTeamsState>(
+        listener: (BuildContext context, GetTeamsState state) {
+          LIstenerAdd(state, context);
+
+
+        },
+  child: SafeArea(
         child: SingleChildScrollView(
-          child: Form(
-            key: formKey,
-            child: Column(
-              children: [
-               ActionsWidgets( mediaQuery,formKey,teamNameController,teamDescriptionController,widget.team ),
-                imageTeamPicker(mediaQuery),
-                TextTeamfieldNormal('Team Name',"Team Name here",teamNameController,(value){}),
-            Events(mediaQuery),
-            Members(mediaQuery),
-                StatusWidget(mediaQuery,),
-                TextTeamfieldDescription("Description", "Description must be less then 2 line",teamDescriptionController , (p0) => null)
-              ],
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                     ActionsWidgets( mediaQuery,formKey,teamNameController,teamDescriptionController,widget.team ),
+                      imageTeamPicker(mediaQuery),
+                      TextTeamfieldNormal('Team Name',"Team Name here",teamNameController,(value){}),
+                  Events(mediaQuery),
+                  Members(mediaQuery),
+                      StatusWidget(mediaQuery,),
+                      TextTeamfieldDescription("Description", "Description must be less then 2 line",teamDescriptionController , (p0) => null)
+                    ],
 
 
-            ),
-          ),
-        ) ,)
+                  ),
+                ),
+              ) ,),
+)
     );
   }
   Widget Members(mediaQuery)=>Padding(

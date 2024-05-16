@@ -216,3 +216,33 @@ export const getMembersWithRank=async(req:Request,res:Response)=>{
   }
 
 }
+export const getMemberWithHighestRank=async(req:Request,res:Response)=>{
+  try {
+      const roles = await Role.find({ name: { $nin: ["superadmin", "admin"] }});
+      const member = await Member.findOne({ role: { $in: roles.map(role => role._id) } }).sort({Points:-1})
+      if (member){
+        //filter  just one
+        const memberData={
+            id: member._id,
+            firstName: member.firstName,
+            email: member.email,
+            Images:await getFilesInfoByIds(member.Images),
+            Points: member.Points,
+      
+        }
+        
+     
+  
+          res.status(200).json(memberData)
+      }
+      else{
+          res.status(404).json({message:'no members found'})
+      }
+          
+  } catch (error) {
+        console.log(error)
+        res.status(500).json({message:'error with server'})
+    
+  }
+
+}

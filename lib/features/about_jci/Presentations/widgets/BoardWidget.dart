@@ -134,7 +134,7 @@ TextEditingController controller = TextEditingController();
       onTap: () async {
         if (await FunctionMember.isSuper()) {
           if (!mounted) return;
-          context.read<MembersBloc>().add(const GetAllMembersEvent(false));
+          context.read<MembersBloc>().add(const GetAllMembersEvent(true));
           Dialogs.showPosAction(context,post,controller);
         }
 

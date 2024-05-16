@@ -10,6 +10,12 @@ members:any []
 event:string
 coverImage:string
 }
+export class CommentInput{
+    
+    @IsNotEmpty()
+    comment:string
+    
+}
 export class TeamInputs{
     @IsNotEmpty()
     name:string

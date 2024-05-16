@@ -17,6 +17,7 @@ class MemberStore{
 static const String _cachedMembersRank = 'CachedMembersWIthRanks';
   static const String  _UserInfo = 'UserInfo';
   static String _memberID(String id)=> 'Member_$id';
+  static String memberRank= 'MemberRank';
 
   static Future<void> cacheMembers(List<MemberModel> Members) async{
     final pref = await SharedPreferences.getInstance();
@@ -36,6 +37,20 @@ static const String _cachedMembersRank = 'CachedMembersWIthRanks';
       return  MembersJson.map<MemberModel>((e) => MemberModel.fromJson(e)).toList();
     }
     return [];
+  }
+  //cadhe member rank
+  static Future<void> cacheMemberRank(MemberModel Members) async{
+    final pref = await SharedPreferences.getInstance();
+    final MembersModelToJson=Members.toJson();
+    pref.setString(memberRank, jsonEncode(MembersModelToJson));
+  }
+  static Future<MemberModel?> getCachedMemberRank() async{
+    final pref = await SharedPreferences.getInstance();
+    final cachedMembers=pref.getString(memberRank);
+    if(cachedMembers!=null){
+      return MemberModel.fromJson(jsonDecode(cachedMembers));
+    }
+    return null;
   }
 
 

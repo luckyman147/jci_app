@@ -1,15 +1,18 @@
 import 'package:equatable/equatable.dart';
 
-abstract class Failure extends Equatable {}
+abstract class Failure extends Equatable {
+  final List properties = const <dynamic>[];
+
+const Failure([properties]);
+
+@override
+List<dynamic> get props => properties;}
 
 class OfflineFailure extends Failure {
-  @override
-  List<Object?> get props => [];
+
 }
 
 class ServerFailure extends Failure {
-  @override
-  List<Object?> get props => [];
 }
 
 class EmptyCacheFailure extends Failure {
@@ -29,30 +32,23 @@ class WrongCredentialsFailure extends Failure {
   @override
   List<Object?> get props => [];
 }class ExpiredFailure extends Failure {
-  @override
-  List<Object?> get props => [];
+
 }
 class AlreadyLogoutFailure extends Failure {
-  @override
-  List<Object?> get props => [];
+
 }
 class UnauthorizedFailure extends Failure {
-  @override
-  List<Object?> get props => [];
+
 }
 class UnexpectedFailure extends Failure {
-  @override
-  List<Object?> get props => [];
+
 }
 class NoInternetFailure extends Failure {
-  @override
-  List<Object?> get props => [];
+
 }
 class AlreadyParticipatedFailure extends Failure {
-  @override
-  List<Object?> get props => [];
+
 }
 class WrongVerificationCodeFailure extends Failure {
-  @override
-  List<Object?> get props => [];
+
 }

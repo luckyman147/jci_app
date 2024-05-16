@@ -132,7 +132,7 @@ class _CreateUpdateActivityPageState extends State<CreateUpdateActivityPage> {
                   ),
                   AddWidgetComponents.         showImagePicker(vis.selectedActivity, mediaQuery),
                   TextfieldNormal(context,
-                      "${vis.selectedActivity.name.tr(context)} ${"Name".tr(context)}" ,"${"Name of".tr(context)}${vis.selectedActivity.name} ${"here".tr(context)}", _namecontroller,
+                      "${vis.selectedActivity.name.tr(context)} ${"Name".tr(context)}" ,"${"Name of".tr(context)} ${vis.selectedActivity.name.tr(context)} ${"here".tr(context)}", _namecontroller,
 
                           (value){
                         context.read<FormzBloc>().add(ActivityNameChanged(activityName: value));

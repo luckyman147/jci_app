@@ -63,7 +63,7 @@ Widget body(List<Team> teams, int index, MediaQueryData mediaQuery,
               context.read<GetTeamsBloc>().add(GetTeamById({"id": teams[index].id,"isUpdated":true}));
             },
             child: Container(
-              height: mediaQuery.size.height / 5,
+              height: mediaQuery.size.height / 4.5,
               width: mediaQuery.size.width / 1,
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -154,39 +154,39 @@ Widget details(List<Team> teams, int index,MediaQueryData mediaQuery) =>
 
 Padding IsPublic(bool status) {
   return Padding(
-              padding:paddingSemetricHorizontal(),
-              child: Container(
+    padding:paddingSemetricHorizontal(),
+    child: Container(
 
-                decoration: BoxDecoration(
-                  color: status?Colors.green:Colors.red,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(status?"Public":"Private",style: PoppinsRegular(14, textColorWhite),),
-                ),
-              ),
-            );
+      decoration: BoxDecoration(
+        color: status?Colors.green:Colors.red,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(status?"Public":"Private",style: PoppinsRegular(14, textColorWhite),),
+      ),
+    ),
+  );
 }
 
 Row eventRow(MediaQueryData mediaQuery, List<Team> teams, int index) {
   return Row(
-        children: [
-          Icon(Icons.event,color: SecondaryColor,),
-          SizedBox(width: 5,),
-          SizedBox(
-            width:mediaQuery.size.width/5,
-            child: Text(
-              teams[index].event['name']!,
-              overflow: TextOverflow.ellipsis,
-              style: PoppinsRegular(
-                14,
-                textColorBlack,
-              ),
-            ),
+    children: [
+      Icon(Icons.event,color: SecondaryColor,),
+      SizedBox(width: 5,),
+      SizedBox(
+        width:mediaQuery.size.width/5,
+        child: Text(
+          teams[index].event['name']!,
+          overflow: TextOverflow.ellipsis,
+          style: PoppinsRegular(
+            14,
+            textColorBlack,
           ),
-        ],
-      );
+        ),
+      ),
+    ],
+  );
 }
 
 
@@ -224,7 +224,7 @@ Widget Images(List<Team> teams, int index) =>
                   child:
 
 
-               MemberTeamSelection.   photo(
+                  MemberTeamSelection.   photo(
                       teams[index].Members[i]['Images'] as List<dynamic>,
                       25, 100))),
         if (teams[index].Members.length > 3)
@@ -252,7 +252,7 @@ Widget Images(List<Team> teams, int index) =>
 
 
 Widget CircleProgess(List<Team> teams, int index,
-   ) =>
+    ) =>
     !teams[index].TeamLeader.isEmpty
         ? Text(
       "By ${teams[index].TeamLeader[0]["firstName"]}",
@@ -266,32 +266,32 @@ Widget CircleProgess(List<Team> teams, int index,
 
 SizedBox progresscircle(List<Team> teams, int index) {
   return SizedBox(
-          height: 90,
-          child: CircleProgressBar(
-            foregroundColor: Colors.blue,
-            backgroundColor: Colors.black12,
-            strokeWidth: 8,
-            value: teams[index].tasks.isEmpty
-                ? 0
-                : calculateCompletedTasks(
-                teams[index].tasks) /
-                teams[index].tasks.length,
-            child: Align(
-              alignment: Alignment.center,
-              child: AnimatedCount(
-                style: PoppinsSemiBold(17, textColorBlack,
-                    TextDecoration.none),
-                count: teams[index].tasks.isEmpty
-                    ? 0
-                    :( calculateCompletedTasks(
-                    teams[index].tasks) /
-                    teams[index].tasks.length)*100,
-                unit: "%",
-                duration: Duration(milliseconds: 500),
-              ),
-            ),
-          ),
-        );
+    height: 90,
+    child: CircleProgressBar(
+      foregroundColor: Colors.blue,
+      backgroundColor: Colors.black12,
+      strokeWidth: 8,
+      value: teams[index].tasks.isEmpty
+          ? 0
+          : calculateCompletedTasks(
+          teams[index].tasks) /
+          teams[index].tasks.length,
+      child: Align(
+        alignment: Alignment.center,
+        child: AnimatedCount(
+          style: PoppinsSemiBold(17, textColorBlack,
+              TextDecoration.none),
+          count: teams[index].tasks.isEmpty
+              ? 0
+              :( calculateCompletedTasks(
+              teams[index].tasks) /
+              teams[index].tasks.length)*100,
+          unit: "%",
+          duration: Duration(milliseconds: 500),
+        ),
+      ),
+    ),
+  );
 }
 
 Widget TaskRow(List<Team> teams, int index) {
@@ -306,21 +306,21 @@ Widget TaskRow(List<Team> teams, int index) {
       child: Flex(
           direction: Axis.horizontal,
           children: [
-              Icon(
-                Icons.check_box_outlined,
-                color: PrimaryColor,
-                size: 20,
+            Icon(
+              Icons.check_box_outlined,
+              color: PrimaryColor,
+              size: 20,
+            ),
+            Text(
+              " ${calculateCompletedTasks(teams[index].tasks)} / ${teams[index].tasks.length} ",
+              style: PoppinsSemiBold(
+                15,
+                textColorBlack,
+                TextDecoration.none,
               ),
-              Text(
-                " ${calculateCompletedTasks(teams[index].tasks)} / ${teams[index].tasks.length} ",
-                style: PoppinsSemiBold(
-                  15,
-                  textColorBlack,
-                  TextDecoration.none,
-                ),
-              ),
+            ),
 
-            ]),
+          ]),
 
     ),
   );
@@ -364,73 +364,89 @@ class TeamHomeWidget extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
 
     return ListView.separated(
-       scrollDirection: Axis.horizontal,
+        scrollDirection: Axis.horizontal,
         itemBuilder: (ctx, index) {
 
-      ;
+          ;
 
 
           return SingleChildScrollView(
-            child: InkWell(
-              onTap: () {
-                context.go('/TeamDetails/${teams[index].id}/$index');
-              },
-              child: Container(
-                width: mediaQuery.size.width /1.8,
-height: mediaQuery.size.height/6,
-                decoration: BoxDecoration(
-                  color: textColorWhite,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: textColorBlack,
-                    width: 2,
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+              child: InkWell(
+                onTap: () {
+                  context.go('/TeamDetails/${teams[index].id}/$index');
+                },
+                child: Container(
+                  width: mediaQuery.size.width /1.8,
+                  height: mediaQuery.size.height/6,
 
-                    children: [
-                      SizedBox(
-                        width: mediaQuery.size.width / 2.4,
-                        child: Text(
-                          teams[index].name,
-                          overflow: TextOverflow.ellipsis,
-                          style: PoppinsSemiBold(
-                            16,
-                            textColorBlack,
-                            TextDecoration.none,
+                  decoration: BoxDecoration(
+
+                  gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    index.isOdd ? SecondaryColor :
+           PrimaryColor,
+
+                    textColorWhite
+                  ],
+                  ),
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+
+                        blurRadius: 7,
+                        offset: Offset(0, 1), // changes position of shadow
+                      ),
+                    ],
+
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+
+                      children: [
+                        SizedBox(
+                          width: mediaQuery.size.width / 2.4,
+                          child: Text(
+                            teams[index].name,
+                            overflow: TextOverflow.ellipsis,
+                            style: PoppinsSemiBold(
+                              16,
+                              textColorWhite,
+                              TextDecoration.none,
+                            ),
                           ),
                         ),
-                      ),
 
 
-              Padding(
-                padding: paddingSemetricVertical(),
-                child: SizedBox(
-                  width: mediaQuery.size.width / 2,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment
-                        .spaceBetween,
-                    children: [
-                      TaskRow(teams, index),
-                      Images(teams, index),
+                        Padding(
+                          padding: paddingSemetricVertical(),
+                          child: SizedBox(
+                            width: mediaQuery.size.width / 2,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment
+                                  .spaceBetween,
+                              children: [
+                                TaskRow(teams, index),
+                                Images(teams, index),
 
-                    ],
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        // eventRow(mediaQuery, teams, index),
+
+                      ],
+                    ),
                   ),
                 ),
-              ),
-
-
-                      // eventRow(mediaQuery, teams, index),
-
-                    ],
-                  ),
-                ),
-              ),
-            )
+              )
 
           ) ;       },
         separatorBuilder: (BuildContext context, int index) {
@@ -438,6 +454,6 @@ height: mediaQuery.size.height/6,
             width: 20,
           );
         },
-        itemCount:min(teams.length, 2));
+        itemCount:min(teams.length, 3));
   }
 }

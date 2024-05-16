@@ -10,13 +10,14 @@ import 'package:jci_app/features/Teams/domain/usecases/TaskUseCase.dart';
 
 import '../../../../core/util/snackbar_message.dart';
 import '../../domain/entities/Checklist.dart';
+import '../../domain/entities/Task.dart';
 import '../../domain/entities/Team.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/TaskIsVisible/task_visible_bloc.dart';
 
 class CheckListWidget extends StatelessWidget {
-  final List<Map<String,dynamic>> checkList;
-  final Map<String,dynamic> tasks;
+  final List<Map<String, dynamic>> checkList;
+  final Map<String, dynamic> tasks;
   final Team team;
   final String id ;
 
@@ -31,24 +32,34 @@ class CheckListWidget extends StatelessWidget {
             builder: (context, state) {
               return Container(
                 decoration:  buildBoxDecoration(),
-                child: ListTile(
-                  minVerticalPadding: 5,
-                  enableFeedback: true,
-                  tileColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: BorderSide(color:textColor, width: 1.5)),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: textColor, width: 1.5),
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      ProfileComponents.buildFutureBuilder(
+                        buildCheckbox(index, context),
+                        true,
+                        id,
+                            (p0) => FunctionMember.isAssignedOrLoyal(team, tasks['AssignTo']),
+                      ),
+                      Expanded(
+                        child: buildTextField(index, id, context),
+                      ),
+                      ProfileComponents.buildFutureBuilder(
+                        buildIconButton(context, index),
+                        true,
+                        id,
+                            (p0) => FunctionMember.isAssignedOrLoyal(team, tasks['AssignTo']),
+                      ),
+                    ],
+                  ),
+                )
 
-                  leading:
-              ProfileComponents.buildFutureBuilder(buildCheckbox(index, context), true, id, (p0) => FunctionMember.isAssignedOrLoyal(team, tasks['AssignTo'])),
-                  title: buildTextField(index,id,context),
-
-
-                  trailing:
-                  ProfileComponents.buildFutureBuilder(                  buildIconButton(context, index),
-                      true, id, (p0) => FunctionMember.isAssignedOrLoyal(team, tasks['AssignTo'])),
-
-                ),
               );
             },
           ),
@@ -95,7 +106,7 @@ class CheckListWidget extends StatelessWidget {
 
 
                   value:checkList[index]['isCompleted'], onChanged: (bool? value) {
-final CheckInputFields checkInputFields = CheckInputFields(taskid: id, checkid: checkList[index]['id'], IsCompleted: value!, checklist: null, name: null, teamid: null);
+final CheckInputFields checkInputFields = CheckInputFields(taskid: id, checkid: checkList[index]["id"], IsCompleted: value!, checklist: null, name: null, teamid: null);
                   context.read<GetTaskBloc>().add(UpdateChecklistStatus(checkInputFields));
                   context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
 
@@ -120,7 +131,7 @@ final CheckInputFields checkInputFields = CheckInputFields(taskid: id, checkid: 
                   enabled: true,
                   controller: TextEditingController(
                       text: checkList[index]['name']),
-                  style: PoppinsSemiBold(18, textColorBlack,checkList[index]["isCompleted"]?TextDecoration.lineThrough:TextDecoration.none),
+                  style: PoppinsSemiBold(MediaQuery.devicePixelRatioOf(context)*4, textColorBlack,checkList[index]['isCompleted']?TextDecoration.lineThrough:TextDecoration.none),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(18),
@@ -129,14 +140,14 @@ final CheckInputFields checkInputFields = CheckInputFields(taskid: id, checkid: 
   }
 }
 
-Widget CheckListAddField(TextEditingController controller, String id,FocusNode focus,mediaQuery,Team team,Map<String, dynamic> task,bool mounted ) =>
+Widget CheckListAddField(TextEditingController controller, String id,FocusNode focus,mediaQuery,Team team,Map<String,dynamic> task,bool mounted ) =>
     BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
       builder: (context, state) {
         return Padding(
           padding: paddingSemetricVerticalHorizontal(h: 18),
           child: InkWell(
             onTap: () async {
-              if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])){
+              if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])) {
                 if (!mounted) return ;
               context.read<TaskVisibleBloc>().add(ToggleTaskVisible(false));
             FocusScope.of(context).requestFocus(focus);}
@@ -159,7 +170,7 @@ Widget CheckListAddField(TextEditingController controller, String id,FocusNode f
 
                   child: Padding(
                     padding: const EdgeInsets.all(18.0),
-                    child: Text("Add CheckList",textAlign: TextAlign.center ,style: PoppinsRegular(18, textColor),),
+                    child: Text("Add CheckList",textAlign: TextAlign.center ,style: PoppinsRegular(MediaQuery.devicePixelRatioOf(context)*5, textColor),),
                   )):
 
               textFieldcHECKLIST(focus, controller, context, state, id),

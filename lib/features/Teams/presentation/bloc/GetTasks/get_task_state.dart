@@ -1,6 +1,6 @@
 part of 'get_task_bloc.dart';
 enum TaskStatus { initial, success, error,Changed,Loading,SuccessCheck,ErrorUpdate }
- class GetTaskState extends Equatable {
+class GetTaskState extends Equatable {
   final TaskStatus status;
   final List<Map<String, dynamic>> tasks;
   final List<Map<String, dynamic>> clonetasks;
@@ -9,10 +9,10 @@ enum TaskStatus { initial, success, error,Changed,Loading,SuccessCheck,ErrorUpda
 
 
   GetTaskState( {this.tasks=const [], this.status = TaskStatus.initial, this.errorMessage = "",
-  this.clonetasks=const []
+    this.clonetasks=const []
 
 
-}
+  }
       );
 
   GetTaskState copyWith({
@@ -29,7 +29,7 @@ enum TaskStatus { initial, success, error,Changed,Loading,SuccessCheck,ErrorUpda
     return GetTaskState(
 
 
-     tasks: tasks ?? this.tasks,
+      tasks: tasks ?? this.tasks,
       clonetasks: clonetasks ?? this.clonetasks,
 
       status: status ?? this.status,

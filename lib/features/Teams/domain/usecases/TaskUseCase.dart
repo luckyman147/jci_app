@@ -145,6 +145,16 @@ class UpdateTaskTimelineUseCase extends UseCase<Unit, inputFields> {
 
 
 }
+class AddCommentUseCase extends UseCase<Unit, CommentInput> {
+  final TaskRepo _taskRepository;
+
+  AddCommentUseCase(this._taskRepository);
+
+  @override
+  Future<Either<Failure, Unit>> call( params) {
+    return _taskRepository.AddComment(params.taskid!, params.comment!);
+  }
+}
 class UpdateMembersUsecases extends UseCase<Unit, inputFields> {
   final TaskRepo _taskRepository;
 
@@ -199,6 +209,18 @@ class inputFields{
     required this.member,
 
     required this.teamid, required this.fileid});
+}
+
+class CommentInput {
+  final String? comment;
+  final String? taskid;
+
+  final String? commentid;
+  final String? memberid;
+
+  CommentInput({required this.comment, required this.taskid, required this.commentid, required this.memberid});
+
+
 }
 class CheckInputFields{
   final String? taskid;

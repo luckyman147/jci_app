@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/util/snackbar_message.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
@@ -27,7 +28,7 @@ import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/TaskFilter/taskfilter_bloc.dart';
 import 'EventSelection.dart';
 
-Widget ActionsWidgets(mediaQuery,GlobalKey<FormState> key,TextEditingController TeamName,TextEditingController description,Team team ) => BlocConsumer<GetTeamsBloc, GetTeamsState>(
+Widget ActionsWidgets(mediaQuery,GlobalKey<FormState> key,TextEditingController TeamName,TextEditingController description,Team team ) => BlocBuilder<GetTeamsBloc, GetTeamsState>(
   builder: (context, state) {
     return BlocBuilder<PageIndexBloc, PageIndexState>(
   builder: (context, state) {
@@ -41,11 +42,7 @@ Widget ActionsWidgets(mediaQuery,GlobalKey<FormState> key,TextEditingController 
     );
   },
 );
-  }, listener: (BuildContext context, GetTeamsState state) {
-    LIstenerAdd(state, context);
-
-
-},
+  },
 );
 
 void LIstenerAdd(GetTeamsState state, BuildContext context) {
@@ -53,8 +50,8 @@ void LIstenerAdd(GetTeamsState state, BuildContext context) {
   if (state.status ==  TeamStatus.error)
   {SnackBarMessage.showErrorSnackBar(message: state.errorMessage, context: context);
   }
-  if (state.status == TeamStatus.success) {
-    SnackBarMessage.showSuccessSnackBar(message: "Team Added", context: context);
+ else if (state.status == TeamStatus.success) {
+    SnackBarMessage.showSuccessSnackBar(message: "Team Created Successfully".tr(context), context: context);
     context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
     GoRouter.of(context).go('/home');
 

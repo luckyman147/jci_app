@@ -118,11 +118,7 @@ class BoardImpl{
       builder: (context, state) {
         if (state is MembersInitial) {
           return ShimmerMember();
-        } else if (state.userStatus == UserStatus.MembersLoaded) {
-          return ShimmerMember();
-
         }
-
         else if (state.userStatus == UserStatus.MembersLoaded ) {
           return MemberGridView(members:state.members, postId: postid,);
         }

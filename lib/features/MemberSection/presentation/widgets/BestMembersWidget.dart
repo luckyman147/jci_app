@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../Home/presentation/widgets/MemberSelection.dart';
@@ -23,26 +25,36 @@ class BestMembersComponent{
               return SizedBox(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    minVerticalPadding: 10,
+                  child: PhysicalModel(
+                    color: Colors.white,
+                    elevation: 10,
+                    borderRadius: BorderRadius.circular(10),
+                    child: ListTile(
+visualDensity: VisualDensity.comfortable,
 
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: BorderSide(color: textColor),
-                    ),
-                    leading: Text(
-                      (index + 1).toString(),
-                      style: PoppinsRegular( index>2?20:24,index==0?Colors.yellow:index==1?Colors.grey:index==2?Colors.brown:Colors.grey.shade400, ),
-                    ),
-                    title:Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        imageWidget(member, 30, 18,true ),
-                        Text(member.points.toString(), style: PoppinsSemiBold(20, textColorBlack, TextDecoration.none)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                            color: index<3?SecondaryColor:Colors.grey.shade400,
+                            width: 2)
 
-                      ],
-                    ),
+                      ),
 
+                      leading: Text(
+                        (index + 1).toString(),
+                        style: PoppinsRegular( index>2?20:24,index<3?SecondaryColor:
+                          Colors.grey.shade400, ),
+                      ),
+                      title:Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          imageWidget(member, 30, 18,true ),
+                          Text(member.points.toString(), style: PoppinsSemiBold(20, textColorBlack, TextDecoration.none)),
+
+                        ],
+                      ),
+
+                    ),
                   ),
                 ),
               );
@@ -114,6 +126,15 @@ class BestMembersComponent{
       decoration: BoxDecoration(
         color: textColorWhite,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 7,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      border: Border.all(color: color,width: 2)
       ),
 
       child: Padding(
@@ -124,7 +145,7 @@ class BestMembersComponent{
             Text(members.firstName.toString(), style: PoppinsSemiBold(15, textColor, TextDecoration.none)),
             // Text(members.firstName.toString(), style: PoppinsSemiBold(15, textColor, TextDecoration.none)),
             Text(members.lastName.toString(), style: PoppinsSemiBold(15, textColor, TextDecoration.none)),
-            Text(members.points.toString()+ "Pts", style: PoppinsSemiBold(16, PrimaryColor, TextDecoration.none)),
+            Text("${members.points}Pts", style: PoppinsSemiBold(16, PrimaryColor, TextDecoration.none)),
           ],
         ),
       ),
@@ -199,7 +220,9 @@ class BestMembersComponent{
             maxHeight: mediaQuery.size.height,
             minHeight: mediaQuery.size.height/2
         ),
-        context: context, builder: (context) => SizedBox(
+        context: context, builder: (context) => Container(
+
+
         height: mediaQuery.size.height ,
         child: Column(
           children: [
@@ -208,5 +231,80 @@ class BestMembersComponent{
 
           ],
         )));
+  }
+  static Widget showHighestRankMembers( BuildContext context,Member member) {
+    return Padding(
+      padding: paddingSemetricVerticalHorizontal(v: 10, h: 13),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: paddingSemetricVertical(),
+            child: SizedBox(
+
+                width: MediaQuery.of(context).size.width,
+                child: Text("Discover the Member of Month".tr( context),
+                  overflow: TextOverflow.ellipsis,
+                  style: PoppinsSemiBold(MediaQuery.devicePixelRatioOf(context)*5, textColorBlack, TextDecoration.none),)),
+          ),
+          InkWell(
+            onTap:(){
+              ShowRankMembers(MediaQuery.of(context), context);
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width ,
+              decoration: BoxDecoration(
+
+boxShadow: [
+  BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 7,
+                offset: Offset(0, 3), // changes position of shadow
+              ),
+],
+
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [backgroundColored, textColorWhite],
+                  stops: [0.0, 0.7],
+                ),
+                borderRadius: BorderRadius.circular(15),
+
+
+              ),
+              child: Padding(
+                padding:paddingSemetricVerticalHorizontal(v: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    PhotoReeact(member, 90),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.3,
+
+                            child: Text("${member.firstName} ${member.lastName}",
+                                textAlign: TextAlign.center,
+                                style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none))),
+
+                        Text("${member.points}  Pts",
+                            textAlign: TextAlign.center,
+                            style: PoppinsSemiBold(16, PrimaryColor, TextDecoration.none)),
+
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

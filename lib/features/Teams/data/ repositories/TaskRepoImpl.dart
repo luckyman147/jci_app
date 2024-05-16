@@ -213,4 +213,19 @@ return _getMessageUnit(taskRemoteDataSource.updateChecklistStatus(taskid, checki
   @override
   Future<Either<Failure, Unit>> updateChecklistName(String taskid, String checklistid, String name) {
     return _getMessageUnit(taskRemoteDataSource.UpdateChecklistName(taskid, checklistid, name));
+  }
+
+  @override
+  Future<Either<Failure, Unit>> AddComment(String taskid, String comment)async {
+    return _getMessageUnit(taskRemoteDataSource.AddComment(taskid, comment));
+  }
+
+  @override
+  Future<Either<Failure, Unit>> DeleteComment(String taskid, String commentId) {
+    return _getMessageUnit(taskRemoteDataSource.DeleteComment(taskid, commentId));
+  }
+
+  @override
+  Future<Either<Failure, Unit>> UpdateComment(String taskid, String commentId, String comment) {
+    return _getMessageUnit(taskRemoteDataSource.UpdateComment(taskid, commentId, comment));
   }}

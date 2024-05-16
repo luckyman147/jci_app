@@ -56,7 +56,7 @@ class DeatailsTeamComponent{
 
 
 
- static BlocBuilder<GetTaskBloc, GetTaskState> buillLinkedtext(
+  static BlocBuilder<GetTaskBloc, GetTaskState> buillLinkedtext(
       MediaQueryData mediaQuery,Team team) {
     return BlocBuilder<GetTaskBloc, GetTaskState>(
       builder: (context, state) {
@@ -70,23 +70,23 @@ class DeatailsTeamComponent{
     );
   }
 
- static void ShowAllTasks(BuildContext context, MediaQueryData mediaQuery, GetTaskState state, Team team) {
-      showModalBottomSheet(
+  static void ShowAllTasks(BuildContext context, MediaQueryData mediaQuery, GetTaskState state, Team team) {
+    showModalBottomSheet(
 
-       showDragHandle: true,
-       backgroundColor: textColorWhite,
-       context: context, builder: (context) {
-     return SingleChildScrollView(
+        showDragHandle: true,
+        backgroundColor: textColorWhite,
+        context: context, builder: (context) {
+      return SingleChildScrollView(
 
 
-         child: BottomTaskSheet(mediaQuery, state.tasks,team));
-   });
- }
+          child: BottomTaskSheet(mediaQuery, state.tasks,team));
+    });
+  }
 
   static SizedBox description(mediaQuery, BuildContext context,Team team ,bool mounted) {
 
     return SizedBox(
-width: mediaQuery.size.width,
+      width: mediaQuery.size.width,
 
 
       child: Column(
@@ -144,33 +144,33 @@ width: mediaQuery.size.width,
 
   static IconButton InviteBuitton(BuildContext context,Team team) {
     return IconButton.filled(
-  style: ButtonStyle(
-    backgroundColor: MaterialStateProperty.all(PrimaryColor),
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(PrimaryColor),
 
-  ),
-  onPressed: (){
-    context.read<MembersBloc>( ).add(const GetAllMembersEvent(false));
-    MemberBottomSheetBuilder(context, MediaQuery.of(context),assignType.Invite,team);
+        ),
+        onPressed: (){
+          context.read<MembersBloc>( ).add(const GetAllMembersEvent(false));
+          MemberBottomSheetBuilder(context, MediaQuery.of(context),assignType.Invite,team);
 
 
-  }, icon:const  Icon(Icons.person_add_alt_1,color: textColorWhite,));
+        }, icon:const  Icon(Icons.person_add_alt_1,color: textColorWhite,));
   }
 
   static ElevatedButton elevatedButtonBuildAction(String text, Function() action) {
     return ElevatedButton(
 
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: PrimaryColor,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: PrimaryColor,
 
-                  shape: RoundedRectangleBorder(
+          shape: RoundedRectangleBorder(
 
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                onPressed: action, child: Text(text,style: PoppinsRegular(18, textColorWhite),));
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        onPressed: action, child: Text(text,style: PoppinsRegular(18, textColorWhite),));
   }
 
-static   Future<dynamic> TeamMembersShett(BuildContext context, mediaQuery,Team team,bool mounted) {
+  static   Future<dynamic> TeamMembersShett(BuildContext context, mediaQuery,Team team,bool mounted) {
     return showModalBottomSheet(
 
         showDragHandle: true,
@@ -209,7 +209,7 @@ static   Future<dynamic> TeamMembersShett(BuildContext context, mediaQuery,Team 
         });
   }
 
- static  ListView TeamMembers(Team team,bool mounted) {
+  static  ListView TeamMembers(Team team,bool mounted) {
     return ListView.separated(
         itemBuilder: (context,index){
           final member = Member.toMember(team.Members[team.Members.length-index-1]);
@@ -233,8 +233,8 @@ static   Future<dynamic> TeamMembersShett(BuildContext context, mediaQuery,Team 
                           child: Row(
 
                             children: [
-                            MemberTeamSelection.  imageWidget(Member.toMember(team.Members[team.Members.length-index-1])),
-                                        ProfileComponents.buildFutureBuilder(Icon(Icons.person_sharp,),  true, Member.toMember(team.Members[team.Members.length-index-1]).id, (p0) => FunctionMember.isOwner(Member.toMember(team.Members[team.Members.length-index-1]).id))
+                              MemberTeamSelection.  imageWidget(Member.toMember(team.Members[team.Members.length-index-1])),
+                              ProfileComponents.buildFutureBuilder(Icon(Icons.person_sharp,),  true, Member.toMember(team.Members[team.Members.length-index-1]).id, (p0) => FunctionMember.isOwner(Member.toMember(team.Members[team.Members.length-index-1]).id))
                             ],
                           ),
                         ),
@@ -253,16 +253,16 @@ static   Future<dynamic> TeamMembersShett(BuildContext context, mediaQuery,Team 
     }, itemCount: team.Members.length);
   }
 
- static Widget KickButton(BuildContext context, Team team, int index) {
-   return TextButton(onPressed: () {
-     final TeamInput tam=TeamInput(team.id, Member.toMember(team.Members[team.Members.length-index-1]).id.toString(), "kick",team.Members[team.Members.length-index-1]);
-     context.read<GetTeamsBloc>().add(UpdateTeamMember(fields: tam));
-   }, child: Icon( Icons.remove_circle,color: Colors.red,),);
- }
+  static Widget KickButton(BuildContext context, Team team, int index) {
+    return TextButton(onPressed: () {
+      final TeamInput tam=TeamInput(team.id, Member.toMember(team.Members[team.Members.length-index-1]).id.toString(), "kick",team.Members[team.Members.length-index-1]);
+      context.read<GetTeamsBloc>().add(UpdateTeamMember(fields: tam));
+    }, child: Icon( Icons.remove_circle,color: Colors.red,),);
+  }
 
- 
 
-static  Widget ProgessBar(MediaQueryData mediaQuery, BuildContext context,) {
+
+  static  Widget ProgessBar(MediaQueryData mediaQuery, BuildContext context,) {
 
 
     return BlocBuilder<GetTaskBloc, GetTaskState>(
@@ -346,7 +346,7 @@ static  Widget ProgessBar(MediaQueryData mediaQuery, BuildContext context,) {
     );}
 
 
-static   Widget Header(BuildContext contex, mediaQuery,Team team,bool mounted) =>
+  static   Widget Header(BuildContext contex, mediaQuery,Team team,bool mounted) =>
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: BlocBuilder<PageIndexBloc, PageIndexState>(
@@ -361,7 +361,7 @@ static   Widget Header(BuildContext contex, mediaQuery,Team team,bool mounted) =
 
                     children: [
                       BackButton(onPressed: () {
-                    TeamFunction.    ReturnFunbction(context, ste);
+                        TeamFunction.    ReturnFunbction(context, ste);
 
                       },),
                       SizedBox(
@@ -404,16 +404,16 @@ static   Widget Header(BuildContext contex, mediaQuery,Team team,bool mounted) =
                                   ),
 
                                 ),
-                                                      ProfileComponents.buildFutureBuilder(IconButton(icon:Icon(Icons.more_vert, color: textColorBlack,), onPressed: () {
-                                                eleteUpdateTeamSHeet(context, mediaQuery,team,mounted);
-                                                },
-                                                ), true, "member", (p0) => FunctionMember.isChefAndSuperAdmin(team))   ,
+                                ProfileComponents.buildFutureBuilder(IconButton(icon:Icon(Icons.more_vert, color: textColorBlack,), onPressed: () {
+                                  eleteUpdateTeamSHeet(context, mediaQuery,team,mounted);
+                                },
+                                ), true, "member", (p0) => FunctionMember.isChefAndSuperAdmin(team))   ,
                               ]
                           ),
                         ),
                       ),
 
-                      IconButton(onPressed: (){}, icon: Icon(Icons.exit_to_app_rounded, color: Colors.red,))
+              //        IconButton(onPressed: (){}, icon: Icon(Icons.exit_to_app_rounded, color: Colors.red,))
 
                     ],
                   ),
@@ -426,7 +426,7 @@ static   Widget Header(BuildContext contex, mediaQuery,Team team,bool mounted) =
 
 
 
- static  void eleteUpdateTeamSHeet(BuildContext context, mediaQuery,Team team  ,bool mounted) {
+  static  void eleteUpdateTeamSHeet(BuildContext context, mediaQuery,Team team  ,bool mounted) {
     showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -438,7 +438,7 @@ static   Widget Header(BuildContext contex, mediaQuery,Team team,bool mounted) =
         });
   }
 
-static   Column ModelShowBottomActions(mediaQuery, BuildContext context,Team team,bool mounted) {
+  static   Column ModelShowBottomActions(mediaQuery, BuildContext context,Team team,bool mounted) {
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -472,150 +472,150 @@ static   Column ModelShowBottomActions(mediaQuery, BuildContext context,Team tea
 
 
 
-static Widget Circle(Team team, DateTime parse, MediaQueryData mediaQuery,
-    BuildContext context) =>
-    Column(
+  static Widget Circle(Team team, DateTime parse, MediaQueryData mediaQuery,
+      BuildContext context) =>
+      Column(
 
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween
-                , children: [
-              Row(
-                children: [
-                  Icon(Icons.timer, color: Colors.red,),
-                  Text('Deadline', style: PoppinsNorml(14, textColorBlack,),),
-                ],
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween
+                  , children: [
+                Row(
+                  children: [
+                    Icon(Icons.timer, color: Colors.red,),
+                    Text('Deadline', style: PoppinsNorml(14, textColorBlack,),),
+                  ],
+                ),
+                Text(DateFormat('MMM,dd').format(parse),
+                  style: PoppinsSemiBold(
+                      16, textColorBlack, TextDecoration.none),),
+              ]
               ),
-              Text(DateFormat('MMM,dd').format(parse),
-                style: PoppinsSemiBold(
-                    16, textColorBlack, TextDecoration.none),),
-            ]
             ),
-          ),
 
 
-        ]
-    );
+          ]
+      );
 
 
-static Widget ImageCard(mediaQuery, String image,double height) =>
-     image.isNotEmpty
-        ? ClipRRect(
+  static Widget ImageCard(mediaQuery, String image,double height) =>
+      image.isNotEmpty
+          ? ClipRRect(
+          borderRadius: BorderRadius.circular(100),
+
+
+          child: Image.memory(
+              base64Decode(image),
+              fit: BoxFit.cover,
+              height:height,
+              width: height
+
+
+          ))
+          : ClipRRect(
+
         borderRadius: BorderRadius.circular(100),
 
+        child: Container(
+            height: height,
+            width: height,
+            color: backgroundColored,
+            child: Image.asset("assets/images/jci.png", fit: BoxFit.contain,)
+        ),
+      );
 
-        child: Image.memory(
-            base64Decode(image),
-            fit: BoxFit.cover,
-            height:height,
-            width: height
+
+  Widget Progress(Team team, MediaQueryData mediaQuery,
+      List<Map<String, dynamic>> tasks) =>
+      SizedBox(
+        height: mediaQuery.size.height / 5.5,
+        child: CircleProgressBar(
+          foregroundColor: PrimaryColor,
+          backgroundColor: textColor,
+          strokeWidth: 10,
+          value: team.tasks.isEmpty
+              ? 0
+              : calculateSumCompletedTasks(
+              tasks) /
+              team.tasks.length,
+          child: Align(
+            alignment: Alignment.center,
+            child: AnimatedCount(
+              style: PoppinsSemiBold(17, textColorBlack,
+                  TextDecoration.none),
+              count: team.tasks.isEmpty
+                  ? 0
+                  : (calculateSumCompletedTasks(
+                  tasks) /
+                  team.tasks.length) * 100,
+              unit: '%',
+              duration: Duration(milliseconds: 500),
+            ),
+          ),
+        ),
+      );
 
 
-        ))
-        : ClipRRect(
+  static Widget membersTeamImage(BuildContext context, MediaQueryData mediaQuery,
+      int length, List<dynamic> items,double photoheight,double contHeight) =>
+      Row(
 
-      borderRadius: BorderRadius.circular(100),
+        children: [
+          for (var i = 0; i < (length > 3 ? 2 : length); i++)
 
-      child: Container(
-          height: height,
-          width: height,
-          color: backgroundColored,
-          child: Image.asset("assets/images/jci.png", fit: BoxFit.contain,)
+            PhotoContainer(items, i,photoheight),
+          if (length > 3)
+            alignPhoto(length,contHeight),
+
+        ],
+      );
+
+  static Padding PhotoContainer(List<dynamic> item, int i,double height) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 3.0),
+      child: Align(
+        widthFactor: .5,
+        child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                  color: textColorWhite,
+                  width: 5),
+              shape: BoxShape.circle,
+            ),
+            child: MemberTeamSelection. photo(
+                item[i]["Images"],
+                height, 15)),
       ),
     );
+  }
 
+  static Align alignPhoto(int number,double height) {
+    return Align(
+      widthFactor: .5,
+      child: NophotoContainer(number,height),
+    );
+  }
 
-Widget Progress(Team team, MediaQueryData mediaQuery,
-    List<Map<String, dynamic>> tasks) =>
-    SizedBox(
-      height: mediaQuery.size.height / 5.5,
-      child: CircleProgressBar(
-        foregroundColor: PrimaryColor,
-        backgroundColor: textColor,
-        strokeWidth: 10,
-        value: team.tasks.isEmpty
-            ? 0
-            : calculateSumCompletedTasks(
-            tasks) /
-            team.tasks.length,
-        child: Align(
-          alignment: Alignment.center,
-          child: AnimatedCount(
-            style: PoppinsSemiBold(17, textColorBlack,
-                TextDecoration.none),
-            count: team.tasks.isEmpty
-                ? 0
-                : (calculateSumCompletedTasks(
-                tasks) /
-                team.tasks.length) * 100,
-            unit: '%',
-            duration: Duration(milliseconds: 500),
-          ),
+  static Container NophotoContainer(int number,double height) {
+    return Container(
+      height: height,
+      width: height,
+      decoration: BoxDecoration(
+        border: Border.all(
+            color: textColorWhite,
+            width: 5),
+        color: PrimaryColor,
+
+        shape: BoxShape.circle,
+      ),
+      // Customize the container as needed
+      child: Center(
+        child: Text(
+          '+ ${number - 2} ',
+          style: PoppinsLight(11, textColorWhite),
         ),
       ),
     );
-
-
-static Widget membersTeamImage(BuildContext context, MediaQueryData mediaQuery,
-    int length, List<dynamic> items,double photoheight,double contHeight) =>
-    Row(
-
-      children: [
-        for (var i = 0; i < (length > 3 ? 2 : length); i++)
-
-          PhotoContainer(items, i,photoheight),
-        if (length > 3)
-          alignPhoto(length,contHeight),
-
-      ],
-    );
-
-static Padding PhotoContainer(List<dynamic> item, int i,double height) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 3.0),
-    child: Align(
-      widthFactor: .5,
-      child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-                color: textColorWhite,
-                width: 5),
-            shape: BoxShape.circle,
-          ),
-          child: MemberTeamSelection. photo(
-              item[i]["Images"],
-              height, 15)),
-    ),
-  );
-}
-
-static Align alignPhoto(int number,double height) {
-  return Align(
-    widthFactor: .5,
-    child: NophotoContainer(number,height),
-  );
-}
-
-static Container NophotoContainer(int number,double height) {
-  return Container(
-    height: height,
-    width: height,
-    decoration: BoxDecoration(
-      border: Border.all(
-          color: textColorWhite,
-          width: 5),
-      color: PrimaryColor,
-
-      shape: BoxShape.circle,
-    ),
-    // Customize the container as needed
-    child: Center(
-      child: Text(
-        '+ ${number - 2} ',
-        style: PoppinsLight(11, textColorWhite),
-      ),
-    ),
-  );
-}}
+  }}

@@ -24,7 +24,8 @@ class MembersBloc extends Bloc<MembersEvent, MembersState> {
   final UpdateMemberUseCase updateMemberUseCase;
   final GetMemberByIdUseCase getMemberByIdUseCase;
 final GetMembersByRanksUseCases getMembersByRanksUseCases;
-  MembersBloc(this.getAllMembersUseCase, this.getMemberByNameUseCase, this.getUserProfileUseCase, this.updateMemberUseCase, this.getMemberByIdUseCase, this.getMembersByRanksUseCases, ) : super(MembersInitial()) {
+final GetMemberByRankUseCase getMembeWithHighestRankUseCase;
+  MembersBloc(this.getAllMembersUseCase, this.getMemberByNameUseCase, this.getUserProfileUseCase, this.updateMemberUseCase, this.getMemberByIdUseCase, this.getMembersByRanksUseCases, this.getMembeWithHighestRankUseCase, ) : super(MembersInitial()) {
     on<MembersEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -36,6 +37,7 @@ on<GetUserProfileEvent>(getUserPrfile);
     on<UpdateMemberProfileEvent>(_updateuser);
     on<GetMemberByIdEvent>(getMemberByid);
     on<getRanksOfMembers>(getMembersByRanks);
+    on<GetMemberByHighestRAnkEvent>(_getMemberByRanks);
 
   }
   void getMembersByRanks(getRanksOfMembers event, Emitter<MembersState> emit)async{
@@ -46,9 +48,19 @@ on<GetUserProfileEvent>(getUserPrfile);
       emit(_eitherRanksOrFailure(
           result));
     } on Exception catch (e) {
-      log(e.toString());
-      log(e.toString());
-      log(e.toString());
+       emit(state.copyWith(Errormessage: 'Failed to load ranks',userStatus: UserStatus.Error));
+      // TODO
+    }
+  }
+  void _getMemberByRanks(GetMemberByHighestRAnkEvent event, Emitter<MembersState> emit)async{
+
+    try {
+      emit(state.copyWith(userStatus: UserStatus.Loading));
+      final result= await getMembeWithHighestRankUseCase(event.isUpdated);
+      emit(_eitherRankOrFailure(
+          result));
+    } on Exception catch (e) {
+       emit(state.copyWith(Errormessage: 'Failed to load ranks',userStatus: UserStatus.Error));
       // TODO
     }
   }
@@ -124,7 +136,7 @@ void getUserPrfile(GetUserProfileEvent event, Emitter<MembersState> emit)async {
           (failure) =>
 
               state.copyWith(
-                Errormessage: mapFailureToMessage(failure),
+                Errormessage: mapFailureToMessage(failure),userStatus: UserStatus.Error,
 
 
               ),
@@ -166,7 +178,17 @@ void getUserPrfile(GetUserProfileEvent event, Emitter<MembersState> emit)async {
         Errormessage: mapFailureToMessage(failure),
             userStatus: UserStatus.ErrorMembers,
       ),
-          (act) => state.copyWith(userStatus: UserStatus.MembersRanksLoaded, membersWithRanks: act),
+          (act) => state.copyWith(userStatus: UserStatus.MembersRanksLoaded, membersWithRanks: act,memberWithRank: act.first),
+    );
+  }
+
+  MembersState _eitherRankOrFailure(Either<Failure, Member> result) {
+    return result.fold(
+          (failure) => state.copyWith(
+        Errormessage: mapFailureToMessage(failure),
+            userStatus: UserStatus.ErrorMembers,
+      ),
+          (act) => state.copyWith(userStatus: UserStatus.MembersRanksLoaded,memberWithRank: act),
     );
   }
 

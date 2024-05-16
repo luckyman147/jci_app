@@ -10,6 +10,7 @@ import { Role } from "../models/role";
 import { CheckList } from '../models/teams/CheckListModel';
 import { Task } from '../models/teams/TaskModel';
 import { team } from "../models/teams/team";
+import { Comment } from '../models/teams/commentModel';
 export const findrole=async (name:string)=>{
     const role = await Role.findOne({ name: name });
     if (role){
@@ -146,7 +147,7 @@ if (members){
  attachedFile:await getFilesInfoByIds(task.attachedFile),
         isCompleted: task.isCompleted,
         CheckList: await  getCheckListsInfoByIds(task.CheckList),
-    
+        comments:await getCommentsInfo(task.comments)    
 
   
         // Add other fields you want to include
@@ -242,6 +243,30 @@ export   function shortenBase64(base64String:string) {
       throw new Error('Internal server error');
     }
   };
+  export const getCommentsInfo =async (comments_id:string[])=>{
+    try {
+      const comments = await Comment.find({ _id: { $in: comments_id } });
+  if (comments.length>0){
+      const commentsInfo = Promise.all(comments.map(async (comment) => ({
+        id: comment._id,
+        TaskId: comment.TaskId,
+        memberId: await getMembersInfo(comment.MemberId),
+        CreatedAt: (comment as Comment).Created_At,
+          UpdatedAt: (comment as Comment).Updated_At,
+  })))
+return commentsInfo
+  }
+  else{
+    return []
+  }
+
+
+}catch(e){
+  return []
+
+
+
+  }}
   export const getActivitiesInfo = async (EventsIds: string[]): Promise<any> => {
     try {
       // Query the database to find members by their IDs
