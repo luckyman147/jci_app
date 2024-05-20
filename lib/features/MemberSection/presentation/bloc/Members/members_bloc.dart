@@ -157,7 +157,7 @@ void getUserPrfile(GetUserProfileEvent event, Emitter<MembersState> emit)async {
                 Errormessage: mapFailureToMessage(failure),
 
               ),
-          (act) => state.copyWith(userStatus: UserStatus.MemberByname,memberByName: act ),
+          (act) => state.copyWith(userStatus: UserStatus.MemberByname,memberByName: act, ),
     );
   }  MembersState _eitherDoneUpdatedMemberState(
       Either<Failure, Unit> either, String message) {

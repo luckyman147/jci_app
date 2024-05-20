@@ -118,7 +118,7 @@ Widget details(List<Team> teams, int index,MediaQueryData mediaQuery) =>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CircleProgess(teams, index),
+              CircleProgess(teams, index,mediaQuery),
               IsPublic(teams[index].status)
             ],
           ),
@@ -251,17 +251,21 @@ Widget Images(List<Team> teams, int index) =>
     );
 
 
-Widget CircleProgess(List<Team> teams, int index,
+Widget CircleProgess(List<Team> teams, int index,MediaQueryData mediaQuery
     ) =>
     !teams[index].TeamLeader.isEmpty
-        ? Text(
-      "By ${teams[index].TeamLeader[0]["firstName"]}",
-      style: PoppinsSemiBold(
-        17,
-        textColor,
-        TextDecoration.none,
-      ),
-    )
+        ? SizedBox(
+      width: mediaQuery.size.width / 3.5,
+          child: Text(
+                "By ${teams[index].TeamLeader[0]["firstName"]}",
+                overflow: TextOverflow.ellipsis,
+                style: PoppinsSemiBold(
+          17,
+          textColor,
+          TextDecoration.none,
+                ),
+              ),
+        )
         : SizedBox();
 
 SizedBox progresscircle(List<Team> teams, int index) {

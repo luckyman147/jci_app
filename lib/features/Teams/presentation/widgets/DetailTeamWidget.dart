@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
@@ -86,7 +87,7 @@ class _TeamDetailWidgetState extends State<TeamDetailWidget> {
 
                     children: [
 
-                      Text('Tasks', style: PoppinsSemiBold(
+                      Text("${"Task".tr(context)}s", style: PoppinsSemiBold(
                           mediaQuery.devicePixelRatio * 6, textColorBlack,
                           TextDecoration.none),),
                       state.tasks.isEmpty ? SizedBox() :

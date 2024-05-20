@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
@@ -190,7 +191,8 @@ static     var boxDecoration = BoxDecoration(
 
         decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: textColor
+image: DecorationImage(
+  image: AssetImage(vip)),
         ),
 
       ),
@@ -221,63 +223,74 @@ static Widget hh(Member member,BuildContext context){
 
   ),
 
-   Positioned(
-  top: 85,
-  left: 0,
-  right: 0,
-  child: BlocBuilder<MemberManagementBloc, MemberManagementState>(
-  builder: (context, state) {
-    return Column(
-    children: [
-      descriptionName(member, state, context),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(state.role.toUpperCase(),style: PoppinsSemiBold(17, SecondaryColor,TextDecoration.none ),),
-            buildFutureBuilder(IconButton(onPressed: (){
-              BottomMemberSheet.ShowAdminChangeSheet(context,  member);
-
-            }, icon: Icon(Icons.edit)), true, member.id, (p0) => FunctionMember.isSuperAdminANdNoOwner(member))
-          ],
-        ),
-
-    ],
-  );
-  },
-)
-  ),
+   DescriptionUser(member),
 
 
-        Positioned(
-            top: 170,
-right: 0,
-left: 0,
-            child:
-        Align(
-          alignment: Alignment.center,
-          child: Padding(
-            padding: paddingSemetricHorizontal(),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-             Padding(
-               padding: paddingSemetricHorizontal(),
-               child: buildFutureBuilder(ShowAction(context, member,      (){
-                 context.go('/modifyUser?user=${jsonEncode(MemberModel.fromEntity(member).toJson())}');},"Edit Profile"),
-
-                   true, "", (po)=>FunctionMember. isOwner(member.id)),
-             )
-                ,ShowAction(context, member,      (){          FunctionMember.Showinfo(context, member);},"contact"),
-              ],
-            ),
-          ),
-        ))
+        ButtonUser(context, member)
 
 
 
   ],
   ),
   );}
+
+static Positioned ButtonUser(BuildContext context, Member member) {
+  return Positioned(
+          top: 170,
+right: 0,
+left: 0,
+          child:
+      Align(
+        alignment: Alignment.center,
+        child: Padding(
+          padding: paddingSemetricHorizontal(),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+             Padding(
+               padding: paddingSemetricHorizontal(),
+               child: buildFutureBuilder(ShowAction(context, member,      (){
+                 context.go('/modifyUser?user=${jsonEncode(MemberModel.fromEntity(member).toJson())}');},"Edit Profile".tr(context)),
+
+                   true, "", (po)=>FunctionMember. isOwner(member.id)),
+             )
+                ,ShowAction(context, member,      (){          FunctionMember.Showinfo(context, member);},"Contact".tr(context)),
+              ],
+            ),
+          ),
+        ),
+      ));
+}
+
+static Positioned DescriptionUser(Member member) {
+  return Positioned(
+top: 85,
+left: 0,
+right: 0,
+child: BlocBuilder<MemberManagementBloc, MemberManagementState>(
+builder: (context, state) {
+  return Column(
+  children: [
+    descriptionName(member, state, context),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(state.role.toUpperCase(),style: PoppinsSemiBold(17, SecondaryColor,TextDecoration.none ),),
+          buildFutureBuilder(IconButton(onPressed: (){
+            BottomMemberSheet.ShowAdminChangeSheet(context,  member);
+
+          }, icon: Icon(Icons.edit)), true, member.id, (p0) => FunctionMember.isSuperAdminANdNoOwner(member))
+        ],
+      ),
+
+  ],
+);
+},
+)
+);
+}
 
 static ElevatedButton ShowAction(BuildContext context, Member member,Function() onPress,String text) {
   return ElevatedButton(
@@ -301,8 +314,13 @@ static Row descriptionName(Member member, MemberManagementState state, BuildCont
   return Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
-      Text('${member.firstName} ',style: PoppinsSemiBold(21, textColorBlack, TextDecoration.none),),
-      Text('${member.lastName} ',style: PoppinsSemiBold(21, textColorBlack, TextDecoration.none),),
+      SizedBox(
+  width: MediaQuery.of(context).size.width*0.6,
+          child: Text('${member.firstName} ${member.lastName}',
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: PoppinsSemiBold(18 , textColorBlack, TextDecoration.none),)),
+
       state.isUpdated?Icon(Icons.verified,color: PrimaryColor,):buildFutureBuilder(IconButton(
 
           style: ButtonStyle(

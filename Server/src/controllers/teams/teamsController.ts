@@ -6,9 +6,9 @@ import { Event } from "../../models/activities/eventModel";
 import { Team, team } from "../../models/teams/team";
 import { getEventNameById, getMembersInfo, getTasksInfo } from "../../utility/role";
 
+import { Activity } from "../../models/activities/activitieModel";
 import { Member } from "../../models/Member";
 import { CreationOfTeamEmail, participationTeamEmail, sendInvitationEmail, sendKickMemberEmail, sendMemberJoinEmail } from "../../utility/NotificationEmailUtility";
-import { Activity } from "../../models/activities/activitieModel";
 export const AddTeam = async (req: Request, res: Response, next: NextFunction) => {
   const user=req.member
   console.log("ee"+user)
@@ -397,8 +397,8 @@ export const JoinTeam = async (req: Request, res: Response, next: NextFunction) 
     Team.Members.push(member._id);
     member.Teams.push(Team.id);
 
-    const act = await Activity.findById(Team.Event);
-   
+
+   await member.save()
       participationTeamEmail(Team.name, member.language, member.firstName, member.email);
    
 

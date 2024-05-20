@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/SettingsComponents.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
@@ -79,7 +80,7 @@ class _SettingsPageState extends State<SettingsPage> {
               children: [
                 Padding(
                   padding: paddingSemetricVerticalHorizontal(),
-                  child: Text("Settings", style: PoppinsSemiBold(
+                  child: Text("Settings".tr(context), style: PoppinsSemiBold(
                       24, textColorBlack, TextDecoration.none),),
                 ),
                 SettingsComponent.ColumnActions(

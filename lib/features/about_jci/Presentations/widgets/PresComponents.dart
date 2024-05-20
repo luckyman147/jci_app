@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 
 import '../../../../core/app_theme.dart';
@@ -94,7 +95,7 @@ class PresidentsComponents{
   static AlertDialog UpodatePOhotoWid(TaskVisibleState state, BuildContext context, President president) {
     return AlertDialog(
 
-      title: Text('Update President Image',style: PoppinsRegular(16, textColorBlack,),),
+      title: Text('Update President Image'.tr (context),style: PoppinsRegular(16, textColorBlack,),),
       content:            SizedBox(
           height: 200,
           child: Center(
@@ -110,7 +111,7 @@ class PresidentsComponents{
             // Perform action when the second button is pressed
             Navigator.of(context).pop(); // Close the dialog
           },
-          child: Text('Cancel',style: PoppinsRegular(16, textColor,),),
+          child: Text('Cancel'.tr(context),style: PoppinsRegular(16, textColor,),),
         ),  TextButton(
           onPressed: () {
             final President newPresident = President(name: president.name, CoverImage: state.image, year: president.year, id: president.id);
@@ -118,7 +119,7 @@ class PresidentsComponents{
             // Perform action when the second button is pressed
             Navigator.of(context).pop(); // Close the dialog
           },
-          child: Text('Update',style: PoppinsRegular(16, PrimaryColor,),),
+          child: Text('Update'.tr(context),style: PoppinsRegular(16, PrimaryColor,),),
         ),
       ],
     );

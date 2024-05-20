@@ -2,8 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/util/snackbar_message.dart';
 import 'package:jci_app/core/widgets/loading_widget.dart';
+import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
@@ -148,7 +150,9 @@ Widget BottomShetTaskBody(
       horizontal: 8.0,
       vertical: 10,
     ),
-    child: Column(
+    child: BlocBuilder<localeCubit, LocaleState>(
+  builder: (context, state) {
+    return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
@@ -174,7 +178,7 @@ Widget BottomShetTaskBody(
             );
 
           },
-          hintStartTextDate,
+          hintStartTextDate,state
         ),
         chooseDate(
           Deadlinedate,
@@ -190,7 +194,7 @@ Widget BottomShetTaskBody(
             );}
 
           ,
-          hintEndTextDate,
+          hintEndTextDate,state
         ),
 
 
@@ -214,7 +218,7 @@ Widget BottomShetTaskBody(
           },
           child: Center(
             child: Text(
-              "Save",
+              "Save".tr(context),
               style: PoppinsSemiBold(
                 18,
                 textColorWhite,
@@ -224,7 +228,9 @@ Widget BottomShetTaskBody(
           ),
         ),
       ],
-    ),
+    );
+  },
+),
   ),
 );
 
@@ -247,7 +253,7 @@ void AssignBottomSheetBuilder(BuildContext context, MediaQueryData mediaQuery,
             return Text("");
           }
           else if  (state.status== TaskStatus.success || state.status== TaskStatus.Changed || state.status== TaskStatus.ErrorUpdate ){
-            return MemberTeamSelection. MembersAssignToBottomSheet(mediaQuery, onRemoveTap, onAddTap,membersList,ListAssignTo);}
+            return MemberTeamSelection. MembersAssignToBottomSheet(mediaQuery, onRemoveTap, onAddTap,membersList,ListAssignTo,context);}
           else return Container();
         },
       );

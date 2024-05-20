@@ -1,11 +1,13 @@
 
 import 'dart:convert';
 import 'package:circle_progress_bar/circle_progress_bar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/Teams/domain/usecases/TeamUseCases.dart';
@@ -63,7 +65,7 @@ class DeatailsTeamComponent{
         return TextButton(onPressed: () {
           ShowAllTasks(context, mediaQuery, state, team);
         },
-            child: Text("Show More",
+            child: Text("Show More".tr(context),
               style: PoppinsSemiBold(
                   mediaQuery.devicePixelRatio*5, PrimaryColor, TextDecoration.underline),));
       },
@@ -190,7 +192,7 @@ class DeatailsTeamComponent{
                     children:[
                       Padding(
                         padding:paddingSemetricHorizontal(),
-                        child: Text("Board members ( ${team.Members.length} )",style: PoppinsSemiBold(17, textColorBlack, TextDecoration.none),),
+                        child: Text(" ${"Members".tr (context)} ${team.Members.length} )",style: PoppinsSemiBold(17, textColorBlack, TextDecoration.none),),
                       ),
 
                       Padding(
@@ -228,14 +230,17 @@ class DeatailsTeamComponent{
 
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedBox(
-                          width:  MediaQuery.of(context).size.width/2,
-                          child: Row(
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: SizedBox(
+                            width:  MediaQuery.of(context).size.width/2,
+                            child: Row(
 
-                            children: [
-                              MemberTeamSelection.  imageWidget(Member.toMember(team.Members[team.Members.length-index-1])),
-                              ProfileComponents.buildFutureBuilder(Icon(Icons.person_sharp,),  true, Member.toMember(team.Members[team.Members.length-index-1]).id, (p0) => FunctionMember.isOwner(Member.toMember(team.Members[team.Members.length-index-1]).id))
-                            ],
+                              children: [
+                                MemberTeamSelection.  imageWidget(Member.toMember(team.Members[team.Members.length-index-1])),
+                                ProfileComponents.buildFutureBuilder(Icon(Icons.person_sharp,),  true, Member.toMember(team.Members[team.Members.length-index-1]).id, (p0) => FunctionMember.isOwner(Member.toMember(team.Members[team.Members.length-index-1]).id))
+                              ],
+                            ),
                           ),
                         ),
                         FunctionMember.isChef(team, team.Members.length-index-1)?
@@ -257,6 +262,7 @@ class DeatailsTeamComponent{
     return TextButton(onPressed: () {
       final TeamInput tam=TeamInput(team.id, Member.toMember(team.Members[team.Members.length-index-1]).id.toString(), "kick",team.Members[team.Members.length-index-1]);
       context.read<GetTeamsBloc>().add(UpdateTeamMember(fields: tam));
+      Navigator.pop(context);
     }, child: Icon( Icons.remove_circle,color: Colors.red,),);
   }
 
@@ -272,54 +278,59 @@ class DeatailsTeamComponent{
           .of(context)
           .size
           .width / (state.tasks.length*1.2);
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Display containers for true values with red color
-            ...state.tasks.where((element) => element['isCompleted']).toList().asMap().entries.map((entry) {
-              if (entry.key == 0) {
-                // Apply border radius to the first container
-                return Container(
-                  decoration: BoxDecoration(
-                    color: PrimaryColor,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Display containers for true values with red color
+              ...state.tasks.where((element) => element['isCompleted']).toList().asMap().entries.map((entry) {
+                if (entry.key == 0) {
+                  // Apply border radius to the first container
+                  return AnimatedContainer(
+                    decoration: BoxDecoration(
+                      color: PrimaryColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        bottomLeft: Radius.circular(10),
+                      ),
                     ),
-                  ),
-                  width: containerWidth,
-                  height: 10,
-                );
-              } else {
-                // Don't apply border radius to the other containers
-                return Container(
-                  decoration: BoxDecoration(
-                    color: PrimaryColor,
-                  ),
-                  width: containerWidth,
-                  height: 10,
-                );
-              }
-            }).toList(),
-            // Display containers for false values with blue color
-            ...state.tasks.where((element) => !element['isCompleted']).toList().asMap().entries.map((entry) {
-
-              if (entry.key == sasks.length - 1) {
-                // Apply border radius to the last container
-                return Container(
-                  decoration: BoxDecoration(
-                    color: textColor,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(10),
-                      bottomRight: Radius.circular(10),
+                    width: containerWidth,
+                    height: 10, duration: Duration(milliseconds: 1000),
+                  );
+                } else {
+                  // Don't apply border radius to the other containers
+                  return AnimatedContainer(
+                    duration: Duration(milliseconds: 1000),
+                    decoration: BoxDecoration(
+                      color: PrimaryColor,
                     ),
-                  ),
-                  width: containerWidth,
-                  height: 10,
-                );
-              }
+                    width: containerWidth,
+                    height: 10,
+                  );
+                }
+              }).toList(),
+              // Display containers for false values with blue color
+              ...state.tasks.where((element) => !element['isCompleted']).toList().asMap().entries.map((entry) {
+
+                if (entry.key == sasks.length - 1) {
+                  // Apply border radius to the last container
+                  return AnimatedContainer(
+                    duration: Duration(milliseconds: 1000),
+                    decoration: BoxDecoration(
+                      color: textColor,
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(10),
+                        bottomRight: Radius.circular(10),
+                      ),
+                    ),
+                    width: containerWidth,
+                    height: 10,
+                  );
+                }
 
 
 
@@ -327,19 +338,20 @@ class DeatailsTeamComponent{
 
 
 
-              else {
-                // Don't apply border radius to the other containers
-                return Container(
-                  decoration: BoxDecoration(
-                    color: textColor,
-                  ),
-                  width: containerWidth,
-                  height: 10,
-                );
-              }
+                else {
+                  // Don't apply border radius to the other containers
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: textColor,
+                    ),
+                    width: containerWidth,
+                    height: 10,
+                  );
+                }
 
-            }).toList(),
-          ],
+              }).toList(),
+            ],
+          ),
         ),
       );
       },
@@ -371,9 +383,9 @@ class DeatailsTeamComponent{
                           child:
 
 
-                          ste.WillAdded ? Text("Add Task", style: PoppinsSemiBold(
+                          ste.WillAdded ? Text("${"Add".tr(context)} ${"Task".tr(context)}", style: PoppinsSemiBold(
                               mediaQuery.devicePixelRatio * 5, textColorBlack,
-                              TextDecoration.none),) : ste.WillDeleted ? Text("Delete Task", style: PoppinsSemiBold(
+                              TextDecoration.none),) : ste.WillDeleted ? Text("${"Delete".tr(context)} ${"Task".tr(context)}", style: PoppinsSemiBold(
                               mediaQuery.devicePixelRatio * 5, textColorBlack,
                               TextDecoration.none),) :
 
@@ -447,7 +459,7 @@ class DeatailsTeamComponent{
 
 
 
-          TeamComponent.actionTeamRow(mediaQuery, TeamAction.Upload, Icons.edit, "Update", () async{
+          TeamComponent.actionTeamRow(context,mediaQuery, TeamAction.Upload, Icons.edit, "Update".tr(context), () async{
             context.read<TaskVisibleBloc>().add(ChangeImageEvent(team.CoverImage));
             final  image=  await  ActivityAction.convertBase64ToXFile(team.CoverImage);
 
@@ -461,7 +473,7 @@ class DeatailsTeamComponent{
 
           })
 
-          ,TeamComponent.actionTeamRow(mediaQuery, TeamAction.delete, Icons.delete, "Delete", () {
+          ,TeamComponent.actionTeamRow(context,mediaQuery, TeamAction.delete, Icons.delete, "Delete".tr(context), () {
             context.read<GetTeamsBloc>().add(DeleteTeam( team.id));
             context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
 

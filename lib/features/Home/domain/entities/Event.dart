@@ -7,7 +7,9 @@ class Event  extends Activity{
   final String LeaderName;
   final DateTime registrationDeadline;
 
-
+   static Event get EventTest=>Event(registrationDeadline: DateTime.now(), LeaderName: "LeaderName", name: "Choose the Event",
+      description: "hola", ActivityBeginDate: DateTime.now(), ActivityEndDate: DateTime.now(), ActivityAdress: "hhhh",
+      ActivityPoints: 2, categorie: "fun", IsPaid: false, price: 0, Participants: [], CoverImages: [], id: '', IsPart: false);
 
   Event( {required this.registrationDeadline,   required this.LeaderName,
 

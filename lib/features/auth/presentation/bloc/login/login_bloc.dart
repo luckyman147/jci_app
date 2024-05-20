@@ -90,7 +90,7 @@ final status=await Store.getStatus();
     if (state.isValid) {
 
       try {
-
+        emit(LoadingLogin());
         final failureOrDoneMessage =
             await loginUseCase.LoginCredentials(event.email, event.password);
 

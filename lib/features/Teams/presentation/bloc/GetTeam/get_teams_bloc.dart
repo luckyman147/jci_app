@@ -230,8 +230,10 @@ void _updateMember(UpdateTeamMember event ,Emitter<GetTeamsState> emit) async {
     return either.fold(
             (failure) => state.copyWith(status: TeamStatus.error, errorMessage: mapFailureToMessage(failure)),
             (act) => state.copyWith(
-           status: TeamStatus.success
+           status: TeamStatus.Created,
+              // insert in the beginning of the list
 
+                teams: UnmodifiableListView([act,...state.teams])
 
         )
 
@@ -271,14 +273,16 @@ void _updateMember(UpdateTeamMember event ,Emitter<GetTeamsState> emit) async {
                 state.teamById['Members'] = updatedMember;
               }
               else {
-                log('message here ');
+
                 List<Map<String, dynamic>> updatedMember = RemoveMember(field.memberid!);
 
                 state.teamById['Members'] = updatedMember;
               }
 
 
-              return state.copyWith(status: TeamStatus.success, teamById: state.teamById);
+              return state.copyWith(status: state.status == TeamStatus.IsRefresh ?
+                  TeamStatus.success : TeamStatus.IsRefresh
+                  , teamById: state.teamById);
             }
     );
   }
@@ -298,14 +302,14 @@ void _updateMember(UpdateTeamMember event ,Emitter<GetTeamsState> emit) async {
           state.teamById['Members']);
       updatedMember.add(fields.member!);
       state.teamById['Members'] = updatedMember;
-              return  state.copyWith(status: TeamStatus.success);}
+              return  state.copyWith(status:state.status==TeamStatus.IsRefresh? TeamStatus.Updated:TeamStatus.Updated);}
     );
   }
 
   GetTeamsState _mapFailureOrJoinTeamToState(Either<Failure, Unit> result) {
     return result.fold(
             (failure) => state.copyWith(status: TeamStatus.error, errorMessage: mapFailureToMessage(failure)),
-            (act) => state.copyWith(status: TeamStatus.success)
+            (act) => state.copyWith(status: state.status==TeamStatus.IsRefresh? TeamStatus.Updated:TeamStatus.IsRefresh)
     );
   }
 }

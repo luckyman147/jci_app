@@ -15,6 +15,7 @@ import '../bloc/SignUp/sign_up_bloc.dart';
 import '../bloc/bool/toggle_bool_bloc.dart';
 import '../widgets/Text.dart';
 import '../widgets/formText.dart';
+import '../widgets/inputs.dart';
 
 class ResetPassword extends StatefulWidget {
 
@@ -87,13 +88,13 @@ else if(state.status== ResetPasswordStatus. Updated){
                 alignment: Alignment.topLeft,
                 child: Label(text: 'New Password'.tr(context), size: 20,),
               ),
-              PasswordInput(controller: Passwordcontroller),
+              PasswordInputText(controller: Passwordcontroller),
                         SizedBox(height: 20,),
               Align(
                 alignment: Alignment.topLeft,
                 child: Label(text: 'Confirm Password'.tr(context), size: 20,),
               ),
-              confirmpassword(controller: ConPasswordcontroller, PasswordContro: Passwordcontroller,),
+              confirmpasswordText(controller: ConPasswordcontroller, PasswordContro: Passwordcontroller,),
                     Padding(
                       padding:  EdgeInsets.only(top: mediaquery.size.height *0.04),
                       child: _ResetButton(_key,widget.email),
@@ -147,62 +148,5 @@ final language=await context.read<localeCubit>().cachedLanguageCode();
 
 
 }
-class PasswordInput extends StatelessWidget {
-  final TextEditingController controller;
 
 
-  const PasswordInput({super.key, required this.controller,  });
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ResetBloc, ResetPasswordState>(
-
-      builder: (context, state) {
-        print("${controller.text} controller from password input ${controller.text}");
-        return FormTextPassword(inputkey:
-        'ResetForm_passwordInput_textField',
-          Onchanged: (password) {
-            context.read<ResetBloc>().add(PasswordChanged(password));
-          } ,
-          errortext:  null, controller: controller, validator: (string ) {
-            if(string.isEmpty)
-              return 'Empty';
-            if(string.length < 6)
-              return 'Too Short';
-            return null;
-          },
-        );
-      },
-    );
-  }
-}
-class confirmpassword extends StatelessWidget {
-  final TextEditingController controller;
-  final TextEditingController PasswordContro;
-
-
-  const confirmpassword(
-      {super.key, required this.controller, required this.PasswordContro});
-
-  @override
-  Widget build(BuildContext context) {
-    print("${controller.text} controller from password input ${controller.text}"  );
-    return BlocBuilder<ResetBloc, ResetPasswordState>(
-      builder: (context, state) {
-        return FormTextConPassword(
-          inputkey: 'ResetPasswordForm_confirmPasswordInput_textField',
-          Onchanged: (confirmPassword) {
-            context.read<ResetBloc>().add(
-                ConfirPasswordChanged(confirmPassword));
-          },
-          errortext: null,
-
-
-          controller: controller,
-          validator: PasswordContro.text
-
-
-        );
-      },
-    );
-  }
-}

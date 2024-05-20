@@ -46,7 +46,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
                 calendar(state),
                 SizedBox(height: 20,),
-                EvnetBuilder()],
+                EvnetBuilder(state)],
 
             ),
           );
@@ -56,7 +56,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   }
 
-  Widget EvnetBuilder() {
+  Widget EvnetBuilder(LocaleState ste) {
     return SizedBox(
       height: MediaQuery.of(context).size.height/3,
                 width: MediaQuery.of(context).size.width,
@@ -86,51 +86,7 @@ class _CalendarPageState extends State<CalendarPage> {
                      ],
 
                      ),
-                          child: ListTile(
-                            onTap: (){
-                              context.go(
-                                  '/activity/${ value[index].id}/${state
-                                      .selectedActivity.name}/$index');
-                            },
-
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),side: BorderSide(color: textColorBlack)),
-                          trailing: Icon(Icons.arrow_forward_ios_rounded,color: PrimaryColor,),
-                            title: SizedBox(
-                              width: MediaQuery.of(context).size.width/1.5,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(value[index].name,  overflow: TextOverflow.ellipsis,   style: PoppinsSemiBold(16, textColorWhite,TextDecoration.none),),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Padding(
-                                        padding: paddingSemetricHorizontal(),
-                                        child: Icon(Icons.location_on,color: textColorWhite,),
-                                      ),
-
-                                      Text(value[index].ActivityAdress,overflow: TextOverflow.ellipsis,style: PoppinsRegular(16, textColorWhite,),),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            subtitle: Padding(
-                              padding: paddingSemetricVertical(),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: paddingSemetricHorizontal(),
-                                    child: Icon(Icons.calendar_today_rounded,color: textColorWhite,),
-                                  ),
-                                  Text("${DateFormat('dd MMMM yyyy').format(value[index].ActivityBeginDate)} à ${DateFormat('HH:mm').format(value[index].ActivityBeginDate)}",style: PoppinsRegular(14, textColorWhite),),
-                                ],
-                              ),
-                            ),
-                          ),
+                          child: listTileCalendar(context, value, index, state,ste),
                         ),
                       );
                     },
@@ -142,6 +98,58 @@ class _CalendarPageState extends State<CalendarPage> {
 
                 ),
               );
+  }
+
+  ListTile listTileCalendar(BuildContext context, List<Activity> value, int index, ActivityState state,LocaleState lste) {
+    String formattedDate = DateFormat('dd MMM yyyy', lste.locale == Locale("en") ? "en_US" : "fr_FR").format(value[index].ActivityBeginDate);
+    String formattedTime = DateFormat('HH:mm').format(value[index].ActivityBeginDate);
+    String formattedDateTime = lste.locale == Locale("en") ? "$formattedDate At $formattedTime" : "$formattedDate A $formattedTime";
+
+    return ListTile(
+                          onTap: (){
+                            context.go(
+                                '/activity/${ value[index].id}/${state
+                                    .selectedActivity.name}/$index');
+                          },
+
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),side: BorderSide(color: textColorBlack)),
+                        trailing: Icon(Icons.arrow_forward_ios_rounded,color: PrimaryColor,),
+                          title: SizedBox(
+                            width: MediaQuery.of(context).size.width/1.5,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(value[index].name,  overflow: TextOverflow.ellipsis,   style: PoppinsSemiBold(16, textColorWhite,TextDecoration.none),),
+                                ),
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: paddingSemetricHorizontal(),
+                                      child: Icon(Icons.location_on,color: textColorWhite,),
+                                    ),
+
+                                    Text(value[index].ActivityAdress,overflow: TextOverflow.ellipsis,style: PoppinsRegular(16, textColorWhite,),),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          subtitle: Padding(
+                            padding: paddingSemetricVertical(),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: paddingSemetricHorizontal(),
+                                  child: Icon(Icons.calendar_today_rounded,color: textColorWhite,),
+                                ),
+                                    Text(formattedDateTime,style: PoppinsRegular(14, textColorWhite),),
+                              ],
+                            ),
+                          ),
+                        );
   }
 
   BlocBuilder<CalendarCubit, CalendarState> calendar(LocaleState state) {

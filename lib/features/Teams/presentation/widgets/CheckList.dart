@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/Teams/domain/usecases/TaskUseCase.dart';
@@ -170,7 +171,7 @@ Widget CheckListAddField(TextEditingController controller, String id,FocusNode f
 
                   child: Padding(
                     padding: const EdgeInsets.all(18.0),
-                    child: Text("Add CheckList",textAlign: TextAlign.center ,style: PoppinsRegular(MediaQuery.devicePixelRatioOf(context)*5, textColor),),
+                    child: Text("${"Add".tr(context)} ${"Subtask"}",textAlign: TextAlign.center ,style: PoppinsRegular(MediaQuery.devicePixelRatioOf(context)*5, textColor),),
                   )):
 
               textFieldcHECKLIST(focus, controller, context, state, id),
@@ -203,7 +204,7 @@ focusNode: focus ,
                     onTap: () {
                       if (controller.text.isEmpty) {
                         SnackBarMessage.showErrorSnackBar(
-                            message: "Empty Field", context: context);
+                            message: "Empty Field".tr(context), context: context);
                       }
                       else {
                         final CheckInputFields checkInputFields = CheckInputFields(taskid: id, checkid: '', IsCompleted: null, checklist: null, name: controller.text, teamid: null);
@@ -222,7 +223,7 @@ focusNode: focus ,
                     child: state.WillAdded ? Icon(
                       Icons.check_circle, color: PrimaryColor,) : SizedBox()
                 ),
-                hintText: 'Add CheckList',
+                hintText: '${"Add".tr(context)} ${"Subtask".tr(context)}',
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.all(18),
               ),

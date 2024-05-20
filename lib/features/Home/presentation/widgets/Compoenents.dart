@@ -138,7 +138,7 @@ class _MyDropdownButtonState extends State<MyDropdownButton> {
                   return DropdownMenuItem<activity>(
                     alignment: AlignmentDirectional.centerStart,
                     value: value,
-                    child: Text(value.name.tr(context),style: PoppinsSemiBold(MediaQuery.of(context).devicePixelRatio*6, textColorBlack, TextDecoration.none),),
+                    child: Text(value.name.tr(context),style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),),
 
                   );
                 }).toList(),
@@ -235,7 +235,7 @@ class _CalendarButtonState extends State<CalendarButton> {
                       Navigator.pop(context);
                     },),
 
-                    Text("Calendar ",style: PoppinsSemiBold(20, textColorBlack, TextDecoration.none),),
+                    Text("Calendar".tr(context),style: PoppinsSemiBold(20, textColorBlack, TextDecoration.none),),
                   ],
                 ),
                 Padding(
@@ -671,7 +671,7 @@ Widget MySearchBar(BuildContext context,activity Activity) {
             controller: TextEditingController()..text = '',
             enabled: true,
             decoration: InputDecoration(
-              hintText: 'Search',
+              hintText: 'Search'.tr(context),
 
               hintStyle: PoppinsRegular(13, textColor),
               prefixIcon:    IconButton( onPressed: () {

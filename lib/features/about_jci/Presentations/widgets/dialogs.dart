@@ -80,10 +80,13 @@ class Dialogs{
   static ShoUpdateAddPresident(BuildContext context,President? president,PresidentsAction action) {
     showModalBottomSheet(
       showDragHandle: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+
       context: context,
       builder: (BuildContext context) {
         return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.4,
+            height: MediaQuery.of(context).size.height ,
             width: MediaQuery.of(context).size.width,
 
             child: AddUpdatePage(president: president,action: action,));

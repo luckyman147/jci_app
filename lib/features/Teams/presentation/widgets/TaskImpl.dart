@@ -38,8 +38,10 @@ Widget GetTasksWidget(Team team, MediaQueryData mediaQuery,
               case TaskStatus.error:
                 return Center(
                     child :Column(
-                      children: [Text("Add your first Task".tr(context),style:PoppinsRegular(15, textColorBlack)),
-                        Image.asset("assets/images/task.jpg", height: mediaQuery.size.height * 0.5, width: mediaQuery.size.width * 0.5,),
+                      children: [
+                        Image.asset("assets/images/task.jpg", height: mediaQuery.size.height * 0.2, width: mediaQuery.size.width * 0.5,),
+
+                        Text("Add your first Task".tr(context),style:PoppinsSemiBold(20, textColorBlack,TextDecoration.none),),
 
                       ],
                     )
@@ -164,7 +166,7 @@ Widget TaskAddField(TextEditingController controller, String id) =>
                       onTap: () {
                         if (controller.text.isEmpty) {
                           SnackBarMessage.showErrorSnackBar(
-                              message: "Empty Field", context: context);
+                              message: "Empty Field".tr(context), context: context);
                         }
                         else {
                           final inputFields input=inputFields(taskid: '', teamid: id, file: null, memberid: null, status: false, Deadline: null, StartDate: null, name: controller.text, task: null, isCompleted: null, member: null, fileid: null, );
@@ -183,7 +185,7 @@ Widget TaskAddField(TextEditingController controller, String id) =>
                       child: state.WillAdded ? Icon(
                         Icons.check_circle, color: PrimaryColor,) : SizedBox()
                   ),
-                  hintText: 'Add Task',
+                  hintText: '${"Add".tr(context)} ${"Task".tr(context)}',
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(18),
                 ),

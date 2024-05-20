@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 
 const PrimaryColor = Color.fromRGBO(0, 150, 215, 1);
@@ -81,7 +82,7 @@ color: textColorWhite,
 
 ButtonStyle bottondec(bool value)=>ElevatedButton.styleFrom(
 
-  backgroundColor: value?PrimaryColor:BackWidgetColor,
+  backgroundColor:  value?PrimaryColor:BackWidgetColor,
   shape: RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(10),
   ),
@@ -158,15 +159,15 @@ canvasColor: backgroundColored,
   ),
 );
 
-InputDecoration inputDecoration (mediaQuery,bool isempty )=> InputDecoration(
+InputDecoration inputDecoration (mediaQuery,bool isempty,BuildContext context )=> InputDecoration(
   errorText:isempty ?"Empty Field":null,
   prefixIcon: Icon(
     Icons.search,
     color: textColor,
   ),
-  hintText: "Search by name or email",
+  hintText: "Search by name or email".tr(context),
   hintStyle: PoppinsRegular(
-    mediaQuery.devicePixelRatio * 6,
+    mediaQuery.devicePixelRatio * 5,
     textColor,
 
   ),

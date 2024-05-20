@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/TeamImpl.dart';
@@ -92,7 +93,7 @@ class TeamComponent{
       );
     },
   );
- static  Widget actionTeamRow(
+ static  Widget actionTeamRow(BuildContext context,
       mediaQuery, TeamAction action, IconData icon, String text,Function() onTap) =>
       InkWell(
         onTap:onTap ,
@@ -111,7 +112,7 @@ class TeamComponent{
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "${text} Team",
+                "${text} ${"Team".tr(context)}",
                 style: PoppinsRegular(
                     mediaQuery.devicePixelRatio * 8, textColorBlack),
               ),
@@ -132,7 +133,7 @@ class TeamComponent{
           // Dispatch event to initialize GetTeamsBloc and fetch teams with updated privacy
           context.read<GetTeamsBloc>().add(initStatus());
           context.read<GetTeamsBloc>().add(GetTeams(isPrivate: false,isUpdated: state.isUpdated));
-        },"Primary",state.privacy==Privacy.Primary,Privacy.Primary),
+        },"Primary".tr(context),state.privacy==Privacy.Primary,Privacy.Primary),
         SizedBox(width: 10,),
         StatusContainer((){
           context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Private));
@@ -142,7 +143,7 @@ class TeamComponent{
           context.read<GetTeamsBloc>().add(GetTeams(isPrivate: true,isUpdated: true));
           context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(false));
 
-        },"Private",state.privacy==Privacy.Private,Privacy.Private),
+        },"Private".tr(context),state.privacy==Privacy.Private,Privacy.Private),
 
 
       ],);
@@ -221,14 +222,14 @@ static IconButton iconButton(BuildContext context,IconData icon, Function() onPr
             }
         ),
         state.willSearch==false?
-        Text("Teams ",style:PoppinsSemiBold(21, textColorBlack, TextDecoration.none)):
+        Text("Teams".tr(context),style:PoppinsSemiBold(21, textColorBlack, TextDecoration.none)):
         SizedBox(
           width: mediaquery.size.width*0.6,
           height: 50,
           child: TextField(
               style: PoppinsRegular(16, textColorBlack) ,
               decoration: InputDecoration(
-                hintText: "Search Teams",
+                hintText: "${"Search".tr(context)} ${"Teams".tr(context)}",
                 hintStyle: PoppinsRegular(16, textColor),
                 border: InputBorder.none,
               ),
@@ -289,7 +290,7 @@ class myTaskButtons extends StatelessWidget {
               _handleActivityButtonClick(context, filter,state);
             },
             child: Text(
-              filter.toString().split('.').last,
+              filter.toString().split('.').last.tr(context),
               style: PoppinBold(
                   mediaQuery.size.width / 30,
                   state.selectedFilter == filter

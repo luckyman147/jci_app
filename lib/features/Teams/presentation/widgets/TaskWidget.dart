@@ -10,11 +10,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/strings/app_strings.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
+import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import '../../domain/entities/Task.dart';
 import '../../domain/entities/Team.dart';
@@ -130,10 +132,12 @@ class _TaskWidgetState extends State<TaskWidget> {
             TextOverflow.ellipsis, maxLines: 1
                 ,style:PoppinsSemiBold(mediaQuery.devicePixelRatio*6, textColorBlack, TextDecoration.none)),
           ),
-          Column(
+          BlocBuilder<localeCubit, LocaleState>(
+  builder: (context, state) {
+    return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(DateFormat('MMM,dd').format(widget.tasks[index]['Deadline']),style:PoppinsRegular(mediaQuery.devicePixelRatio*6,!datetime?Colors.red:textColor ),),
+              Text(DateFormat('MMM,dd',state.locale==Locale('en')?"en":"fr").format(widget.tasks[index]['Deadline']),style:PoppinsRegular(mediaQuery.devicePixelRatio*5,!datetime?Colors.red:textColor ),),
 
 
               Row(
@@ -152,7 +156,9 @@ class _TaskWidgetState extends State<TaskWidget> {
 
             ],
 
-          ),
+          );
+  },
+),
         ],
       ),
     );
@@ -268,7 +274,7 @@ Widget builddesc(List<Map<String, dynamic>> tasks,double size,int index) {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Center(
-                child: Text(tasks[index]['isCompleted']?"Completed" :"Pending",style: PoppinsSemiBold(size,
+                child: Text(tasks[index]['isCompleted']?"Completed".tr(context) :"Pending".tr(context),style: PoppinsSemiBold(size,
 
                     tasks[index]['isCompleted']?Colors.green:Colors.white
                     , TextDecoration.none), ),

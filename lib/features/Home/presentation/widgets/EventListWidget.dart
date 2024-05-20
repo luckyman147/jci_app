@@ -18,6 +18,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participan
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Functions.dart';
+import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import 'Compoenents.dart';
 
@@ -109,7 +110,9 @@ scrollDirection: Axis.vertical,
                               ),
                             ),
                           ),
-                          Padding(
+                          BlocBuilder<localeCubit, LocaleState>(
+  builder: (context, state) {
+    return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 18.0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -119,11 +122,13 @@ scrollDirection: Axis.vertical,
                                   width: mediaQuery.size.width / 2.5,
 
                                   child:Text(
-                                    "${DateFormat('EEE, MMM, d').format(widget.Activities[index].ActivityBeginDate)} ${"Start At".tr(context)} ${DateFormat('h:mm').format(widget.Activities[index].ActivityBeginDate)}",
-                                    style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColorBlack),
+                                    "${DateFormat('EEEE MMM d',state.locale==Locale('en')?'en_US' : 'fr_FR').format(widget.Activities[index].ActivityBeginDate)} ",
+                                    style: PoppinsLight(mediaQuery.devicePixelRatio*5, textColorBlack),
                                   ),
 
-                                ), Row(
+                                ),
+                                Text("${"Start At".tr(context)} ${DateFormat('h:mm').format(widget.Activities[index].ActivityBeginDate)}",style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColorBlack),),
+                                Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     SizedBox(
@@ -173,7 +178,9 @@ scrollDirection: Axis.vertical,
 
                               ],
                             ),
-                          )
+                          );
+  },
+)
                         ]
                     ),
                   ),
@@ -335,14 +342,16 @@ Positioned details(MediaQueryData mediaQuery, List<Activity> activity,int index,
   top: mediaQuery.size.height / 4.9,
   child: Padding(
     padding: const EdgeInsets.symmetric(horizontal: 30.0),
-    child: Center(
+    child: BlocBuilder<localeCubit, LocaleState>(
+  builder: (context, state) {
+    return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
             child: Text(
-              "le ${DateFormat('dd MMMM yyyy').format(activity[index].ActivityBeginDate)} à ${DateFormat('HH:mm').format(activity[index].ActivityBeginDate)}",
+              "${DateFormat('dd MMMM yyyy',state.locale==Locale("en")?'en_US' : 'fr_FR').format(activity[index].ActivityBeginDate)} à ${DateFormat('HH:mm').format(activity[index].ActivityBeginDate)}",
               style: PoppinsNorml(mediaQuery.devicePixelRatio * 4.5, textColorBlack),
             ),
           ),
@@ -368,7 +377,9 @@ Positioned details(MediaQueryData mediaQuery, List<Activity> activity,int index,
 
         ],
       ),
-    ),
+    );
+  },
+),
   ),
 );
 

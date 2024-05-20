@@ -72,7 +72,7 @@ class _MemberGridViewState extends State<MemberGridView> {
         // Change the number of items to display
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
-          childAspectRatio: 1,
+          childAspectRatio: .8,
           crossAxisSpacing: 8.0,
           mainAxisSpacing: 8.0,
 

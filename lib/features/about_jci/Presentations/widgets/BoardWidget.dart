@@ -74,7 +74,7 @@ TextEditingController controller = TextEditingController();
   }
 
   Widget buildGridView(List<Post> postList,int priority,int length) {
-    log("length $length");
+
     return BlocBuilder<YearsBloc, YearsState>(
   builder: (context, state) {
     return GridView.builder(
@@ -140,11 +140,7 @@ TextEditingController controller = TextEditingController();
 
 
       },
-      onLongPress: (){
 
-
-
-      },
       child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),

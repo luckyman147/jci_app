@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
@@ -45,7 +46,7 @@ else{
   context.read<TaskVisibleBloc>().add(ChangeImageEvent("assets/images/jci.png",));
   context.read<MembersBloc>().add(GetAllMembersEvent(false));
   context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: activity.Events));
-  context.read<FormzBloc>().add(EventChanged( eventChanged: EventTest));
+  context.read<FormzBloc>().add(EventChanged( eventChanged: Event.EventTest));
 
 
   context.read<MembersTeamCubit>().initMembers([]);
@@ -75,11 +76,11 @@ else{
                     children: [
                      ActionsWidgets( mediaQuery,formKey,teamNameController,teamDescriptionController,widget.team ),
                       imageTeamPicker(mediaQuery),
-                      TextTeamfieldNormal('Team Name',"Team Name here",teamNameController,(value){}),
+                      TextTeamfieldNormal('Team Name'.tr(context),"${"Team Name".tr(context)} ${"here".tr(context)}",teamNameController,(value){}),
                   Events(mediaQuery),
                   Members(mediaQuery),
                       StatusWidget(mediaQuery,),
-                      TextTeamfieldDescription("Description", "Description must be less then 2 line",teamDescriptionController , (p0) => null)
+                      TextTeamfieldDescription("Description".tr(context), "Description must be less then 3 line".tr(context),teamDescriptionController , (p0) => null,context)
                     ],
 
 
@@ -101,7 +102,7 @@ else{
               padding: const EdgeInsets.symmetric(horizontal: 18.0),
 
               child: Text(
-                "Members Name",
+                "Members Name".tr(context),
                 style: PoppinsRegular(18, textColorBlack),
               ),
             ),
@@ -114,7 +115,6 @@ else{
   );
   Widget Events(mediaQuery)=>BlocBuilder<FormzBloc, FormzState>(
     builder: (context, state) {
-      debugPrint("state: ${state.eventFormz.value}");
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,12 +123,12 @@ else{
             padding: const EdgeInsets.symmetric(horizontal: 18.0),
 
             child: Text(
-              "Events Name ",
+              "Event Name".tr(context),
               style: PoppinsRegular(18, textColorBlack),
             ),
           ),
           bottomEventSheet(context ,mediaQuery,
-              state.eventFormz.value??EventTest),
+              state.eventFormz.value??Event.EventTest),
         ],
       );
     },

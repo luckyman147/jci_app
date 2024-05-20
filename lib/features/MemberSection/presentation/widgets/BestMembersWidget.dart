@@ -15,7 +15,7 @@ class BestMembersComponent{
       children: [
         BestMembersWidget(members, context),
 
-        RowInfo(),
+        RowInfo(context),
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.5,
           child: ListView.separated(
@@ -76,11 +76,7 @@ visualDensity: VisualDensity.comfortable,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
 
-        image: DecorationImage(
-          image: AssetImage("assets/images/classement.jpg"),
-          fit: BoxFit.cover,
-          opacity: 0.1,
-        ),
+
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(20),
           bottomRight: Radius.circular(20),
@@ -90,7 +86,7 @@ visualDensity: VisualDensity.comfortable,
 
         children: [
           Header(context,textColorBlack),
-          Text("Best Members",style: PoppinBold(30, SecondaryColor,TextDecoration.none),),
+          Text("Best Members".tr(context),style: PoppinBold(30, SecondaryColor,TextDecoration.none),),
           Padding(
             padding: paddingSemetricVertical(),
             child: Row(
@@ -134,7 +130,7 @@ visualDensity: VisualDensity.comfortable,
             offset: Offset(0, 3), // changes position of shadow
           ),
         ],
-      border: Border.all(color: color,width: 2)
+      border: Border.all(color: color,width: 1)
       ),
 
       child: Padding(
@@ -142,10 +138,10 @@ visualDensity: VisualDensity.comfortable,
         child: Column(
           children: [
             ImageRank(members, color, index,siez),
-            Text(members.firstName.toString(), style: PoppinsSemiBold(15, textColor, TextDecoration.none)),
+            Text(members.firstName.toString(), style: PoppinsSemiBold(15, ThirdColor, TextDecoration.none)),
             // Text(members.firstName.toString(), style: PoppinsSemiBold(15, textColor, TextDecoration.none)),
-            Text(members.lastName.toString(), style: PoppinsSemiBold(15, textColor, TextDecoration.none)),
-            Text("${members.points}Pts", style: PoppinsSemiBold(16, PrimaryColor, TextDecoration.none)),
+            Text(members.lastName.toString(), style: PoppinsSemiBold(15, ThirdColor, TextDecoration.none)),
+            Text("${members.points} Pts", style: PoppinsSemiBold(16, PrimaryColor, TextDecoration.none)),
           ],
         ),
       ),
@@ -184,12 +180,12 @@ visualDensity: VisualDensity.comfortable,
         BackButton(color: color,onPressed: (){Navigator.pop(context);},),
         Padding(
           padding: paddingSemetricHorizontal(h: 17),
-          child: Text("Ranks",style: PoppinsSemiBold(20, color, TextDecoration.none),),
+          child: Text("LeaderBoard".tr(context),style: PoppinsSemiBold(20, color, TextDecoration.none),),
         )
       ],);
   }
 
-  static Row RowInfo() {
+  static Row RowInfo(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -199,10 +195,10 @@ visualDensity: VisualDensity.comfortable,
         ),
         Padding(
           padding: paddingSemetricHorizontal(),
-          child: Text("Member",style: PoppinsSemiBold(15, textColor, TextDecoration.none),),
+          child: Text("Member".tr(context),style: PoppinsSemiBold(15, textColor, TextDecoration.none),),
         ), Padding(
           padding: paddingSemetricHorizontal(),
-          child: Text("Points",style: PoppinsSemiBold(15, textColor, TextDecoration.none),),
+          child: Text("Points".tr(context),style: PoppinsSemiBold(15, textColor, TextDecoration.none),),
         ),
       ],
     );
@@ -216,21 +212,20 @@ visualDensity: VisualDensity.comfortable,
         isScrollControlled: true,
         backgroundColor: backgroundColored,
 
-        constraints: BoxConstraints(
-            maxHeight: mediaQuery.size.height,
-            minHeight: mediaQuery.size.height/2
-        ),
-        context: context, builder: (context) => Container(
-
-
-        height: mediaQuery.size.height ,
-        child: Column(
-          children: [
-
-            MemberImpl.MembersWithRanks(mediaQuery),
-
-          ],
-        )));
+   
+        context: context, builder: (context) => SingleChildScrollView(
+          child: Container(
+          
+          
+          height: mediaQuery.size.height ,
+          child: Column(
+            children: [
+          
+              MemberImpl.MembersWithRanks(mediaQuery),
+          
+            ],
+          )),
+        ));
   }
   static Widget showHighestRankMembers( BuildContext context,Member member) {
     return Padding(

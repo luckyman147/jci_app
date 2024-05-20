@@ -45,9 +45,7 @@ class HomeComponents{
                   drawerbody(mediaQuery),
 
 
-Align(
-    alignment: Alignment.bottomCenter,
-    child: TextButton( onPressed: () {  }, child: Text("View Terms of use",style: PoppinsRegular(16, textColorBlack),),))
+
 
                 ],
               ),
@@ -80,7 +78,7 @@ Align(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            HeaderSection(mediaQuery, "About Us", Icons.info, (){}),
+                            HeaderSection(mediaQuery, "About Us".tr(context), Icons.info, (){}),
 
                             Column(
                               children: [
@@ -90,7 +88,7 @@ Align(
 
                                     Navigator.push(context, MaterialPageRoute(builder: (context)=>PresentationsPage()));
 
-                                  },'Presentation',context,null
+                                  },'Presentation'.tr(context),context,null
 
                                 ,Icons.apartment),
                                 BuildPres(
@@ -98,14 +96,14 @@ Align(
 
                                           Navigator.push(context, MaterialPageRoute(builder: (context)=>BoardPage()));
 
-                                        },'Board',context,null,Icons.group
+                                        },'Board'.tr(context),context,null,Icons.group
                                 ), BuildPres(
                                         (){
                                           context.read<PresidentsBloc>().add(GetAllPresidentsEvent());
                                           Navigator.push(context, MaterialPageRoute(builder: (context)=>PresidentsPage()));
 
 
-                                        },'Last Presidants',context,null,Icons.person_pin_rounded),
+                                        },'Last Presidents'.tr(context),context,null,Icons.person_pin_rounded),
                                 SizedBox(
                                     width: mediaQuery.size.width/1,
                                     height: 3,
@@ -114,7 +112,7 @@ Align(
                             ),
 
 
-                            HeaderSection(mediaQuery, "Contact Us", Icons.message, (){}),
+                            HeaderSection(mediaQuery, "Contact Us".tr(context), Icons.message, (){}),
                             BuildPres(()async => await ActivityAction.launchURL(context,facebookURl), "Facebook", context, BlackFacebook,null),
                             BuildPres(()async => await ActivityAction.launchURL(context,InstagramURl), "Instagram", context, instagram,null),
                             BuildPres(() async=> await ActivityAction.launchURL(context,TiktokURl), "Tiktok", context, tiktok,null)

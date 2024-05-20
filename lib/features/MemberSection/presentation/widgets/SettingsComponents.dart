@@ -19,6 +19,7 @@ import 'package:jci_app/features/MemberSection/presentation/widgets/functionMemb
 import 'package:jci_app/features/auth/presentation/widgets/Components.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../../core/strings/app_strings.dart';
 import '../../../Home/presentation/widgets/Functions.dart';
@@ -125,7 +126,7 @@ static isMode(SettingsBools state) {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          rowAction(context, "Profile", Icons.person,isProfile(state.settings),Profile(context,member,pass,cpass,key),MediaQuery.of(context),SettingsBools.Profile,null,200),
+          rowAction(context, "Profile".tr(context), Icons.person,isProfile(state.settings),Profile(context,member,pass,cpass,key),MediaQuery.of(context),SettingsBools.Profile,null,200),
           MembersAdmin(state),
 
               Language(context, state),
@@ -144,7 +145,7 @@ static isMode(SettingsBools state) {
                     height: 70,
                     child: Padding(
                       padding: paddingSemetricHorizontal(),
-                      child: IconAndTextInfo(Icons.cached, "Clear Cache"),
+                      child: IconAndTextInfo(Icons.cached, "Clear Cache".tr(context)),
                     ))),
           ),signoput(context),
 
@@ -159,7 +160,11 @@ static isMode(SettingsBools state) {
     return FutureBuilder(future: context.read<localeCubit>().cachedLanguageCode(),
                builder: (contex,snat) {
                   if(snat.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return Shimmer.fromColors(child: Container(
+                      height: 30,
+                      width: 10,
+                      
+                    ), baseColor:Colors.grey[300]!, highlightColor: Colors.grey[300]!);
                   }
 
                  return rowAction(context, "Language (${snat.data})", Icons.language,
@@ -178,7 +183,7 @@ static isMode(SettingsBools state) {
             if (snap.data==true) {
               return rowAction(
                   context,
-                  "Members",
+                  "Members".tr(context),
                   Icons.people,
                   isMem(state.settings),
                   ProfileComponents.MembersWidgetOnlyName(
@@ -214,7 +219,7 @@ static isMode(SettingsBools state) {
                       Icon(Icons.logout,color: Colors.red,size: 30,),
                       Padding(
                         padding: paddingSemetricHorizontal(),
-                        child: Text("Logout",style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),),
+                        child: Text("Logout".tr(context),style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),),
                       ),
                     ],
                   ),

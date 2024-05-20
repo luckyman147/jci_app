@@ -1,13 +1,10 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
-import 'package:jci_app/features/auth/domain/usecases/authusecase.dart';
+
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/bool/toggle_bool_bloc.dart';
@@ -16,10 +13,8 @@ import 'package:jci_app/features/auth/presentation/widgets/Components.dart';
 import 'package:jci_app/features/auth/presentation/widgets/PinForm.dart';
 import 'package:jci_app/features/auth/presentation/widgets/SubmitFunctions.dart';
 
-import '../../../../core/util/snackbar_message.dart';
-import '../../../../core/widgets/backbutton.dart';
 import '../../domain/entities/Member.dart';
-import '../bloc/SignUp/sign_up_bloc.dart';
+
 import '../widgets/Text.dart';
 
 class Pincode extends StatefulWidget {

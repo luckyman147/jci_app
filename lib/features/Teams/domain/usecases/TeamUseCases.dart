@@ -13,7 +13,7 @@ class GetAllTeamsUseCase {
 
 
 
-  Future<Either<Failure, List<Team>>> call({String page="0",String limit="4",isPrivate=false,updated=true}) async {
+  Future<Either<Failure, List<Team>>> call({String page="0",String limit="3",isPrivate=false,updated=true}) async {
     return await _teamRepository.getTeams(page, limit, isPrivate, updated);
   }
 }

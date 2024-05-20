@@ -35,7 +35,9 @@ class _HomeWidgetState extends State<HomeWidget> {
   void initState() {
     context.read<AcivityFBloc>().add(GetActivitiesOfMonthEvent(act: widget.Activity));
 context.read<MembersBloc>().add(GetMemberByHighestRAnkEvent(isUpdated: true));
-context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
+
+    context.read<GetTeamsBloc>().add(GetTeams(isPrivate: true));
+    context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Private));
 
     super.initState();
   }

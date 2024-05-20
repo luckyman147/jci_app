@@ -63,24 +63,36 @@ Widget allTeams(String id,ScrollController scrollController,bool isHome) {
 }
 
 
-Widget GetTeamByid(String id,TextEditingController taskController,int index) {
+Widget GetTeamByid(String id, TextEditingController taskController, int index) {
   return BlocBuilder<GetTeamsBloc, GetTeamsState>(
     builder: (context, state) {
-      if (state is GetTeamsInitial || state is GetTeamsLoading) {
-        return LoadingWidget();
-      }   else if (state.status ==TeamStatus.success ) {
+      switch (state.status) {
+        case TeamStatus.initial:
+        case TeamStatus.Loading:
+          return LoadingWidget();
 
-        return RefreshIndicator(
-          onRefresh: () async {
-            context.read<GetTeamsBloc>().add(GetTeamById({"id": id,"isUpdated":false}));
-          },
+        case TeamStatus.success:
+        case TeamStatus.Updated:
+          case TeamStatus.IsRefresh:
+            case TeamStatus.Created:
+          return RefreshIndicator(
+            onRefresh: () async {
+              context.read<GetTeamsBloc>().add(GetTeamById({"id": id, "isUpdated": true}));
+            },
+            child: TeamDetailWidget(
+              team: TeamModel.fromJson(state.teamById),
+              taskController: taskController,
+            ),
+          );
 
-          child: TeamDetailWidget(team:TeamModel.fromJson( state.teamById), taskController: taskController,),
-        );
-      }else if (state.status ==TeamStatus.error ) {
-        return LoadingWidget();
+        case TeamStatus.error:
+          context.read<GetTeamsBloc>().add(GetTeamById({"id": id, "isUpdated": true}));
+          return LoadingWidget();
+
+        default:
+          return LoadingWidget();
       }
-      return LoadingWidget();
     },
   );
 }
+

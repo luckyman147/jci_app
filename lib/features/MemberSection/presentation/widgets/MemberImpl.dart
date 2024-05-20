@@ -25,6 +25,8 @@ class MemberImpl{
           case UserStatus.MembersRanksLoaded:
             return MemberSectionWidget(member: state.user!);
           case UserStatus.Error:
+            context.read<MembersBloc>().add(GetUserProfileEvent(false));
+
             return SettingsComponent.signoput(context);
           default:
             return ShimmerGridView.UserprofileShimmer(context);
@@ -76,7 +78,7 @@ class MemberImpl{
 
           return BestMembersComponent.MembersRanksBody(context, state.membersWithRanks,);
         default:
-          return Text("data");
+          return ShimmerGridView();
       }
 
     });

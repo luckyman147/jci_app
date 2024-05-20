@@ -1,11 +1,10 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:jci_app/core/app_theme.dart';
+
 import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
-import 'package:jci_app/features/auth/presentation/pages/pinPage.dart';
+
 import 'package:jci_app/features/auth/presentation/widgets/SignUpForm.dart';
 
 import '../../../../core/util/snackbar_message.dart';
@@ -13,11 +12,8 @@ import '../../../../core/widgets/loading_widget.dart';
 
 
 
-import '../../domain/entities/Member.dart';
-import '../bloc/auth/auth_bloc.dart';
 import '../bloc/bool/toggle_bool_bloc.dart';
-import '../bloc/login/login_bloc.dart';
-import '../widgets/Form.dart';
+
 
 class SignUpPage extends StatefulWidget {
 

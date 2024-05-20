@@ -42,18 +42,10 @@ AddDots(activitys, mediaQuery)
                 ActivityDetailsComponent.rowName(
                     mediaQuery, context, activitys, act, index),
 
-
-
-
-                ActivityDetailsComponent.infoCircle(mediaQuery, activitys),
-                SizedBox(
-                  height: mediaQuery.size.height / 40,
-                ),
-
+                ActivityDetailsComponent.infoCircle(mediaQuery, activitys,context),
                 ActivityDetailsComponent.Description(mediaQuery, activitys),
-                SizedBox(
-                  height: mediaQuery.size.height / 40,
-                ),
+
+
                 //Align(
                 //alignment: Alignment.topLeft,
 

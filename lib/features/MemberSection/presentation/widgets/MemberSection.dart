@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
@@ -66,10 +67,17 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
                        context.read<MembersBloc>().add(GetAllMembersEvent(true));
 
                     },),false,widget.member.id,(po)=>FunctionMember. isOwner(widget.member.id)),
-                      Padding(
-                        padding: paddingSemetricHorizontal(),
-                        child: Text('${widget.member.firstName} ${widget.member.lastName}', style: PoppinsSemiBold(
-                            18, textColorBlack, TextDecoration.none),),
+                      SizedBox(
+                        width:MediaQuery.of(context).size.width/1.5,
+                        child: Padding(
+                          padding: paddingSemetricHorizontal(),
+
+                          child: Text('${widget.member.firstName} ${widget.member.lastName}',
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: PoppinsSemiBold(
+                              18, textColorBlack, TextDecoration.none),),
+                        ),
                       ),
 
                     ]  ),
@@ -99,11 +107,11 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
 
 
               ProfileComponents.hh(widget.member,context),
-    ProfileComponents.ExpandedContainer(context, ProfileComponents.isObjectif(state.state), ProfileComponents.BuildObjectifsWidget(widget.member,ste,context), 'Objectifs', StatesBool.Objectifs,mediaQuery, mediaQuery.size.width/1.17,mediaQuery.size.height/4),
+    ProfileComponents.ExpandedContainer(context, ProfileComponents.isObjectif(state.state), ProfileComponents.BuildObjectifsWidget(widget.member,ste,context), 'Objectives'.tr(context), StatesBool.Objectifs,mediaQuery, mediaQuery.size.width/1.17,mediaQuery.size.height/4),
 
-    ProfileComponents.ExpandedContainer(context, ProfileComponents.isPoints(state.state), ProfileComponents.BuildPointsWidget(widget.member,ste,context,pointsFocusNode), 'Points', StatesBool.Points,mediaQuery,mediaQuery.size.width/1.17 ,mediaQuery.size.height/4),
-                      ProfileComponents.ExpandedContainer(context, ProfileComponents.iActivities(state.state),ProfileComponents.ActivitiesComponent(widget.member.Activities , mediaQuery), 'Activities', StatesBool.Activities,mediaQuery,mediaQuery.size.width/1.17,mediaQuery.size.height/4 ),
-              ProfileComponents.ExpandedContainer(context, ProfileComponents.iTeams(state.state), ProfileComponents.TeamsComponent(widget.member,mediaQuery,context), 'Teams', StatesBool.Teams,mediaQuery,mediaQuery.size.width/1.17 ,mediaQuery.size.height/4),
+    ProfileComponents.ExpandedContainer(context, ProfileComponents.isPoints(state.state), ProfileComponents.BuildPointsWidget(widget.member,ste,context,pointsFocusNode), 'Points'.tr(context), StatesBool.Points,mediaQuery,mediaQuery.size.width/1.17 ,mediaQuery.size.height/4),
+                      ProfileComponents.ExpandedContainer(context, ProfileComponents.iActivities(state.state),ProfileComponents.ActivitiesComponent(widget.member.Activities , mediaQuery), 'My Activities'.tr(context), StatesBool.Activities,mediaQuery,mediaQuery.size.width/1.17,mediaQuery.size.height/4 ),
+              ProfileComponents.ExpandedContainer(context, ProfileComponents.iTeams(state.state), ProfileComponents.TeamsComponent(widget.member,mediaQuery,context), 'My Teams'.tr(context), StatesBool.Teams,mediaQuery,mediaQuery.size.width/1.17 ,mediaQuery.size.height/4),
             ],
                     );
   },

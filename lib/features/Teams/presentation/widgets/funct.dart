@@ -287,18 +287,6 @@ class TeamFunction{
       context.read<MembersBloc>().add(
           GetMemberByIdEvent(MemberInfoParams(id: member.id,
               status: true)));
-      //   context.read<MemberManagementBloc>().add(initMemberEvent(.id, isUpdated: null));
-
-      /*    if (state.upcomingPages.isNotEmpty) {
-        context.read<ChangeSboolsCubit>().ChangePages(
-            state.upcomingPages.last,
-            "/memberSection/${member.id}");
-      }
-      else {
-        context.read<ChangeSboolsCubit>().ChangePages(
-            '/home', "/memberSection/${member.id}");
-      }
-*/
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (BuildContext context) {

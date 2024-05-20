@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/Home/domain/entities/ActivityGuest.dart';
 import 'package:jci_app/features/Home/domain/entities/Guest.dart';
 import 'package:jci_app/features/Home/domain/usercases/ActivityUseCases.dart';
@@ -36,10 +37,10 @@ class GuestWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Random Visitors", style: PoppinsRegular(20, textColorBlack, )),
+            Text("Random Visitors".tr(context), style: PoppinsRegular(20, textColorBlack, )),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("${guests.length} visitors", style: PoppinsLight(15, textColorBlack, )),
+              child: Text("${guests.length} ${"Visitor".tr(context)}s", style: PoppinsLight(15, textColorBlack, )),
             ),
           ],
         ),
@@ -94,7 +95,7 @@ Widget buildAddGuest(BuildContext context, TextEditingController controller, Tex
                   context.read<ActivityCubit>().selectIndex(0);
 
                 }, icon: Icon(Icons.arrow_back)),
-                Text("Add Guest",textAlign: TextAlign.center, style: PoppinsRegular(16, textColorBlack, )),
+                Text("${"Add".tr(context)} ${"Visitor".tr(context)}",textAlign: TextAlign.center, style: PoppinsRegular(16, textColorBlack, )),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -103,17 +104,17 @@ Widget buildAddGuest(BuildContext context, TextEditingController controller, Tex
 
                       context.read<ActivityCubit>().selectIndex(2);
 
-                    }, child: Text("Already Exists",style: PoppinsSemiBold(15, PrimaryColor, TextDecoration.underline),)),
+                    }, child: Text("Already Exists".tr(context),style: PoppinsSemiBold(15, PrimaryColor, TextDecoration.underline),)),
                   ],
                 )
             ]),
-            biuildguiestfiels(controller, "Enter Name", TextInputType.text, "Name"),
-            biuildguiestfiels(controller2, "Enter Email", TextInputType.emailAddress, "Email"),
-            biuildguiestfiels(controller3, "Enter Phone Number", TextInputType.phone, "Phone Number"),
+            biuildguiestfiels(controller, "Name".tr(context), TextInputType.text, "Name".tr(context),context),
+            biuildguiestfiels(controller2, "Email".tr(context), TextInputType.emailAddress, "Email".tr(context),context),
+            biuildguiestfiels(controller3, "Phone Number".tr(context), TextInputType.phone, "Phone Number".tr(context),context),
             TextButton(onPressed: (){
 
               ActivityAction.  AddGuest(_formKey, controller, controller2, controller3, context,activityId);
-            }, child: Text("Add Guest", style: PoppinsRegular(15, PrimaryColor,))
+            }, child: Text("${"Add".tr(context)} ${"Visitor".tr(context)}", style: PoppinsRegular(15, PrimaryColor,))
             )
           ]
         ),
@@ -123,14 +124,14 @@ Widget buildAddGuest(BuildContext context, TextEditingController controller, Tex
 
 
 
-Padding biuildguiestfiels(TextEditingController controller, String HintText, TextInputType keyboardType,String labetext) {
+Padding biuildguiestfiels(TextEditingController controller, String HintText, TextInputType keyboardType,String labetext,BuildContext ctx) {
   return Padding(
             padding: paddingSemetricVerticalHorizontal(),
             child: TextFormField(
               style: PoppinsRegular(15, textColorBlack, ),
               validator: (value) {
                 if (value!.isEmpty) {
-                  return 'Please enter some text';
+                  return 'Please enter some text'.tr(ctx);
                 }
                 return null;
               },
@@ -160,7 +161,7 @@ Padding biuildguiestfiels(TextEditingController controller, String HintText, Tex
                     children: [
                       ActivityDetailsComponent.searchField((p0) {
                         context.read<ParticpantsBloc>().add(SearchGuestByname(name: p0));
-                      }, "Search Guest",true),
+                      }, "${"Search".tr(context)} ${"Visitor".tr(context)}",true),
                       IconButton.outlined(onPressed: (){
                         context.read<ActivityCubit>().selectIndex(1);
                   
@@ -223,7 +224,7 @@ ActivityAction.        DeleteGestFunction(context, guest.guest,activityId);
 
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-          GuestInfo(context, guest.guest),
+          GuestInfo(context, guest.guest,guest.status=="present" ),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -260,7 +261,7 @@ ActivityAction.        DeleteGestFunction(context, guest.guest,activityId);
     );
   }
 
-static   Row GuestInfo(BuildContext context, Guest guest) {
+static   Row GuestInfo(BuildContext context, Guest guest,bool act) {
     return Row(
           children: [
             ClipRRect(
@@ -268,13 +269,13 @@ static   Row GuestInfo(BuildContext context, Guest guest) {
             child: Container(
                 height: 30,
                 width: 30,
-                child:Image.asset(vip)
+                child:Image.asset(vip,color:act?textColorWhite:textColorBlack ,)
             )),
             SizedBox(
               width: MediaQuery.of(context).size.width / 3.5,
               child: Text(guest.name,
                 overflow: TextOverflow.ellipsis,
-                style:  PoppinsSemiBold(15, guest.isConfirmed?textColorWhite:textColorBlack, TextDecoration.none),),
+                style:  PoppinsSemiBold(15, guest.isConfirmed || act ?textColorWhite:textColorBlack, TextDecoration.none),),
             )
           ],
         );
@@ -294,7 +295,7 @@ static Widget GuestALL(BuildContext context,List<Guest> guests,String activityId
               }, icon:const  Icon(Icons.arrow_back)),
               ActivityDetailsComponent.searchField((p0) {
                 context.read<ParticpantsBloc>().add(SearchGuestActByname(name: p0));
-              }, "Search Guest",true),
+              }, "${"Search".tr(context)} ${"Visitor".tr(context)}",true),
               IconButton.outlined(onPressed: (){
                 context.read<ActivityCubit>().selectIndex(0);
 
@@ -359,7 +360,7 @@ static Widget GuestALL(BuildContext context,List<Guest> guests,String activityId
 
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              GuestInfo(context, guest),
+              GuestInfo(context, guest,status!=null),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

@@ -35,7 +35,7 @@ Widget ActionsWidgets(mediaQuery,GlobalKey<FormState> key,TextEditingController 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Header(context,team.isEmpty?"Create Team":"Edit Team"),
+        Header(context,team.isEmpty?"${"Create".tr(context)} ${"Team".tr(context)}":"${"Edit".tr(context)} ${"Team".tr(context)}"),
         DoneActions(TeamName, description, key,team),
 
       ],
@@ -50,10 +50,12 @@ void LIstenerAdd(GetTeamsState state, BuildContext context) {
   if (state.status ==  TeamStatus.error)
   {SnackBarMessage.showErrorSnackBar(message: state.errorMessage, context: context);
   }
- else if (state.status == TeamStatus.success) {
+ else if (  state.status == TeamStatus.Created) {
     SnackBarMessage.showSuccessSnackBar(message: "Team Created Successfully".tr(context), context: context);
     context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
     GoRouter.of(context).go('/home');
+    context.read<GetTeamsBloc>().add(GetTeams(isPrivate: false));
+
 
 
   }
@@ -74,7 +76,7 @@ Widget DoneActions(TextEditingController TeamName, TextEditingController descrip
                 AddUpdateFunction(key, team, TeamName, description, form, state, Visstate, te, context);
               },
               child:  Text(
-                  "Done",style: PoppinsSemiBold(21, PrimaryColor, TextDecoration.none)
+                  "Save".tr(context),style: PoppinsSemiBold(21, PrimaryColor, TextDecoration.none)
               ),
             )
         );
@@ -295,7 +297,7 @@ Widget TextTeamfieldNormal(String name, String HintText,
       ),
     );
 Widget TextTeamfieldDescription(String name, String HintText,
-    TextEditingController controller, Function(String) onChanged) =>
+    TextEditingController controller, Function(String) onChanged,BuildContext context) =>
     Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
       child: Column(
@@ -311,12 +313,12 @@ Widget TextTeamfieldDescription(String name, String HintText,
             autocorrect: true,
             autofocus: true,
             minLines: 3,
-            maxLength: 50,
+            maxLength: 100,
             autofillHints: [HintText],
             textInputAction: TextInputAction.done,
             validator: (value) {
               if (value!.isEmpty) {
-                return 'Please enter some text';
+                return 'Please enter some text'.tr(context);
               }
               return null;
             },
@@ -371,7 +373,7 @@ Widget bottomMembersSheet(BuildContext context, MediaQueryData mediaQuery,
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child:
               members!=null&& members.isNotEmpty?membersImage(context, mediaQuery, members):
-              Text("Select  Members",style: PoppinsRegular(18, ThirdColor),),
+              Text("${"Select".tr(context)}  ${"Members".tr(context)}",style: PoppinsRegular(18, ThirdColor),),
             ),
           )),
     ),
@@ -458,7 +460,7 @@ Widget bottomEventSheet(BuildContext context, MediaQueryData mediaQuery,
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child:
               event!=null&& event.name.isNotEmpty&& event.name!='Choose the Event'?imageEventWidget(event,mediaQuery):
-              Text("Select Events",style: PoppinsRegular(18, ThirdColor),),
+              Text("Select an event".tr(context),style: PoppinsRegular(18, ThirdColor),),
             ),
           )),
     ),
@@ -475,7 +477,7 @@ Widget StatusWidget(mediaQuery) => Padding(
   mainAxisAlignment: MainAxisAlignment.spaceBetween,
   children: [
   Text(
-  "Status",
+  "Status".tr(context),
   style: PoppinsRegular(
   mediaQuery.devicePixelRatio * 6, textColorBlack),
   ),
@@ -502,7 +504,7 @@ Widget StatusWidget(mediaQuery) => Padding(
 
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Center(child: Text(!state.isPaid?"Private":"Public",style: PoppinsRegular(18, textColorWhite),)),
+        child: Center(child: Text(!state.isPaid?"Private".tr(context):"Public",style: PoppinsRegular(18, textColorWhite),)),
       )),
   ),
   ],

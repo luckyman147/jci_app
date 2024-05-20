@@ -80,12 +80,12 @@ final ScrollController controller = ScrollController();
 
                     Navigator.pop(context);
                   },),
-                  Text(widget.action == PresidentsAction.Add ? 'Add President' : 'Update President',style: PoppinsRegular(18, textColorBlack),),
+                  Text(widget.action == PresidentsAction.Add ? '${"Add".tr(context)} ${"President".tr(context)}' : '${"Update".tr(context)} ${"President".tr(context)}',style: PoppinsRegular(18, textColorBlack),),
                 ],
               ),
 
           //    ProfileComponents.imagezChanged(state.image,MediaQuery.of(context),context),
-              TextfieldNormal(context,"President Name", "Enter Presidents  name",name,(poo){}),
+              TextfieldNormal(context,"${"President".tr(context)} ${"Name".tr(context)}", "${"Enter".tr(context)} ${"Presidents".tr(context)}  ${"Name".tr(context)}",name,(poo){}),
              buildAddyear(context, ste),
       //add Select Year
           //  PresWidgets.yearForm(ste.year, context, mounted, controller),
@@ -95,7 +95,7 @@ final ScrollController controller = ScrollController();
                  height: 50,
                  width: MediaQuery.of(context).size.width * 1,
                  child: BoardComponents.ButtomActin(context, () =>          JCIFunctions.       update( state, context,name,widget.president,widget.action,_formKey,ste)
-                     , "Save Changes", PrimaryColor, textColorWhite, true),
+                     , "Save Changes".tr(context), PrimaryColor, textColorWhite, true),
                ),
              )
             ],
@@ -128,7 +128,7 @@ final ScrollController controller = ScrollController();
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(ste.year == "" ? "Select Year" : ste.year,
+                        Text(ste.year == "" ? "Select Year".tr(context) : ste.year,
                           textAlign: TextAlign.center,
                           style: PoppinsNorml(17, ste.year.isNotEmpty?textColorBlack:ThirdColor),),
 

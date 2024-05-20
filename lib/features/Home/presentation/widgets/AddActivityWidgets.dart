@@ -17,6 +17,7 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Formz.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/CreateTeamWIdgets.dart';
+import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/strings/app_strings.dart';
@@ -375,7 +376,6 @@ class _DateFieldWidgetState extends State<DateFieldWidget> {
               widget.hintTextDate,
               widget.hintTextTime,
               ()async {
-                  debugPrint("${"updated time".tr(context)}: ${state.jokertime.value }");
 
                   final TimeOfDay? selectedTime = await showTimePicker(
                     context: context,
@@ -638,7 +638,7 @@ Widget TextfieldDescription(BuildContext context,String name, String HintText,
 
 
 Widget chooseDate(DateTime todayDate, MediaQueryData mediaQuery, String Format,
-        Function() onTap, String text) =>
+        Function() onTap, String text,LocaleState locale) =>
     InkWell(
       onTap: () async {
         onTap();
@@ -665,7 +665,7 @@ Widget chooseDate(DateTime todayDate, MediaQueryData mediaQuery, String Format,
                 ),
               ),
               Text(
-                DateFormat(Format).format(todayDate),
+                DateFormat(Format,locale.locale==Locale("en")?"en":"fr").format(todayDate),
                 style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 5,
                     textColorBlack, TextDecoration.none),
               ),
@@ -832,7 +832,9 @@ Widget BottomShetBody(
       horizontal: 8.0,
       vertical: 10,
     ),
-    child: Column(
+    child: BlocBuilder<localeCubit, LocaleState>(
+  builder: (context, state) {
+    return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
@@ -848,7 +850,8 @@ Widget BottomShetBody(
           mediaQuery,
           "MMM,dd,yyyy",
           datePickerFunction,
-          hintTextDate,
+          hintTextDate,state
+          
         ),
         chooseTime(
 time,
@@ -881,7 +884,9 @@ time,
           ),
         ),
       ],
-    ),
+    );
+  },
+),
   ),
 );
 class PrefixIconButton extends StatelessWidget {

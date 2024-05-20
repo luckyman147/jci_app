@@ -1,5 +1,5 @@
 part of 'get_teams_bloc.dart';
-enum TeamStatus { initial, success, error ,Deleted,DeletedError,IsRefresh,Loading}
+enum TeamStatus { initial, success, error ,Deleted,DeletedError,IsRefresh,Loading,Created,Updated}
  class GetTeamsState extends Equatable {
    final TeamStatus status;
    final List<Team> teams;

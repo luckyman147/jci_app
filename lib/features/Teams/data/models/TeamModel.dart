@@ -10,15 +10,17 @@ class TeamModel extends Team{
 
   factory TeamModel.fromJson(Map<String, dynamic> json) =>
       TeamModel(
-        name: json['name'] as String,
+        name: json['name']??"",
         description: json['description'] != null ? json['description'] as String : "",
         event: json['event'] ?? json["Event"],
-        Members: json['Members'] as List<dynamic>,
-        CoverImage: json['CoverImage'] as String,
+        Members: json['Members'] == null ? [] : json['Members'] as List<dynamic>,
+
+        CoverImage: json['CoverImage'] ?? "",
         tasks:  json['tasks'] == null ? [] : (json['tasks'] as List<dynamic>)
             .map((e) => TaskModel.fromJson(e as Map<String, dynamic>))
             .toList(),
-        id: json['id']==null?json['_id'] as String:json['id'] as String,
+        id: json['id']==null?json['_id']??""
+              :json['id'] ,
         TeamLeader: json['TeamLeader'] ?? "",
         status: json['status'] != null ? json['status'] as bool : false
       );

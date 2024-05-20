@@ -12,10 +12,12 @@ import 'package:intl/intl.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
 import 'package:jci_app/features/Home/domain/entities/ActivityParticpants.dart';
+import 'package:jci_app/features/Home/domain/entities/training.dart';
 import 'package:jci_app/features/Home/domain/usercases/ActivityUseCases.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import 'package:jci_app/features/Home/presentation/widgets/MemberSelection.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
+import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/strings/app_strings.dart';
@@ -64,7 +66,7 @@ class ActivityDetailsComponent{
   
   
  static  Widget Description(mediaQuery,Activity activitys) => Padding(
-    padding:  EdgeInsets.symmetric(horizontal:mediaQuery.size.width/20,vertical: 10),
+    padding:  EdgeInsets.symmetric(horizontal:mediaQuery.size.width/20),
     child: Align(
       alignment: Alignment.topLeft,
       child: BlocBuilder<ActivityCubit, ActivityState>(
@@ -78,8 +80,8 @@ class ActivityDetailsComponent{
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              if (activitys.runtimeType == MeetingModel)
-                AgendaWidget(boxDecoration, context, mediaQuery, activitys),
+
+                activitys.runtimeType == MeetingModel ?  AgendaWidget(boxDecoration, context, mediaQuery, activitys):SizedBox(),
               Padding(
                 padding: paddingSemetricVertical(),
                 child: Container(
@@ -143,7 +145,7 @@ class ActivityDetailsComponent{
      ctx.read<ParticpantsBloc>().add(SearchMemberByname(name: p0));
      }
 
-               , "Search participant",false),
+               , "${"Search".tr(ctx)} ${"Participants".tr(ctx)}",false),
 
            Expanded(
              child: Padding(
@@ -402,7 +404,7 @@ showDragHandle: true,
                              Padding(
                                padding: const EdgeInsets.all(8.0),
                                child: Text(
-                                 "Participants",
+                                 "Participants".tr(context),
                                  style: PoppinsNorml(mediaQuery.devicePixelRatio * 6,
                                    textColorBlack, ),
                                ),
@@ -411,7 +413,8 @@ showDragHandle: true,
                          ),Padding(
                            padding: const EdgeInsets.all(8.0),
                            child: Text(
-                             "${activitys.Participants.length} member",
+                             "${activitys.Participants.length} ${"Member".tr(context)}",
+                             
                              style: PoppinsNorml(mediaQuery.devicePixelRatio * 4,
                                textColorBlack, ),
                            ),
@@ -576,7 +579,7 @@ showDragHandle: true,
               padding:  EdgeInsets.symmetric(horizontal: mediaQuery.devicePixelRatio*12,vertical: mediaQuery.size.height/28),
               child: Align(
                   alignment: AlignmentDirectional.center,
-                  child: Text("${state.selectedActivity.name} Details",style: PoppinsSemiBold(mediaQuery.devicePixelRatio*5, BackWidgetColor,TextDecoration.none),)),
+                  child: Text("${state.selectedActivity.name.tr(context)} Details",style: PoppinsSemiBold(mediaQuery.devicePixelRatio*5, textColor,TextDecoration.none),)),
             );
           },
         ),
@@ -585,17 +588,6 @@ showDragHandle: true,
   );
 
 
-
-  Container ispaid(mediaQuery,BuildContext context,Activity activitys) => Container(
-      width: mediaQuery.size.width / 4,
-      decoration: BoxDecoration(
-          color: PrimaryColor, borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Center(
-              child: Text(activitys.IsPaid ? "Paid".tr(context) : "Free".tr(context),
-                  style: PoppinsRegular(
-                      mediaQuery.devicePixelRatio * 6, textColorWhite)))));
 
  static  Widget PartipantsRow(MediaQueryData mediaQuery,BuildContext context,Activity activitys,activity act,int index) => SingleChildScrollView(
    scrollDirection: Axis.horizontal,
@@ -653,7 +645,7 @@ showDragHandle: true,
  }
 
  static  Widget kk(mediaQuery,Activity activitys)=>Padding(
-   padding: paddingSemetricVerticalHorizontal(h: 20),
+   padding: paddingSemetricHorizontal(h: 20),
    child: Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -669,14 +661,16 @@ showDragHandle: true,
           children: [
             SizedBox(
               width: mediaQuery.size.width/1.5,
-              height: 60,
+
               child: Padding(
-                padding:paddingSemetricVerticalHorizontal(),
+                padding:paddingSemetricVerticalHorizontal(v: 20),
                 child: Text(
                   activitys.ActivityAdress,
+                  overflow: TextOverflow.ellipsis,
+
 
                   style: PoppinsSemiBold(
-                      mediaQuery.devicePixelRatio * 5, textColorBlack,TextDecoration.none),
+                     18, textColorBlack,TextDecoration.none),
                 ),
               ),
             ),
@@ -696,16 +690,19 @@ showDragHandle: true,
 
 
 
- static  Widget infoCircle(mediaQuery,Activity activitys) => SingleChildScrollView(
+ static  Widget infoCircle(mediaQuery,Activity activitys,BuildContext context) => SingleChildScrollView(
    child: SizedBox(
-     height: mediaQuery.size.height/5.5,
+     height: MediaQuery.of(context).size.height/
+         3.5,
    
      child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
    crossAxisAlignment: CrossAxisAlignment.start,
    
         children: [
-          Padding(
+          BlocBuilder<localeCubit, LocaleState>(
+  builder: (context, state) {
+    return Padding(
             padding: paddingSemetricHorizontal(h:20),
             child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -720,16 +717,16 @@ showDragHandle: true,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        DateFormat('EEE MMM yyyy').format(activitys.ActivityBeginDate),
+                            DateFormat('EEE MMM yyyy',state.locale==Locale('en')?'en_US' : 'fr_FR').format(activitys.ActivityBeginDate),
                         style: PoppinsSemiBold(
-                            mediaQuery.devicePixelRatio * 4.5, textColorBlack,TextDecoration.none),
+                            19, textColorBlack,TextDecoration.none),
                       ),
                       Row(
                         children: [
    
                           Text(
-                              ActivityAction. calculateDurationhour(activitys.ActivityBeginDate, activitys.ActivityEndDate),
-                            style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 3.5,
+                              ActivityAction. calculateDurationhour(activitys.ActivityBeginDate, activitys.ActivityEndDate,state),
+                            style: PoppinsSemiBold(16,
                                 textColor, TextDecoration.none),
                           ),
                         ],
@@ -739,15 +736,73 @@ showDragHandle: true,
                 ),
               ],
             ),
-          ),
+          );
+  },
+),
    
    
          kk(mediaQuery,activitys),
-   
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+
+               children: [
+                activitys.runtimeType == TrainingModel?
+                Padding(
+                  padding: paddingSemetricVerticalHorizontal(h: 20),
+                  child: Row(
+                    children: [
+                      IconInfo(Icons.person),
+                      Padding(
+                        padding: paddingSemetricHorizontal(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              "By Trainer".tr(context),
+                              style: PoppinsLight(15, textColorBlack, ),
+                            ),
+                            SizedBox(
+                              width: mediaQuery.size.width/3.5,
+                              child: Text(
+                                "${(activitys as Training).ProfesseurName } ",
+                                overflow: TextOverflow.ellipsis,
+                                style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ):Container(),
+                 Price(activitys, context, mediaQuery),
+
+               ],
+             ),
+        ),
         ],
       ),
    ),
  );
+
+ static Padding Price(Activity activitys, BuildContext context, mediaQuery) {
+   return Padding(
+   padding: paddingSemetricHorizontal(h: 20),
+   child: Row(
+     children: [
+       IconInfo(Icons.monetization_on),
+       Padding(
+         padding: paddingSemetricHorizontal(),
+         child: Text(activitys.IsPaid ? "Paid".tr(context) : "Free".tr(context),
+           style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none)),
+       ),
+     ],
+   ),
+ );
+ }
 
  static Container IconInfo(IconData icon) {
    return Container(
@@ -799,7 +854,7 @@ class DescriptionToggle extends StatelessWidget {
                         .add(ShowFullDescriptionEvent());
                   },
                   child: Text(
-                    state.isFullDescription ? 'Show less' : 'Show more',
+                    state.isFullDescription ? 'Show less'.tr(context) : 'Show more'.tr(context),
                     style: PoppinsSemiBold(mediaquery.devicePixelRatio * 5,
                         PrimaryColor, TextDecoration.underline),
                   ),

@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 
@@ -65,12 +67,16 @@ class MemberTeamSelection{
 
                 TeamFunction.    ChangeMemerFunction(isExisted, context, item, onRemoveTap, onAddTap);
                   }, child: Text(
-                isExisted ? "Selected" : "Select"
+                isExisted ? "Selected".tr(context) : "Select".tr(context)
 
 
-                , style: PoppinsSemiBold(17,
+                , style: PoppinsSemiBold(13,
                   isExisted ? textColorWhite : textColorBlack
-                  , TextDecoration.none),)),
+                  , TextDecoration.none),)
+             .animate()
+                  .fadeIn(duration: 600.ms)
+
+              ),
             );
           },
         );
@@ -99,7 +105,7 @@ class MemberTeamSelection{
 
         , style: PoppinsSemiBold(17,
           TeamFunction.      doesObjectExistInList(ff, item) ? textColorWhite : textColorBlack
-          , TextDecoration.none),)),
+          , TextDecoration.none),)).animate().fadeIn(duration: 600.ms),
     );
   }
 
@@ -116,7 +122,7 @@ class MemberTeamSelection{
               return Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  textMemberz(mediaQuery),
+                  textMemberz(mediaQuery,context),
                   SeachMemberWidget(mediaQuery, context, (value){
 
                     TeamFunction.    SearchAction(context, value, state);
@@ -134,7 +140,7 @@ class MemberTeamSelection{
  static Widget MembersAssignToBottomSheet(mediaQuery
       , Function(Member) onRemoveTap, Function(Member) onAddTap,
       List<Member> members,
-      List<Member> ff,) =>
+      List<Member> ff,BuildContext context) =>
       SizedBox(
         height: mediaQuery.size.height / .9,
         width: double.infinity,
@@ -143,7 +149,7 @@ class MemberTeamSelection{
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              textMemberz(mediaQuery),
+              textMemberz(mediaQuery,context),
 
               AssignToPiece(mediaQuery, onRemoveTap, onAddTap, members, ff)
 
@@ -198,9 +204,9 @@ class MemberTeamSelection{
     );
   }
 
-static  Text textMemberz(mediaQuery) {
+static  Text textMemberz(mediaQuery,BuildContext context) {
     return Text(
-      "Choose Members",
+      "Choose Members".tr(context),
       style: PoppinsSemiBold(
         mediaQuery.devicePixelRatio * 6,
         PrimaryColor,
@@ -218,77 +224,69 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
         child: TextField(
 
           style: PoppinsRegular(
-            mediaQuery.devicePixelRatio * 6,
+            mediaQuery.devicePixelRatio * 5,
             textColorBlack,
           ),
           onChanged: onChanged,
-          decoration: inputDecoration(mediaQuery,false),
+          decoration: inputDecoration(mediaQuery,false,context),
         )
 
     );
   }
 
 
- static Widget MembersWidget(MediaQueryData mediaQuery, String name,assignType type,
-    Team team) =>
-      BlocBuilder<MembersTeamCubit, MembersTeamState>(
-        builder: (context, ste) {
-          return BlocConsumer<MembersBloc, MembersState>(
-            builder: (context, state) {
-              if (state .userStatus==UserStatus.Loading) {
-                return LoadingWidget();
-              } else if (state.userStatus==UserStatus.MembersLoaded ) {
+ static Widget MembersWidget(MediaQueryData mediaQuery, String name, assignType type, Team team) {
+   return BlocBuilder<MembersTeamCubit, MembersTeamState>(
+     builder: (context, ste) {
+       return BlocConsumer<MembersBloc, MembersState>(
+         builder: (context, state) {
+           switch (state.userStatus) {
+             case UserStatus.Loading:
+               return LoadingWidget();
 
-                return RefreshIndicator(
-                    onRefresh: () {
+             case UserStatus.MembersLoaded:
+               return RefreshIndicator(
+                 onRefresh: () {
+                   return RefreshMembers(context, SearchType.All, "");
+                 },
+                 child: type == assignType.Assign
+                     ? MembersDetails(state.members  , mediaQuery, (value) {}, (po) {}, ste.members)
+                     : BuildInviteComp(state.members, ste.members, team),
+               );
 
-                      return
+             case UserStatus.MemberByname:
+               if (name.isNotEmpty) {
+                 return RefreshIndicator(
+                   onRefresh: () {
+                     return RefreshMembers(context, SearchType.Name, name);
+                   },
+                   child: type == assignType.Assign
+                       ? MembersDetails(state.memberByName, mediaQuery, (po) {}, (po) {}, ste.members)
+                       : BuildInviteComp(state.memberByName, ste.members, team),
+                 );
+               } else {
+                 context.read<MembersBloc>().add(const GetAllMembersEvent(false));
+               }
+               break;
 
-                        RefreshMembers(context, SearchType.All, "");
-                    },
-                    child:
+             case UserStatus.Error:
+               return MessageDisplayWidget(message: state.Errormessage);
 
-type==assignType.Assign ?
-                    MembersDetails(
-                        state.members, mediaQuery, ( value){},  (po){},
-                        ste.members ):  BuildInviteComp(state.members,ste.members,team)
+             default:
+               return LoadingWidget();
+           }
+           return LoadingWidget();
+         },
+         listener: (BuildContext context, MembersState state) {
+           if (state.userStatus == UserStatus.Error) {
+             context.read<MembersBloc>().add(const GetAllMembersEvent(false));
+           }
+         },
+       );
+     },
+   );
+ }
 
-                );
-              }
-              else if (state. userStatus==UserStatus.MemberByname || state.userStatus==UserStatus.MembersLoaded) {
-                if (name.isNotEmpty) {
-                  return RefreshIndicator(
-                      onRefresh: () {
-
-                        return
-
-                          RefreshMembers(context, SearchType.Name, name);
-                      },
-                      child:type==assignType.Assign ?
-                      MembersDetails(
-                          state.members, mediaQuery, (po){}, (po){},
-                          ste.members ): BuildInviteComp(state.memberByName,ste.members,team)
-
-                  );
-              }
-                else {
-                  context.read<MembersBloc>().add(const GetAllMembersEvent(false));
-                }
-              }
-              else if (state .userStatus==UserStatus.Error) {
-                return MessageDisplayWidget(message: state.Errormessage);
-              }
-              return LoadingWidget();
-            }, listener: (BuildContext context, MembersState state) {
-            if (state .userStatus==UserStatus.Error) {
-              context.read<MembersBloc>().add(const GetAllMembersEvent(false));
-            }
-          },
-
-
-          );
-        },
-      );
 
 
  static  Future<void> RefreshMembers(BuildContext context, SearchType type,
@@ -342,8 +340,12 @@ type==assignType.Assign ?
           photo(item.Images, 50, 100),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(item.firstName,
-              style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),),
+            child: SizedBox(
+              width: 100,
+              child: Text(item.firstName,
+                overflow: TextOverflow.ellipsis,
+                style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),),
+            ),
           ),
 
         ]);

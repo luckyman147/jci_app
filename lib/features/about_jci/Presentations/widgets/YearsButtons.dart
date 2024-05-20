@@ -1,3 +1,4 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
@@ -7,6 +8,8 @@ import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/ye
 import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../MemberSection/presentation/widgets/ProfileComponents.dart';
+import '../../../Teams/presentation/widgets/TaskComponents.dart';
 import '../bloc/Board/BoardBloc/boord_bloc.dart';
 import 'dialogs.dart';
 
@@ -36,7 +39,7 @@ class _YearsButtonsState extends State<YearsButtons> {
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
-
+            ProfileComponents.buildFutureBuilder(buildaddButtBoard(context), true, "", (p0) => FunctionMember.isSuper()),
             SizedBox(
               height: 50,
               width: double.maxFinite,
@@ -92,6 +95,33 @@ class _YearsButtonsState extends State<YearsButtons> {
         ),
       ),
     );
+  }
+
+  Padding buildaddButtBoard(BuildContext context) {
+    return Padding(
+            padding: paddingSemetricHorizontal(),
+            child: SizedBox(
+              height: 50,
+              width: 50,
+              child: InkWell(
+                radius: 20,
+               onTap: (){
+                 Dialogs.showYearSelectionDialog(context,);
+
+               },
+                child: DottedBorder(
+                        radius: Radius.circular(10),
+                        dashPattern:const  [10,12,10,12],
+                        color: textColor,
+                        strokeWidth: 3,
+                        borderType: BorderType.RRect,
+                        child:const  Center(
+                          child:  Icon(Icons.add,color: textColor,size: 20,),
+                        ),
+                      ),
+              ),
+            ),
+          );
   }
 
   BoxDecoration buildBoxDecoration(YearsState state, int index) {

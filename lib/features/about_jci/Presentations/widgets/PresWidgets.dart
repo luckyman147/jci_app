@@ -150,8 +150,7 @@ static Widget sheetbody(BoxDecoration boxDecoration, President? president, TextE
 
 
                   ButtonActions(context, boxDecoration,Icons.photo,"Change  Image",()async{
-                    log(president!.CoverImage.toString()      );
-                    log(president!.name.toString()      );
+
                     final  image=  await  ActivityAction.convertBase64ToXFile(president!.CoverImage);
 if (!mounted) return;
 if (image!=null){

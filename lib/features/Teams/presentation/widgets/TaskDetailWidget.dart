@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
@@ -13,6 +14,8 @@ import 'package:jci_app/features/Teams/presentation/bloc/Timeline/timeline_bloc.
 import 'package:jci_app/features/Teams/presentation/widgets/CheckList.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
+import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
+import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 
 import '../../../../core/app_theme.dart';
@@ -140,12 +143,7 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
         child: ListView(
           shrinkWrap: true, keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: [
-Row(
-  children: [
-    buildChangeSection(mediaQuery, context,( ){},true,"Checklist"),
-    buildChangeSection(mediaQuery, context,( ){},false,"Comments")
-  ],
-),
+
 
             Padding(
               padding: paddingSemetricVertical(),
@@ -220,7 +218,7 @@ child: SizedBox(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          buildText("Timeline",mediaQuery),
+          buildText("Timeline".tr(context),mediaQuery),
           InkWell(
             onTap: ()async  {
               if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])){
@@ -239,9 +237,9 @@ child: SizedBox(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
 
-                      BuildStart(mediaQuery, "Start Date",
+                      BuildStart(mediaQuery, "Start Date".tr(context),
                           state.tasks[widget.index]['StartDate']),
-                      BuildStart(mediaQuery, "Deadline",
+                      BuildStart(mediaQuery, "Deadline".tr(context),
                           state.tasks[widget.index]['Deadline']),
 
                     ]);
@@ -270,11 +268,11 @@ child: SizedBox(
                     child: BottomShetTaskBody(
                       context,
                       mediaQuery,
-                      "Timeline",
+                      "Timeline".tr(context),
                       ste.timeline['StartDate'],
                       ste.timeline['Deadline'],
-                      "Start Date",
-                      "Deadline",
+                      "Start Date".tr(context),
+                      "Deadline".tr(context),
                       widget.task ["id"],),
                   );
                 },
@@ -355,16 +353,20 @@ child: SizedBox(
               padding: paddingSemetricHorizontal(h: 5),
               child: Icon(Icons.access_time_rounded,),
             ),
-            Column(
+            BlocBuilder<localeCubit, LocaleState>(
+  builder: (context, state) {
+    return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
 
               children: [
                 Text(date, style: PoppinsRegular(15, ThirdColor),),
-                Text("${DateFormat("MMM,dd,yyyy").format(time)}",
+                Text("${DateFormat("MMM,dd,yyyy",state.locale==Locale("en")?"en":'fr').format(time)}",
                   style: PoppinsRegular(
                       mediaQuery.devicePixelRatio * 4, textColorBlack),),
               ],
-            )
+            );
+  },
+)
 
           ],
 
@@ -385,7 +387,7 @@ child: SizedBox(
               children: [
                 Padding(
                   padding: paddingSemetricVertical(),
-                  child: buildText("Members",mediaQuery),
+                  child: buildText("Members".tr(context),mediaQuery),
                 ),
 
                 Row(
@@ -470,7 +472,7 @@ child: SizedBox(
               child: Row(
 
                 children: [
-                  buildText('Attached Files',mediaQuery),
+                  buildText('Attached Files'.tr(context),mediaQuery),
                   ProfileComponents.buildFutureBuilder(   Padding(
                     padding: paddingSemetricHorizontal(),
                     child: buildAddButton(() async{

@@ -163,8 +163,12 @@ if (event.CoverImages[0]!="assets/images/jci.png"){
 
   @override
   Future<List<EventModel>> getEventsOfTheMonth() async{
+    String memberId = "111";
     final member = await MemberStore.getModel();
-    final memberId = member!.id;
+    if (member != null) {
+      memberId = member.id;
+    }
+
     final response =  await client.post(
       Uri.parse(getEventByMonth),
       headers: {"Content-Type": "application/json"},

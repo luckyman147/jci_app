@@ -16,6 +16,7 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/features/Home/domain/entities/ActivityGuest.dart';
 import 'package:jci_app/features/Home/domain/entities/ActivityParticpants.dart';
+import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -205,19 +206,19 @@ static Future<void> launchURL(BuildContext context, String url) async {
     context: context,
     builder: (context) => AlertDialog(
       title: Text('Confirmation',style:PoppinsSemiBold(18, textColorBlack, TextDecoration.none)),
-      content: Text('You are about to open a link in your browser. Do you want to continue?',style:PoppinsRegular(14, textColorBlack, )),
+      content: Text('You are about to open a link in your browser. Do you want to continue?'.tr(context),style:PoppinsRegular(14, textColorBlack, )),
       actions: <Widget>[
         TextButton(
           onPressed: () {
             Navigator.of(context).pop(false); // Return false if canceled
           },
-          child: Text('Cancel',style: PoppinsRegular(16, textColorBlack),),
+          child: Text('Cancel'.tr(context),style: PoppinsRegular(16, textColorBlack),),
         ),
         TextButton(
           onPressed: () {
             Navigator.of(context).pop(true); // Return true if confirmed
           },
-          child: Text('Open',style: PoppinsRegular(16, PrimaryColor),),
+          child: Text('Open'.tr(context),style: PoppinsRegular(16, PrimaryColor),),
         ),
       ],
     ),
@@ -397,9 +398,9 @@ static Future<void> launchURL(BuildContext context, String url) async {
         .toList();
   }
 
-static   String calculateDurationhour(DateTime beginDateTime, DateTime endDateTime) {
+static   String calculateDurationhour(DateTime beginDateTime, DateTime endDateTime,LocaleState state) {
     final duration = endDateTime.difference(beginDateTime);
-    final dateFormat = DateFormat('EEE HH:mm ');
+    final dateFormat = DateFormat('EEE HH:mm ',state.locale==Locale('en')?'en_US':'fr');
     final timeFormat = DateFormat('HH:mm');
     if (duration.inDays > 0) {
       return ' ${dateFormat.format(beginDateTime)} - ${dateFormat.format(

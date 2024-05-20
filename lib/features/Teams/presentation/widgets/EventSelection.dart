@@ -3,8 +3,11 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 
@@ -19,26 +22,41 @@ import '../../../Home/presentation/widgets/SearchWidget.dart';
 Widget EventsTeamContainer(mediaQuery,Event item)=>BlocBuilder<FormzBloc, FormzState>(
 
     builder: (context, state) {
-final ff=state.eventFormz.value??EventTest;
+final ff=state.eventFormz.value??Event.EventTest;
 return  Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           imageEventWidget(item,mediaQuery),
-          SizedBox(
-            width: mediaQuery.size.width / 3,
-            child: ElevatedButton(
-                style:
+          InkWell(
+            onTap: () {
+              context.read<FormzBloc>().add(EventChanged( eventChanged: item));
 
-                bottondec(ff .id == item.id),
-                onPressed: (){
-                  context.read<FormzBloc>().add(EventChanged( eventChanged: item));
-                }, child: Text(
+            },
+            child: AnimatedContainer(
+              width: mediaQuery.size.width / 3,
+              duration: Duration(milliseconds: 500),
+              decoration: BoxDecoration(
+                  color: ff.id == item.id?PrimaryColor:BackWidgetColor,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        spreadRadius: 1,
+                        blurRadius: 1,
+                        offset: Offset(0, 1))
+                  ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
 
-ff.id == item.id?"Selected":"Select"
-                  ,style:PoppinsSemiBold(17,
-               ff.id == item.id?textColorWhite:textColorBlack
+                ff.id == item.id?"Selected".tr(context):"Select".tr(context)
+                  ,style:PoppinsSemiBold(14,
+                               ff.id == item.id?textColorWhite:textColorBlack
 
-                , TextDecoration.none) ,)),
+                , TextDecoration.none) ,),
+              ),
+            ),
           )
         ],);
     }
@@ -64,68 +82,18 @@ Widget EventsTeamBottomSheet(
     child: BlocBuilder<FormzBloc, FormzState>(
       builder: (context, state) {
         return Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              "Choose Events",
+              "Select an event".tr(context),
               style: PoppinsSemiBold(
-                mediaQuery.devicePixelRatio * 6,
+                mediaQuery.devicePixelRatio * 5,
                 PrimaryColor,
                 TextDecoration.none,
               ),
             ),
             Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                  vertical: 10,
-                ),
-                child: TextField(
-
-                  style: PoppinsRegular(
-                    mediaQuery.devicePixelRatio * 6,
-                    textColorBlack,
-                  ),
-                  onChanged: (value) {
-                   //context.read<FormzBloc>().add(EventnameChanged( name: value));
-                   // if (state.EventName.value.length > 1){
-                     // context.read<EventsBloc>().add(GetEventByNameEvent( name: state.EventName.value));}
-                    //else if (state.EventName.value.isEmpty|| state.EventName.displayError!= null ){
-                      //context.read<EventsBloc>().add(GetAllEventsEvent());
-                   // }
-                    //debugPrint(state.EventName.displayError.toString());
-                    // BlocProvider.of<EventsBloc>(context)
-                    //    .add(SearchEventsEvent(value));
-                  //
-                 //
-                 },
-                  decoration: InputDecoration(
-                 //   errorText: state.EventName.displayError!= null?"Empty Field":null,
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: textColor,
-                    ),
-                    hintText: "Search for a Event",
-                    hintStyle: PoppinsRegular(
-                      mediaQuery.devicePixelRatio * 6,
-                      textColor,
-
-                    ),
-
-                    focusedBorder: border(PrimaryColor),
-                    enabledBorder: border(ThirdColor),
-                    errorBorder: border(Colors.red),
-                    focusedErrorBorder: border(Colors.red),
-                    errorStyle: ErrorStyle(18, Colors.red),
-
-                  ),
-                )
-
-            ),
-
-
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding:paddingSemetricVerticalHorizontal(),
               child: SingleChildScrollView(
                 child: SizedBox(
                     height: mediaQuery.size.height/3 ,
@@ -195,7 +163,7 @@ Widget EventsDetails(List<Event> Events,mediaQuery)=>ListView.separated(
 
   itemCount: Events.length,
   itemBuilder: (context, index) {
-    log(Events[index].name);
+
     return EventsTeamContainer(mediaQuery, Events[index]);
   },
   separatorBuilder: (BuildContext context, int index) { return const SizedBox(height: 10,);  },
@@ -235,6 +203,3 @@ Widget EventsDetails(List<Event> Events,mediaQuery)=>ListView.separated(
 
     ]);}
 
-Event get EventTest=>Event(registrationDeadline: DateTime.now(), LeaderName: "LeaderName", name: "Choose the Event",
-    description: "hola", ActivityBeginDate: DateTime.now(), ActivityEndDate: DateTime.now(), ActivityAdress: "hhhh",
-    ActivityPoints: 2, categorie: "fun", IsPaid: false, price: 0, Participants: [], CoverImages: [], id: '', IsPart: false);

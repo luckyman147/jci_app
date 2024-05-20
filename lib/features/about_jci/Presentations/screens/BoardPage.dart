@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/BoardImpl.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
-import 'package:jci_app/features/about_jci/Presentations/widgets/dialogs.dart';
 
 import '../../../../core/app_theme.dart';
-import '../../../../core/util/snackbar_message.dart';
-import '../../../MemberSection/presentation/widgets/ProfileComponents.dart';
-import '../../../MemberSection/presentation/widgets/functionMember.dart';
-import '../../../Teams/presentation/widgets/TaskComponents.dart';
-import '../bloc/ActionJci/action_jci_cubit.dart';
+
 import '../bloc/Board/BoardBloc/boord_bloc.dart';
-import 'AddUpdatePresidentsPage.dart';
+import '../bloc/presidents_bloc.dart';
+
+import 'PastPresidentsPage.dart';
 
 class BoardPage extends StatefulWidget {
   const BoardPage({Key? key}) : super(key: key);
@@ -61,11 +59,19 @@ class _BoardPageState extends State<BoardPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Board', style: PoppinsSemiBold(
+                  Text('Board'.tr(context), style: PoppinsSemiBold(
                       18, textColorBlack, TextDecoration.none),),
-                  ProfileComponents.buildFutureBuilder(buildAddButton(() {
-                    Dialogs.showYearSelectionDialog(context,);
-                  }), true, "", (p0) => FunctionMember.isSuper())
+                  TextButton(child: Row(
+                    children: [
+                      Text('Last Presidents'.tr(context),style:PoppinsSemiBold(16,PrimaryColor, TextDecoration.underline)),
+                      Icon(Icons.arrow_forward_ios_rounded,color: PrimaryColor,)
+                    ],
+                  ),onPressed: (){
+                    context.read<PresidentsBloc>().add(GetAllPresidentsEvent());
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>PresidentsPage()));
+
+                  },)
+
                 ],
               ),
             );

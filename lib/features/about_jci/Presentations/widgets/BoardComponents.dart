@@ -24,7 +24,7 @@ class BoardComponents{
     return BlocBuilder<YearsBloc, YearsState>(
       builder: (context, state) {
         return AlertDialog(
-          title: Text('Add Board ', style: PoppinsRegular(16, textColorBlack)),
+          title: Text('${"Add".tr(context)} ${"Board".tr(context)}', style: PoppinsRegular(16, textColorBlack)),
           content: SizedBox(
             height: 200,
             width: double.maxFinite,
@@ -81,9 +81,9 @@ context.read<ActionJciCubit>().changePageNum(page);
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                      'Add Position',
+                      '${"Add".tr(context)} Position',
 
-                      style:PoppinsSemiBold(MediaQuery.of(context).devicePixelRatio*6, textColorBlack, TextDecoration.none)
+                      style:PoppinsSemiBold(MediaQuery.of(context).devicePixelRatio*7, textColorBlack, TextDecoration.none)
                   ),
                   // Space between text and other widgets
 
@@ -105,7 +105,7 @@ context.read<ActionJciCubit>().changePageNum(page);
                     Navigator.pop(context);
                   }
 
-                },"Add Position",PrimaryColor,textColorWhite,JCIFunctions.objectExistsInList(state.roles, state.newrole['role'])),
+                },'${"Add".tr(context)} Position',PrimaryColor,textColorWhite,JCIFunctions.objectExistsInList(state.roles, state.newrole['role'])),
               ),
             ),
           ],
@@ -121,7 +121,7 @@ context.read<ActionJciCubit>().changePageNum(page);
           Navigator.pop(context); // Close dialog
         },
         child: Text(
-          'Cancel',
+          'Cancel'.tr(context),
           style: PoppinsSemiBold(16, textColor, TextDecoration.none),
         ),
       ), ElevatedButton(
@@ -136,7 +136,7 @@ context.read<ActionJciCubit>().changePageNum(page);
           // Close dialog
         },
         child: Text(
-          'Submit',
+          'Submit'.tr(context),
           style: PoppinsSemiBold(16, textColorWhite, TextDecoration.none),
         ),
       ),
@@ -214,14 +214,14 @@ context.read<ActionJciCubit>().changePageNum(page);
 
   static AlertDialog alertDialogDelete(String year,String role, BuildContext context,TypeDelete type,String text) {
   return AlertDialog(
-    title: Text('Delete $text',style: PoppinsRegular(15, textColorBlack),),
-    content: Text('Are you sure you want to delete this ${type.name}?',style: PoppinsLight(16, textColor, ),),
+    title: Text('${"Delete".tr(context)} $text',style: PoppinsRegular(15, textColorBlack),),
+    content: Text('${"Are you sure you want to delete this".tr(context)} ${type.name}?',style: PoppinsLight(16, textColor, ),),
     actions: <Widget>[
       TextButton(
         onPressed: () {
           Navigator.of(context).pop();
         },
-        child: Text('No',style: PoppinsRegular(17, textColor, ),),
+        child: Text('Cancel'.tr(context),style: PoppinsRegular(17, textColor, ),),
       ),
       TextButton(
         onPressed: () {
@@ -237,7 +237,7 @@ else{
           context.read<ActionJciCubit>().changePageNum(0);
 
         },
-        child: Text('Delete',style: PoppinsRegular(17, PrimaryColor),),
+        child: Text('Delete'.tr(context),style: PoppinsRegular(17, PrimaryColor),),
       ),
     ],
   );
@@ -327,7 +327,7 @@ else{
         },
         decoration: InputDecoration(
 
-          labelText: 'Search for member name',
+          labelText: 'Search for member name'.tr(context),
           prefixIcon: Icon(Icons.search),
           labelStyle: PoppinsRegular(14.0, textColor),
           border: border(textColorBlack),
@@ -358,13 +358,13 @@ else{
           final Pos=PostField(year: "", role: post.role, assignTo: post.assignTo[0].id, id: post.id);
           context.read<BoordBloc>().add(RemoveMemberEvent( postField: Pos));
           Navigator.pop(context);
-            }, "Delete member ", context)),
+            }, "${"Delete".tr(context)} ${"Member".tr(context)} ", context)),
           buildCircularIconButton(Icons.delete_rounded, () {
             final Pos=PostField(year: state.year, role: post.role, assignTo: post.assignTo[0].id, id: post.id);
 
             context.read<YearsBloc>().add(RemovePosition(post: Pos));
             Navigator.pop(context);
-          }, "Delete  Position", context)
+          }, "${"Delete".tr(context)}  Position", context)
             ]
           ),
         ),
@@ -456,7 +456,7 @@ static  Widget buildCircularIconButton(IconData iconData, VoidCallback onPressed
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           headefnewrole(context),
-          textfieldnamerole(nameController),
+          textfieldnamerole(nameController,context),
 
           Expanded(
             child: BoardComponents.NewRolesGridprioritys(roles),
@@ -471,7 +471,7 @@ static  Widget buildCircularIconButton(IconData iconData, VoidCallback onPressed
                 }
 
 
-              }, "Add new role", PrimaryColor, textColorWhite,JCIFunctions.objectExistsInList(roles, state.newrole['role']) && nameController.text.isNotEmpty),
+              }, "${"Add".tr(context)} ${"New role".tr(context)}", PrimaryColor, textColorWhite,JCIFunctions.objectExistsInList(roles, state.newrole['role']) && nameController.text.isNotEmpty),
           )],
       ),
     );
@@ -481,7 +481,7 @@ static  Widget buildCircularIconButton(IconData iconData, VoidCallback onPressed
     return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Add New role",
+            Text("${"Add".tr(context)} ${"New role".tr(context)}",
                 style:PoppinsSemiBold(MediaQuery.of(context).devicePixelRatio*6, textColorBlack, TextDecoration.none)
             
             ),
@@ -496,18 +496,18 @@ static  Widget buildCircularIconButton(IconData iconData, VoidCallback onPressed
         );
   }
 
-  static TextFormField textfieldnamerole(TextEditingController controller) {
+  static TextFormField textfieldnamerole(TextEditingController controller,BuildContext context) {
     return TextFormField(
           style: PoppinsRegular(18, textColorBlack),
           controller: controller,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter Role name';
+              return 'Enter Role name'.tr(context);
             }
             return null;
           },
           decoration: InputDecoration(
-            hintText: 'Enter  Role name ',
+            hintText: 'Enter Role name'.tr(context),
           
             hintStyle: PoppinsRegular(18, textColor),
             border: border(textColor),

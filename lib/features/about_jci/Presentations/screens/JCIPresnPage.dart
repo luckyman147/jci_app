@@ -7,6 +7,8 @@ import 'package:jci_app/core/strings/app_strings.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/PresWidgets.dart';
 
+import 'BoardPage.dart';
+
 class PresentationsPage extends StatefulWidget {
   const PresentationsPage({Key? key}) : super(key: key);
 
@@ -28,7 +30,7 @@ class _PresentationsPageState extends State<PresentationsPage> {
     contae = ScrollController();
     contae.addListener(_scrollListener);
     controller.addListener(_scrollListener);
-    log('hhdok');
+
    // log(PresWidgets.SecondDescriptionHeight(context).toString());
    // log(PresWidgets.SecondDescriptionHeight(context).toString());
   }
@@ -42,7 +44,7 @@ class _PresentationsPageState extends State<PresentationsPage> {
    void _scrollListener() {
      setState(() {
        _offset = controller.offset;
-       log(controller.offset.toString());
+
 
      });
    }
@@ -53,9 +55,19 @@ class _PresentationsPageState extends State<PresentationsPage> {
     return Scaffold(
       appBar: AppBar(
         title:  Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
 
-            Text('Presentation',style:PoppinsSemiBold(20, textColorBlack, TextDecoration.none))
+            Text('Presentation'.tr(context),style:PoppinsSemiBold(20, textColorBlack, TextDecoration.none)),
+            TextButton(child: Row(
+              children: [
+                Text('Board'.tr(context),style:PoppinsSemiBold(16,PrimaryColor, TextDecoration.underline)),
+Icon(Icons.arrow_forward_ios_rounded,color: PrimaryColor,)
+              ],
+            ),onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>BoardPage()));
+
+            },)
           ],
         ),
         backgroundColor: textColorWhite,
