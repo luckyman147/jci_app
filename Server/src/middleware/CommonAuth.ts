@@ -3,6 +3,7 @@ import { adminsPayload, AuthPayload } from "../dto/auth.dto";
 import { validateAdminSignature, validateSignature, validateSuperAdminSignature } from "../utility";
 import { ADminPayload } from "../dto/admin.dto";
 import { SuperAdminPayload } from "../dto/superAdmin.dto";
+import { Server } from "socket.io";
 
 
 
@@ -13,7 +14,8 @@ declare global{
             admin:adminsPayload;
             superadmin:SuperAdminPayload;
             otp:number
-            expiry:Date
+            expiry:Date,
+            io:Server
         }
         interface database{
             gfs:any

@@ -424,10 +424,26 @@ final result= MeetingModel.fromEntities(act as Meeting);
   }
 
   @override
-  Future<Either<Failure, Unit>> addGuest(String activityId, Guest guest) async{
+  Future<Either<Failure, ActivityGuest>> addGuest(String activityId, Guest guest) async{
 
 final guestmodel=GuestModel.fromEntity(guest);
-    return await  _response( trainingRemoteDataSource.addGuest(activityId, guestmodel));
+if (await networkInfo.isConnected) {
+  try {
+    final result = await trainingRemoteDataSource.addGuest(activityId,guestmodel);
+    return Right(result);
+  } on EmptyDataException {
+    return Left(EmptyDataFailure());
+  } on WrongCredentialsException {
+    return Left(WrongCredentialsFailure());
+  } on ServerException {
+    return Left(ServerFailure());
+  }
+} else {
+  return Left(OfflineFailure());
+}
+    // TODO: implement getAllguest
+
+
   }
 
   @override

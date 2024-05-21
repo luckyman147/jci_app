@@ -14,7 +14,7 @@ categorie:string
     Price:number
     Participants:any[]
     CoverImages:string[]
-
+notes:any[]
     guests:any[]
     
 }
@@ -41,6 +41,11 @@ export const ActivitySchema=new Schema({
         default: 'pending',
         },
       
+      }],
+    notes:[{
+      type: mongoose.Schema.Types.ObjectId,
+        ref: 'notes',
+        default:[]
       }],
     categorie:{type:String,required:true},
     IsPaid:{type:Boolean,default:false},

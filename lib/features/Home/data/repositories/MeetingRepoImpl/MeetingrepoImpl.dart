@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/core/config/services/MeetingStore.dart';
+import 'package:jci_app/features/Home/data/model/NoteModel.dart';
+import 'package:jci_app/features/Home/domain/entities/Note.dart';
 
 import '../../../../../core/config/services/store.dart';
 import '../../../../../core/config/services/verification.dart';
@@ -209,5 +213,65 @@ id: meeting.id,
 
       return hasCommonElement(eventPermission, userPermissions)?Right(true):Right(false);
     }
+  }
+
+  @override
+  Future<Either<Failure, List<Note>>> getAllNotes(String activityId, String start, String limit,bool isUpdated) async{
+    if (await networkInfo.isConnected) {
+
+     // final cachedNotes = await meetingLocalDataSource.getNotes(start,limit);
+
+      try {
+        log("dddd");
+        final remoteNotes = await meetingRemoteDataSource.getModelNotesOfActivity(activityId,start,limit);
+        meetingLocalDataSource.cacheNotes(remoteNotes,start,limit);
+        return Right(remoteNotes);
+      } on ServerException {
+
+        return Left(ServerFailure());
+      }
+    } else {
+      try {
+        final localNotes = await meetingLocalDataSource
+            .getNotes(start,limit);
+        return Right(localNotes);
+      } on EmptyCacheException {
+        if (await networkInfo.isConnected) {
+          return Left(EmptyDataFailure());
+        } else {
+          return Left(OfflineFailure());
+        }
+      }
+
+
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> UpdateNotes(String activityId, Note note) async{
+    final noteModel=NoteModel.fromEntity(note);
+    return await (getMessage(meetingRemoteDataSource.UpdateNoteOfActivity(activityId,noteModel)));
+
+  }
+
+  @override
+  Future<Either<Failure, Note>> addNotes(String activityId, Note note) async{
+    final noteModel=NoteModel.fromEntity(note);
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteNote =await meetingRemoteDataSource.CreateNoteOfActivity(activityId,noteModel);
+        return Right(remoteNote);
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> deleteNotes(String activityId, String noteId)async {
+    return await (getMessage(meetingRemoteDataSource.DeleteNote(activityId,noteId)));
+
   }
 }

@@ -3,6 +3,7 @@ import 'package:jci_app/core/usescases/usecase.dart';
 
 import '../../../../core/error/Failure.dart';
 import '../entities/Meeting.dart';
+import '../entities/Note.dart';
 import '../repsotories/meetingRepo.dart';
 
 
@@ -90,4 +91,15 @@ class CheckMeetPermissionsUseCase {
     return await MeetingRepository.CheckPermissions();
   }
 }
+class GetNotesOfActivityUseCase {
+  final MeetingRepo MeetingRepository;
+
+  GetNotesOfActivityUseCase(this.MeetingRepository);
+
+  Future<Either<Failure,List<Note>>> call(String activityId,bool isUpdated,{String start="0",String limit="4"}) async {
+    return await MeetingRepository.getAllNotes(activityId, start, limit, isUpdated);
+  }
+}
+
+
 

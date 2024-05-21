@@ -159,7 +159,7 @@ void RemoveGuest(DeleteGuestEvent event,
     Emitter<ParticpantsState> emit
     ) async {
   final result = await removeGuestUseCases(event.params);
-  emit(_eitherAddedDeleteGuestOrFailure(result,event.params,false));
+  emit(_eitherDeleteGuestOrFailure(result,event.params));
 }
 void AddGuest(AddGuestEvent event,
     Emitter<ParticpantsState> emit
@@ -269,21 +269,19 @@ void getAllguests(
     );
   }
 
-  ParticpantsState _eitherAddedDeleteGuestOrFailure(Either<Failure, Unit> result, guestParams params, bool bool)
+  ParticpantsState _eitherAddedDeleteGuestOrFailure(Either<Failure, ActivityGuest> result, guestParams params, bool bool)
   {
     return result.fold(
           (failure) => state.copyWith(status: ParticpantsStatus.failed),
-          (_) {
-        if (bool) {
-          final List<ActivityGuest> guests = List.of(state.Activeguests
+          (ge) {
+
+          final List<ActivityGuest> guests = List.of(state.guestsSearch
           );
-          guests.add(params.guest!);
+
+          guests.add(ge);
           return state.copyWith(status: ParticpantsStatus.success, Activeguests: guests,guestsSearch: guests);
-        } else {
-          final List<ActivityGuest> guests = List.of(state.Activeguests);
-          guests.removeWhere((guest) => guest.guest.id == params.guestId);
-          return state.copyWith(status: ParticpantsStatus.success, Activeguests: guests, guestsSearch: guests);
-        }
+
+
       },
     );
   }
@@ -338,6 +336,18 @@ void getAllguests(
 
         return state.copyWith(status: ParticpantsStatus.changed,message: 'Guest Added');
       },
+    );
+  }
+
+  ParticpantsState _eitherDeleteGuestOrFailure(Either<Failure, Unit> result, guestParams params, ) {
+    return result.fold(
+          (failure) => state.copyWith(status: ParticpantsStatus.failed),
+          (_) {
+      final List<ActivityGuest> guests = List.of(state.Activeguests);
+      guests.removeWhere((guest) => guest.guest.id == params.guestId);
+      return state.copyWith(status: ParticpantsStatus.success, Activeguests: guests, guestsSearch: guests);
+    }
+
     );
   }
 

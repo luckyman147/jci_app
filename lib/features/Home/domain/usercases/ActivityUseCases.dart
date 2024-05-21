@@ -131,13 +131,13 @@ class GetGuestsUseCases extends UseCase<List<ActivityGuest>,String > {
     return activitiesRepo.getAllguest(params);
   }
 }
-class AddGuestUseCases extends UseCase<Unit,guestParams > {
+class AddGuestUseCases extends UseCase<ActivityGuest,guestParams > {
   final ActivitiesRepo activitiesRepo;
 
   AddGuestUseCases({required this.activitiesRepo});
 
   @override
-  Future<Either<Failure, Unit>> call(guestParams params) {
+  Future<Either<Failure, ActivityGuest>> call(guestParams params) {
     return activitiesRepo.addGuest(params.activityid!, params.guest!.guest);
   }
 }class AddGuestToActivityUseCases extends UseCase<Unit,guestParams > {

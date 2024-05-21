@@ -21,6 +21,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/notesBloc/notes_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/calendar/calendar_cubit.dart';
@@ -33,8 +34,11 @@ import 'domain/usercases/MeetingsUseCase.dart';
 final sl = GetIt.instance;
 
 Future<void> initActivities() async {
+ sl.registerFactory(() => NotesBloc(sl()));
+
   sl.registerFactory(() => AcivityFBloc(
     getTrainingsOfTheMonthUseCase: sl(),
+
 
     getEventsOfTheMonthUseCase: sl(),
  participantBloc: sl(), getAllActivitiesUseCases: sl(), getActivityByIdUseCases: sl(), getActivityByNameUseCases: sl(), ));
@@ -83,6 +87,7 @@ sl.registerLazySingleton(() => CheckTrainingPermissionsUseCase(sl()));
 sl.registerLazySingleton(() => CheckMeetPermissionsUseCase(sl()));
 
 
+sl.registerLazySingleton(() => GetNotesOfActivityUseCase(sl()));
 sl.registerLazySingleton(() => LeaveMeetingUseCase(sl()));
 sl.registerLazySingleton(() => LeaveTrainingUseCase(sl()));
 sl.registerLazySingleton(() => ParticipateEventUseCase(sl()));

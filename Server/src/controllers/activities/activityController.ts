@@ -1,16 +1,16 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
-import { ActivityMemberStatus, GuestInput, SeachActivityInputs, SearchType } from '../../dto/activity.dto';
+import { ActivityMemberStatus, GuestInput, noteInput, SeachActivityInputs, SearchType } from '../../dto/activity.dto';
 import { Activity } from '../../models/activities/activitieModel';
 import { Event } from '../../models/activities/eventModel';
 import { Guest } from '../../models/activities/Guests';
 import { Meeting } from '../../models/activities/meetingModel';
+import { notes } from '../../models/activities/notes';
 import { Training } from '../../models/activities/TrainingModel';
 import { Member } from '../../models/Member';
 import { ConfirmGuestPartGuestEmail, participationEmail, sendAbsenceEmail, sendAddGuestEmail, sendPresenceEmail } from '../../utility/NotificationEmailUtility';
 import { getGuestInfo, getMembersInfo } from '../../utility/role';
-
 
 export const GetActivityByid= async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -262,7 +262,10 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
 
       await activity.save()
       sendAddGuestEmail(newguest.email,activity.name,newguest.name,activity.ActivityAdress,activity.ActivityBeginDate)
-      res.status(200).json({message:"Guest added successfully",guest:newguest})
+      res.status(200).json({
+        guest:newguest,
+        status:'pending'
+      })
         
     
       
@@ -425,3 +428,157 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
     }
   };
   
+  export const getAllnotes=async (req:Request,res:Response)=>{
+    try {
+      const start: number = parseInt(req.query.start as string);
+      const limit: number = parseInt(req.query.limit as string);
+      const startIndex: number = start;
+      const endIndex: number = start + limit;
+      const { activityId } = req.params;
+      const activity = await Activity.findById(activityId)
+      if (!activity){
+        return res.status(404).json({ message: 'activity not found' });
+      }
+      const results: any = {};
+    if (endIndex < await notes.countDocuments().exec()) {
+      results.next = {
+          start: endIndex,
+          limit: limit
+      };
+  }
+  
+  if (startIndex > 0) {
+    results.previous = {
+        start: Math.max(start - limit, 0), // Ensure start is not negative
+        limit: limit
+    };
+}
+      const note=await notes.find( { _id: { $in: activity.notes } }).sort({ createdAt: 'desc' }) .limit(limit).skip(startIndex).exec();
+      if (note.length > 0) {
+        // Format the notes
+        const formattedNotes = await Promise.all(note.map(async (note) => {
+          // Perform any required formatting here
+          return {
+            id: note._id,
+            title: note.title,
+            content: note.content,
+            date: note.date,
+           owner:await getMembersInfo([note.owner as string])
+          };
+        }));
+  console.log(formattedNotes)
+        // Send the formatted notes as the response
+        return res.status(200).json(formattedNotes);
+      } else {
+        return res.status(404).json({ message: 'No notes found for this activity' });
+      }
+  
+    }
+
+
+    catch(e){
+      console.error('Error fetching notes of activity:', e);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+
+
+
+  }
+  export const addNotes=async (req:Request,res:Response)=>{
+    try {
+      const { activityId } = req.params;
+      const member=req.member
+      const activity = await Activity.findById(activityId)
+      if (!activity){
+        return res.status(404).json({ message: 'activity not found' });
+      }
+      const noteInputs=plainToClass(noteInput,req.body)
+      // Validate the inputs
+      const errors = await validate(noteInputs, { validationError: { target: false } });
+      if (errors.length > 0) {
+        return res.status(400).json({ message: 'Invalid input', errors });
+      }
+ const date = new Date();
+ date.setHours(date.getHours() + 1);
+
+      const newNote = new notes({
+        title: noteInputs.title,
+        content: noteInputs.content,
+        date:date,
+        owner: member
+        // Add more fields if necessary
+      });
+      await newNote.save();
+      activity.notes.push(newNote)
+      await activity.save()
+      req.io.emit('noteAdded', newNote);
+      res.status(201).json({ message: 'Note added successfully', note: newNote });
+
+    }
+    catch(e){
+      console.error('Error fetching notes of activity:', e);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+
+
+
+  }
+  export const updateNote = async (req: Request, res: Response) => {
+    try {
+      const { activityId, noteId } = req.params;
+
+  
+      const activity = await Activity.findById(activityId);
+      if (!activity) {
+        return res.status(404).json({ message: 'Activity not found' });
+      }
+  
+      const note = await notes.findById(noteId);
+      if (!note || !activity.notes.includes(noteId)) {
+        return res.status(404).json({ message: 'Note not found' });
+      }
+  
+      const noteInputs = plainToClass(noteInput, req.body);
+      const errors = await validate(noteInputs, { validationError: { target: false } });
+      if (errors.length > 0) {
+        return res.status(400).json({ message: 'Invalid input', errors });
+      }
+  
+      note.title = noteInputs.title;
+      note.content = noteInputs.content;
+     
+  
+      await note.save();
+
+
+      res.status(200).json({ message: 'Note updated successfully', note });
+    } catch (e) {
+      console.error('Error updating note:', e);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+  export const deleteNote = async (req: Request, res: Response) => {
+    try {
+      const { activityId, noteId } = req.params;
+  
+      const activity = await Activity.findById(activityId);
+      if (!activity) {
+        return res.status(404).json({ message: 'Activity not found' });
+      }
+  
+      const note = await notes.findById(noteId);
+      if (!note || !activity.notes.includes(noteId)) {
+        return res.status(404).json({ message: 'Note not found' });
+      }
+  
+      await note.deleteOne();
+      activity.notes = activity.notes.filter(note => note.toString() !== noteId);
+      await activity.save();
+
+  
+      res.status(200).json({ message: 'Note deleted successfully' });
+    } catch (e) {
+      console.error('Error deleting note:', e);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };

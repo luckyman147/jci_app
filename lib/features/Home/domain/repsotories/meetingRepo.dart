@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:jci_app/features/Home/domain/entities/Note.dart';
 import 'package:jci_app/features/Home/domain/repsotories/EventRepo.dart';
 
 import '../../../../core/error/Failure.dart';
@@ -26,6 +27,9 @@ abstract class MeetingRepo  {
   Future<Either<Failure, Meeting>> getMeetingLikes(String id);
 
   Future<Either<Failure, Meeting>> getMeetingParticipants(String id);
-
+  Future<Either<Failure,List<Note>>> getAllNotes(String activityId,String start,String limit,bool isUpdated);
+  Future<Either<Failure,Note>> addNotes(String activityId,Note note);
+  Future<Either<Failure,Unit>> deleteNotes(String activityId,String noteId);
+  Future<Either<Failure,Unit>> UpdateNotes(String activityId,Note note);
 
 }

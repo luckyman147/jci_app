@@ -8,6 +8,7 @@ import 'package:jci_app/core/config/env/urls.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:jci_app/core/config/services/MemberStore.dart';
+import 'package:jci_app/features/Home/data/model/NoteModel.dart';
 
 
 import '../../../../../core/config/services/store.dart';
@@ -30,6 +31,10 @@ abstract class MeetingRemoteDataSource {
 
   Future<Unit> leaveMeeting(String id);
   Future<Unit> participateMeeting(String id);
+Future<List<NoteModel>> getModelNotesOfActivity(String activityId,String start,String limit);
+Future<Unit> DeleteNote(String activityId,String noteId);
+Future<NoteModel> CreateNoteOfActivity(String activityId,NoteModel note);
+Future<Unit> UpdateNoteOfActivity(String activityId,NoteModel note);
 
 }
 
@@ -206,4 +211,103 @@ final body = Meeting.toJson();
     });
   }
 
+  @override
+  Future<NoteModel> CreateNoteOfActivity(String activityId, NoteModel note)async {
+    final token = await getTokens();
+    final body = note.toJson();
+    return client.post(
+      Uri.parse(Urls.AddNotes(activityId)),
+      headers: {"Content-Type": "application/json",
+        "Authorization": "Bearer ${token[1]}"
+      },
+      body: json.encode(body),
+    ).then((response) async {
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final Map<String, dynamic> decodedJson = json.decode(response.body) ;
+        final NoteModel noteModel = NoteModel.fromJson(decodedJson);
+        return noteModel;
+      }
+      else if (response.statusCode == 400) {
+        throw WrongCredentialsException();
+      }
+      else {
+        throw ServerException();
+      }
+    });
+
+  }
+
+  @override
+  Future<Unit> DeleteNote(String activityId, String noteId)async {
+final token = await getTokens();
+    final response = await client.delete(
+      Uri.parse(Urls.DeleteNotes(activityId,noteId)),
+  headers: {"Content-Type": "application/json",
+    "Authorization": "Bearer ${token[1]}"
+  },
+    );
+    if (response.statusCode==200){
+      return Future.value(unit);
+    }
+    else{
+      throw EmptyDataException();
+    }
+
+
+
+
+  }
+
+  @override
+  Future<Unit> UpdateNoteOfActivity(String activityId, NoteModel note) async{
+final token = await getTokens();
+    final body = note.toJson();
+    return client.patch(
+      Uri.parse(Urls.DeleteNotes(activityId,note.id)),
+      headers: {"Content-Type": "application/json",
+        "Authorization": "Bearer ${token[1]}"},
+      body: json.encode(body),
+    ).then((response) async {
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> decodedJson = json.decode(response.body) ;
+        return Future.value(unit);
+
+      }
+      else if (response.statusCode == 400) {
+        throw WrongCredentialsException();
+      }
+      else {
+        throw ServerException();
+      }
+    });
+
+  }
+
+  @override
+  Future<List<NoteModel>> getModelNotesOfActivity(String activityId,String start,String limit)async {
+    final token = await getTokens();
+    final response = await client.get(
+      Uri.parse(Urls.GetNotes(activityId, start, limit)),
+      headers: {"Content-Type": "application/json",
+        "Authorization": "Bearer ${token[1]}"
+      },
+    );
+    if (response.statusCode == 200) {
+      final List  decodedJson = json.decode(response.body);
+      final List<NoteModel> noteModels = decodedJson.map<NoteModel>((jsonNoteModel) =>
+          NoteModel.fromJson(jsonNoteModel))
+          .toList();
+      return noteModels;
+
+    } else if (response.statusCode == 400) {
+      throw EmptyDataException();
+
+
+      // TODO: implement getModelNotesOfActivity
+
+    }
+    else{
+      throw ServerException();
+    }
+  }
 }

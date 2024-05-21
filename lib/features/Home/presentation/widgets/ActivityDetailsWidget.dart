@@ -1,11 +1,17 @@
 
 
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/widgets/ActivityImplWidgets.dart';
+import 'package:jci_app/features/Home/presentation/widgets/Functions.dart';
+import 'package:jci_app/features/Home/presentation/widgets/NotesWidget.dart';
 
+import '../../../../core/app_theme.dart';
 import '../../domain/entities/Activity.dart';
+import '../bloc/Activity/BLOC/notesBloc/notes_bloc.dart';
 import 'ActivityDetailsComponents.dart';
 
 
@@ -44,17 +50,46 @@ AddDots(activitys, mediaQuery)
 
                 ActivityDetailsComponent.infoCircle(mediaQuery, activitys,context),
                 ActivityDetailsComponent.Description(mediaQuery, activitys),
+Padding(
+
+  padding: paddingSemetricHorizontal(h: 18),
+  child: SizedBox(
+    width: mediaQuery.size.width,
+    height: 50,
+    child: InkWell(
+      onTap: () {
+        context.read<NotesBloc>().add(Notesfetched(activityId:activitys.id , isUpdated: true));
+
+        ActivityAction.showNotes(context, mediaQuery,activitys);
+      },
 
 
-                //Align(
-                //alignment: Alignment.topLeft,
+      child: DottedBorder(
+        borderType: BorderType.RRect,
+        radius: Radius.circular(12),
+        padding: EdgeInsets.all(6),
+        color: textColorBlack,
+          dashPattern: [12,16,13,16],
+          child: Center(
+            child: Text("Add Notes",style: PoppinsSemiBold(mediaQuery.devicePixelRatio*5, textColorBlack, TextDecoration.none),
 
-                //child: Text("Maps",style: PoppinsSemiBold(mediaQuery.devicePixelRatio*5, textColorBlack, TextDecoration.none), ))
-              ],
+                  ),
+          )
+
+                      //Align(
+                      //alignment: Alignment.topLeft,
+
+                      //child: Text("Maps",style: PoppinsSemiBold(mediaQuery.devicePixelRatio*5, textColorBlack, TextDecoration.none), ))
+      ),
+    ),
+  ),
+)],
             ),
           )
         ],
       ),
     );
   }
+
+
 }

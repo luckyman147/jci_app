@@ -42,7 +42,7 @@ abstract class TrainingRemoteDataSource {
 
   Future<Unit> sendReminder(String activityId) ;
 
- Future<Unit> addGuest(String activityId, GuestModel guest) ;
+ Future<ActivityguestModel> addGuest(String activityId, GuestModel guest) ;
 
   Future<Unit>  deleteGuest(String activityId, String guestId) ;
 
@@ -349,7 +349,7 @@ return Future.value(unit);
   }
 
   @override
-  Future<Unit> addGuest(String activityId, GuestModel guest) async{
+  Future<ActivityguestModel> addGuest(String activityId, GuestModel guest) async{
     final token = await getTokens();
     return client.post(
       Uri.parse(Urls.Addguest(activityId)),
@@ -357,7 +357,10 @@ return Future.value(unit);
       body: json.encode(guest.toJson()),
     ).then((response) async {
       if (response.statusCode == 200) {
-        return Future.value(unit);
+        final  decodedJson = json.decode(response.body);
+
+        final ActivityguestModel guests =ActivityguestModel.fromJson(decodedJson);
+        return guests;
       } else if (response.statusCode == 400 || response.statusCode==409) {
         throw WrongCredentialsException();
       } else if (response.statusCode == 401) {

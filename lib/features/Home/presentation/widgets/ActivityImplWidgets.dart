@@ -16,6 +16,7 @@ import '../../../../core/widgets/loading_widget.dart';
 import '../../../auth/presentation/widgets/Text.dart';
 import '../../domain/entities/Activity.dart';
 import '../bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
+import '../bloc/Activity/BLOC/notesBloc/notes_bloc.dart';
 import '../bloc/Activity/activity_cubit.dart';
 
 import '../bloc/PageIndex/page_index_bloc.dart';
@@ -25,6 +26,7 @@ import 'ErrorDisplayMessage.dart';
 import 'EventListWidget.dart';
 import 'EventOfweek.dart';
 import 'Functions.dart';
+import 'NotesWidget.dart';
 import 'ShimmerEffects.dart';
 
 
@@ -315,6 +317,37 @@ Widget ShowAllGuests(String activityId){
   );
 
 }
+BlocConsumer<NotesBloc, NotesState> NotesImpl(Widget widget, String activityId    ){
+  return BlocConsumer<NotesBloc, NotesState>(
+    builder: (context, state) {
+      switch (state.status){
+        case NotesStatus.initial:
+          return ReloadDetailsPage.loadNotesShimer(3);
+        case NotesStatus.success:
+          if (state.notes.isEmpty) {
+            return  Center(child: Text('No Notes',style: PoppinsRegular(17, textColorBlack),));
+          }
+          return widget;
+        case NotesStatus.failure:
+          log(activityId);
+          context.read<NotesBloc>().add(Notesfetched(activityId: activityId, isUpdated: true));
+
+          return ReloadDetailsPage.loadNotesShimer(3);
+
+        default:
+          context.read<NotesBloc>().add(Notesfetched(activityId: activityId, isUpdated: false));
+
+          return ReloadDetailsPage.loadNotesShimer(3);
+      }
+    }, listener: (BuildContext context, NotesState state) {
+    if (state.status == NotesStatus.failure) {
+      context.read<NotesBloc>().add(Notesfetched(activityId: activityId, isUpdated: true));
+
+    }
+  },
+  );
+}
+
 
 
 

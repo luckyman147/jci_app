@@ -1,5 +1,5 @@
 
-import express, { Application } from 'express';
+import express, { Application, NextFunction,Request,Response } from 'express';
 import morgan from "morgan";
 import { specs, specs2, swaggerUi, swaggerUiOptions1, swaggerUiOptions2 } from '../config/swaggerConfig';
 import { AuthRouter, BoardRouter, MemberRoute, SuperAdmineRouter } from '../routes';
@@ -12,15 +12,20 @@ import { BoardRoleRouter } from '../routes/board/BoardRoleRoute';
 import { PosRouter } from '../routes/board/PosRoute';
 import { TeamRoute } from '../routes/team/TeamRoute';
 import { mailRoute } from '../routes/mailRoute';
+import { Server } from 'socket.io';
 
 
-const appli= async (app:Application)=>{
+const appli= async (app:Application,io:Server)=>{
 // Middleware to handle form data
 
 const maxRequestBodySize = '100mb';
 app.use(express.json({limit: maxRequestBodySize}));
 app.use(express.urlencoded({limit: maxRequestBodySize,extended:true}));
 app.use(morgan("tiny"));
+app.use((req:Request, res:Response, next:NextFunction) => {
+    req.io = io;
+    next();
+});
 
 app.use(express.static("public"));
 app.use('/mails',mailRoute)

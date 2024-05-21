@@ -62,6 +62,7 @@ class Urls{
   static String getMembersWithRank="$BaseUrl/member/Members";
   static String getMemberWithHightRank="$BaseUrl/member/Member";
   static String activitySearch="$BaseUrl/Activity/SearchName/get";
+  static String AddNotes(String activityId)=>"$BaseUrl/Activity/notes/$activityId";
   static String SendReminderUrl(String activityId)=> "$BaseUrl/mails/SendReminder/$activityId";
   static String Addguest(String activityId)=> "$guestUrl$activityId";
   static String deleteguest(String activityId,String guestId)=> "$guestUrl$activityId/$guestId";
@@ -76,4 +77,8 @@ class Urls{
   static String JoinTeam(String teamId,) => "$TeamUrl$teamId/JoinTeam";
 
   static String AddGuestToActivity(String activityId, String guestId) => "$BaseUrl/Activity/guests/$activityId/$guestId";
+
+  static String DeleteNotes(String activityId, String noteId) => "$BaseUrl/Activity/notes/$activityId/$noteId";
+
+  static String GetNotes(String activityId,String start,String limit) => "$BaseUrl/Activity/notes/$activityId?start=$start&limit=$limit";
 }

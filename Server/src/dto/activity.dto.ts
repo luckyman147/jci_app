@@ -71,6 +71,12 @@ enum ActivityStatus {
     @IsNotEmpty()
     name: string;
   }  
+  export class noteInput{
+    @IsNotEmpty()
+    title:string
+    @IsNotEmpty()
+    content:string
+  }
   export class GuestInput {
     @IsNotEmpty()
     name: string;

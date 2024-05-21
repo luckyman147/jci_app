@@ -67,6 +67,8 @@
   "Start Date": "Début",
   "Deadline": "Date limite",
   "Completed": "Terminé",
+  "Are you sure you want to delete": "Voulez-vous vraiment supprimer",
+
 
   "Empty Field": "Champ vide",
   "Description must be less then 3 line": "La description doit être inférieure à 3 lignes",

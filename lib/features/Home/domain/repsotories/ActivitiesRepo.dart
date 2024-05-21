@@ -21,7 +21,7 @@ Future<Either<Failure,Unit>> CheckAbsence(String activityId,String memberId,Stri
 Future<Either<Failure,List<ActivityParticipants>>> getAllParticipants(String activityId);
 Future<Either<Failure,List<ActivityGuest>>> getAllguestOfActivity(String activityId);
 Future<Either<Failure,List<Guest>>> getAllguest(bool isupdated);
-Future<Either<Failure,Unit>> addGuest(String activityId,Guest guest);
+Future<Either<Failure,ActivityGuest>> addGuest(String activityId,Guest guest);
 Future<Either<Failure,Unit>> addGuestToActivity(String activityId,String guestId);
 Future<Either<Failure,Unit>> deleteGuest(String activityId,String guestId);
 Future<Either<Failure,Unit>> updateGuest(String activityId,Guest guest);

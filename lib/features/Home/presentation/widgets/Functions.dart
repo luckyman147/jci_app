@@ -40,6 +40,7 @@ import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../bloc/Activity/activity_cubit.dart';
 import '../bloc/IsVisible/bloc/visible_bloc.dart';
 import '../bloc/textfield/textfield_bloc.dart';
+import 'NotesWidget.dart';
 
 
 class ActivityAction {
@@ -56,25 +57,25 @@ final guestA=ActivityGuest(guest: guest, status: status);
       builder: (context) {
         return AlertDialog(
           title: Text(
-            "Delete Guest",
+            "${"Delete".tr(context)} ${"Visitor".tr(context)}",
             style: PoppinsRegular(19, textColorBlack),
           ),
           contentPadding: EdgeInsets.symmetric(vertical: 20.0), // Adjust vertical padding
           content: SizedBox(
-            height: 100, // Set the desired height
+            // Set the desired height
             child: Column(
               mainAxisSize: MainAxisSize.min, // Ensure the column takes minimum space
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    "Are you sure you want to delete ${guest.name}",
+                    "${"Are you sure you want to delete".tr(context)} ${guest.name}",
                     style: PoppinsRegular(17, textColorBlack),
                   ),
                 ),
                 if (guest.id.isEmpty)
                   Text(
-                    "This guest has not been saved to the database",
+                    "This visitor has not been saved to the database",
                     style: PoppinsSemiBold(
                       17,
                       Colors.red,
@@ -154,7 +155,7 @@ final guestA=ActivityGuest(guest: guest, status: status);
   }
  static void AddGuest(GlobalKey<FormState> formKey, TextEditingController controller, TextEditingController controller2, TextEditingController controller3, BuildContext context,String activityId) {
     if (formKey.currentState!.validate()) {
-      final guest=Guest(name: controller.text, email: controller2.text, phone: controller3.text,isConfirmed: true, id: '');
+      final guest=Guest(name: controller.text, email: controller2.text, phone: controller3.text,isConfirmed: false, id: '');
       final guestOfActivity=ActivityGuest(guest: guest, status: "pending");
       final guestP=guestParams(guest: guestOfActivity, guestId: guest.id, status: guestOfActivity.status, activityid: activityId);
       context.read<ParticpantsBloc>().add(AddGuestEvent(params: guestP));
@@ -162,6 +163,9 @@ final guestA=ActivityGuest(guest: guest, status: status);
       controller2.clear();
       controller3.clear();
       context.read<ActivityCubit>().selectIndex(0);
+      context.read<ParticpantsBloc>().add(GetAllGuestsEvent(isUpdated: true));
+
+
 
     }
   }
@@ -199,6 +203,34 @@ static   List<String> combineTextFields(List<TextEditingController> controllers)
     }
 
     return combinedControllers;
+  }
+static Future<bool> showNotes(BuildContext context, MediaQueryData mediaQuery,Activity activitys) async{
+
+   final exit=await     showModalBottomSheet(
+       isScrollControlled: true,
+       showDragHandle: true,
+       enableDrag: true,
+
+       useSafeArea: true,
+
+       context: context, builder: (context){
+
+
+     return NotesListWidget(activityId: activitys.id,);
+   });
+   return exit??false;
+ }
+  static   String getFirstNWords(String content, int n) {
+    // Split the content by spaces to get individual words
+    List<String> words = content.split(' ');
+
+    // If the content has fewer than n words, return the whole content
+    if (words.length <= n) {
+      return content;
+    }
+
+    // Otherwise, return the first n words joined by spaces
+    return words.take(n).join(' ');
   }
 static Future<void> launchURL(BuildContext context, String url) async {
   // Show an AlertDialog to confirm before launching the URL

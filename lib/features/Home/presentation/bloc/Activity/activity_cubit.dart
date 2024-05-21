@@ -11,6 +11,9 @@ class ActivityCubit extends Cubit<ActivityState> {
   void selectActivity(activity activity) {
     emit(ActivityState(activity));
   }
+  void changeNotePage (int index){
+    emit(state.copyWith(noteIndex: index));
+  }
   void selectIndex(int index) {
     emit(state.copyWith(index: index));
   }
