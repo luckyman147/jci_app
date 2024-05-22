@@ -511,8 +511,14 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
       await newNote.save();
       activity.notes.push(newNote)
       await activity.save()
-      req.io.emit('noteAdded', newNote);
-      res.status(201).json({ message: 'Note added successfully', note: newNote });
+    const formatted=   {
+      id: newNote._id,
+      title: newNote.title,
+      content: newNote.content,
+      date: newNote.date,
+     owner:await getMembersInfo([newNote.owner as string])
+    };
+      res.status(201).json(formatted);
 
     }
     catch(e){
@@ -523,18 +529,53 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
 
 
   }
+  export const SaveNotes=async (req:Request,res:Response)=>{
+    try {
+    
+      const member=req.member
+      
+      const noteInputs=plainToClass(noteInput,req.body)
+      // Validate the inputs
+      const errors = await validate(noteInputs, { validationError: { target: false } });
+      if (errors.length > 0) {
+        return res.status(400).json({ message: 'Invalid input', errors });
+      }
+ const date = new Date();
+ date.setHours(date.getHours() + 1);
+
+      const newNote = new notes({
+        title: noteInputs.title,
+        content: noteInputs.content,
+        date:date,
+        owner: member
+        // Add more fields if necessary
+      });
+      await newNote.save();
+
+
+      
+      res.status(201).json(newNote);
+
+    }
+    catch(e){
+      console.error('Error fetching notes of activity:', e);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+
+
+
+  }
+
+
   export const updateNote = async (req: Request, res: Response) => {
     try {
-      const { activityId, noteId } = req.params;
+      const {  noteId } = req.params;
 
   
-      const activity = await Activity.findById(activityId);
-      if (!activity) {
-        return res.status(404).json({ message: 'Activity not found' });
-      }
+   
   
       const note = await notes.findById(noteId);
-      if (!note || !activity.notes.includes(noteId)) {
+      if (!note ) {
         return res.status(404).json({ message: 'Note not found' });
       }
   

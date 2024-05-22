@@ -99,7 +99,41 @@ class GetNotesOfActivityUseCase {
   Future<Either<Failure,List<Note>>> call(String activityId,bool isUpdated,{String start="0",String limit="4"}) async {
     return await MeetingRepository.getAllNotes(activityId, start, limit, isUpdated);
   }
+}class CreateNotesUseCases extends UseCase<Note,NoteInput> {
+  final MeetingRepo MeetingRepository;
+
+  CreateNotesUseCases(this.MeetingRepository);
+
+  Future<Either<Failure,Note>> call(param) async {
+    return await MeetingRepository.addNotes(param.activityId,param.note!);
+  }
 }
 
+class UpdateNotesUseCases extends UseCase<Unit,Note> {
+  final MeetingRepo MeetingRepository;
+
+  UpdateNotesUseCases(this.MeetingRepository);
+
+  Future<Either<Failure,Unit>> call(param) async {
+    return await MeetingRepository.UpdateNotes(param);
+  }
+}
+
+class DeleteNotesUseCases extends UseCase<Unit,NoteInput> {
+  final MeetingRepo MeetingRepository;
+
+  DeleteNotesUseCases(this.MeetingRepository);
+
+  Future<Either<Failure,Unit>> call(params) async {
+    return await MeetingRepository.deleteNotes(params.activityId,params.noteid!);
+  }
+}
+class NoteInput{
+  final String activityId;
+  final Note? note;
+  final String? noteid;
+
+  NoteInput(this.activityId, this.note, this.noteid, );
+}
 
 

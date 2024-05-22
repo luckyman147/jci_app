@@ -47,48 +47,53 @@ AddDots(activitys, mediaQuery)
               children: [
                 ActivityDetailsComponent.rowName(
                     mediaQuery, context, activitys, act, index),
-
                 ActivityDetailsComponent.infoCircle(mediaQuery, activitys,context),
+                buildNotes(mediaQuery, context),
+
                 ActivityDetailsComponent.Description(mediaQuery, activitys),
-Padding(
-
-  padding: paddingSemetricHorizontal(h: 18),
-  child: SizedBox(
-    width: mediaQuery.size.width,
-    height: 50,
-    child: InkWell(
-      onTap: () {
-        context.read<NotesBloc>().add(Notesfetched(activityId:activitys.id , isUpdated: true));
-
-        ActivityAction.showNotes(context, mediaQuery,activitys);
-      },
-
-
-      child: DottedBorder(
-        borderType: BorderType.RRect,
-        radius: Radius.circular(12),
-        padding: EdgeInsets.all(6),
-        color: textColorBlack,
-          dashPattern: [12,16,13,16],
-          child: Center(
-            child: Text("Add Notes",style: PoppinsSemiBold(mediaQuery.devicePixelRatio*5, textColorBlack, TextDecoration.none),
-
-                  ),
-          )
-
-                      //Align(
-                      //alignment: Alignment.topLeft,
-
-                      //child: Text("Maps",style: PoppinsSemiBold(mediaQuery.devicePixelRatio*5, textColorBlack, TextDecoration.none), ))
-      ),
-    ),
-  ),
-)],
+],
             ),
           )
         ],
       ),
     );
+  }
+
+  Padding buildNotes(MediaQueryData mediaQuery, BuildContext context) {
+    return Padding(
+
+padding: paddingSemetricVerticalHorizontal(h: 18, v: 10),
+child: SizedBox(
+  width: mediaQuery.size.width,
+  height: 50,
+  child: InkWell(
+    onTap: () {
+      context.read<NotesBloc>().add(Notesfetched(activityId:activitys.id , isUpdated: true));
+
+      ActivityAction.showNotes(context, mediaQuery,activitys);
+    },
+
+
+    child: DottedBorder(
+      borderType: BorderType.RRect,
+      radius: Radius.circular(12),
+      padding: EdgeInsets.all(6),
+      color: textColorBlack,
+        dashPattern: [12,16,13,16],
+        child: Center(
+          child: Text("Add Notes",style: PoppinsSemiBold(mediaQuery.devicePixelRatio*5, textColorBlack, TextDecoration.none),
+
+                ),
+        )
+
+                    //Align(
+                    //alignment: Alignment.topLeft,
+
+                    //child: Text("Maps",style: PoppinsSemiBold(mediaQuery.devicePixelRatio*5, textColorBlack, TextDecoration.none), ))
+    ),
+  ),
+),
+);
   }
 
 

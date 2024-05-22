@@ -1,5 +1,5 @@
 import express from "express";
-import { addGuest, addGuestToAct, addNotes, changeMemberStatus, deleteGuest, deleteNote, GetActivityByid, GetActivityByname, getActivityMembers, getAllGuests, getAllGuestsOfActivity, getAllnotes, updateGuest, updateGuestConfirmation, updateNote } from "../../controllers/activities/activityController";
+import { addGuest, addGuestToAct, addNotes, changeMemberStatus, deleteGuest, deleteNote, GetActivityByid, GetActivityByname, getActivityMembers, getAllGuests, getAllGuestsOfActivity, getAllnotes, SaveNotes, updateGuest, updateGuestConfirmation, updateNote } from "../../controllers/activities/activityController";
 import { authenticate } from "passport";
 import { Authenticate } from "../../middleware/CommonAuth";
 
@@ -27,7 +27,8 @@ router.get('/:id',GetActivityByid)
 
 router.get('/notes/:activityId',getAllnotes)
 router.post('/notes/:activityId',Authenticate,addNotes)
-router.patch('/notes/:activityId/:noteId',updateNote)
+router.post('/notes//save',Authenticate,SaveNotes)
+router.patch('/notes/:noteId',updateNote)
 router.delete('/notes/:activityId/:noteId',deleteNote)
 router.post('/SearchName/get',GetActivityByname)
 router.get('/members/:activityId',getActivityMembers)

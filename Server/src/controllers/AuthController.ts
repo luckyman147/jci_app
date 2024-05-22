@@ -28,7 +28,7 @@ if (existmember !==null){
     return res.status(409).json({message:'A member exist the same '})
 
 }
-const role = await findrole('member')
+const role = await findrole('New Member')
 console.log(role)
     const salt=await GenerateSalt()
     const UserPassword=await HashPassword(password,salt)
@@ -56,7 +56,7 @@ console.log(role)
 
         }
         console.log(result.language)
-        sendNewMemberEmail(result.language,result.firstName,result.email)
+        sendNewMemberEmail(result.language,result.firstName,result.email,false,"")
         console.log(result)
         return res.status(201).json({message:"sign up completed " })
 
@@ -243,7 +243,7 @@ catch(err){
                 
 
           })
-          sendNewMemberEmail(MemberInfo.language,MemberInfo.firstName,MemberInfo.email)
+          sendNewMemberEmail(MemberInfo.language,MemberInfo.firstName,MemberInfo.email,false,"")
           return res.status(200).json({refreshToken:refreshToken,accessToken:accessToken,email:MemberInfo.email,role:await findroleByid(MemberInfo.role._id),
            status:'logged' ,Permissions: await getPermissionsKeys(
             MemberInfo.Permissions,MemberInfo.role)})
@@ -274,7 +274,7 @@ export const MemberGoogleLoginSignUp= async(req:Request,res:Response,next:NextFu
                 return res.status(409).json({message:'A member exist the same '})
             
             }
-            const role = await findrole('member')
+            const role = await findrole('New Member')
             console.log(role)
                 const salt=await GenerateSalt()
                 const UserPassword=await HashPassword(password,salt)
@@ -321,7 +321,7 @@ export const MemberGoogleLoginSignUp= async(req:Request,res:Response,next:NextFu
                 
 
           })
-          sendNewMemberEmail(result.language,result.firstName,result.email)
+          sendNewMemberEmail(result.language,result.firstName,result.email,false,"")
           return res.status(201).json({refreshToken:refreshToken,accessToken:accessToken,email:result.email,role:await findroleByid(result.role._id),
            status:'logged' ,Permissions: await getPermissionsKeys(
             result.Permissions,result.role)})
@@ -333,3 +333,5 @@ export const MemberGoogleLoginSignUp= async(req:Request,res:Response,next:NextFu
             return res.status(500).json({message:'something went wrong'})
             
             }
+
+            

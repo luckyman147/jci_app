@@ -30,6 +30,6 @@ abstract class MeetingRepo  {
   Future<Either<Failure,List<Note>>> getAllNotes(String activityId,String start,String limit,bool isUpdated);
   Future<Either<Failure,Note>> addNotes(String activityId,Note note);
   Future<Either<Failure,Unit>> deleteNotes(String activityId,String noteId);
-  Future<Either<Failure,Unit>> UpdateNotes(String activityId,Note note);
+  Future<Either<Failure,Unit>> UpdateNotes(Note note);
 
 }

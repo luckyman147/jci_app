@@ -2,12 +2,14 @@ import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
 import { CreateRoleInput, ValidateCotisation, ValidatePoints } from "../dto/admin.dto";
+import { Guest } from "../models/activities/Guests";
 import { Member } from "../models/Member";
 import { Permission } from "../models/Pemission";
 import { Role } from "../models/role";
+import { GenerateSalt, generateStrongPassword, HashPassword } from "../utility";
+import { sendMembershipEmail, sendNewMemberEmail, sendUpdatedPointsEmail, sendVerifiedMemberEmail } from "../utility/NotificationEmailUtility";
 import { CheckObjectif } from "../utility/objectifcheck";
-import { findrole, findroleByid, getActivitiesInfo, getFilesInfoByIds, getMeetingsInfo, GetMemberPermission, getteamsInfo, getTrainingInfo } from "../utility/role";
-import { sendMembershipEmail, sendUpdatedPointsEmail, sendVerifiedMemberEmail } from "../utility/NotificationEmailUtility";
+import { findrole, findroleByid, getActivitiesInfo, getFilesInfoByIds, getMeetingsInfo, GetMemberPermission, getPublicPermissions, getteamsInfo, getTrainingInfo } from "../utility/role";
 
 
 //& find member
@@ -304,3 +306,54 @@ export const UpdateMemberPermissions = async (req: Request, res: Response, next:
                             return res.status(500).json({ message: 'Error updating permissions for member' });
                         }
                     }
+export const ChangeGuestToNewMember=async(req:Request,res:Response)=>{
+    const guestId=req.params.guestId
+const guest=await Guest.findById(guestId)
+if (guest){
+//existed member 
+const existed = await Member.findOne({ email: guest.email });
+if (existed){
+    return res.status(409).json({message:"member already exist"})
+
+}
+const salt=await GenerateSalt()
+const password=generateStrongPassword(8)
+const UserPassword=await HashPassword(password,salt)
+const Permissions=await getPublicPermissions()
+const role = await findrole('New Member')
+
+const newMember=await Member.create({
+    email:guest.email,
+    password:UserPassword,
+    salt:salt,
+    cotisation:[false,false],
+    firstName:guest.name,
+    is_validated:false,
+    adress:'',
+    phone:'',
+    language:'fr',
+
+    lastName:guest.name,
+    role:role,
+    Permissions:Permissions
+
+})
+if (newMember){
+    if(role){
+        role.Members.push(newMember.id)
+        await role.save()
+
+    }
+   await guest.deleteOne()
+
+    console.log(newMember.language)
+    sendNewMemberEmail(newMember.language,newMember.firstName,newMember.email,true,password)
+  
+    return res.status(201).json({message:"sign up completed " })
+
+    
+}
+}
+return res.status(404).json({message:"guest not found"})
+
+}

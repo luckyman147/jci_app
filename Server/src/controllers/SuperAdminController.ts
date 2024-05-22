@@ -4,14 +4,45 @@ import { validate } from "class-validator";
 
 import { plainToClass } from 'class-transformer';
 import { PermissionInput, PresidentsInut } from '../dto/superAdmin.dto';
+import { Activity } from '../models/activities/activitieModel';
 import { LastPresidents } from '../models/LastPresidents';
 import { Member } from '../models/Member';
 import { Permission } from '../models/Pemission';
 import { Role } from '../models/role';
+import { team } from '../models/teams/team';
 import { generateSecureKey } from '../utility';
-import { findrole } from '../utility/role';
 import { sendPromotionEmail } from '../utility/NotificationEmailUtility';
+import { findrole } from '../utility/role';
 
+export const deleteMember=async(req:Request,res:Response)=>{
+    const id=req.params.id
+    const member=await Member.findById(id)
+    if (member) {
+        const role=await Role.findById(member.role)
+        if (role){
+            role.Members=role.Members.filter(memberid=>memberid!=member.id)
+            await role.save()
+        }
+        // find member in teams
+        const Team=await team .find()
+        Team.forEach(async(team)=>{
+            team.Members=team.Members.filter(memberid=>memberid!=member.id)
+            await team.save()
+        })
+        const activity=await Activity.find()
+        activity.forEach(async(activity)=>{
+            activity.Participants=activity.Participants.filter(memberid=>memberid!=member.id)
+            await activity.save()
+        })
+        await member.deleteOne()
+        return res.status(204).json({ message: 'Member deleted successfully' });
+
+    
+    }else{
+        return res.status(404).json({ message: 'Member not found' });
+    }
+
+}
 export const ChangeToAdmin=async(req:Request, res:Response,next:NextFunction)=>{
     const superAdmin=req. superadmin
    

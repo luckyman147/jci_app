@@ -1,11 +1,14 @@
 import 'dart:developer';
 
+import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/widgets/loading_widget.dart';
+import 'package:jci_app/features/Home/domain/usercases/MeetingsUseCase.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/notesBloc/notes_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Functions.dart';
@@ -13,7 +16,9 @@ import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileCompo
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/TaskComponents.dart';
 
+import '../../../../core/util/snackbar_message.dart';
 import '../../../Teams/presentation/widgets/MembersTeamSelection.dart';
+import '../../domain/entities/Note.dart';
 import 'ShimmerEffects.dart';
 
 class NotesListWidget extends StatefulWidget {
@@ -25,6 +30,7 @@ final String activityId;
 
 class _NotesListWidgetState extends State<NotesListWidget> {
   final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
 
@@ -52,10 +58,39 @@ class _NotesListWidgetState extends State<NotesListWidget> {
   }
 TextEditingController titleController = TextEditingController();
 TextEditingController contentController = TextEditingController();
-
+GlobalKey<FormState> formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ActivityCubit, ActivityState>(
+    return BlocListener<NotesBloc, NotesState>(
+  listener: (context, ste) {
+    if (ste.status == NotesStatus.Created) {
+
+      titleController.clear();
+      contentController.clear();
+      context.read<ActivityCubit>().changeNotePage(0);
+      SnackBarMessage.showSuccessSnackBar(message: "Note Created Succesfully", context: context);
+      
+    }
+    if (ste.status == NotesStatus.Deleted) {
+   
+      SnackBarMessage.showSuccessSnackBar(message: "Note deleted Succesfully", context: context);
+      context.read<NotesBloc>().add(resetNotes());
+      context.read<NotesBloc>().add(Notesfetched(activityId: widget.activityId, isUpdated: true));
+      
+    }
+    if (ste.status == NotesStatus.Updated) {
+      titleController.clear();
+      contentController.clear();
+      context.read<ActivityCubit>().changeNotePage(0);
+      context.read<NotesBloc>().add(resetNotes());
+      context.read<NotesBloc>().add(Notesfetched(activityId: widget.activityId, isUpdated: true));
+      SnackBarMessage.showSuccessSnackBar(message: "Note Updated Succesfully", context: context);
+
+    }
+
+    // TODO: implement listener}
+  },
+  child: BlocBuilder<ActivityCubit, ActivityState>(
   builder: (context, state) {
     return PageView.builder(
       controller: PageController(),
@@ -63,7 +98,7 @@ TextEditingController contentController = TextEditingController();
       if (state.noteIndex==0)
       return buildBlocConsumer();
       else{
-        return addnoTes(titleController,contentController);
+        return addnoTes(titleController,contentController,widget.activityId, formKey);
       }
     },
       itemCount: 2,
@@ -72,6 +107,7 @@ TextEditingController contentController = TextEditingController();
       },
     );
   },
+),
 );
   }
 
@@ -83,8 +119,13 @@ case NotesStatus.initial:
   case NotesStatus.loading:
   return ReloadDetailsPage.loadNotesShimer(4);
 case NotesStatus.success:
+  case NotesStatus.Created:
+  case NotesStatus.Updated:
+  case NotesStatus.Deleted:
+  case NotesStatus.FailureCRUD:
+
   if (state.notes.isEmpty) {
-    return  Center(child: Text('No Notes',style: PoppinsRegular(17, textColorBlack),));
+    return  BUildWhileNoNotes(context);
   }
   return buildNotex(context, state);
 case NotesStatus.failure:
@@ -103,8 +144,43 @@ default:
         context.read<NotesBloc>().add(Notesfetched(activityId: widget.activityId, isUpdated: true));
 
       }
+
   },
   );
+  }
+
+  Center BUildWhileNoNotes(BuildContext context) {
+    return Center(child: InkWell(
+    onTap: (){
+      context.read<ActivityCubit>().changeNotePage(1);
+    },
+    child: SizedBox(
+      height: MediaQuery.of(context).size.height*0.5,
+      width: MediaQuery.of(context).size.width*0.8,
+      child: DottedBorder(
+
+        borderType: BorderType.RRect,
+        radius: Radius.circular(12),
+        padding: EdgeInsets.all(6),
+        dashPattern: [12, 16],
+        color: textColor,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(Icons.add,size: 50,color: textColor,),
+              SizedBox(height: 10,),
+              Text('Add The First Note',style: PoppinsRegular(14, textColorBlack),),
+
+
+
+            ],
+          ),
+        ),
+      ),
+    ),
+  ));
   }
 
   SizedBox buildNotex(BuildContext context, NotesState state) {
@@ -128,43 +204,52 @@ default:
         child: ListView.separated(
           itemBuilder: (context, index) {
 
-            if (index >= state.notes.length) {
-              return LoadingWidget();
+            if (index >= state.notes.length ) {
+              return SizedBox();
             } else {
-              return Container(
-margin: paddingSemetricHorizontal(),
-            height: 169,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              border: Border.all(color: textColorBlack,
-                width: .5,
-              ),
-              borderRadius: BorderRadius.circular(10),
+              return InkWell(
+                onTap: (){
+            ActivityAction.      showNotedetails(context, state, index);
+                },
+                onLongPress: ()
+                async{
+                  await ActivityAction.showDeleteNotedialog(state, index, context,widget.activityId);
+                },
+                child: Container(
+                margin: paddingSemetricHorizontal(),
+                            height: 169,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                border: Border.all(color: textColorBlack,
+                  width: .5,
+                ),
+                borderRadius: BorderRadius.circular(10),
 
 
-            ),
-            child:Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment:   CrossAxisAlignment.start,
-              children: [
-                NoteHeader(state, index),
-                Center(
-                  child: SizedBox(
-                    height: 1,
-                      width: MediaQuery.of(context).size.width*0.8,
-                      child: const Divider()),
-                ),
-                noteBody(state, index),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    DateFormat('EEEE,MMM,yyy').format(state.notes[index].date),
-                    style: PoppinsRegular(14, textColor),
+                            ),
+                            child:Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment:   CrossAxisAlignment.start,
+                children: [
+                  NoteHeader(state, index),
+                  Center(
+                    child: SizedBox(
+                      height: 1,
+                        width: MediaQuery.of(context).size.width*0.8,
+                        child: const Divider()),
                   ),
-                ),
-              ],
+                  noteBody(state, index),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      DateFormat('EEEE,MMM,yyy').format(state.notes[index].date),
+                      style: PoppinsRegular(14, textColor),
+                    ),
                   ),
-          );
+                ],
+                    ),
+                          ),
+              );
             }
           },
           itemCount: state.hasReachedMax ? state.notes.length : state.notes.length + 1,
@@ -175,6 +260,9 @@ margin: paddingSemetricHorizontal(),
       );
   }
 
+
+
+  
   Padding NoteHeader(NotesState state, int index) {
     return Padding(
                 padding: paddingSemetricVerticalHorizontal(),
@@ -198,7 +286,16 @@ margin: paddingSemetricHorizontal(),
                   Padding(
                     padding: paddingSemetricHorizontal(),
                     child: ProfileComponents.buildFutureBuilder(
-                    IconButton.outlined(onPressed: ()=>null, icon: Icon(Icons.edit))
+                    IconButton.outlined(onPressed: (){
+                      titleController.text = state.notes[index].title;
+                      contentController.text = state.notes[index].content;
+                      context.read<ActivityCubit>().changeNotePage(1);
+                      context.read<NotesBloc>().add(changeNoteActionEvent(state.notes[index].id,action: NotesAction.update
+
+                      ));
+
+
+                    }, icon: Icon(Icons.edit))
 
                     , true, "", (p0) => FunctionMember.isOwner(state.notes[index].owner[0]["_id"], ),
                     ),
@@ -235,6 +332,9 @@ margin: paddingSemetricHorizontal(),
             children: [
               BackButton(onPressed: (){
                 Navigator.pop(context);
+                context.read<ActivityCubit>().changeNotePage(0);
+                context.read<NotesBloc>().add(resetNotes());
+
               },),
               Padding(
                 padding: paddingSemetricHorizontal(),
@@ -249,80 +349,138 @@ margin: paddingSemetricHorizontal(),
         ],
       );
   }
-  Widget addnoTes(TextEditingController title, TextEditingController content){
+  Widget addnoTes(TextEditingController title, TextEditingController content,String activityId,GlobalKey<FormState> _formKey,
+      ){
     return Padding(
       padding: paddingSemetricVerticalHorizontal(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              BackButton(onPressed: (){
-                context.read<ActivityCubit>().changeNotePage(0);
-              },),
-              Text("${"Add".tr(context)} note",style: PoppinsRegular(16, textColorBlack),),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end
-                ,            children: [
-                IconButton(
-                  icon: Icon(Icons.save,color: SecondaryColor,),
-                  tooltip: 'Save',
-                  onPressed: () {
-                    // Handle save action
-                    print('Save button pressed');
-                  },
+      child: BlocBuilder<NotesBloc, NotesState>(
+  builder: (context, state) {
+    return Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                BackButton(onPressed: (){
+                  context.read<ActivityCubit>().changeNotePage(0);
+                  title.clear();
+                  content.clear();
+                  context.read<NotesBloc>().add(changeNoteActionEvent("",action: NotesAction.create
+
+                  ));
+
+                },),
+                state.action==NotesAction.create?Padding(
+                  padding: paddingSemetricHorizontal(),
+                  child: Text("${"Add".tr(context)} note",style: PoppinsRegular(16, textColorBlack),),
+                ):Padding(
+                  padding: paddingSemetricHorizontal(),
+                  child: Text("${"Edit".tr(context)} note",style: PoppinsRegular(16, textColorBlack),),
                 ),
-                IconButton(
-                  icon: Icon(Icons.send,color: PrimaryColor,),
-                  tooltip: 'Send',
-                  onPressed: () {
-                    // Handle send action
-                    print('Send button pressed');
-                  },
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end
+                  ,            children: [
+                  IconButton(
+                    icon: Icon(Icons.archive,color: SecondaryColor,),
+                    tooltip: 'ARCHIVE',
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        final note=Note(id: state.noteId, title: title.text, content: content.text, date: DateTime.now(), owner:"" );
+
+                        if (state.action==NotesAction.update){
+                          context.read<NotesBloc>().add(updateNote(note: note));
+
+                      }}
+                      // Handle save action
+
+                    },
+                  ),
+                  Visibility(
+                    visible: state.action==NotesAction.create,
+                    child: IconButton(
+                      icon: Icon(Icons.send,color: PrimaryColor,),
+                      tooltip: 'Send',
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          final note=Note(id: '', title: title.text, content: content.text, date: DateTime.now(), owner:"" );
+                          final noteIput=NoteInput(activityId, note,null);
+
+                          context.read<NotesBloc>().add(createNoteEvent(note: noteIput));
+
+                        }
+
+                      },
+                    ),
+                  ),
+                ],
                 ),
               ],
-              ),
-            ],
-          )
-          ,
+            )
+            ,
 
-          Padding(
-            padding: paddingSemetricVerticalHorizontal(),
-            child: TextFormField(
-              controller: title,
-              style: PoppinsRegular(14, textColorBlack),
-              decoration: InputDecoration(
-                hintText: "Title",
+            Padding(
+              padding: paddingSemetricVerticalHorizontal(),
+              child: TextFormField(
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter some text'.tr(context);
+                  }
+                  return null;
+                },
 
-                hintStyle: PoppinsRegular(14, textColorBlack),
-                border: border(PrimaryColor)
-              ),
-            ),
-          ),
-          Padding(
-            padding: paddingSemetricHorizontal(),
-            child: TextFormField(
-              maxLines: 20,
-              maxLength: 1000,
-              controller: content,
-              style: PoppinsRegular(14, textColorBlack),
-              decoration: InputDecoration(
-                hintText: "Content",
 
-                hintStyle: PoppinsRegular(14, textColor),
-                border: border(PrimaryColor)
-                  ,enabledBorder: border(PrimaryColor)
+                controller: title,
+                style: PoppinsRegular(14, textColorBlack),
+                decoration: InputDecoration(
+                  hintText: "Title",
+
+        errorStyle: PoppinsRegular(14, Colors.red),
+                  hintStyle: PoppinsRegular(14, textColorBlack),
+                  border: border(PrimaryColor),
+                    enabledBorder: border(PrimaryColor)
                   ,focusedBorder: border(PrimaryColor)
-
+                ),
               ),
             ),
-          ),
+            Padding(
+              padding: paddingSemetricHorizontal(),
+              child: TextFormField(
+                maxLines: 20,
+                maxLength: 1000,
+                controller: content,
+
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter some text'.tr(context);
+                  }
+                  else if(value.length<10){
+                    return 'Please enter more than 10 characters';
+                  }
+                  return null;
+                },
+                style: PoppinsRegular(14, textColorBlack),
+                decoration: InputDecoration(
+                  hintText: "Content",
+errorStyle: PoppinsRegular(14, Colors.red),
+                  hintStyle: PoppinsRegular(14, textColor),
+                  border: border(PrimaryColor)
+                    ,enabledBorder: border(PrimaryColor)
+                    ,focusedBorder: border(PrimaryColor)
+
+                ),
+              ),
+            ),
 
 
-        ],
-      ),
+          ],
+        ),
+      );
+  },
+),
     );
   }
 }

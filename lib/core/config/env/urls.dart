@@ -78,7 +78,9 @@ class Urls{
 
   static String AddGuestToActivity(String activityId, String guestId) => "$BaseUrl/Activity/guests/$activityId/$guestId";
 
-  static String DeleteNotes(String activityId, String noteId) => "$BaseUrl/Activity/notes/$activityId/$noteId";
+  static String DeleteNotes( String act,String noteId) => "$BaseUrl/Activity/notes/$act/$noteId";
 
   static String GetNotes(String activityId,String start,String limit) => "$BaseUrl/Activity/notes/$activityId?start=$start&limit=$limit";
+
+  static String UpdateNotes(String id) => "$BaseUrl/Activity/notes/$id";
 }

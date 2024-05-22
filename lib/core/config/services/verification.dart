@@ -24,15 +24,14 @@ void check(BuildContext context,bool mounted)async {
   final language = await Store.getLocaleLanguage();
   final token = await Store.GetTokens();
   final islooged = await Store.isLoggedIn();
-  if (!mounted) return;
-  if (authState is AuthLogoutState || authState is AuthFailureState &&!islooged) {
+  if (!mounted) return;   if (language == null) {
+
+    context.go('/screen');}
+ else  if (authState is AuthLogoutState || authState is AuthFailureState &&!islooged) {
 
     context.go('/login');
   }
-
-  else  if (language == null) {
-    context.go('/screen');
-  } else if (islooged && token != null) {
+ else if (islooged && token != null) {
     context.go('/home');
   }
   else  {

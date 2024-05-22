@@ -248,9 +248,9 @@ id: meeting.id,
   }
 
   @override
-  Future<Either<Failure, Unit>> UpdateNotes(String activityId, Note note) async{
+  Future<Either<Failure, Unit>> UpdateNotes( Note note) async{
     final noteModel=NoteModel.fromEntity(note);
-    return await (getMessage(meetingRemoteDataSource.UpdateNoteOfActivity(activityId,noteModel)));
+    return await (getMessage(meetingRemoteDataSource.UpdateNoteOfActivity(noteModel)));
 
   }
 
@@ -270,7 +270,7 @@ id: meeting.id,
   }
 
   @override
-  Future<Either<Failure, Unit>> deleteNotes(String activityId, String noteId)async {
+  Future<Either<Failure, Unit>> deleteNotes( String activityId,String noteId)async {
     return await (getMessage(meetingRemoteDataSource.DeleteNote(activityId,noteId)));
 
   }

@@ -34,7 +34,7 @@ import 'domain/usercases/MeetingsUseCase.dart';
 final sl = GetIt.instance;
 
 Future<void> initActivities() async {
- sl.registerFactory(() => NotesBloc(sl()));
+ sl.registerFactory(() => NotesBloc(sl(),sl(),sl (),sl()));
 
   sl.registerFactory(() => AcivityFBloc(
     getTrainingsOfTheMonthUseCase: sl(),
@@ -82,6 +82,9 @@ Future<void> initActivities() async {
 //use cases
 
 sl.registerLazySingleton(() => LeaveEventUseCase(sl()));
+sl.registerLazySingleton(() => CreateNotesUseCases(sl()));
+sl.registerLazySingleton(() => UpdateNotesUseCases(sl()));
+sl.registerLazySingleton(() => DeleteNotesUseCases(sl()));
 sl.registerLazySingleton(() => CheckPermissionsUseCase(sl()));
 sl.registerLazySingleton(() => CheckTrainingPermissionsUseCase(sl()));
 sl.registerLazySingleton(() => CheckMeetPermissionsUseCase(sl()));

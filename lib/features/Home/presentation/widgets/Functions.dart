@@ -26,6 +26,7 @@ import 'dart:typed_data';
 
 import '../../../../core/config/services/TeamStore.dart';
 
+import '../../../MemberSection/presentation/widgets/functionMember.dart';
 import '../../../Teams/domain/entities/Team.dart';
 import '../../../Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import '../../../auth/domain/entities/Member.dart';
@@ -33,10 +34,12 @@ import '../../../auth/domain/entities/Member.dart';
 import '../../domain/entities/Activity.dart';
 import '../../domain/entities/Guest.dart';
 import '../../domain/usercases/ActivityUseCases.dart';
+import '../../domain/usercases/MeetingsUseCase.dart';
 import '../bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 
 import '../bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
+import '../bloc/Activity/BLOC/notesBloc/notes_bloc.dart';
 import '../bloc/Activity/activity_cubit.dart';
 import '../bloc/IsVisible/bloc/visible_bloc.dart';
 import '../bloc/textfield/textfield_bloc.dart';
@@ -118,7 +121,27 @@ final guestA=ActivityGuest(guest: guest, status: status);
       },
     );
   }
+ static Future<void> showDeleteNotedialog(NotesState state, int index, BuildContext context,String activityId) async {
+   if ((await FunctionMember.isOwner(state.notes[index].owner[0]['_id'])|| await FunctionMember.isAdminAndSuperAdmin())) {
+     showDialog(context: context, builder: (context){
+       return AlertDialog(
+         title: Text('${"Delete".tr(context)} Note',style: PoppinsRegular(16, textColorBlack),),
+         content: Text('Are you sure you want to delete this note?',style: PoppinsRegular(14, textColorBlack),),
+         actions: [
+           TextButton(onPressed: (){
+             Navigator.pop(context);
+           }, child: Text('Cancel'.tr(context),style: PoppinsRegular(14, textColor),)),
+           TextButton(onPressed: (){
+             final note =NoteInput(activityId, null, state.notes[index].id);
+             context.read<NotesBloc>().add(deleteNote(note: note ));
+             Navigator.pop(context);
+           }, child: Text('Delete'.tr(context),style: PoppinsRegular(14, Colors.red),)),
+         ],
+       );
+     });
 
+   }
+ }
   static void showGuestDetails(BuildContext context, Guest guest) {
     showDialog(
 
@@ -204,7 +227,32 @@ static   List<String> combineTextFields(List<TextEditingController> controllers)
 
     return combinedControllers;
   }
-static Future<bool> showNotes(BuildContext context, MediaQueryData mediaQuery,Activity activitys) async{
+  static Future<dynamic> showNotedetails(BuildContext context, NotesState state, int index) {
+    return showDialog(context: context, builder: (context){
+      return AlertDialog(
+        elevation: 7,
+        title: Text('Note Details',style: PoppinsRegular(17, PrimaryColor),),
+        content: SizedBox(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(' ${state.notes[index].title}',style: PoppinsLight(15, textColorBlack),),
+              Text(' ${state.notes[index].content}',style: PoppinsRegular(15, textColorBlack),),
+
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: (){
+            Navigator.pop(context);
+          }, child: Text('Close',style: PoppinsRegular(17, textColorBlack),))
+        ],
+      );
+    });
+  }
+
+ static Future<bool> showNotes(BuildContext context, MediaQueryData mediaQuery,Activity activitys) async{
 
    final exit=await     showModalBottomSheet(
        isScrollControlled: true,

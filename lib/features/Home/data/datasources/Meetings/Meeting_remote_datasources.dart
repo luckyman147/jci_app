@@ -34,7 +34,7 @@ abstract class MeetingRemoteDataSource {
 Future<List<NoteModel>> getModelNotesOfActivity(String activityId,String start,String limit);
 Future<Unit> DeleteNote(String activityId,String noteId);
 Future<NoteModel> CreateNoteOfActivity(String activityId,NoteModel note);
-Future<Unit> UpdateNoteOfActivity(String activityId,NoteModel note);
+Future<Unit> UpdateNoteOfActivity(NoteModel note);
 
 }
 
@@ -238,10 +238,10 @@ final body = Meeting.toJson();
   }
 
   @override
-  Future<Unit> DeleteNote(String activityId, String noteId)async {
+  Future<Unit> DeleteNote(String id, String noteId)async {
 final token = await getTokens();
     final response = await client.delete(
-      Uri.parse(Urls.DeleteNotes(activityId,noteId)),
+      Uri.parse(Urls.DeleteNotes(id,noteId)),
   headers: {"Content-Type": "application/json",
     "Authorization": "Bearer ${token[1]}"
   },
@@ -259,11 +259,11 @@ final token = await getTokens();
   }
 
   @override
-  Future<Unit> UpdateNoteOfActivity(String activityId, NoteModel note) async{
+  Future<Unit> UpdateNoteOfActivity( NoteModel note) async{
 final token = await getTokens();
     final body = note.toJson();
     return client.patch(
-      Uri.parse(Urls.DeleteNotes(activityId,note.id)),
+      Uri.parse(Urls.UpdateNotes(note.id)),
       headers: {"Content-Type": "application/json",
         "Authorization": "Bearer ${token[1]}"},
       body: json.encode(body),

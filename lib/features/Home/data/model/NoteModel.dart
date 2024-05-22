@@ -8,7 +8,7 @@ class NoteModel extends Note{
       title: json['title']??"",
       content: json['content']??"",
       date: DateTime.now(),
-      owner: json['owner'], id: json['id']??json['_id']
+      owner: json['owner'], id: json['id']??json['_id']??""
     );
   }
   factory NoteModel.fromEntity(Note note){

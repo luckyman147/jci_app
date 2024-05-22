@@ -27,7 +27,7 @@ export const emailConfig=async (language:string, englishhtml:string,Frenshhtml:s
         // Send mail with defined transport object
         if (!isNews) {
         await transporterContact.sendMail({
-            from: process.env.EMAILCONTACT, // Sender address
+            from:`"JCI Hammam Sousse  Contact" <${process.env.EMAILCONTACT}>`, // Sender address
             to: participants, // List of recipients
             subject: language === 'en' ? englishheader : frenshHeader, // Subject line
             html: htmlContent, // HTML content based on language
@@ -36,7 +36,7 @@ export const emailConfig=async (language:string, englishhtml:string,Frenshhtml:s
          
         });} else {
             await transporter.sendMail({
-                from: process.env.EMAIL, // Sender address
+                from: `"JCI Hammam Sousse News" <${process.env.EMAIL}>` , // Sender address
                 to: participants, // List of recipients
                 subject: language === 'en' ? englishheader : frenshHeader, // Subject line
                 html: htmlContent, // HTML content based on language
@@ -119,7 +119,7 @@ export const onRequestResetPasswordOTP = async (otp: number, toEmail: string): P
 
 
 
-export const sendNewMemberEmail=async(language:string,participants:string,email:string)=> {
+export const sendNewMemberEmail=async(language:string,participants:string,email:string,isSwitched:boolean,password:string)=> {
     // Create a transporter
   
     // English HTML content
@@ -135,6 +135,7 @@ export const sendNewMemberEmail=async(language:string,participants:string,email:
         <p>We are thrilled to officially welcome you as a new member of our community. Your membership is important to us, and we are excited to have you on board!</p>
         <p>As a member, you will have access to a wide range of resources, events, and opportunities to connect with like-minded individuals.</p>
         <p>Thank you for joining us, and we look forward to your active participation and contributions.</p>
+
         <p>Best regards,</p>
 
     </div>
@@ -157,6 +158,11 @@ ${footer}
         <p>Cher(e) ${participants},</p>
         <p>Nous sommes ravis de vous accueillir officiellement en tant que nouveau membre de notre communauté. Votre adhésion est importante pour nous, et nous sommes heureux de vous compter parmi nous !</p>
         <p>En tant que membre, vous aurez accès à une large gamme de ressources, d'événements et d'opportunités pour vous connecter avec des personnes partageant les mêmes idées.</p>
+        ${isSwitched ? `
+        <p>Pour accéder à votre compte, veuillez utiliser le mot de passe suivant :</p>
+        <p>Ton mot de passe est  : <strong>${password}</strong></p>
+        <p style="color: red;">Important : Ne partagez pas ce mot de passe avec qui que ce soit pour assurer la sécurité de votre compte.</p>
+        ` : ''}
         <p>Merci de nous rejoindre, et nous sommes impatients de votre participation active et de vos contributions.</p>
         <p>Cordialement,</p>
       
