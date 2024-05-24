@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -27,24 +28,39 @@ Widget MemberContainer(mediaQuery,Member item)=>BlocBuilder<FormzBloc, FormzStat
       return  Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          imageWidget(item,50,23,true),
-          SizedBox(
-            width: mediaQuery.size.width / 3,
-            child: ElevatedButton(
-                style: ff.id==item.id?bottondec(true):bottondec(false),
+          imageWidget(item,50,15,true,100),
+          InkWell(
+            onTap: () {
+              context.read<FormzBloc>().add(MemberFormzChanged( memberFormz: item));
 
-                onPressed: (){
-                  context.read<FormzBloc>().add(MemberFormzChanged( memberFormz: item));
 
-                  Navigator.pop(context);
+            },
+            child: AnimatedContainer(
+              width: mediaQuery.size.width / 3,
+              duration: Duration(milliseconds: 800),
+              curve: Curves.easeIn,
+              decoration: BoxDecoration(
+                color: ff.id == item.id?PrimaryColor:BackWidgetColor,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 1,
+                      offset: Offset(0, 1))
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(ff.id==item.id? "Selected".tr(context):"Select".tr(context),
 
-                }, child: Text(ff.id==item.id? "Selected".tr(context):"Select".tr(context),
-
-              style:PoppinsSemiBold(17,
+                                style:PoppinsSemiBold(14,
 
                 ff.id==item.id?textColorWhite:textColorBlack,
 
-                TextDecoration.none) ,)),
+                TextDecoration.none) ,),
+              ),
+            ),
           )
         ],);
     }
@@ -78,7 +94,7 @@ Widget bottomMemberSheet(BuildContext context, MediaQueryData mediaQuery,
             child: Padding(
               padding: paddingSemetricHorizontal(),
               child:
-              member!=null&& member.firstName.isNotEmpty?imageWidget(member,40,23,true):
+              member!=null&& member.firstName.isNotEmpty?imageWidget(member,40,23,true,150):
               Text("$text",style: PoppinsNorml(18, ThirdColor),),
             ),
           )),
@@ -135,7 +151,7 @@ Widget MembersBottomSheet(String text,
                     else if (state.memberName.value.isEmpty|| state.memberName.displayError!= null ){
                       context.read<MembersBloc>().add(GetAllMembersEvent(false));
                     }
-                    debugPrint(state.memberName.displayError.toString());
+
                     // BlocProvider.of<MembersBloc>(context)
                     //    .add(SearchMembersEvent(value));
                   },
@@ -190,7 +206,7 @@ Widget MembersWidget(MediaQueryData mediaQuery,String name)=>BlocConsumer<Member
     } else if (state.userStatus == UserStatus.MembersLoaded) {
       return RefreshIndicator(
           onRefresh: () {
-            print(state.members.length);
+
             return
 
               RefreshMembers(context,SearchType.All,"");
@@ -209,12 +225,12 @@ Widget MembersWidget(MediaQueryData mediaQuery,String name)=>BlocConsumer<Member
       if (name.isNotEmpty){
         return RefreshIndicator(
             onRefresh: () {
-              print(state.members.length);
+
               return
 
                 RefreshMembers(context,SearchType.Name,name);
             },
-            child: MembersDetails( state.members,mediaQuery));
+            child: MembersDetails( state.memberByName,mediaQuery));
       }
       else{
         context.read<MembersBloc>().add(GetAllMembersEvent(true));
@@ -278,7 +294,7 @@ Widget MembersDetails(List<Member> members,mediaQuery)=>ListView.separated(
 
 
 
-Widget imageWidget(Member item,double height , double size,bool bools){
+Widget imageWidget(Member item,double height , double size,bool bools,double width){
 if (item.Images.isNotEmpty){
 
 }
@@ -286,7 +302,12 @@ if (item.Images.isNotEmpty){
     children: [
       PhotoReeact(item, height),
       const SizedBox(width: 8),
-      Text(item.firstName, style: PoppinsSemiBold(size, bools?textColorBlack:textColorWhite, TextDecoration.none)),]);}
+      SizedBox(
+        width: width,
+        child: Text(item.firstName,
+            overflow: TextOverflow.ellipsis,
+            style: PoppinsSemiBold(size, bools?textColorBlack:textColorWhite, TextDecoration.none)),
+      ),]);}
 
 ClipRRect PhotoReeact(Member item, double height) {
   return item.Images.isEmpty

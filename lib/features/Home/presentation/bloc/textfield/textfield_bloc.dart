@@ -1,5 +1,6 @@
 
 import 'dart:collection';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -33,12 +34,26 @@ void _removeTextFields(
       RemoveTextFieldEvent event,
       Emitter<TextFieldState> emit) {
   final List<TextEditingController> updatedControllers = List.from(state.textFieldControllers);
+  log(updatedControllers.toString());
+  log(event.indicesToRemove.toString());
+
+// Collect the controllers to remove
+  final List<TextEditingController> controllersToRemove = [];
   for (int index in event.indicesToRemove) {
     if (index >= 0 && index < updatedControllers.length) {
-      updatedControllers.removeAt(index);
+      controllersToRemove.add(updatedControllers[index]);
     }
   }
-  emit( state.copyWith(textFieldControllers: updatedControllers));
+
+// Remove the collected controllers
+  for (var controller in controllersToRemove) {
+    updatedControllers.remove(controller);
+  }
+
+  log(updatedControllers.toString());
+
+  emit(state.copyWith(textFieldControllers: updatedControllers));
+
 }
 void _ChangeTextfield(
   ChangeTextFieldEvent event,

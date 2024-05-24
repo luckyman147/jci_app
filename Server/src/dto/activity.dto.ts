@@ -123,6 +123,9 @@ description:string
 agenda:string[]
 @IsNotEmpty()
 ActivityBeginDate:Date
+@IsNotEmpty()
+ActivityEndDate: Date
+
 
 ActivityPoints:number
 

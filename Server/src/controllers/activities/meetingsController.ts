@@ -76,6 +76,7 @@ export const updateMeeting = async (req: Request, res: Response, next: NextFunct
     existingMeeting.name = meetingInputs.name;
     existingMeeting.description = meetingInputs.description;
     existingMeeting.ActivityBeginDate = meetingInputs.ActivityBeginDate;
+    existingMeeting.ActivityEndDate = meetingInputs.ActivityEndDate;
     existingMeeting.Agenda = meetingInputs.agenda;
     existingMeeting.Director = meetingInputs.Director;
     existingMeeting.categorie = meetingInputs.categorie;
@@ -110,6 +111,7 @@ if (errors.length > 0) {
           name: meetingInputs.name,
           description: meetingInputs.description,
           ActivityBeginDate: meetingInputs.ActivityBeginDate,
+          ActivityEndDate: meetingInputs.ActivityEndDate,
         Agenda:meetingInputs.agenda,
         Director:meetingInputs.Director,
         price:meetingInputs.price,
@@ -158,6 +160,8 @@ export const getmeetingById = async (req: Request, res: Response, next: NextFunc
         ActivityPoints: meeting.ActivityPoints,
         categorie: meeting.categorie,
         Permissions:Permissions,
+              ActivityEnddate: meeting.ActivityEndDate,
+
        
       
         participants: await getMembersInfo(meeting.Participants.map(member=>member.memberid)),

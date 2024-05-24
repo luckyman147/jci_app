@@ -42,6 +42,8 @@ Future<Unit> validateCotisation(String memberid,int type, bool cotisation);
 
  Future<MemberModel> getMemberWithHightRank() ;
 
+  Future<Unit> deleteMember(String id);
+
 }
 class MemberRemoteImpl implements MemberRemote {
   final http.Client client;
@@ -524,6 +526,41 @@ body: json.encode(body)
         throw ServerException();
     }
 
+  }
+
+  @override
+  Future<Unit> deleteMember(String id) async{
+    final tokens=await getTokens();
+
+    final  AccessToken =  tokens[1]; // replace with your actual access token
+
+    try {
+      final Response = await client.delete(
+        Uri.parse(Urls.deleteMemberUrl(id)),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $AccessToken',
+        },
+
+      );
+
+      if (Response.statusCode == 204) {
+        return Future.value(unit);
+      }
+      else  if (Response.statusCode==401){
+        throw UnauthorizedException();
+      }
+      else if (Response.statusCode==404){
+        throw WrongCredentialsException();
+      }
+      else {
+        throw ServerException();
+      }
+
+    } catch (e) {
+
+      throw ServerException();
+    }
   }
 
 }

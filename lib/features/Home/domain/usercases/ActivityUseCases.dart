@@ -19,6 +19,16 @@ class GetAllActivitiesUseCases extends UseCase<List<Activity>,activity >{
 
   }
 }
+class ChangeGuestToMemberUseCases extends UseCase<Unit,String >{
+  final ActivitiesRepo activitiesRepo;
+
+  ChangeGuestToMemberUseCases({required this.activitiesRepo});
+
+  @override
+  Future<Either<Failure, Unit>> call( params) {
+    return activitiesRepo.ChangeGuestToMember(params);
+  }
+}
 class GetActivityByIdUseCases extends UseCase<Activity,activityParams >{
   final ActivitiesRepo activitiesRepo;
 

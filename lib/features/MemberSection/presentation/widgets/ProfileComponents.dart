@@ -378,7 +378,7 @@ static Widget AchivedmentWidget(bool isFinished,String text ) {
 
             children: [
               Text(' Total Points',style: PoppinsRegular(18, textColor, ),),
-              Text(' Cotisation',style: PoppinsRegular(18, textColor, ),),
+              Text('Cotisation'.tr(context),style: PoppinsRegular(18, textColor, ),),
             ],
           ),
 
@@ -757,10 +757,45 @@ static Widget dropNumber()=> Expanded(
                 onChanged: (value) {
                   context.read<MembersBloc>().add(GetMemberByNameEvent( name: value));
                 },
+keyboardType: TextInputType.emailAddress,
+                keyboardAppearance: Brightness.dark,
+
 
                 style: PoppinsRegular( 18, textColorBlack),
 
-                decoration: decorationTextField(null)
+                decoration:InputDecoration(
+                   hintText: "${"Search".tr(context)} ${"Member".tr(context)}",
+
+                    hintStyle: PoppinsRegular( 15, textColor),
+                    suffixIcon: Icon(Icons.search),
+                   prefixIcon: IconButton(onPressed: () {
+
+                     showModalBottomSheet(context: context, builder: (context){
+                       return Container(
+
+                         child: Padding(
+                           padding: const EdgeInsets.all(8.0),
+                           child: Column(
+                             mainAxisSize: MainAxisSize.min,
+                             crossAxisAlignment: CrossAxisAlignment.start,
+                             children: [
+                               Text("${"Sort".tr(context)} ${"By".tr(context)}:",style: PoppinsRegular( 20, textColorBlack),),
+                               SizedBox(height: 10,),
+                              BuildSortMember(context,"Membership".tr(context),()=>null,true),
+                              BuildSortMember(context,"Points",()=>null,false),
+                              BuildSortMember(context,"Role",()=>null,false),
+                             ],
+                           ),
+                         ),
+                       );
+                     });
+
+                   }, icon: Icon(Icons.filter_alt),),
+
+                   border:border(PrimaryColor),
+                  focusedBorder: border(PrimaryColor),
+                  enabledBorder: border(PrimaryColor),
+                )
 
             )),
     SizedBox(height: 10,),
@@ -772,6 +807,30 @@ static Widget dropNumber()=> Expanded(
  MemberImpl.       MembersAdminWidget(mediaQuery),
       ],
     );
+  }
+
+  static Padding BuildSortMember(BuildContext context,String sort,Function() onChanged,bool isSelected) {
+    return Padding(
+                            padding: paddingSemetricVerticalHorizontal(),
+                            child: ListTile(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                side: BorderSide(color: PrimaryColor)
+                              ),
+                             style: ListTileStyle.drawer,
+
+                            selected:isSelected,
+                              selectedTileColor: PrimaryColor,
+                              title: Text("${"By".tr(context)} $sort",style: PoppinsRegular( 18, isSelected?textColorWhite:textColorBlack),),
+                              onTap: (){
+                                onChanged();
+                                Navigator.pop(context);
+
+                                //context.read<MembersBloc>().add(GetMemberByNameEvent( name: ""));
+                              },
+
+                            ),
+                          );
   }
 
 
@@ -800,7 +859,7 @@ static Widget dropNumber()=> Expanded(
                   ),
                 );
               },
-              child: imageWidget(members[index],30,18,true),
+              child: imageWidget(members[index],30,18,true,100),
             );
           },
         );

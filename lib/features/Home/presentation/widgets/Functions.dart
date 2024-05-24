@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:async';
+import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
+import 'package:jci_app/core/util/snackbar_message.dart';
 import 'package:jci_app/features/Home/domain/entities/ActivityGuest.dart';
 import 'package:jci_app/features/Home/domain/entities/ActivityParticpants.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
@@ -41,8 +43,7 @@ import '../bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../bloc/Activity/BLOC/notesBloc/notes_bloc.dart';
 import '../bloc/Activity/activity_cubit.dart';
-import '../bloc/IsVisible/bloc/visible_bloc.dart';
-import '../bloc/textfield/textfield_bloc.dart';
+
 import 'NotesWidget.dart';
 
 
@@ -312,6 +313,7 @@ static Future<void> launchURL(BuildContext context, String url) async {
       throw 'Could not launch $url';
     }
   }
+
 }
  static  Category getCategoryFromString(String categoryString) {
     switch (categoryString.toLowerCase()) {
@@ -490,7 +492,14 @@ static   String calculateDurationhour(DateTime beginDateTime, DateTime endDateTi
           endDateTime)}';
     }
   }
+static bool isActivityBeforeToday(DateTime activityBeginDate, DateTime activityEndDate) {
+  // Get today's date
+  DateTime today = DateTime.now();
 
+  // Check if any part of the activity falls before today
+  return activityBeginDate.isBefore(DateTime(today.year, today.month, today.day)) ||
+      activityEndDate.isBefore(DateTime(today.year, today.month, today.day));
+}
  static  String calculateDurationDays(DateTime beginDateTime, DateTime endDateTime) {
     final duration = endDateTime.difference(beginDateTime);
 
@@ -505,7 +514,13 @@ static   String calculateDurationhour(DateTime beginDateTime, DateTime endDateTi
     }
   }
 
+ static bool isBetween(DateTime activityBeginDate, DateTime activityEndDate) {
+   // Get the current time
+   DateTime now = DateTime.now();
 
+   // Check if the current time is between activityBeginDate and activityEndDate
+   return now.isAfter(activityBeginDate) && now.isBefore(activityEndDate);
+ }
 static   String DisplayDuration(DateTime beginDateTime, DateTime endDateTime,
       BuildContext context) {
     final duration = endDateTime.difference(beginDateTime);

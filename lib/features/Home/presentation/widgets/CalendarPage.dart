@@ -5,11 +5,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../changelanguages/presentation/bloc/locale_cubit.dart';
 import '../../domain/entities/Activity.dart';
+import '../bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import '../bloc/calendar/calendar_cubit.dart';
 import 'Compoenents.dart';
 
@@ -75,6 +78,7 @@ class _CalendarPageState extends State<CalendarPage> {
                      gradient: LinearGradient(
                      begin: Alignment.topLeft,
                      end: Alignment.bottomRight,
+                     stops: [0.1, 0.9],
                      colors: [PrimaryColor, textColorWhite]),
                      boxShadow: [
                        BoxShadow(
@@ -114,6 +118,8 @@ class _CalendarPageState extends State<CalendarPage> {
 
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),side: BorderSide(color: textColorBlack)),
                         trailing: Icon(Icons.arrow_forward_ios_rounded,color: PrimaryColor,),
+      leading:ProfileComponents.buildFutureBuilder(    ReminderButton(context, value, index), true, "", (p0) => FunctionMember.isAdminAndSuperAdmin())   ,
+
                           title: SizedBox(
                             width: MediaQuery.of(context).size.width/1.5,
                             child: Column(
@@ -131,7 +137,9 @@ class _CalendarPageState extends State<CalendarPage> {
                                       child: Icon(Icons.location_on,color: textColorWhite,),
                                     ),
 
-                                    Text(value[index].ActivityAdress,overflow: TextOverflow.ellipsis,style: PoppinsRegular(16, textColorWhite,),),
+                                    SizedBox(
+                                        width: MediaQuery.of(context).size.width/2.5,
+                                        child: Text(value[index].ActivityAdress,overflow: TextOverflow.ellipsis,style: PoppinsRegular(16, textColorWhite,),)),
                                   ],
                                 ),
                               ],
@@ -150,6 +158,15 @@ class _CalendarPageState extends State<CalendarPage> {
                             ),
                           ),
                         );
+  }
+
+  IconButton ReminderButton(BuildContext context, List<Activity> value, int index) {
+    return IconButton(icon:
+      Icon(Icons.alarm_on_outlined,color: textColorWhite,), onPressed: () {
+      context.read<ParticpantsBloc>().add(SendReminderEvent(activityId: value[index].id));
+
+    }
+      ,);
   }
 
   BlocBuilder<CalendarCubit, CalendarState> calendar(LocaleState state) {

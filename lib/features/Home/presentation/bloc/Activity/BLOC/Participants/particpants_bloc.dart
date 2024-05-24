@@ -37,9 +37,11 @@ final UpdateGuestUseCases updateGuestUseCases;
 final ConfirmGuestUseCases confirmGuestUseCases;
 final SendReminderUseCases sendReminderUseCases;
 final AddGuestToActivityUseCases addGuestToActivityUseCases;
+final ChangeGuestToMemberUseCases changeGuestToMemberUseCases;
 
   ParticpantsBloc({required this.leaveActivityUseCases, required this.participateActivityUseCases,
     required this.checkPermissionsUseCases, required this.getAllParticipantsUseCases,
+    required this.changeGuestToMemberUseCases,
     required this.getAllGuestsOfActivityUseCases, required this.addGuestUseCases,
     required this.removeGuestUseCases, required this.updateGuestUseCases,
     required this.confirmGuestUseCases, required this.sendReminderUseCases,
@@ -69,8 +71,13 @@ on<SearchMemberByname>(seachMembersByname);
 on<GetAllGuestsEvent>(GetAllGuests);
 on<AddGuestToActivityEvent>(_addGuestToActivity);
 on<SearchGuestActByname>(seachAllGuesusByname);
+on<ChangeGuestToMemberEvent>(_changeGuestToMember);
 
 
+  }
+  void _changeGuestToMember(ChangeGuestToMemberEvent event, Emitter<ParticpantsState> emit) async {
+    final result = await changeGuestToMemberUseCases(event.params);
+    emit(_eitherChangedToMemberOrFailed(result,event.params));
   }
   void _addGuestToActivity(AddGuestToActivityEvent event, Emitter<ParticpantsState> emit) async {
     final result = await addGuestToActivityUseCases(event.params);
@@ -350,5 +357,24 @@ void getAllguests(
 
     );
   }
+
+  ParticpantsState _eitherChangedToMemberOrFailed(Either<Failure, Unit> result, String params) {
+    return result.fold(
+          (failure) => state.copyWith(status: ParticpantsStatus.failed),
+          (_) {
+        final List<ActivityGuest> Actguests = List.of(state.Activeguests);
+        final List<Guest> guests = List.of(state.guestsAllSearch);
+        // delete guest from active guests
+        Actguests.removeWhere((guest) => guest.guest.id == params);
+        // remove guest from all guests
+        guests.removeWhere((guest) => guest.id == params);
+
+        return state.copyWith(status: ParticpantsStatus.ToMember, Activeguests: Actguests, Allguests: guests, guestsSearch: Actguests, guestsAllSearch: guests);
+
+
+      },
+    );
+  }
+
 
   }

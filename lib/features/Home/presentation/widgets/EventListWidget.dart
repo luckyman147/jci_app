@@ -48,6 +48,8 @@ class _ActivityWidgetState extends State<ActivityWidget> {
     return BlocBuilder<ActivityCubit, ActivityState>(
       builder: (context, state) {
         return ListView.separated(itemBuilder: (ctx, index) {
+          bool isBefore=ActivityAction.isActivityBeforeToday(widget.Activities[index].ActivityBeginDate, widget.Activities[index].ActivityEndDate);
+          bool isBetween=ActivityAction.isBetween(widget.Activities[index].ActivityBeginDate, widget.Activities[index].ActivityEndDate);
           return InkWell(
             onTap: () {
               context.go('/activity/${widget.Activities[index].id}/${state.selectedActivity.name}/$index');
@@ -123,11 +125,11 @@ scrollDirection: Axis.vertical,
 
                                   child:Text(
                                     "${DateFormat('EEEE MMM d',state.locale==Locale('en')?'en_US' : 'fr_FR').format(widget.Activities[index].ActivityBeginDate)} ",
-                                    style: PoppinsLight(mediaQuery.devicePixelRatio*5, textColorBlack),
+                                    style: PoppinsLight(mediaQuery.devicePixelRatio*5, isBefore?Colors.red:isBetween?Colors.green:textColorBlack),
                                   ),
 
                                 ),
-                                Text("${"Start At".tr(context)} ${DateFormat('h:mm').format(widget.Activities[index].ActivityBeginDate)}",style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColorBlack),),
+                                Text("${"Start At".tr(context)} ${DateFormat('h:mm').format(widget.Activities[index].ActivityBeginDate)}",style: PoppinsRegular(mediaQuery.devicePixelRatio*5, isBefore?Colors.red:isBetween?Colors.green:textColorBlack),),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [

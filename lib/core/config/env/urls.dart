@@ -1,5 +1,5 @@
 
-  final BaseUrl = "http://192.168.1.14"
+  final BaseUrl = "http://192.168.1.9"
       ":8080";
   final SuperAdminUrl = "$BaseUrl/Super";
   final BoardUrl = "$BaseUrl/Board";
@@ -83,4 +83,8 @@ class Urls{
   static String GetNotes(String activityId,String start,String limit) => "$BaseUrl/Activity/notes/$activityId?start=$start&limit=$limit";
 
   static String UpdateNotes(String id) => "$BaseUrl/Activity/notes/$id";
+
+  static String ChangeGuestToMember(String guestId) =>"$BaseUrl/admin/guest/ChangeToMember/$guestId";
+
+  static String deleteMemberUrl(String id) => "$SuperAdminUrl/member/$id";
 }

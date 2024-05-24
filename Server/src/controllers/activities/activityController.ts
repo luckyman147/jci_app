@@ -9,7 +9,7 @@ import { Meeting } from '../../models/activities/meetingModel';
 import { notes } from '../../models/activities/notes';
 import { Training } from '../../models/activities/TrainingModel';
 import { Member } from '../../models/Member';
-import { ConfirmGuestPartGuestEmail, participationEmail, sendAbsenceEmail, sendAddGuestEmail, sendPresenceEmail } from '../../utility/NotificationEmailUtility';
+import { ConfirmGuestPartGuestEmail, NotedAddedEmail, participationEmail, sendAbsenceEmail, sendAddGuestEmail, sendPresenceEmail } from '../../utility/NotificationEmailUtility';
 import { getGuestInfo, getMembersInfo } from '../../utility/role';
 
 export const GetActivityByid= async (req: Request, res: Response, next: NextFunction) => {
@@ -488,6 +488,7 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
     try {
       const { activityId } = req.params;
       const member=req.member
+      const owner =await Member.findById (req.member._id)
       const activity = await Activity.findById(activityId)
       if (!activity){
         return res.status(404).json({ message: 'activity not found' });
@@ -505,7 +506,7 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
         title: noteInputs.title,
         content: noteInputs.content,
         date:date,
-        owner: member
+        owner: member._id
         // Add more fields if necessary
       });
       await newNote.save();
@@ -518,6 +519,17 @@ participationEmail(event.name,event.ActivityBeginDate,event.ActivityAdress,Found
       date: newNote.date,
      owner:await getMembersInfo([newNote.owner as string])
     };
+    const image=""
+    
+    
+    const members=await Member.find({ _id: { $in: activity.Participants.map(part=>part.memberid)  } })
+    if (members.length>0){
+      members.forEach((member)=>{
+        NotedAddedEmail(member.language,member.email,activity.name,formatted.content as string,formatted.title as string,owner?.firstName as string)
+      })
+    }
+
+    
       res.status(201).json(formatted);
 
     }

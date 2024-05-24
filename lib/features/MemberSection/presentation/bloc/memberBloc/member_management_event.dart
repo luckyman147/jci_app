@@ -75,3 +75,9 @@ class SendInactivityReportEvent extends MemberManagementEvent{
   @override
   List<Object> get props => [id];
 }
+class deleteMemberEvent extends MemberManagementEvent{
+  final String id;
+  deleteMemberEvent({required this.id});
+  @override
+  List<Object> get props => [id];
+}

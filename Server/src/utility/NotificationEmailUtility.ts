@@ -1066,6 +1066,54 @@ export const ReminderActivity = async (language: string, email: string, activity
     // Call the emailConfig function with the appropriate parameters
     emailConfig(language, englishHTMLContent, frenchHTMLContent, `Reminder: ${activityname}`, `Rappel:${activityname}`, email, false);
 }
+export const NotedAddedEmail = async (language: string, email: string, activityname:string,notedetails:string,titre:string,nomPa:string) => {
+    // English HTML content
+    const englishHTMLContent = `
+    <html>
+    <body style="font-family: Arial, sans-serif;">
+
+    <!-- English Version -->
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);">
+
+    <p>Dear members</p>
+   
+ 
+    <p>We wanted to let you know that a new note has been added to the activity <strong>${activityname}</strong>.</p>
+    <p>Here are the details of the note:</p>
+    <P>By <strong>${nomPa}</strong></p>
+    <p><strong>${titre}:</strong> ${notedetails}</p>
+    <p>Thank you for being an active part of our community. If you have any questions, feel free to contact us.</p>
+    <p>Best regards,</p>
+
+  </div>
+    ${footer}
+    </body>
+    </html>`;
+  
+    // French HTML content
+    const frenchHTMLContent = `
+    <html>
+    <body style="font-family: Arial, sans-serif;">
+        
+    <!-- French Version -->
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);">
+
+    <p>Cher(e) members</p>
+    <p>Nous voulions vous informer qu'une nouvelle note a été ajoutée à l'activité <strong>${activityname}</strong>.</p>
+    <p>Voici les détails de la note :</p>
+    <P>Par <strong>${nomPa}</strong></p>
+    <p><strong>${titre}:</strong> ${notedetails}</p>
+    <p>Merci de faire partie active de notre communauté. Si vous avez des questions, n'hésitez pas à nous contacter.</p>
+    <p>Cordialement,</p>
+    </div>
+  </div>
+    ${footer}
+    </body>
+    </html>`;
+  
+    // Call the emailConfig function with the appropriate parameters
+    emailConfig(language, englishHTMLContent, frenchHTMLContent, ` ${activityname}:noteShared`, `${activityname}:Une note a été partager`, email, false);
+}
 export const sendAddGuestEmail = async ( email: string, activityname:string,guestname:string,lieu:string,date:Date) => {
     // English HTML content
     

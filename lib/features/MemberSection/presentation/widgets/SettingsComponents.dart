@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:circle_progress_bar/circle_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -8,27 +7,24 @@ import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/widgets/loading_widget.dart';
-import 'package:jci_app/features/Home/presentation/widgets/AddActivityWidgets.dart';
-import 'package:jci_app/features/Home/presentation/widgets/MemberSelection.dart';
-import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
+
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/MemberImpl.dart';
+
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
-import 'package:jci_app/features/auth/presentation/widgets/Components.dart';
+
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
-import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
+
 import 'package:shimmer/shimmer.dart';
 
 import '../../../../core/strings/app_strings.dart';
-import '../../../Home/presentation/widgets/Functions.dart';
-import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
+
 import '../../../auth/data/models/Member/AuthModel.dart';
 import '../../../auth/domain/entities/Member.dart';
 import '../../../auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
-import '../../../auth/presentation/bloc/bool/toggle_bool_bloc.dart';
+
 import 'BestMembersWidget.dart';
 
 class SettingsComponent {

@@ -10,6 +10,12 @@ class CheckAbsenceEvent extends ParticpantsEvent {
   @override
   List<Object> get props => [params];
 }
+class ChangeGuestToMemberEvent extends ParticpantsEvent {
+  final String params;
+  ChangeGuestToMemberEvent({required this.params});
+  @override
+  List<Object> get props => [params];
+}
 class AddParticipantEvent extends ParticpantsEvent {
   final int index;
    final activityParams act;

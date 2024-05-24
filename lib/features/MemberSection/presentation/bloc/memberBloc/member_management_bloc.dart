@@ -21,7 +21,8 @@ class MemberManagementBloc extends Bloc<MemberManagementEvent, MemberManagementS
   final SendInactivityReportUseCase sendInactivityReportUseCase;
   final SendMembershipReportUseCase sendMembershipReportUseCase;
 final ChangeLanguageUseCase changeLanguageUseCase;
-  MemberManagementBloc(this.updateCotisationUseCase, this.updatePointsUseCase, this.validateMemberUseCase, this.changeRoleUseCase, this.changeLanguageUseCase, this.sendInactivityReportUseCase, this.sendMembershipReportUseCase) : super(MemberManagementInitial()) {
+final DeleteMemberUseCase deleteMemberUseCase;
+  MemberManagementBloc(this.updateCotisationUseCase, this.updatePointsUseCase, this.validateMemberUseCase, this.changeRoleUseCase, this.changeLanguageUseCase, this.sendInactivityReportUseCase, this.sendMembershipReportUseCase, this.deleteMemberUseCase) : super(MemberManagementInitial()) {
     on<MemberManagementEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -36,6 +37,7 @@ final ChangeLanguageUseCase changeLanguageUseCase;
     on<ChangeLanguageEvent>(_changeLanguage);
     on<SendInactivityReportEvent>(_sendInactivityReport);
     on<SendMembershipReportEvent>(_sendMembershipReport);
+    on<deleteMemberEvent>(_deleteMember);
   }
   void initMember(initMemberEvent event, Emitter<MemberManagementState> emit) {
     emit(MemberManagementState(isUpdated: event.isUpdated, cotisation: event.cotisation, points: event.points,
@@ -129,7 +131,17 @@ void _addCotisatisation(AddCotisation event,Emitter<MemberManagementState> emit)
     }
   }
 
+void _deleteMember(deleteMemberEvent event, Emitter<MemberManagementState> emit) async {
 
+    try{
+      final result =await  deleteMemberUseCase(event.id);
+      emit( _eitherDeleteOrFailute(result, 'Member Deleted Successfully', ));
+    }
+    catch(e){
+      emit(state.copyWith(typeResult: TypeResult.failed, ErrorMessage: e.toString()));
+    }
+
+}
 
 
 
@@ -141,6 +153,15 @@ void _addCotisatisation(AddCotisation event,Emitter<MemberManagementState> emit)
 
 
         return state.copyWith(typeResult: TypeResult.success, ErrorMessage: message,isUpdated: true);}
+    );
+  }  MemberManagementState _eitherDeleteOrFailute(
+      Either<Failure, Unit> failureOrSuccess, String message, ) {
+    return failureOrSuccess.fold(
+      (failure) => state.copyWith(typeResult: TypeResult.failed, ErrorMessage: mapFailureToMessage(failure)),
+      (success) {
+
+
+        return state.copyWith(typeResult: TypeResult.Removed, ErrorMessage: message,isUpdated: true);}
     );
   }  MemberManagementState _eitherCotisationOrFailute(
       Either<Failure, Unit> failureOrSuccess, String message, int index,bool cotisation ) {

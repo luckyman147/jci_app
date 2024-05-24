@@ -10,7 +10,7 @@ class ActivityguestModel extends ActivityGuest{
   factory ActivityguestModel.fromJson(Map<String, dynamic> json) {
     return ActivityguestModel(
       //list of guests
-      guest: GuestModel.fromJson(json['guest'] as Map<String, dynamic>) as Guest,
+      guest: json['guest']!=null? GuestModel.fromJson(json['guest'] as Map<String, dynamic>) as Guest:Guest(id: "id", name: "name", email: "email", phone: "phone", isConfirmed: true),
       status: json['status'],
     );}
    Map<String, dynamic> toMap() {

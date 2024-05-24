@@ -261,7 +261,7 @@ Widget ShowGuests(String activityId){
     switch(state.status){
       case ParticpantsStatus.initial:
         return ShimmerButton.shimmerparticipants();
-      case ParticpantsStatus.loading:
+      case ParticpantsStatus.loading: case ParticpantsStatus.ToMember:
         return ShimmerButton.shimmerparticipants();
       case ParticpantsStatus.loaded:  case ParticpantsStatus.changed: case ParticpantsStatus.failed:
         context.read<ParticpantsBloc>().add(GetGuestsOfActivityEvent(activityId: activityId));
@@ -275,7 +275,8 @@ return ShimmerButton.shimmerparticipants();
             
             case ParticpantsStatus.success:
           case ParticpantsStatus.LoadedGuests:
-            
+
+
             
 
         return GuestWidget(guests: state.guestsSearch, activityId: activityId, index: 0,);
@@ -294,12 +295,15 @@ Widget ShowAllGuests(String activityId){
     switch(state.status){
       case ParticpantsStatus.initial:
       case ParticpantsStatus.loading:
+
         return ShimmerButton.shimmerparticipants();
       case ParticpantsStatus.failed:  case ParticpantsStatus.changed:
         context.read<ParticpantsBloc>().add(GetAllGuestsEvent(isUpdated: true));
 
         return ShimmerButton.shimmerparticipants();
       case ParticpantsStatus.loaded:
+      case ParticpantsStatus.ToMember:
+
         context.read<ParticpantsBloc>().add(GetAllGuestsEvent());
         return ShimmerButton.shimmerparticipants();
           case ParticpantsStatus.empty:

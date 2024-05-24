@@ -10,6 +10,7 @@ import { GenerateSalt, generateStrongPassword, HashPassword } from "../utility";
 import { sendMembershipEmail, sendNewMemberEmail, sendUpdatedPointsEmail, sendVerifiedMemberEmail } from "../utility/NotificationEmailUtility";
 import { CheckObjectif } from "../utility/objectifcheck";
 import { findrole, findroleByid, getActivitiesInfo, getFilesInfoByIds, getMeetingsInfo, GetMemberPermission, getPublicPermissions, getteamsInfo, getTrainingInfo } from "../utility/role";
+import { Activity } from "../models/activities/activitieModel";
 
 
 //& find member
@@ -316,6 +317,7 @@ if (existed){
     return res.status(409).json({message:"member already exist"})
 
 }
+
 const salt=await GenerateSalt()
 const password=generateStrongPassword(8)
 const UserPassword=await HashPassword(password,salt)
@@ -343,6 +345,21 @@ if (newMember){
         role.Members.push(newMember.id)
         await role.save()
 
+    }
+    const activitys=await Activity.find(
+        
+    )
+    if (activitys.length>0){
+        activitys.forEach(
+           async (acti
+            )=>{acti.guests=acti.guests.filter(
+                (guests)=>guests.guest!=guest.id
+                 )
+                await acti.save()
+                }
+    )
+
+      
     }
    await guest.deleteOne()
 

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/domain/repositories/MemberRepo.dart';
 import 'package:jci_app/features/MemberSection/domain/usecases/MemberUseCases.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
@@ -39,7 +40,9 @@ class BottomMemberSheet {
       context: context,
       builder: (BuildContext context) {
         final mediaQuery = MediaQuery.of(context);
-        return AdminChangeSheet(context,member);
+        return SizedBox(
+            height: mediaQuery.size.height * 0.5,
+            child: SingleChildScrollView(child: AdminChangeSheet(context,member)));
       },
     );
   }
@@ -49,13 +52,13 @@ class BottomMemberSheet {
 builder: (context, state) {
 
   return AnimatedContainer(
-    height:state.IsActive ? 350 : 250,
+    height:state.IsActive ? MediaQuery.of(context).size.height*.6 : 250,
 
         width: double.infinity,
         duration: Duration(milliseconds: 300),
         child: BlocBuilder<MemberManagementBloc, MemberManagementState>(
           builder: (context, state) {
-            log("sdsss"+state.cotisation.toString());
+
             return Column(
               children: <Widget>[
 
@@ -65,20 +68,22 @@ builder: (context, state) {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                         side: BorderSide(color: textColor, width: 2)),
-                   title: ChangePoints(mediaQuery, state,  pointsFocusNode,context,member.id),
+                   title: SingleChildScrollView(
+                       scrollDirection: Axis.horizontal,
+                       child: ChangePoints(mediaQuery, state,  pointsFocusNode,context,member.id)),
 
                   ),
                 ),Row(
                   children: [
-                    CotisationField(mediaQuery, state,"1st Cotisation",0,(valu){
+                    CotisationField(mediaQuery, state,"1${"st".tr(context)} ${"Cotisation".tr(context)}",0,(valu){
                       FunctionMember.UpdateCotisationAction(member.id, 0, valu!,context);
 
-                    }),
+                    },context),
                     state.cotisation.length>1?
-                    CotisationField(mediaQuery, state,"2nd Cotisation",1,(valu){
+                    CotisationField(mediaQuery, state,"2${"nd".tr(context)} ${"Cotisation".tr(context)}",1,(valu){
                       FunctionMember.UpdateCotisationAction(member.id, 1, valu!,context);
 
-                    }):IconButton.outlined(onPressed: (){
+                    },context):IconButton.outlined(onPressed: (){
                       context.read<MemberManagementBloc>().add(AddCotisation());
                     }, icon: Icon(Icons.add)),
                   ],
@@ -187,14 +192,14 @@ builder: (context, state) {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Center(child: Text("Save", style: PoppinsRegular(18, Colors.white),)),
+                            child: Center(child: Text("Save".tr(context), style: PoppinsRegular(18, Colors.white),)),
                           ),
                         ))
                       ],
                     );
   }
 
-  static SizedBox CotisationField(MediaQueryData mediaQuery, MemberManagementState state,String text,int index,Function(bool?) onChanged) {
+  static SizedBox CotisationField(MediaQueryData mediaQuery, MemberManagementState state,String text,int index,Function(bool?) onChanged,BuildContext context) {
     return SizedBox(
                       width: mediaQuery.size.width * 0.5,
                       child: Padding(
@@ -204,12 +209,12 @@ builder: (context, state) {
                               borderRadius: BorderRadius.circular(15),
                               side: BorderSide(color: textColor, width: 2)),
                           title: Text(text, style: PoppinsSemiBold(
-                              16, textColorBlack, TextDecoration.none)),
+                              MediaQuery.devicePixelRatioOf(context)*5.5, textColorBlack, TextDecoration.none)),
 
                           subtitle: Row(
                             children: [
                               Text(
-                                  FunctionMember.CheckBoolAtIndex(state.cotisation, index)?"Paid":"Not Paid", style: PoppinsRegular(20,
+                                  FunctionMember.CheckBoolAtIndex(state.cotisation, index)?"Paid".tr(context):"Not Paid".tr(context), style: PoppinsRegular(MediaQuery.devicePixelRatioOf(context)*5,
                                 FunctionMember.CheckBoolAtIndex(state.cotisation, index)?Colors.green:Colors.red
                                   ,)),
                              Checkbox(
@@ -227,19 +232,30 @@ builder: (context, state) {
 
   static Widget  AdminChangeSheet(BuildContext context,Member member) {
     return SizedBox(
-      height: 200,
+
       width: double.infinity,
       child: Column(
         children: <Widget>[
           ProfileComponents.buildFutureBuilder(
-              ListTileChangement(context, member,"Change To Admin ",(){FunctionMember.ChangeRole(member.id, MemberType. admin, context); })
+              ListTileChangement(context, member,"${"Change To".tr(context)} Admin ",(){FunctionMember.ChangeRole(member.id, MemberType. admin, context); })
               ,false, member.id, (p0) => FunctionMember.isReAdmin(member)),
           ProfileComponents.buildFutureBuilder(
-              ListTileChangement(context, member,"Change To Member ",(){ FunctionMember.ChangeRole(member.id, MemberType. member, context);})
+              ListTileChangement(context, member,"${"Change To".tr(context)} ${"Member".tr(context)} ",(){ FunctionMember.ChangeRole(member.id, MemberType. member, context);})
               ,false, member.id, (p0) => FunctionMember.isMember(member)),
           ProfileComponents.buildFutureBuilder(
-              ListTileChangement(context, member,"Change To Super Admin ",(){ FunctionMember.ChangeRole(member.id, MemberType. superAdmin, context);})
+              ListTileChangement(context, member,"${"Change To".tr(context)} Super Admin ",(){ FunctionMember.ChangeRole(member.id, MemberType. superAdmin, context);})
               ,false, member.id, (p0) => FunctionMember.isSuperAdmin(member)),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    ),
+         ),
+              onPressed: (){
+                context.read<MemberManagementBloc>().add(deleteMemberEvent(id: member.id));
+              }, child: Text("${"Delete".tr(context)} ${"Member".tr(context)}", style: PoppinsSemiBold(16, Colors.white, TextDecoration.none)))
+
         ]
       )
     );

@@ -32,11 +32,7 @@ class MemberRepoImpl extends MemberRepo {
  return _getMessageReset(memberRemote.UpdatePoints(memberid, points, ));
   }
 
-  @override
-  Future<void> deleteMember(String id) {
-    // TODO: implement deleteMember
-    throw UnimplementedError();
-  }
+
   Future<Either<Failure, Unit>> _getMessageReset(
       Future<Unit> AuthReset) async {
     if (await networkInfo.isConnected) {
@@ -305,6 +301,11 @@ class MemberRepoImpl extends MemberRepo {
       }
 
     }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> deleteMember(String id) async{
+    return _getMessageReset(memberRemote.deleteMember(id));
   }
 
   }

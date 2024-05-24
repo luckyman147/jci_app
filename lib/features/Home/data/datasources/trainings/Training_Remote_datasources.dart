@@ -55,6 +55,8 @@ Future<List<GuestModel>>    getAllGuest() ;
 
   Future<Unit> addGuestToActivity(String activityId, String guestId) ;
 
+  Future<Unit> changeGuestToMember(String guestId) ;
+
 }
 
 class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
@@ -513,6 +515,28 @@ return Future.value(unit);
       }
     });
     }
+
+  @override
+  Future<Unit> changeGuestToMember(String guestId)async {
+    final token =await getTokens();
+    return client.post(
+      Uri.parse(Urls.ChangeGuestToMember(guestId)),
+      headers: {"Content-Type": "application/json",
+        "Authorization":'Bearer ${token[1]}'},
+    ).then((response) async {
+      if (response.statusCode == 200) {
+        return Future.value(unit);
+      } else if (response.statusCode == 400) {
+        throw WrongCredentialsException();
+      } else if (response.statusCode == 401) {
+        throw UnauthorizedException();
+      } else {
+        throw ServerException();
+      }
+    });
+    }
+
+
 
   }
 

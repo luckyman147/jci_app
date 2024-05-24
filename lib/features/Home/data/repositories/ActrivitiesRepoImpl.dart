@@ -553,6 +553,11 @@ if (await networkInfo.isConnected) {
     return _response(trainingRemoteDataSource.addGuestToActivity(activityId, guestId));
   }
 
+  @override
+  Future<Either<Failure, Unit>> ChangeGuestToMember(String guestId) async{
+    return _response(trainingRemoteDataSource.changeGuestToMember(guestId));
+  }
+
 
 
 

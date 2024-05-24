@@ -1,5 +1,5 @@
 part of 'particpants_bloc.dart';
-enum ParticpantsStatus { initial, loading, success,changed, failed,loaded,LoadedGuests,empty,sent }
+enum ParticpantsStatus { initial, loading, success,changed, failed,loaded,LoadedGuests,empty,sent,ToMember }
  class ParticpantsState extends Equatable {
   final List<Map<String, dynamic>> isParticipantAdded;
 final List<dynamic> particpants ;

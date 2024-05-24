@@ -87,7 +87,7 @@ final status=await Store.getStatus();
     LoginSubmitted event,
     Emitter<LoginState> emit,
   ) async {
-    if (state.isValid) {
+
 
       try {
         emit(LoadingLogin());
@@ -104,16 +104,6 @@ final status=await Store.getStatus();
       } catch (e) {
         emit(ErrorLogin(message: "Something went wrong ${e.toString()}"));
       }
-    } else {
-      if (!state.email.isValid) {
-        emit(ErrorLogin(message: "Email is invalid"));
-      } else if (!state.password.isValid) {
-        emit(ErrorLogin(message: "Password is invalid"));
-      } else {
-        emit(ErrorLogin(message: "Something invalid"));
-      }
-      emit(const LoginState(status: FormzSubmissionStatus.canceled));
-    }
   }
 
 

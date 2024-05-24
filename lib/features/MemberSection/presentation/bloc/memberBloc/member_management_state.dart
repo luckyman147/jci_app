@@ -1,6 +1,6 @@
 part of 'member_management_bloc.dart';
 enum ActionMember {add,Remove}
-enum TypeResult {Initial ,Loading,success,failed}
+enum TypeResult {Initial ,Loading,success,failed,Removed}
  class MemberManagementState extends Equatable {
   final bool isUpdated;
   final List<bool> cotisation;

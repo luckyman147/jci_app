@@ -3,6 +3,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/widgets/ActivityImplWidgets.dart';
@@ -48,9 +49,9 @@ AddDots(activitys, mediaQuery)
                 ActivityDetailsComponent.rowName(
                     mediaQuery, context, activitys, act, index),
                 ActivityDetailsComponent.infoCircle(mediaQuery, activitys,context),
-                buildNotes(mediaQuery, context),
 
-                ActivityDetailsComponent.Description(mediaQuery, activitys),
+
+                ActivityDetailsComponent.Description(mediaQuery, activitys),  buildNotes(mediaQuery, context),
 ],
             ),
           )
@@ -62,10 +63,10 @@ AddDots(activitys, mediaQuery)
   Padding buildNotes(MediaQueryData mediaQuery, BuildContext context) {
     return Padding(
 
-padding: paddingSemetricVerticalHorizontal(h: 18, v: 10),
+padding: paddingSemetricVerticalHorizontal(h: 20, v: 10),
 child: SizedBox(
   width: mediaQuery.size.width,
-  height: 50,
+  height: 70,
   child: InkWell(
     onTap: () {
       context.read<NotesBloc>().add(Notesfetched(activityId:activitys.id , isUpdated: true));
@@ -76,12 +77,12 @@ child: SizedBox(
 
     child: DottedBorder(
       borderType: BorderType.RRect,
-      radius: Radius.circular(12),
+      radius: Radius.circular(7),
       padding: EdgeInsets.all(6),
       color: textColorBlack,
         dashPattern: [12,16,13,16],
         child: Center(
-          child: Text("Add Notes",style: PoppinsSemiBold(mediaQuery.devicePixelRatio*5, textColorBlack, TextDecoration.none),
+          child: Text(" ${"View".tr(context)} Notes",style: PoppinsSemiBold(mediaQuery.devicePixelRatio*5, textColorBlack, TextDecoration.none),
 
                 ),
         )

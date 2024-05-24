@@ -51,7 +51,17 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
 
-    return BlocBuilder<ChangeSboolsCubit, ChangeSboolsState>(
+    return BlocListener<MemberManagementBloc, MemberManagementState>(
+  listener: (context, state) {
+    if (state.typeResult ==TypeResult.Removed){
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+
+      context.read<MembersBloc>().add(GetAllMembersEvent(true));
+    }
+    // TODO: implement listener}
+  },
+  child: BlocBuilder<ChangeSboolsCubit, ChangeSboolsState>(
       builder: (context, state) {
         return
           SingleChildScrollView(
@@ -118,7 +128,8 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
 )]),
           );
       },
-    );
+    ),
+);
   }
 
 

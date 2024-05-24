@@ -16,6 +16,7 @@ import '../../../auth/data/models/Member/AuthModel.dart';
 import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
 
 
+import '../bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import 'ActivityImplWidgets.dart';
 import 'Compoenents.dart';
 
@@ -35,6 +36,7 @@ class _HomeWidgetState extends State<HomeWidget> {
   void initState() {
     context.read<AcivityFBloc>().add(GetActivitiesOfMonthEvent(act: widget.Activity));
 context.read<MembersBloc>().add(GetMemberByHighestRAnkEvent(isUpdated: true));
+    context.read<AddDeleteUpdateBloc>().add(CheckPermissions(act: widget.Activity));
 
     context.read<GetTeamsBloc>().add(GetTeams(isPrivate: true));
     context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Private));

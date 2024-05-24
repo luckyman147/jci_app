@@ -378,6 +378,8 @@ class AddUpdateFunctions{
     context.read<TextFieldBloc>().add(ChangeTextFieldEvent(ActivityAction.createControllers(meeting.agenda)));
 
     Member? member=members.firstWhere((element) => element.id==meeting.Director);
+    if (!mounted) return ;
+    if (member!=null)
     context.read<FormzBloc>().add(MemberFormzChanged( memberFormz: member));
 
 

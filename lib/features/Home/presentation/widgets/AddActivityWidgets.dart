@@ -243,9 +243,9 @@ static   Widget showImagePicker(activity act ,mediaQuery)=>
                       ?
                   Text("Add".tr(context),
                       style:
-                      PoppinsSemiBold(16, textColorBlack, TextDecoration.none))
+                      PoppinsSemiBold(18, textColorBlack, TextDecoration.none))
                       : Text("Edit".tr(context), style: PoppinsSemiBold(
-                      16, textColorBlack, TextDecoration.none)),
+                      18, textColorBlack, TextDecoration.none)),
                   work != "edit" ? Padding(
                     padding: const EdgeInsets.only(bottom: 2),
                     child: MyDropdownButton(),
@@ -951,7 +951,6 @@ style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),
                             context.read<TextFieldBloc>().add(RemoveTextFieldEvent([index, index + 1]));}
 
 
-                          debugPrint(widget.text.length.toString());
                         },
                         iconData: index==widget.text.length-2?Icons.add:Icons.remove,
                       ),

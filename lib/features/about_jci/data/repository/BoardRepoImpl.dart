@@ -4,7 +4,7 @@ import 'package:jci_app/core/network/network_info.dart';
 import 'package:jci_app/features/about_jci/Domain/Repository/BoardRepo.dart';
 import 'package:jci_app/features/about_jci/Domain/entities/BoardRole.dart';
 import 'package:jci_app/features/about_jci/Domain/entities/BoardYear.dart';
-import 'package:jci_app/features/about_jci/Domain/entities/Post.dart';
+
 import 'package:jci_app/features/about_jci/data/models/BoardRoleModel.dart';
 
 import '../../../../core/error/Exception.dart';

@@ -32,6 +32,17 @@ class ChangeRoleUseCase extends UseCase<Unit, ChangeRoleParams>{
   }
 
 }
+class DeleteMemberUseCase extends UseCase<Unit, String>{
+  final MemberRepo authRepository;
+
+  DeleteMemberUseCase({required this.authRepository});
+
+  @override
+  Future<Either<Failure, Unit>> call(String params) async {
+    return await authRepository.deleteMember(params);
+  }
+
+}
 class ChangeRoleParams{
   final String id;
   final MemberType type;

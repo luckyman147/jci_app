@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/core/app_theme.dart';
@@ -69,14 +70,14 @@ GlobalKey<FormState> formKey = GlobalKey<FormState>();
       contentController.clear();
       context.read<ActivityCubit>().changeNotePage(0);
       SnackBarMessage.showSuccessSnackBar(message: "Note Created Succesfully", context: context);
-      
+
     }
     if (ste.status == NotesStatus.Deleted) {
-   
+
       SnackBarMessage.showSuccessSnackBar(message: "Note deleted Succesfully", context: context);
       context.read<NotesBloc>().add(resetNotes());
       context.read<NotesBloc>().add(Notesfetched(activityId: widget.activityId, isUpdated: true));
-      
+
     }
     if (ste.status == NotesStatus.Updated) {
       titleController.clear();
@@ -185,9 +186,11 @@ default:
 
   SizedBox buildNotex(BuildContext context, NotesState state) {
     return SizedBox(
-    height: MediaQuery.of(context).size.height,
+
     width: double.infinity,
     child: Column(
+      mainAxisSize: MainAxisSize.min,
+
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
 
@@ -217,7 +220,7 @@ default:
                 },
                 child: Container(
                 margin: paddingSemetricHorizontal(),
-                            height: 169,
+
                             width: double.infinity,
                             decoration: BoxDecoration(
                 border: Border.all(color: textColorBlack,
@@ -228,6 +231,7 @@ default:
 
                             ),
                             child:Column(
+                              mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment:   CrossAxisAlignment.start,
                 children: [
@@ -262,7 +266,7 @@ default:
 
 
 
-  
+
   Padding NoteHeader(NotesState state, int index) {
     return Padding(
                 padding: paddingSemetricVerticalHorizontal(),
@@ -316,7 +320,7 @@ default:
                       style: PoppinsSemiBold(14, textColorBlack, TextDecoration.none),
                     ),
                     Text(
-                                 ActivityAction.getFirstNWords(state.notes[index].content, 40),
+                                 ActivityAction.getFirstNWords(state.notes[index].content, 10),
                       style: PoppinsRegular(15, textColorBlack),
                     ),
                   ],
@@ -384,20 +388,23 @@ default:
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end
                   ,            children: [
-                  IconButton(
-                    icon: Icon(Icons.archive,color: SecondaryColor,),
-                    tooltip: 'ARCHIVE',
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        final note=Note(id: state.noteId, title: title.text, content: content.text, date: DateTime.now(), owner:"" );
+                  Visibility(
+                   visible: state.action==NotesAction.update,
+                    child: IconButton(
+                      icon: Icon(Icons.archive,color: SecondaryColor,),
+                      tooltip: 'ARCHIVE',
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          final note=Note(id: state.noteId, title: title.text, content: content.text, date: DateTime.now(), owner:"" );
 
-                        if (state.action==NotesAction.update){
-                          context.read<NotesBloc>().add(updateNote(note: note));
+                          if (state.action==NotesAction.update){
+                            context.read<NotesBloc>().add(updateNote(note: note));
 
-                      }}
-                      // Handle save action
+                        }}
+                        // Handle save action
 
-                    },
+                      },
+                    ),
                   ),
                   Visibility(
                     visible: state.action==NotesAction.create,

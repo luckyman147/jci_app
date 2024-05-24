@@ -671,7 +671,7 @@ Widget MySearchBar(BuildContext context,activity Activity) {
             controller: TextEditingController()..text = '',
             enabled: true,
             decoration: InputDecoration(
-              hintText: 'Search'.tr(context),
+              hintText: 'Search'.tr(context)  ,
 
               hintStyle: PoppinsRegular(13, textColor),
               prefixIcon:    IconButton( onPressed: () {
@@ -703,7 +703,7 @@ Widget ChangeactivityDialog(BuildContext context, ActivityState state) {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            'Filter by Activity Type',
+            'Filter by Activity Type'.tr(context),
             style: PoppinsSemiBold(17, textColorBlack,TextDecoration.none),
           ),
         ),

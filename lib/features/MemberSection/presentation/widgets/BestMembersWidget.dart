@@ -48,7 +48,7 @@ visualDensity: VisualDensity.comfortable,
                       title:Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          imageWidget(member, 30, 18,true ),
+                          imageWidget(member, 30, 18,true ,100),
                           Text(member.points.toString(), style: PoppinsSemiBold(20, textColorBlack, TextDecoration.none)),
 
                         ],

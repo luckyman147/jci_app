@@ -14,6 +14,7 @@ abstract class MemberRepo {
   Future<Either<Failure, Unit>> ChangeToAdmin(String id, MemberType type);
   Future<Either<Failure, Unit>> SendMembershipReport(String id, );
   Future<Either<Failure, Unit>> SendInactivityReport(String id, );
+  Future<Either<Failure, Unit>> deleteMember(String id, );
 
 
 
@@ -24,5 +25,5 @@ abstract class MemberRepo {
   Future<Either<Failure, List<Member>>> GetMembers(bool isUpdated);
 
   Future<Either<Failure,Unit>> updateMember(Member member);
-  Future<void> deleteMember(String id);
+
 }

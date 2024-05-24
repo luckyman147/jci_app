@@ -61,16 +61,12 @@ final CheckMeetPermissionsUseCase checkMeetingPermissionsUseCase;
   void _addActivity(
       AddACtivityEvent event, Emitter<AddDeleteUpdateState> emit) async {
     emit(LoadingAddDeleteUpdateState());
-    if (!AddUpdateFunctions.validateTime(event.params.act!.ActivityBeginDate, event.params.act!.ActivityEndDate)){
-      emit(ErrorAddDeleteUpdateState(message: 'End Time must be greater than Start '));
-
-    }  else {
 
 
         final result = await createActivityUseCase(event.params);
         emit(_eitherDoneMessageOrErrorState(result, ' Added Succefully'));
 
-    }
+
   }
   void _deleteActivity(
       DeleteActivityEvent event,
@@ -115,11 +111,7 @@ void checkPermissions(
 
       )async {
     try {
-      if (!AddUpdateFunctions.validateTime(event.params.act!.ActivityBeginDate,
-          event.params.act!.ActivityEndDate)) {
-        emit(ErrorAddDeleteUpdateState(
-            message: 'End Time must be greater than Start Time'));
-      }
+
 
       final failureOrEvents = await updateActivityUseCases(event.params);
       emit(_UpdatedActivityOrFailure(failureOrEvents));

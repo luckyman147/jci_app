@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/core/util/snackbar_message.dart';
 import 'package:jci_app/features/Home/domain/entities/ActivityGuest.dart';
 import 'package:jci_app/features/Home/domain/entities/Guest.dart';
 import 'package:jci_app/features/Home/domain/usercases/ActivityUseCases.dart';
@@ -31,7 +32,15 @@ class GuestWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return BlocListener<ParticpantsBloc, ParticpantsState>(
+  listener: (context, state) {
+    if (state.status == ParticpantsStatus.ToMember) {
+      SnackBarMessage.showSuccessSnackBar( message:"changed succefully",context: context);
+      Navigator.pop(context);
+    }
+    // TODO: implement listener
+  },
+  child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
@@ -80,7 +89,8 @@ class GuestWidget extends StatelessWidget {
 ),
         ),
       ],
-    );
+    ),
+);
   }
 Widget buildAddGuest(BuildContext context, TextEditingController controller, TextEditingController controller2, TextEditingController controller3 ) {
     return SingleChildScrollView(
@@ -336,6 +346,29 @@ static Widget GuestALL(BuildContext context,List<Guest> guests,String activityId
       splashColor: Colors.transparent,
       onLongPress: (){
         ActivityAction.        DeleteGestFunction(context, guest,activityId);
+      },
+      onDoubleTap: (){
+       showDialog(context: context, builder: (context)=>AlertDialog(
+          title: Text("Change To Member".tr(context)),
+          content: Column(
+            children: [
+              Text("Do you want to add to Change this visitor to be a member in JCI?".tr(context)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton(onPressed: (){
+                    Navigator.pop(context);
+                  }, child: Text("Cancel".tr(context),style: PoppinsRegular(15, textColor),)),
+                  TextButton(onPressed: (){
+                    context.read<ParticpantsBloc>().add(ChangeGuestToMemberEvent( params: guest.id));
+                    Navigator.pop(context);
+                  }, child: Text("Save".tr(context),style: PoppinsRegular(15, PrimaryColor),)),
+                ],
+              )
+            ],
+          ),
+        
+       ));
       },
       child: Container(
         margin: EdgeInsets.all(8),

@@ -24,6 +24,7 @@ Future<Either<Failure,List<Guest>>> getAllguest(bool isupdated);
 Future<Either<Failure,ActivityGuest>> addGuest(String activityId,Guest guest);
 Future<Either<Failure,Unit>> addGuestToActivity(String activityId,String guestId);
 Future<Either<Failure,Unit>> deleteGuest(String activityId,String guestId);
+Future<Either<Failure,Unit>> ChangeGuestToMember(String guestId);
 Future<Either<Failure,Unit>> updateGuest(String activityId,Guest guest);
 Future<Either<Failure,Unit>> updateGuestStatus(String activityId,String guestid,String status);
 Future<Either<Failure,Unit>> SendRemiderActivity(String activityId);

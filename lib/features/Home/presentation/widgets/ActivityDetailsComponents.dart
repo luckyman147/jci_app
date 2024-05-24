@@ -208,7 +208,7 @@ class ActivityDetailsComponent{
                      Row(
                        mainAxisAlignment: MainAxisAlignment.start,
                        children: [
-                         imageWidget(Member.fromImages(participant.member[0]), 30, 18,participant.status=="pending"),
+                         imageWidget(Member.fromImages(participant.member[0]), 30, 18,participant.status=="pending",100),
                        ],
                      ),
                      Row(
@@ -251,28 +251,44 @@ class ActivityDetailsComponent{
 
  
  
- static Container AgendaWidget(BoxDecoration boxDecoration, BuildContext context, mediaQuery, Activity activitys) {
-   return Container(
-     width: mediaQuery.size.width ,
-     decoration: boxDecoration,
-     child: Padding(
-       padding: const EdgeInsets.all(8.0),
-       child: Column(
-         crossAxisAlignment: CrossAxisAlignment.start,
-         children: [
-           Text(
-             "Agenda".tr(context),
-             style: PoppinsNorml(
-               mediaQuery.devicePixelRatio * 6,
-               textColorBlack,
+ static Widget AgendaWidget(BoxDecoration boxDecoration, BuildContext context, mediaQuery, Activity activitys) {
+   return GestureDetector(
+     onTap: () {
+ showModalBottomSheet(context: context, builder: (context) {
+       return AgendaBottomSheet(activitys,context,mediaQuery);
+     });
+     },
+     child: Container(
+       width: mediaQuery.size.width ,
+       decoration: boxDecoration,
+       child: Padding(
+         padding: const EdgeInsets.all(8.0),
+         child: Column(
+           crossAxisAlignment: CrossAxisAlignment.start,
+           children: [
+             Text(
+               "Agenda".tr(context),
+               style: PoppinsNorml(
+                 mediaQuery.devicePixelRatio * 6,
+                 textColorBlack,
+               ),
              ),
-           ),
-           SizedBox(
-             height: 50 *  (activitys as MeetingModel).agenda.length.toDouble(), // Adjust the height as needed
-             child: ListView.separated(
-               itemCount: (activitys as MeetingModel).agenda.length,
+             SizedBox(
+               height: 40 *  (activitys as MeetingModel).agenda.length.toDouble(), // Adjust the height as needed
+               child: listviewAgenbda(activitys, mediaQuery),
+             ),
+           ],
+         ),
+       ),
+     ),
+   );
+ }
+
+ static ListView listviewAgenbda(MeetingModel activitys, mediaQuery) {
+   return ListView.separated(
+               itemCount: (activitys).agenda.length,
                itemBuilder: (context, index) {
-                 var i = (activitys as MeetingModel).agenda[index];
+                 var i = (activitys).agenda[index];
                  return Column(
                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                    children: [
@@ -281,18 +297,26 @@ class ActivityDetailsComponent{
                        child: Row(
                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                          children: [
-                           Text(
-                             '${index+1}. ${i.split('(').first}',
-                             style: PoppinsLight(
-                               mediaQuery.devicePixelRatio * 5,
-                               textColorBlack,
+                           SizedBox(
+                              width: mediaQuery.size.width * 0.6,
+                             child: Text(
+                               '${index+1}. ${i.split('(').first}',
+                               overflow: TextOverflow.ellipsis,
+                               style: PoppinsRegular(
+                                 mediaQuery.devicePixelRatio * 6,
+                                 textColorBlack,
+                               ),
                              ),
                            ),
-                           Text(
-                             "${i.split('(').last.split('min )').first.trim().replaceAll(RegExp(r'\s'), '')} min",
-                             style: PoppinsLight(
-                               mediaQuery.devicePixelRatio * 5,
-                               textColorBlack,
+                           SizedBox(
+                              width: mediaQuery.size.width * 0.2,
+                             child: Text(
+                               "${i.split('(').last.split('min )').first.trim().replaceAll(RegExp(r'\s'), '')} min",
+                                overflow: TextOverflow.ellipsis,
+                               style: PoppinsRegular(
+                                 mediaQuery.devicePixelRatio * 6,
+                                 textColorBlack,
+                               ),
                              ),
                            ),
                          ],
@@ -304,12 +328,7 @@ class ActivityDetailsComponent{
                separatorBuilder: (BuildContext context, int index) {
                  return SizedBox(height: 10);
                },
-             ),
-           ),
-         ],
-       ),
-     ),
-   );
+             );
  }
 
  static   Widget ImageCard(mediaQuery,Activity activitys) => activitys.CoverImages.isNotEmpty
@@ -410,14 +429,20 @@ showDragHandle: true,
                                ),
                              ),
                            ],
-                         ),Padding(
-                           padding: const EdgeInsets.all(8.0),
-                           child: Text(
-                             "${activitys.Participants.length} ${"Member".tr(context)}",
-                             
-                             style: PoppinsNorml(mediaQuery.devicePixelRatio * 4,
-                               textColorBlack, ),
-                           ),
+                         ),Row(
+                           children: [
+                             Padding(
+                               padding: const EdgeInsets.all(8.0),
+                               child: Text(
+                                 "${activitys.Participants.length} ${"Member".tr(context)}",
+
+                                 style: PoppinsNorml(mediaQuery.devicePixelRatio * 4,
+                                   textColorBlack, ),
+
+                               ),
+                             ),
+                             IconButton(onPressed: (){}, icon: Icon(Icons.download_for_offline,color: Colors.green,))
+                           ],
                          ),
                        ],
                      ),
@@ -623,7 +648,7 @@ showDragHandle: true,
              return ShimmerButton.buildShimmerButton(width, 60);
            } else if (snapshot.hasError) {
              // Show an error message if an error occurs
-             return ShimmerButton.buildShimmerButton(width, 60);
+             return ShimmerButton.buildShimmerButton(width, 50);
            } else {
              // Show the ParticipateButton with data when data is available
              return AnimatedSwitcher(
@@ -716,10 +741,14 @@ showDragHandle: true,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                            DateFormat('EEE MMM yyyy',state.locale==Locale('en')?'en_US' : 'fr_FR').format(activitys.ActivityBeginDate),
-                        style: PoppinsSemiBold(
-                            19, textColorBlack,TextDecoration.none),
+                      SizedBox(
+                        width: mediaQuery.size.width/1.5,
+                        child: Text(
+                              DateFormat('dd EEEE MMM yyyy',state.locale==Locale('en')?'en_US' : 'fr_FR').format(activitys.ActivityBeginDate).toUpperCase(),
+                        overflow: TextOverflow.ellipsis,
+                          style: PoppinsSemiBold(
+                              19, textColorBlack,TextDecoration.none),
+                        ),
                       ),
                       Row(
                         children: [
@@ -750,7 +779,7 @@ showDragHandle: true,
                children: [
                 activitys.runtimeType == TrainingModel?
                 Padding(
-                  padding: paddingSemetricVerticalHorizontal(h: 20),
+                  padding: paddingSemetricHorizontal(h: 20),
                   child: Row(
                     children: [
                       IconInfo(Icons.person),
@@ -765,7 +794,7 @@ showDragHandle: true,
                               style: PoppinsLight(15, textColorBlack, ),
                             ),
                             SizedBox(
-                              width: mediaQuery.size.width/3.5,
+                              width: mediaQuery.size.width/2.5,
                               child: Text(
                                 "${(activitys as Training).ProfesseurName } ",
                                 overflow: TextOverflow.ellipsis,
@@ -778,7 +807,10 @@ showDragHandle: true,
                     ],
                   ),
                 ):Container(),
-                 Price(activitys, context, mediaQuery),
+                 Visibility(
+                      visible:  activitys.runtimeType != TrainingModel,
+
+                     child: Price(activitys, context, mediaQuery)),
 
                ],
              ),
@@ -814,6 +846,70 @@ showDragHandle: true,
 
             );
  }
+
+  static Widget AgendaBottomSheet(MeetingModel activitys,BuildContext context,MediaQueryData mediaQuery) {
+   return Padding(
+     padding: const EdgeInsets.all(12.0),
+     child: SingleChildScrollView(
+       child: SizedBox(
+         height: MediaQuery.of(context).size.height/1.5,
+         width: MediaQuery.of(context).size.width,
+         child: ListView.separated(
+           itemCount: (activitys).agenda.length,
+           itemBuilder: (context, index) {
+             var i = (activitys).agenda[index];
+             return Column(
+               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+               children: [
+                 Card(
+                    elevation: 5,
+                   shape: RoundedRectangleBorder(
+                     borderRadius: BorderRadius.circular(10),
+                     side: BorderSide(color: PrimaryColor, width: 1.5),
+                   ),
+       
+                   child: Padding(
+                     padding:paddingSemetricVerticalHorizontal(),
+                     child: Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: [
+                         SizedBox(
+                           width: mediaQuery.size.width ,
+                           child: Text(
+                             '${index+1}. ${i.split('(').first}',
+                             overflow: TextOverflow.ellipsis,
+                             style: PoppinsRegular(
+                               mediaQuery.devicePixelRatio * 6,
+                               textColorBlack,
+                             ),
+                           ),
+                         ),
+                         SizedBox(
+                           width: mediaQuery.size.width * 0.6,
+                           child: Text(
+                             "${i.split('(').last.split('min )').first.trim().replaceAll(RegExp(r'\s'), '')} min",
+                             overflow: TextOverflow.ellipsis,
+                             style: PoppinsLight(
+                               mediaQuery.devicePixelRatio * 5,
+                               textColorBlack,
+                             ),
+                           ),
+                         ),
+                       ],
+                     ),
+                   ),
+                 ),
+               ],
+             );
+           },
+           separatorBuilder: (BuildContext context, int index) {
+             return SizedBox(height: 10);
+           },
+         )
+       ),
+     ),
+   );
+  }
 }
 
 class DescriptionToggle extends StatelessWidget {
@@ -837,8 +933,8 @@ class DescriptionToggle extends StatelessWidget {
           children: [
             Text(
               truncatedDescription,
-              style: PoppinsLight(
-                  mediaquery.devicePixelRatio * 4, textColorBlack),
+              style: PoppinsRegular(
+                  mediaquery.devicePixelRatio * 5, textColorBlack),
             ),
             if (description.length > 100)
               Padding(

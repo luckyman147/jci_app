@@ -12,7 +12,7 @@ final sl = GetIt.instance;
 
 Future<void> initMembers() async {
   sl.registerFactory(() => MembersBloc(sl(), sl(),sl(),sl(),sl(),sl(),sl()));
-  sl.registerFactory(() => MemberManagementBloc(sl(), sl(),sl(),sl(),sl(),sl(),sl()));
+  sl.registerFactory(() => MemberManagementBloc(sl(), sl(),sl(),sl(),sl(),sl(),sl(),sl()));
 
   sl.registerFactory(()=>ChangeSboolsCubit());
   sl.registerLazySingleton<MemberRemote>(() => MemberRemoteImpl(client: sl()));
@@ -33,6 +33,7 @@ sl.registerLazySingleton(() => SendMembershipReportUseCase( authRepository: sl()
   sl.registerLazySingleton(() => UpdateCotisationUseCase( authRepository: sl()));
   sl.registerLazySingleton(() => UpdatePointsUseCase( authRepository: sl()));
   sl.registerLazySingleton(() => ChangeRoleUseCase( authRepository: sl()));
+  sl.registerLazySingleton(() => DeleteMemberUseCase( authRepository: sl()));
 
   sl.registerLazySingleton(() => GetMemberByIdUseCase( authRepository: sl()));
   sl.registerLazySingleton(() => GetMemberByname( authRepository: sl()));
