@@ -441,7 +441,9 @@ showDragHandle: true,
 
                                ),
                              ),
-                             IconButton(onPressed: (){}, icon: Icon(Icons.download_for_offline,color: Colors.green,))
+                             IconButton(onPressed: (){
+                               context.read<ParticpantsBloc>().add(DownloadAndSaveExcelEvent(activityId: activitys.id));
+                             }, icon: Icon(Icons.download_for_offline,color: Colors.green,))
                            ],
                          ),
                        ],

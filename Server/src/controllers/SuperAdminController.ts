@@ -13,6 +13,7 @@ import { team } from '../models/teams/team';
 import { generateSecureKey } from '../utility';
 import { sendPromotionEmail } from '../utility/NotificationEmailUtility';
 import { findrole } from '../utility/role';
+import { BoardRole } from '../models/Board/BoardRole';
 
 export const deleteMember=async(req:Request,res:Response)=>{
     const id=req.params.id
@@ -360,5 +361,32 @@ export const deleteLastPres=async(req:Request, res:Response,next:NextFunction)=>
         return res.status(204).json({ message: 'pres deleted successfully' });
     }else{
         return res.status(404).json({ message: 'pres not found' });
+    }
+}
+
+
+export const changeBoardRoleOfMember=async(req:Request,res:Response)=>{
+    try {
+        const {memberId,BoardRoleId}=req.params
+        // check if memhber exists 
+        const
+        member=await Member.findById(memberId)
+        if (!member){
+            return res.status(404).json({message:'member not found'})
+        }
+        // check if board role exists
+        const boardRole=await BoardRole.findById(BoardRoleId)
+        if (!boardRole){
+            return res.status(404).json({message:'board role not found'})
+        }
+        member.boardRole=BoardRoleId
+      await   member.save()
+        return res.status(200).json({message:'board role changed',member})
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({message:'error changing board role'})
+        
     }
 }

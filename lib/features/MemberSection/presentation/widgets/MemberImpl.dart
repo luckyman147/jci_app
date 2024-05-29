@@ -95,11 +95,15 @@ class MemberImpl{
         case UserStatus.userLoaded:
 
 if (state.memberWithRank == null) {
-  return LoadingWidget();
+  context.read<MembersBloc>().add(
+      GetMemberByHighestRAnkEvent(isUpdated: true));
+  return ShimmerGridView();
 }
           return BestMembersComponent.showHighestRankMembers(context, state.memberWithRank!,);
         default:
-          return Text("data");
+          context.read<MembersBloc>().add(
+              GetMemberByHighestRAnkEvent(isUpdated: true));
+          return ShimmerGridView();
       }
 
     });

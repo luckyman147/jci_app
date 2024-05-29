@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/core/config/services/MeetingStore.dart';
@@ -272,6 +273,29 @@ id: meeting.id,
   @override
   Future<Either<Failure, Unit>> deleteNotes( String activityId,String noteId)async {
     return await (getMessage(meetingRemoteDataSource.DeleteNote(activityId,noteId)));
+
+  }
+
+  @override
+  Future<Either<Failure, Uint8List>> downloadExcel(String activityId,)async {
+   if (await networkInfo.isConnected) {
+      try {
+        final remoteExcel = await meetingRemoteDataSource.downloadExcel(activityId);
+        log(remoteExcel.toString());
+        meetingLocalDataSource.saveExcelFile(remoteExcel,activityId+".xlsx");
+        return Right(remoteExcel);
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> saveExcelFile(Uint8List file, String filename)async {
+    return await (getMessage(meetingLocalDataSource.saveExcelFile(file,filename)));
+
 
   }
 }

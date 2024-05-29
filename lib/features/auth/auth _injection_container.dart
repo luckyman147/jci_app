@@ -7,6 +7,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:jci_app/features/auth/data/datasources/authRemote.dart';
 import 'package:jci_app/features/auth/data/repositories/auth.dart';
 import 'package:jci_app/features/auth/domain/repositories/AuthRepo.dart';
+import 'package:jci_app/features/auth/presentation/bloc/Permissions/permissions_bloc.dart';
 
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
@@ -25,7 +26,7 @@ import 'domain/usecases/authusecase.dart';
 final sl = GetIt.instance;
 
 Future <void > initAuth()async{
-  sl.registerFactory(() => ResetBloc(sl(),sl(),sl()));
+  sl.registerFactory(() => ResetBloc(sl(),sl(),sl()));  sl.registerFactory(() => PermissionsBloc(sl()));
 
 sl.registerFactory(() => AuthBloc(
      refreshTokenUseCase: sl(), signoutUseCase: sl(),
@@ -50,6 +51,8 @@ sl.registerLazySingleton<AuthLocalDataSources>(() => AuthLocalImpl());
   sl.registerLazySingleton(() => UpdatePasswordUseCase(authRepository: sl()));
   sl.registerLazySingleton(() => GoogleRegisterUseCase(sl()));
   sl.registerLazySingleton(() => GoogleSignUseCase(sl()));
+  sl.registerLazySingleton(() => IsNewMemberUseCase(authRepository:  sl()));
+
   sl.registerLazySingleton(() => SendVerifyCodeUseCases( sl()));
   sl.registerLazySingleton(() => SendResetPasswordEmailUseCase( sl()));
   sl.registerLazySingleton(() => CheckOtpUseCase( sl()));

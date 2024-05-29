@@ -47,6 +47,7 @@ import 'ShimmerEffects.dart';
 class ProfileComponents{
 
   static bool isInitial(StatesBool value)=> value==StatesBool.Initial;
+  static bool isDes(StatesBool value)=> value==StatesBool.Description;
   static bool iTeams(StatesBool value)=> value==StatesBool.Teams;
   static bool iActivities(StatesBool value)=> value==StatesBool.Activities;
   static bool iMembers(StatesBool value)=> value==StatesBool.Members;
@@ -113,6 +114,7 @@ static     var boxDecoration = BoxDecoration(
                       context.read<ChangeSboolsCubit>().changeState(StatesBool.Initial);}
                     else {
                       context.read<ChangeSboolsCubit>().changeState(state);
+
                     }                 },
                   icon: Icon(!isExpanded?Icons.arrow_downward:Icons.arrow_upward,color: textColorBlack,),
                 )
@@ -460,7 +462,8 @@ static Widget AchivedmentWidget(bool isFinished,String text ) {
       padding: paddingSemetricVerticalHorizontal(),
       child: Container(
         constraints: BoxConstraints(
-          maxHeight: mediaQuery.size.height * 0.6, // Adjust the height constraint as needed
+          maxHeight: mediaQuery.size.height * 0.6,
+
         ),
         child:
         member.teams.isEmpty?  buildFutureBuilder(AddTeamsWidget(context)
@@ -469,28 +472,31 @@ static Widget AchivedmentWidget(bool isFinished,String text ) {
         ListView.separated(
           itemBuilder: (context, index) {
 
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    DeatailsTeamComponent.ImageCard(mediaQuery, TeamModel.fromJson(member.teams[index]).CoverImage, 40),
-                    Padding(
-                      padding:paddingSemetricHorizontal(),
-                      child: SizedBox(
-                        width:mediaQuery.size.width/2.5,
-                        child: Text(
-                          member.teams[index]['name'],
-                          overflow: TextOverflow.ellipsis,
-                          style: PoppinsRegular(17, textColorBlack),
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      DeatailsTeamComponent.ImageCard(mediaQuery, TeamModel.fromJson(member.teams[index]).CoverImage, 40),
+                      Padding(
+                        padding:paddingSemetricHorizontal(),
+                        child: SizedBox(
+                          width:mediaQuery.size.width/2.5,
+                          child: Text(
+                            member.teams[index]['name'],
+                            overflow: TextOverflow.ellipsis,
+                            style: PoppinsRegular(17, textColorBlack),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
 
-IsPublic(member.teams[index]['status'])
-              ],
+              IsPublic(member.teams[index]['status'])
+                ],
+              ),
             );
           },
           separatorBuilder: (context, index) {
@@ -871,6 +877,12 @@ keyboardType: TextInputType.emailAddress,
         childAspectRatio: 5,
       ),
     );
+  }
+
+  static Widget BuildDescriptionWidget(Member member, MemberManagementState ste, BuildContext context) {
+    return Padding(
+        padding: paddingSemetricVerticalHorizontal(),
+    child: SingleChildScrollView(child: Text(member.description,style: PoppinsRegular(18, textColor, ),)));
   }
 }
 

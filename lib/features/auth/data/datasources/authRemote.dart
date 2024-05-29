@@ -209,16 +209,14 @@ Future<Unit> Login(String email,String password) async {
 
 
 
-
+await MemberStore.saveModel(MemberModel.fromJson(response['member']));
     await Store.setTokens(response['refreshToken'],response['accessToken'] );
 
     await Store.setLoggedIn(true);
 
     List<String> stringList = (response['Permissions'] as List).map((element) => element.toString()).toList();
     await Store.setPermissions(stringList);
-
-
-    //await MemberStore.saveModel(MemberModel.fromJson(response['member']));
+    await MemberStore.saveModel(MemberModel.fromJson(response['member']));
     return Future.value(unit);
 
 
@@ -346,6 +344,8 @@ Map<String, dynamic> filterMap(Map<String, dynamic> user) {
         List<String> stringList = (response['Permissions'] as List).map((element) => element.toString()).toList();
         await Store.setPermissions(stringList);
         await Store.setStatus(true);
+        await MemberStore.saveModel(MemberModel.fromJson(response['member']));
+
         return null;
 
       } else if (Response.statusCode == 400 && response['status'].toString().toUpperCase()=="NTR") {
@@ -378,12 +378,15 @@ Map<String, dynamic> filterMap(Map<String, dynamic> user) {
     final response = jsonDecode(Response.body);
 
     if (Response.statusCode == 201) {
+      await MemberStore.saveModel(MemberModel.fromJson(response['member']));
       await Store.setTokens(response['refreshToken'],response['accessToken'] );
       await Store.setLoggedIn(true);
 
       List<String> stringList = (response['Permissions'] as List).map((element) => element.toString()).toList();
       await Store.setPermissions(stringList);
       await Store.setStatus(true);
+
+
       return Future.value(unit);
     } else if (Response.statusCode==400){
 

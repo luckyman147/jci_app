@@ -16,6 +16,7 @@ Future<Either<Failure,bool>> isFirstEntry();
   Future<Either<Failure,Unit>> updateTokenFromStorage();
   Future<Either<Failure,Unit>> updateFirstEntry();
   Future<Either<Failure,bool>> isLoggedIn();
+  Future<Either<Failure,bool>> isNewMember();
 
 
   Future<Either<Failure, Unit>> updatePassword(Member member);

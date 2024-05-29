@@ -117,14 +117,14 @@ void _getActivityOfMonth(
       )async {
 
     if (event.act==activity.Events){
-      emit(ActivityLoadingState());
+
       final failureOrEvents= await getEventsOfTheMonthUseCase(NoParams());
       emit(_mapFailureOrActivityMonthToState(failureOrEvents));
 
 
     }
     else if (event.act==activity.Trainings){
-      emit(ActivityLoadingState());
+
 
       final failureOrEvents= await getAllActivitiesUseCases(event.act);
       emit(_mapFailureOrActivityMonthToState(failureOrEvents));

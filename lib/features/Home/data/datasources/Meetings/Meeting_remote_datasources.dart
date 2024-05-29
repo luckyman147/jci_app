@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ Future<List<NoteModel>> getModelNotesOfActivity(String activityId,String start,S
 Future<Unit> DeleteNote(String activityId,String noteId);
 Future<NoteModel> CreateNoteOfActivity(String activityId,NoteModel note);
 Future<Unit> UpdateNoteOfActivity(NoteModel note);
-
+Future<Uint8List> downloadExcel(String activityId);
 }
 
 class MeetingRemoteDataSourceImpl implements MeetingRemoteDataSource{
@@ -310,4 +311,15 @@ final token = await getTokens();
       throw ServerException();
     }
   }
+
+  @override
+  Future<Uint8List> downloadExcel(String activityId)async {
+    final response = await http.get(Uri.parse(Urls.downloadUrl(activityId)));
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    } else {
+      throw WrongCredentialsException();
+    }
+  }
+
 }

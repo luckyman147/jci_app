@@ -13,6 +13,8 @@ class Member extends Equatable {
   final String firstName;
   final String lastName;
   final String phone;
+  final String description;
+   final dynamic board;
   final String password;
   final bool is_validated;
   final List<bool> cotisation;
@@ -43,7 +45,7 @@ final int rank;
       teams: [],
       IsSelected: false,
       role: '',
-      objectifs: [], rank: 0,
+      objectifs: [], rank: 0, description: '', board: '',
     );
   }
 
@@ -78,7 +80,7 @@ final int rank;
       Activities: data['Activities']??[],
       teams: data['teams']??[],
       IsSelected: data['IsSelected']??false,
-      role: data['role']??'', objectifs: [], rank: data['rank']??-1,
+      role: data['role']??'', objectifs: [], rank: data['rank']??-1, description: data['description']??'', board: data['boardRole']??'',
     );
   }
 
@@ -87,10 +89,12 @@ final int rank;
       language: "fr",
 
       IsSelected: false, id: "id", role: "role", is_validated: false,
-      cotisation:[false] , Images: [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password", Activities: [], teams: [], points: 0, objectifs: [], rank: 0);
+      cotisation:[false] , Images: [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password", Activities: [], teams: [], points: 0, objectifs: [], rank: 0, description: '', board: '');
 
   static Member toMember(Map<String, dynamic> json) {
     return Member(
+      description: json['description']??'',
+      board: json['boardRole']??'',
       language: json['language']??'fr',
       objectifs: json['objectifs']??[],
       points: json['points']??0,
@@ -119,6 +123,8 @@ final int rank;
         required this.objectifs,
         required this.points,
         required this.teams,
+        required this.description,
+        required this.board,
         required this.language,
         required this.Activities,
         required this.IsSelected,
@@ -140,6 +146,6 @@ final int rank;
   // TODO: implement props
   List<Object?> get props => [email, password,teams,points,
     id, role, is_validated, cotisation, Images, firstName, lastName, phone,
-    IsSelected, Activities,rank
+    IsSelected, Activities,rank, description, board, language, objectifs
 
   ];}

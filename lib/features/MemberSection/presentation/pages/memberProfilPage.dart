@@ -22,12 +22,26 @@ final String id;
 }
 
 class _MemberSectionPageState extends State<MemberSectionPage> {
+ late String _previousData ;
   @override
   void initState() {
-
+    _previousData = widget.id;
     // TODO: implement initState
     super.initState();
   }
+  @override
+  void didUpdateWidget(covariant MemberSectionPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.id != widget.id) {
+      _previousData = oldWidget.id;
+    }
+  }
+
+  @override
+  bool shouldRebuild(MemberSectionPage oldWidget) {
+    return oldWidget.id != _previousData;
+  }
+
   @override
   Widget build(BuildContext context) {
     return  Scaffold(

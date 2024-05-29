@@ -63,8 +63,6 @@ class MemberRepoImpl extends MemberRepo {
           final members = await membersLocalDataSource.getUserProfile();
           if (members == null) {
             final members = await memberRemote.getUserProfile();
-            log("hhhhhhh"+members.Activities.toString());
-
             membersLocalDataSource.ChangeUserProfile(members);
             return Right(members);
           }

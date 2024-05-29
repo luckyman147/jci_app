@@ -136,6 +136,15 @@ class GoogleSignUseCase extends UseCase<User?, NoParams>{
   @override
   Future<Either<Failure, Unit>> call(Member params) async {
     return await _loginRepo.RegisterInWithGoogle(params);
+  }}
+class IsNewMemberUseCase extends UseCase<bool, NoParams> {
+  final AuthRepo authRepository;
+
+  IsNewMemberUseCase({required this.authRepository});
+
+  @override
+  Future<Either<Failure, bool>> call(NoParams params) async {
+    return await authRepository.isNewMember();
   }
 
 }

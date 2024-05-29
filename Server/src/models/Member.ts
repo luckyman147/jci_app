@@ -21,6 +21,7 @@ is_validated:boolean
 cotisation:boolean[]
     salt:string
    role:any
+   boardRole:any
    rank:number
 }
 export const MemberSchema=new Schema({
@@ -57,7 +58,13 @@ language:{type:String,default:'fr'},
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Role',
         
-      }
+      },
+        boardRole: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'BoardRole',
+            
+            
+        },
  
 },{
     toJSON:{

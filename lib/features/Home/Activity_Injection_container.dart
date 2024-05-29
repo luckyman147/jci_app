@@ -43,7 +43,7 @@ Future<void> initActivities() async {
     getEventsOfTheMonthUseCase: sl(),
  participantBloc: sl(), getAllActivitiesUseCases: sl(), getActivityByIdUseCases: sl(), getActivityByNameUseCases: sl(), ));
   sl.registerFactory(() => ParticpantsBloc(leaveActivityUseCases: sl(), participateActivityUseCases: sl(), checkPermissionsUseCases: sl(), getAllParticipantsUseCases: sl(), getAllGuestsUseCases: sl(), addGuestUseCases: sl(),
-    updateGuestUseCases: sl(), removeGuestUseCases: sl(), confirmGuestUseCases: sl(), sendReminderUseCases: sl(), getAllGuestsOfActivityUseCases: sl(), addGuestToActivityUseCases: sl(), changeGuestToMemberUseCases: sl (),
+    updateGuestUseCases: sl(), removeGuestUseCases: sl(), confirmGuestUseCases: sl(), sendReminderUseCases: sl(), getAllGuestsOfActivityUseCases: sl(), addGuestToActivityUseCases: sl(), changeGuestToMemberUseCases: sl (), downloadExcelUseCases: sl(),
 
 
 
@@ -88,6 +88,7 @@ sl.registerLazySingleton(() => DeleteNotesUseCases(sl()));
 sl.registerLazySingleton(() => CheckPermissionsUseCase(sl()));
 sl.registerLazySingleton(() => CheckTrainingPermissionsUseCase(sl()));
 sl.registerLazySingleton(() => CheckMeetPermissionsUseCase(sl()));
+sl.registerLazySingleton(() => DownloadExcelUseCases(sl()));
 
 
 sl.registerLazySingleton(() => GetNotesOfActivityUseCase(sl()));

@@ -10,9 +10,12 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.
 import 'package:jci_app/features/Home/presentation/pages/ActivityPage.dart';
 import 'package:jci_app/features/Home/presentation/widgets/HomeWidget.dart';
 import 'package:jci_app/features/MemberSection/presentation/pages/memberProfilPage.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/screens/AllTeamsScreen.dart';
-import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:jci_app/features/auth/presentation/bloc/Permissions/permissions_bloc.dart';
+
 
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
@@ -27,12 +30,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage > {
-
+@override
+  void initState() {
+  context.read<PermissionsBloc>().add(CheckPermissionsEvent());    
+  // TODO: implement initState
+    super.initState();
+  }
 
 
   @override
   Widget build(BuildContext context) {
 
+    return BlocBuilder<PermissionsBloc, PermissionsState>(
+  builder: (context, Perm) {
     return BlocBuilder<ActivityCubit, ActivityState>(
   builder: (context, ste) {
     return BlocBuilder<PageIndexBloc, PageIndexState>(
@@ -47,7 +57,7 @@ class _HomePageState extends State<HomePage > {
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(24), topRight: Radius.circular(24)),
 
-              child: buildBottomNavigationBar(state, context),
+              child: buildBottomNavigationBar(state, context,Perm),
             ),
           ),
           body:widgets[state.index],
@@ -60,9 +70,11 @@ class _HomePageState extends State<HomePage > {
     );
   },
 );
+  },
+);
   }
 
-  BottomNavigationBar buildBottomNavigationBar(PageIndexState state, BuildContext context) {
+  BottomNavigationBar buildBottomNavigationBar(PageIndexState state, BuildContext context,PermissionsState perm) {
     return BottomNavigationBar( type: BottomNavigationBarType.fixed,
                 showSelectedLabels: true,
                 showUnselectedLabels: true,
@@ -79,8 +91,7 @@ class _HomePageState extends State<HomePage > {
                     context.read<GetTeamsBloc>().add(GetTeams(isPrivate: true));
                   }
                   if (index==3){
-                    context.read<MembersBloc>().add(GetUserProfileEvent(true));
-                    context.read<ChangeSboolsCubit>().ChangePages("/home","/memberSection/id");
+                    context.read<MembersBloc>().add(GetUserProfileEvent(false));
 
 
                   }
@@ -91,8 +102,11 @@ class _HomePageState extends State<HomePage > {
                       icon: Icon(Icons.home,size: 31,), label: "Home"),
                   BottomNavigationBarItem(
                       icon: SvgPicture.string(EventIcon ,color:state.index==1?PrimaryColor:ThirdColor,), label: "Activities".tr(context)),
+if (perm.status==PermStatus.Other)
                   BottomNavigationBarItem(
                       icon: SvgPicture.string(TeamsIcon,color: state.index==2?PrimaryColor:ThirdColor ,), label: "Teams".tr(context)),
+                  if (perm.status==PermStatus.Other)
+
                   BottomNavigationBarItem(
                       icon: Icon(Icons.person,size: 31,), label: "Profile".tr(context)),
                 ]);

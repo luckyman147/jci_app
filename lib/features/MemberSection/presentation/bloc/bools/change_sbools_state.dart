@@ -1,5 +1,5 @@
 part of 'change_sbools_cubit.dart';
-enum StatesBool{Initial,Points,Activities,Teams,Members,Objectifs,JCI}
+enum StatesBool{Initial,Points,Activities,Teams,Members,Objectifs,JCI,Description}
 enum JciStates{Initial,Presentations,Board,Presidants}
 enum SettingsBools{Initial,Profile,Language,Mode,Notifications,Help,Members}
  class ChangeSboolsState extends Equatable {

@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 
-import { ChangeToAdmin, ChangeToMember, ChangeToSuperAdmin, CreateLastPresid, CreatePermission, deleteLastPres, deleteMember, DeletePermission, getAllPresidents, UpdateLastPres, UpdateLastPresImage, UpdatePermission } from '../controllers';
+import { changeBoardRoleOfMember, ChangeToAdmin, ChangeToMember, ChangeToSuperAdmin, CreateLastPresid, CreatePermission, deleteLastPres, deleteMember, DeletePermission, getAllPresidents, UpdateLastPres, UpdateLastPresImage, UpdatePermission } from '../controllers';
 import { AuthenticateSuperAdmin } from '../middleware/CommonAuth';
 
 require('dotenv') .config({path:'Server\\src\\.env'})
@@ -104,6 +104,7 @@ router.use(AuthenticateSuperAdmin)
 router.post('/CreatePermission',CreatePermission)
 router.post('/CreateLastPresident',CreateLastPresid)
 router.patch('/UpdatePresident/:id',UpdateLastPres)
+router.patch('/ChangeBoardRole/:memberId/:BoardRoleId',changeBoardRoleOfMember)
 router.delete('/member/:id',deleteMember)
 router.patch('/UpdatePermission/:id',UpdatePermission)
 router.delete('/DeletePermission/:id',DeletePermission )

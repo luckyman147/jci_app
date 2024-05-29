@@ -227,23 +227,25 @@ class _CalendarButtonState extends State<CalendarButton> {
           SizedBox(
             height: MediaQuery.of(context).size.height,
 
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    BackButton(onPressed: (){
-                      Navigator.pop(context);
-                    },),
-
-                    Text("Calendar".tr(context),style: PoppinsSemiBold(20, textColorBlack, TextDecoration.none),),
-                  ],
-                ),
-                Padding(
-                  padding: paddingSemetricVertical(),
-                  child: MyActivityButtons(),
-                ),
-                SingleChildScrollView(child: ShowCalendarWidget()),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      BackButton(onPressed: (){
+                        Navigator.pop(context);
+                      },),
+              
+                      Text("Calendar".tr(context),style: PoppinsSemiBold(20, textColorBlack, TextDecoration.none),),
+                    ],
+                  ),
+                  Padding(
+                    padding: paddingSemetricVertical(),
+                    child: MyActivityButtons(),
+                  ),
+                  SingleChildScrollView(child: ShowCalendarWidget()),
+                ],
+              ),
             ),
           )
           );

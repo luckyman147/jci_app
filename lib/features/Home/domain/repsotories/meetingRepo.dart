@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:dartz/dartz.dart';
+
 import 'package:jci_app/features/Home/domain/entities/Note.dart';
 import 'package:jci_app/features/Home/domain/repsotories/EventRepo.dart';
 
@@ -30,6 +33,9 @@ abstract class MeetingRepo  {
   Future<Either<Failure,List<Note>>> getAllNotes(String activityId,String start,String limit,bool isUpdated);
   Future<Either<Failure,Note>> addNotes(String activityId,Note note);
   Future<Either<Failure,Unit>> deleteNotes(String activityId,String noteId);
+  Future<Either<Failure,Uint8List>> downloadExcel(String activityId);
   Future<Either<Failure,Unit>> UpdateNotes(Note note);
+  Future<Either<Failure,Unit>>saveExcelFile(Uint8List file, String filename);
+
 
 }

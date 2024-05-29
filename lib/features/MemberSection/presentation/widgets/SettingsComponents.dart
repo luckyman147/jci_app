@@ -25,6 +25,7 @@ import '../../../auth/domain/entities/Member.dart';
 import '../../../auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
 
+import '../bloc/Members/members_bloc.dart';
 import 'BestMembersWidget.dart';
 
 class SettingsComponent {
@@ -44,7 +45,7 @@ static isMode(SettingsBools state) {
   }
 
   static Widget rowAction(BuildContext context, String title, IconData data,bool isSwitch,Widget body,MediaQueryData mediaQuery
-    , SettingsBools state,IconData? iconData,double height) {
+    , SettingsBools state,IconData? iconData,double height,Function() onPressed) {
     return Padding(
       padding: paddingSemetricVertical(),
       child: AnimatedContainer(
@@ -74,7 +75,9 @@ static isMode(SettingsBools state) {
                     IconButton(
                       onPressed:isSwitch?
                           ()=>context.read<ChangeSboolsCubit>().changeSettings(SettingsBools.Initial):
-                          ()=>context.read<ChangeSboolsCubit>().changeSettings(state) ,
+                          (){
+                        onPressed();
+                        context.read<ChangeSboolsCubit>().changeSettings(state);} ,
                       icon: Icon(isSwitch?Icons.arrow_downward_rounded: Icons.arrow_forward_rounded),
                     ),
                   ],
@@ -122,7 +125,7 @@ static isMode(SettingsBools state) {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          rowAction(context, "Profile".tr(context), Icons.person,isProfile(state.settings),Profile(context,member,pass,cpass,key),MediaQuery.of(context),SettingsBools.Profile,null,200),
+          rowAction(context, "Profile".tr(context), Icons.person,isProfile(state.settings),Profile(context,member,pass,cpass,key),MediaQuery.of(context),SettingsBools.Profile,null,200,(){}),
           MembersAdmin(state),
 
               Language(context, state),
@@ -164,7 +167,7 @@ static isMode(SettingsBools state) {
                   }
 
                  return rowAction(context, "Language (${snat.data})", Icons.language,
-                     isLanguage(state.settings),WidgetChangeLanguageWidget(context,MediaQuery.of(context)),MediaQuery.of(context),SettingsBools.Language,null,200);
+                     isLanguage(state.settings),WidgetChangeLanguageWidget(context,MediaQuery.of(context)),MediaQuery.of(context),SettingsBools.Language,null,200,(){});
                }
              );
   }
@@ -185,7 +188,8 @@ static isMode(SettingsBools state) {
                   ProfileComponents.MembersWidgetOnlyName(
                       MediaQuery.of(context),context),
                   MediaQuery.of(context),
-                  SettingsBools.Members,Icons.emoji_events,300);
+                  SettingsBools.Members,Icons.emoji_events,300,()=>    context.read<MembersBloc>().add(GetAllMembersEvent(false))
+              );
             }
           else{return SizedBox();}
           }
@@ -290,7 +294,7 @@ static isMode(SettingsBools state) {
                ProfileComponents.SaveChangesButton(()async{
                  if (key.currentState!.validate()) {
                    final language=await context.read<localeCubit>().cachedLanguageCode();
-                   final  Member member=Member(email: newMember.email , password: cPassword.text, id: '', role: '', is_validated: false, cotisation: [], Images: [],teams: [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: [], points: 0, objectifs: [],language: language??'fr', rank: 0);
+                   final  Member member=Member(email: newMember.email , password: cPassword.text, id: '', role: '', is_validated: false, cotisation: [], Images: [],teams: [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: [], points: 0, objectifs: [],language: language??'fr', rank: 0, description: '', board: "");
 
                    context.read<ResetBloc>().add(ResetSubmitted( member: member));
                  cPassword.clear();

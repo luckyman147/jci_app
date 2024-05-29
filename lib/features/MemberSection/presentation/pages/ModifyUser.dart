@@ -28,21 +28,25 @@ class _ModifyUserState extends State<ModifyUser> {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController NumberController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
 
   @override
   void dispose() {
     firstNameController.dispose();
     lastNameController.dispose();
     NumberController.dispose();
+    descriptionController.dispose();
     _formKey.currentState?.dispose();
     // TODO: implement dispose
     super.dispose();
   }
  @override
   void initState() {
+
    firstNameController.text = widget.member.firstName;
     lastNameController.text = widget.member.lastName;
     NumberController.text = widget.member.phone;
+    descriptionController.text = widget.member.description;
 
     // TODO: implement initState
     super.initState();
@@ -97,9 +101,10 @@ class _ModifyUserState extends State<ModifyUser> {
     ,
               TextfieldNormal(context,"First Name".tr(context), "Enter your first name",firstNameController,(poo){}),
               TextfieldNormal(context,"Last Name".tr(context), "Enter your Last name",lastNameController,(poo){}),
+              TextfieldDescription(context, "Your Bio", "Enter Your Bio", descriptionController, (p0) => null),
               ProfileComponents.TextfieldNum("Phone Number", "Enter your Phone Number",NumberController,(poo){}),
               ProfileComponents.SaveChangesButton(()async{  FunctionMember.saveMember(  widget.member,firstNameController,lastNameController,NumberController,
-                  state.image,context,_formKey);}),
+                  state.image,context,_formKey,descriptionController);}),
           ]),
   ),
 );

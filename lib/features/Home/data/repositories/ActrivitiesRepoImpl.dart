@@ -139,6 +139,7 @@ final result= MeetingModel.fromEntities(act as Meeting);
   @override
   Future<Either<Failure, Activity>> getActivityById(String id, activity act)async  {
     if (await networkInfo.isConnected) {
+      final result=await eventLocalDataSource.getEventById(id);
       try {
 
         switch(act){
@@ -146,6 +147,7 @@ final result= MeetingModel.fromEntities(act as Meeting);
           case activity.All:
 
             final result=await eventRemoteDataSource.getEventById(id);
+await eventLocalDataSource.CacheEventById(result);
 
             return Right(result);
 

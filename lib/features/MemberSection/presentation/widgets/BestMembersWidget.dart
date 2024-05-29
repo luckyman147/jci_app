@@ -74,7 +74,7 @@ visualDensity: VisualDensity.comfortable,
     Container(
       height: MediaQuery.of(context).size.height * 0.43,
       width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
 
 
         borderRadius: BorderRadius.only(
@@ -82,35 +82,37 @@ visualDensity: VisualDensity.comfortable,
           bottomRight: Radius.circular(20),
         ),
       ),
-      child: Column(
-
-        children: [
-          Header(context,textColorBlack),
-          Text("Best Members".tr(context),style: PoppinBold(30, SecondaryColor,TextDecoration.none),),
-          Padding(
-            padding: paddingSemetricVertical(),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-
-                Padding(
-                  padding: const EdgeInsets.only(top: 50.0),
-                  child: ColumBestMembers(members[1],Colors.grey,"2",78,context),
-                ),
-                ColumBestMembers(members[0],Color(0xFFFFD700),"1",78,context),
-                Padding(
-                  padding: const EdgeInsets.only(top: 50.0),
-                  child: ColumBestMembers(members[2],Colors.brown,"3",78,context),
-                ),
-
-
-              ],
-            ),
-          )
-
-
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+        
+          children: [
+            Header(context,textColorBlack),
+            Text("Best Members".tr(context),style: PoppinBold(30, SecondaryColor,TextDecoration.none),),
+            Padding(
+              padding: paddingSemetricVertical(),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+        
+                  Padding(
+                    padding: const EdgeInsets.only(top: 50.0),
+                    child: ColumBestMembers(members[1],Colors.grey,"2",78,context),
+                  ),
+                  ColumBestMembers(members[0],Color(0xFFFFD700),"1",78,context),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 50.0),
+                    child: ColumBestMembers(members[2],Colors.brown,"3",78,context),
+                  ),
+        
+        
+                ],
+              ),
+            )
+        
+        
+          ],
+        ),
       ),
 
     ):              Header(context,textColorBlack);

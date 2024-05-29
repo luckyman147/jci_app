@@ -10,6 +10,7 @@ import '../../../../core/util/snackbar_message.dart';
 import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import '../../../auth/domain/entities/Member.dart';
 import '../../../auth/presentation/bloc/ResetPassword/reset_bloc.dart';
+import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
 import '../bloc/Members/members_bloc.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -29,7 +30,6 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     context.read<localeCubit>().getSavedLanguage();
-    context.read<MembersBloc>().add(GetAllMembersEvent(true));
     // TODO: implement initState
     super.initState();
   }
@@ -59,34 +59,43 @@ class _SettingsPageState extends State<SettingsPage> {
 
       ),
       body: SafeArea(
-        child: BlocListener<ResetBloc, ResetPasswordState>(
+        child: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
-            if (state.status==ResetPasswordStatus.Updated){
-              SnackBarMessage.showSuccessSnackBar(
-                  message: state.message, context: context);
-              context.go('/home');
-              context.read<MembersBloc>().add(GetUserProfileEvent(false));
-            }
-            else if(state.status==ResetPasswordStatus.error){
-              SnackBarMessage.showErrorSnackBar(
-                  message: state.message, context: context);
+            if (state is AuthSuccessState){
+              context.go('/login');
             }
             // TODO: implement listener}
           },
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: paddingSemetricVerticalHorizontal(),
-                  child: Text("Settings".tr(context), style: PoppinsSemiBold(
-                      24, textColorBlack, TextDecoration.none),),
-                ),
-                SettingsComponent.ColumnActions(
-                    context, widget.member, passwordController, conf, _formKey),
+          child: BlocListener<ResetBloc, ResetPasswordState>(
+            listener: (context, state) {
+              if (state.status == ResetPasswordStatus.Updated) {
+                SnackBarMessage.showSuccessSnackBar(
+                    message: state.message, context: context);
+                context.go('/home');
+                context.read<MembersBloc>().add(GetUserProfileEvent(false));
+              }
+              else if (state.status == ResetPasswordStatus.error) {
+                SnackBarMessage.showErrorSnackBar(
+                    message: state.message, context: context);
+              }
+              // TODO: implement listener}
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: paddingSemetricVerticalHorizontal(),
+                    child: Text("Settings".tr(context), style: PoppinsSemiBold(
+                        24, textColorBlack, TextDecoration.none),),
+                  ),
+                  SettingsComponent.ColumnActions(
+                      context, widget.member, passwordController, conf,
+                      _formKey),
 
-              ],
+                ],
+              ),
             ),
           ),
         ),

@@ -20,6 +20,14 @@ Map<String, dynamic> _$MemberModelToJson(MemberModel instance) =>
       'Images': instance.Images,
       'Activities': instance.Activities,
       'IsSelected': instance.IsSelected,
+      "description": instance.description,
+      "board": instance.board,
       'role': instance.role,
       'language': instance.language,
+          "objectifs": instance.objectifs,
+          "points": instance.points,
+
+          "rank": instance.rank,
+          "teams": instance.teams,
+
     };

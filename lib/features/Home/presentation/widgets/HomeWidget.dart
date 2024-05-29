@@ -1,11 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
+import 'package:jci_app/features/auth/presentation/bloc/Permissions/permissions_bloc.dart';
 
 
 import '../../../../core/app_theme.dart';
@@ -34,9 +36,12 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> {
   @override
   void initState() {
-    context.read<AcivityFBloc>().add(GetActivitiesOfMonthEvent(act: widget.Activity));
-context.read<MembersBloc>().add(GetMemberByHighestRAnkEvent(isUpdated: true));
-    context.read<AddDeleteUpdateBloc>().add(CheckPermissions(act: widget.Activity));
+    context.read<AcivityFBloc>().add(
+        GetActivitiesOfMonthEvent(act: widget.Activity));
+    context.read<MembersBloc>().add(
+        GetMemberByHighestRAnkEvent(isUpdated: true));
+    context.read<AddDeleteUpdateBloc>().add(
+        CheckPermissions(act: widget.Activity));
 
     context.read<GetTeamsBloc>().add(GetTeams(isPrivate: true));
     context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Private));
@@ -45,15 +50,14 @@ context.read<MembersBloc>().add(GetMemberByHighestRAnkEvent(isUpdated: true));
   }
 
 
-
-
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     return SafeArea(
       child: Scaffold(
-        drawer:HomeComponents. buildDrawer(context,mediaQuery),
-        appBar: AppBar(title:HomeComponents. buildHeader(mediaQuery),
+        drawer: HomeComponents.buildDrawer(context, mediaQuery),
+        appBar: AppBar(
+          title: HomeComponents.buildHeader(mediaQuery),
 
 
           centerTitle: true,
@@ -64,27 +68,52 @@ context.read<MembersBloc>().add(GetMemberByHighestRAnkEvent(isUpdated: true));
           shadowColor: textColorWhite,
 
 
-        actions:  [
-         Padding(
-           padding: paddingSemetricHorizontal(),
-           child: CalendarButton(color: textColorWhite, IconColor: textColorBlack,),
-         )
+          actions: [
+            Padding(
+              padding: paddingSemetricHorizontal(),
+              child: CalendarButton(
+                color: textColorWhite, IconColor: textColorBlack,),
+            ),
+            BlocBuilder<PermissionsBloc, PermissionsState>(
+              builder: (context, state) {
+                if (state.status == PermStatus.NewMember) {
+                  return IconButton(
+                    onPressed: () {
+                      context.read<AuthBloc>().add(SignoutEvent());
+                    },
+                    icon: Icon(
+                      Icons.logout,
+                      color: Colors.red,
+                    ),
+                  );
+                }
+                return Container();
+              },
+            ),
+
           ],
         ),
-        body: BlocConsumer<ActivityCubit, ActivityState>(
-          listener: (context, state) {},
-          builder: (context, state) {
-            return
+        body: BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthSuccessState) {
+              context.go('/login');
+            }
+            // TODO: implement listener}
+          },
+          child: BlocConsumer<ActivityCubit, ActivityState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              return
 
-              SingleChildScrollView(
-                child: SafeArea(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: mediaQuery.size.height / 38,
-                        horizontal: mediaQuery.size.width / 20),
-                    child: BlocBuilder<AuthBloc, AuthState>(
-                      builder: (context, ste) {
-                        return Column(
+                SingleChildScrollView(
+                  child: SafeArea(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: mediaQuery.size.height / 38,
+                          horizontal: mediaQuery.size.width / 20),
+                      child: BlocBuilder<AuthBloc, AuthState>(
+                        builder: (context, ste) {
+                          return Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
 
@@ -95,31 +124,33 @@ context.read<MembersBloc>().add(GetMemberByHighestRAnkEvent(isUpdated: true));
                               ),
                               Padding(
                                 padding: paddingSemetricHorizontal(h: 10),
-                                child: buildBody(context, state.selectedActivity,
+                                child: buildBody(
+                                    context, state.selectedActivity,
                                     mediaQuery),
                               ),
 
 
                               Padding(
                                 padding: paddingSemetricHorizontal(h: 16),
-                                child: HomeComponents.TeamsWidget(mediaQuery,context),
+                                child: HomeComponents.TeamsWidget(
+                                    mediaQuery, context),
                               ),
                               MemberImpl.MemberWithHighestRanks(mediaQuery)
                             ],
 
 
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-              );
-          },
+                );
+            },
+          ),
         ),
       ),
     );
   }
-
 
 
 }

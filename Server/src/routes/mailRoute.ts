@@ -7,5 +7,5 @@ router.post ('/ResetPasswordMails',SendResetPasswordVerificationCode)
 router.post ('/reportmembership/:memberid',reportMembershipEmail)
 router.post ('/reportInactivity/:memberid',reportInactivityEmail)
 router.post ('/repostunfinishedTask/:taskid',SendReportDeadlineTask)
-router.post ('/SendReminder/:activityId',SendReminderActivity)
+router.post ('/                                                                                                                                                                                             /:activityId',SendReminderActivity)
 export { router as mailRoute }

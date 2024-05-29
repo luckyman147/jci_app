@@ -1,9 +1,14 @@
+import 'dart:developer';
+import 'dart:typed_data';
+
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/features/Home/data/model/NoteModel.dart';
-
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 import '../../../../../core/config/services/MeetingStore.dart';
 import '../../../../../core/error/Exception.dart';
 import '../../model/meetingModel/MeetingModel.dart';
+import 'package:path/path.dart' as p;
 
 abstract class MeetingLocalDataSource {
   Future<List<MeetingModel>> getAllCachedMeetings();
@@ -16,7 +21,7 @@ Future<List<NoteModel>> getNotes(String start,String limit);
   Future<Unit> cacheMeetings(List<MeetingModel> Meeting);
   Future<Unit> cacheMeetingsOfTheWeek(List<MeetingModel> Meeting);
   Future<Unit> cacheMeetingsOfTheMonth(List<MeetingModel> Meeting);
-
+  Future<Unit> saveExcelFile(Uint8List bytes, String filename);
 
 }
 
@@ -86,4 +91,36 @@ throw UnimplementedError();
     }
 
   }
+
+  @override
+  Future<Unit> saveExcelFile(Uint8List bytes, String filename) async {
+    final directory = await getExternalStorageDirectory();
+    final downloadsDir = Directory('/storage/emulated/0/Download'); // Default path for downloads on most Android devices
+
+    // Ensure the Downloads directory exists
+    if (!downloadsDir.existsSync()) {
+      await downloadsDir.create(recursive: true);
+    }
+
+    // Check if a file with the same name already exists and add an index if necessary
+    String filePath = p.join(downloadsDir.path, filename);
+    String baseName = p.basenameWithoutExtension(filename);
+    String extension = p.extension(filename);
+    int index = 1;
+
+    while (await File(filePath).exists()) {
+      filePath = p.join(downloadsDir.path, '$baseName($index)$extension');
+      index++;
+    }
+
+    // Create the file in the Downloads directory
+    final file = File(filePath);
+    await file.writeAsBytes(bytes);
+
+    // Log the directory path for debugging purposes
+    log('File saved to: $filePath');
+
+    return Future.value(unit);
+  }
+
 }

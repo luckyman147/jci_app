@@ -129,3 +129,9 @@ class AddGuestToActivityEvent extends ParticpantsEvent {
   @override
   List<Object> get props => [params];
 }
+class DownloadAndSaveExcelEvent extends ParticpantsEvent {
+  final String activityId;
+  DownloadAndSaveExcelEvent({required this.activityId});
+  @override
+  List<Object> get props => [activityId];
+}

@@ -87,21 +87,8 @@ void checkPermissions(
       Emitter<AddDeleteUpdateState> emit
 
       )async {
-    switch (event.act){
-      case activity.Events:
-        case activity.All:
-        final failureOrEvents= await checkPermissionsUseCase(NoParams());
-        emit(_checkPermissionsOrFailure(failureOrEvents));
-
-      case activity.Trainings:
-        final failureOrEvents= await checkPermissionsUseCase(NoParams());
-        emit(_checkPermissionsOrFailure(failureOrEvents));
-
-      case activity.Meetings:
-        final failureOrEvents= await checkPermissionsUseCase(NoParams());
-        emit(_checkPermissionsOrFailure(failureOrEvents));
-
-    }
+  final failureOrEvents= await checkPermissionsUseCase(NoParams());
+  emit(_checkPermissionsOrFailure(failureOrEvents));
 
   }
 

@@ -1,14 +1,14 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
+import mongoose, { Document } from "mongoose";
+import { forgetPasswordInputs } from '../dto/auth.dto';
 import { CreateMemberInputs, MemberLoginGoogleInputs, MemberLoginInputs } from '../dto/member.dto';
-import { createWorker, Worker } from 'tesseract.js';
-
-import { TokenInput, forgetPasswordInputs } from '../dto/auth.dto';
-import { Member } from '../models/Member';
-import { GenerateSalt, HashPassword, ValidatePassword, VerifyrefreshToken, generateAccessToken, generateRefreshToken, revokeRefreshToken } from '../utility';
-import { findrole, findroleByid, GetMemberPermission, getPermissionsKeys, getPublicPermissions } from '../utility/role';
+import { Member, MemberDoc } from '../models/Member';
+import { generateAccessToken, generateRefreshToken, GenerateSalt, HashPassword, revokeRefreshToken, ValidatePassword, VerifyrefreshToken } from '../utility';
 import { sendNewMemberEmail } from '../utility/NotificationEmailUtility';
+import { CheckObjectif } from '../utility/objectifcheck';
+import { findrole, findroleByid, getActivitiesInfo, getBoardRole, getFilesInfoByIds, getMeetingsInfo, getPermissionsKeys, getPublicPermissions, getRank, getteamsInfo, getTrainingInfo } from '../utility/role';
 
 //**  Sign Up*/
 export const MemberSignUp= async(req:Request,res:Response,next:NextFunction)=>{
@@ -46,7 +46,8 @@ console.log(role)
 
         lastName:lastName,
         role:role,
-        Permissions:Permissions
+        Permissions:Permissions,
+        boardRole:""
 
     })
     if (result){
@@ -100,9 +101,15 @@ export const MemberLogin= async(req:Request,res:Response,next:NextFunction)=>{
                 
 
           })
-        console.log("login")
-          return res.status(200).json({refreshToken:refreshToken,accessToken:accessToken,email:MemberInfo.email,role:await findroleByid(MemberInfo.role._id),
-            Permissions: await getPermissionsKeys(
+         
+            
+
+          const info = await ExtractMembersInfo(MemberInfo);
+
+
+
+          return res.status(200).json({refreshToken:refreshToken,accessToken:accessToken,member:info
+,            Permissions: await getPermissionsKeys(
             MemberInfo.Permissions,MemberInfo.role)})
          }
          else{
@@ -160,15 +167,7 @@ export const RefreshTokenAccess=async(req:Request,res:Response,next:NextFunction
 }
 
 
-export const AccessTokenAccess=async(req:Request,res:Response,next:NextFunction)=>{
 
-}
-export const getRole=async(req:Request,res:Response,next:NextFunction)=>{
-
-}
-export const verifyexpiry=async(req:Request,res:Response,next:NextFunction)=>{
-
-}
 export  const forgetPassword=async(req:Request,res:Response,next:NextFunction)=>{ 
 
 const NewCred=plainToClass(forgetPasswordInputs,req.body)
@@ -243,8 +242,10 @@ catch(err){
                 
 
           })
-          sendNewMemberEmail(MemberInfo.language,MemberInfo.firstName,MemberInfo.email,false,"")
+          const info = await ExtractMembersInfo(MemberInfo);
+      //    sendNewMemberEmail(MemberInfo.language,MemberInfo.firstName,MemberInfo.email,false,"")
           return res.status(200).json({refreshToken:refreshToken,accessToken:accessToken,email:MemberInfo.email,role:await findroleByid(MemberInfo.role._id),
+            member:info,
            status:'logged' ,Permissions: await getPermissionsKeys(
             MemberInfo.Permissions,MemberInfo.role)})
          }
@@ -322,16 +323,48 @@ export const MemberGoogleLoginSignUp= async(req:Request,res:Response,next:NextFu
 
           })
           sendNewMemberEmail(result.language,result.firstName,result.email,false,"")
+          const info = await ExtractMembersInfo(result);
           return res.status(201).json({refreshToken:refreshToken,accessToken:accessToken,email:result.email,role:await findroleByid(result.role._id),
-           status:'logged' ,Permissions: await getPermissionsKeys(
+          member:info,
+            status:'logged' ,Permissions: await getPermissionsKeys(
             result.Permissions,result.role)})
 
             
                     
             }
-            console.log('something')
+           
             return res.status(500).json({message:'something went wrong'})
             
             }
 
+
+async function ExtractMembersInfo(MemberInfo: Document<unknown, {}, MemberDoc> & MemberDoc & { _id: mongoose.Types.ObjectId; }) {
+    const [role, teamsInfo, activitiesInfo, trainingsinfo, meetingsInfo, FilesInfo, objectifs, rank, boardRole] = await Promise.all([
+        findroleByid(MemberInfo.role),
+        getteamsInfo(MemberInfo.Teams),
+        getActivitiesInfo(MemberInfo.Activities), getTrainingInfo(MemberInfo.Activities),
+        getMeetingsInfo(MemberInfo.Activities), getFilesInfoByIds(MemberInfo.Images), CheckObjectif(MemberInfo.id), getRank(MemberInfo.id), getBoardRole(MemberInfo.boardRole)
+    ]);
+
+    const info = {
+        teams: teamsInfo, Activities: [{ "Events": activitiesInfo, "Trainings": trainingsinfo, "Meetings": meetingsInfo }],
+        id: MemberInfo.id,
+        firstName: MemberInfo.firstName,
+        lastName: MemberInfo.lastName,
+        Images: FilesInfo,
+        phone: MemberInfo.phone,
+        email: MemberInfo.email,
+        cotisation: MemberInfo.cotisation,
+        role: role,
+        points: MemberInfo.Points,
+        is_validated: MemberInfo.is_validated,
+        boardRole: boardRole,
+        description: MemberInfo.description,
+
+        objectifs: objectifs,
+        rank: rank
+
+    };
+    return info;
+}
             

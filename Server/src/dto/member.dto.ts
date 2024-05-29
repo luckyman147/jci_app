@@ -27,9 +27,11 @@ export class EditMemberProfileInputs{
 
      @IsNotEmpty()
     lastName:string
- 
+
      @IsNotEmpty()
     phone:string
+    @IsNotEmpty()
+    description:string
 
 
 

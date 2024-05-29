@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jci_app/core/config/services/MemberStore.dart';
 
 import 'package:jci_app/core/error/Exception.dart';
 
@@ -197,6 +198,24 @@ else{
     final MemberModel memberModel=MemberModel.fromEntity(member);
     return await _getMessageReset(api.RegisterInWithGoogle(memberModel));
 
+  }
+
+  @override
+  Future<Either<Failure, bool>> isNewMember()async {
+final member=await MemberStore.getModel();
+if (member==null){
+throw EmptyCacheFailure();
+}
+else{
+
+  if (member.role=='New Member'){
+    return const Right(true);
+  }
+  else{
+    return const Right(false);
+  }
+
+}
   }
 
 

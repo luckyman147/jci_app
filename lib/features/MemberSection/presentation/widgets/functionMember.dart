@@ -42,7 +42,7 @@ static Future<List<Member>> getMembers(){
 
   static Future<dynamic>  saveMember(Member member,TextEditingController firstName,
       TextEditingController lastName,TextEditingController phone,
-      String imagepath,BuildContext context,GlobalKey<FormState> formKey
+      String imagepath,BuildContext context,GlobalKey<FormState> formKey,TextEditingController description
 
       )async {
 
@@ -62,9 +62,9 @@ static Future<List<Member>> getMembers(){
           Activities: member.Activities,
           points: member.points,
           IsSelected: member.IsSelected,
-          role: 'member ',
+          role: 'New Member                                                                 ',
           is_validated: member.is_validated,
-          password: 'password', objectifs: [], language: member.language, rank: 0,
+          password: 'password', objectifs: [], language: member.language, rank: 0, description:description.text, board: member.board ,
         );
         context.read<MembersBloc>().add(
             UpdateMemberProfileEvent(memberUpdate));

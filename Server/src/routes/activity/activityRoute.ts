@@ -2,6 +2,7 @@ import express from "express";
 import { addGuest, addGuestToAct, addNotes, changeMemberStatus, deleteGuest, deleteNote, GetActivityByid, GetActivityByname, getActivityMembers, getAllGuests, getAllGuestsOfActivity, getAllnotes, SaveNotes, updateGuest, updateGuestConfirmation, updateNote } from "../../controllers/activities/activityController";
 import { authenticate } from "passport";
 import { Authenticate } from "../../middleware/CommonAuth";
+import { uploadExcel } from "../../controllers/activities/ParticpoantController";
 
 const router=express.Router()
 
@@ -39,5 +40,6 @@ router.post('/guests/:activityId',addGuest)
 router.post('/guests/:activityId/:guestId',addGuestToAct)
 router.delete('/guests/:activityId/:guestId',deleteGuest)
 router.patch('/guests/:guestId',updateGuest)
+router.get("/download/:activityId",uploadExcel)
 router.patch('/guests/:activityId/:guestId',updateGuestConfirmation)
 export { router as Activityroute };

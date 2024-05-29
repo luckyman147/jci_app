@@ -113,7 +113,7 @@ class _EmailInput extends StatelessWidget {
     return BlocBuilder<ResetBloc, ResetPasswordState>(
 
       builder: (context, state) {
-        print("${controller.text}");
+
         return FormText(inputkey: "ForgetForm_EmailInput_textField",
           Onchanged:
               (email) => context.read<ResetBloc>().add(EmailnameChanged(email)),

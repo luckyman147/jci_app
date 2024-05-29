@@ -9,7 +9,7 @@ import { EditLanguageInputs, EditMemberProfileInputs } from '../dto/member.dto';
 import { Member } from '../models/Member';
 import { Role } from '../models/role';
 import { CheckObjectif } from '../utility/objectifcheck';
-import { findroleByid, getActivitiesInfo, getFilesInfoByIds, getMeetingsInfo, getRank, getteamsInfo, getTrainingInfo } from '../utility/role';
+import { findroleByid, getActivitiesInfo, getBoardRole, getFilesInfoByIds, getMeetingsInfo, getRank, getteamsInfo, getTrainingInfo } from '../utility/role';
 
 
 //& Verify email
@@ -46,11 +46,11 @@ export const GetmemberProfile= async(req:Request,res:Response,next:NextFunction)
     if(member){
         const profile=await Member.findById(member?._id)
         if(profile){
-            const [role, teamsInfo, activitiesInfo, trainingsinfo,meetingsInfo,FilesInfo,objectifs,rank] = await Promise.all([
+            const [role, teamsInfo, activitiesInfo, trainingsinfo,meetingsInfo,FilesInfo,objectifs,rank,boardrole] = await Promise.all([
                 findroleByid(profile.role),
                 getteamsInfo(profile.Teams),
                 getActivitiesInfo(profile.Activities),getTrainingInfo(profile.Activities),
-                getMeetingsInfo(profile.Activities),getFilesInfoByIds(profile.Images),CheckObjectif(profile.id),getRank(profile.id)
+                getMeetingsInfo(profile.Activities),getFilesInfoByIds(profile.Images),CheckObjectif(profile.id),getRank(profile.id),getBoardRole(profile.boardRole)
             ]);
 
             const info = {      teams: teamsInfo,  Activities: [{"Events" : activitiesInfo,"Trainings":trainingsinfo,"Meetings":meetingsInfo}],
@@ -64,7 +64,8 @@ export const GetmemberProfile= async(req:Request,res:Response,next:NextFunction)
                 role: role,
                 points: profile.Points,
                 is_validated: profile.is_validated,
-
+description:profile.description,
+boardRole:boardrole,
                 objectifs:objectifs,
                 rank:rank
             
@@ -87,13 +88,14 @@ export const EditmemberProfile= async(req:Request,res:Response,next:NextFunction
     }
 
 
-    const {firstName,lastName,phone}=profileinputs
+    const {firstName,lastName,phone,description}=profileinputs
     if(member){
         const profile=await Member.findById(member?._id)
 if (profile){
             profile.firstName=firstName
             profile.lastName=lastName
             profile.phone=phone
+            profile.description=description
 
 
             const updated=await profile.save()

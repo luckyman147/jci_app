@@ -22,13 +22,14 @@ factory MemberModel.fromEntity(Member member) {
       password: member.password,
       IsSelected: member.IsSelected,
       teams: member.teams,
-      Activities: member.Activities, objectifs: member.objectifs, language: member.language, rank: member.rank,
+      Activities: member.Activities, objectifs: member.objectifs, language: member.language, rank: member.rank, description: member.description, board: member.board,
     );
   }
 
   factory MemberModel.fromJson(Map<String, dynamic> json) {
 
   return    MemberModel(
+
         objectifs: json['objectifs'] == null ? [] :json['objectifs'] as List<dynamic>,
         points: json['points'] ?? json['Points'] ?? 0,
         id: json['_id']!=null ? json['_id']as String : json['id'] as String,
@@ -44,6 +45,7 @@ factory MemberModel.fromEntity(Member member) {
         phone: json['phone'] ??"",
         email: json['email'] ?? "",
         password: "",
+
         IsSelected:false,
         teams: json['teams'] == null ? [] :json['teams'] as List<dynamic>,
         Activities:
@@ -52,9 +54,9 @@ factory MemberModel.fromEntity(Member member) {
 
         (json['Activities'] as List<dynamic>)
             .map((e) => e )
-            .toList(), language: json['language'] ?? 'fr', rank: json['rank'] ?? json['Rank'] ?? 0,
+            .toList(), language: json['language'] ?? 'fr', rank: json['rank'] ?? json['Rank'] ?? 0, description: json['description'] ?? '', board: json['boardRole'] ?? '',
       );}
-  MemberModel({required super.id, required super.role, required super.is_validated, required super.cotisation, required super.Images, required super.firstName, required super.lastName, required super.phone, required super.email, required super.password, required super.IsSelected, required super.Activities, required super.teams, required super.points, required super.objectifs, required super.language, required super.rank});
+  MemberModel({required super.id, required super.role, required super.is_validated, required super.cotisation, required super.Images, required super.firstName, required super.lastName, required super.phone, required super.email, required super.password, required super.IsSelected, required super.Activities, required super.teams, required super.points, required super.objectifs, required super.language, required super.rank, required super.description, required super.board});
 
   Map<String, dynamic> toJson() => _$MemberModelToJson(this);
 

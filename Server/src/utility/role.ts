@@ -11,6 +11,7 @@ import { CheckList } from '../models/teams/CheckListModel';
 import { Task } from '../models/teams/TaskModel';
 import { team } from "../models/teams/team";
 import { Comment } from '../models/teams/commentModel';
+import { BoardRole } from '../models/Board/BoardRole';
 export const findrole=async (name:string)=>{
     const role = await Role.findOne({ name: name });
     if (role){
@@ -96,7 +97,57 @@ export const getTeamByEvent= async () =>{
       console.error(error);
       throw new Error('Internal server error');
     }
-  };  export const getGuestInfo = async (memberIds: string): Promise<any> => {
+  };  
+    export const getMembersBasicInfo = async (memberIds: string[]): Promise<any> => {
+    try {
+      // Query the database to find members by their IDs
+      const members = await Member.find({ _id: { $in: memberIds } });
+
+      const membersInfo =
+      Promise.all(
+      members.map(async  (member) => ({
+      
+        firstName: member.firstName,
+        email:member.email,
+        phone:member.phone,
+
+
+        // Add other fields you want to include
+      })));
+  console.log(membersInfo)
+
+      return membersInfo;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal server error');
+    }
+  };      export const getguestsBasicInfo = async (memberIds: string[]): Promise<any> => {
+    try {
+      // Query the database to find members by their IDs
+      const members = await Guest.find({ _id: { $in: memberIds } });
+
+      const membersInfo =
+      Promise.all(
+      members.map(async  (member) => ({
+      
+        firstName: member.name,
+        email:member.email,
+        phone:member.phone,
+
+
+        // Add other fields you want to include
+      })));
+  console.log(membersInfo)
+
+      return membersInfo;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal server error');
+    }
+  };  
+  
+  
+  export const getGuestInfo = async (memberIds: string): Promise<any> => {
     try {
       // Query the database to find members by their IDs
       const members = await Guest.findById(memberIds);
@@ -313,7 +364,21 @@ return commentsInfo
       console.error(error);
       throw new Error('Internal server error');
     }
-  }; export const getMeetingsInfo = async (EventsIds: string[]): Promise<any> => {
+  };
+  export const getBoardRole=async(id:string)=>{
+    if (id==null || id.length>0){
+      return null
+    }
+    const boardRole=BoardRole.findById(id)
+    if (boardRole){
+      return boardRole
+    }
+    else{
+      return null
+    }
+  }
+  
+  export const getMeetingsInfo = async (EventsIds: string[]): Promise<any> => {
     try {
       // Query the database to find members by their IDs
       const Meetings = await Meeting.find({ _id: { $in: EventsIds } });

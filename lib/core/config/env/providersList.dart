@@ -22,6 +22,7 @@ import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.d
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/BoardBloc/boord_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/presidents_bloc.dart';
+import 'package:jci_app/features/auth/presentation/bloc/Permissions/permissions_bloc.dart';
 
 
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
@@ -64,6 +65,7 @@ List<SingleChildWidget> providersList = [
   BlocProvider(create: (_) => di.sl<ParticpantsBloc>()),
   BlocProvider(create: (_) => di.sl<BoordBloc>()),
   BlocProvider(create: (_) => di.sl<NotesBloc>()),
+  BlocProvider(create: (_) => di.sl<PermissionsBloc>()),
 
 
   BlocProvider(create: (_) => localeCubit()..getSavedLanguage()),

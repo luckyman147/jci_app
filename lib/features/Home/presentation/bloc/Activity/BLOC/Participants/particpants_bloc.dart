@@ -1,5 +1,6 @@
 
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
@@ -18,6 +19,7 @@ import '../../../../../data/model/ActivityParticpantsModel.dart';
 import '../../../../../data/model/GuestModel.dart';
 import '../../../../../domain/entities/Guest.dart';
 import '../../../../../domain/usercases/ActivityUseCases.dart';
+import '../../../../../domain/usercases/MeetingsUseCase.dart';
 import '../../../../widgets/Functions.dart';
 
 
@@ -38,6 +40,7 @@ final ConfirmGuestUseCases confirmGuestUseCases;
 final SendReminderUseCases sendReminderUseCases;
 final AddGuestToActivityUseCases addGuestToActivityUseCases;
 final ChangeGuestToMemberUseCases changeGuestToMemberUseCases;
+  final DownloadExcelUseCases downloadExcelUseCases;
 
   ParticpantsBloc({required this.leaveActivityUseCases, required this.participateActivityUseCases,
     required this.checkPermissionsUseCases, required this.getAllParticipantsUseCases,
@@ -46,7 +49,9 @@ final ChangeGuestToMemberUseCases changeGuestToMemberUseCases;
     required this.removeGuestUseCases, required this.updateGuestUseCases,
     required this.confirmGuestUseCases, required this.sendReminderUseCases,
     required this.getAllGuestsUseCases,
-    required this.addGuestToActivityUseCases
+    required this.downloadExcelUseCases,
+    required this.addGuestToActivityUseCases,
+
 
 
   })
@@ -72,8 +77,14 @@ on<GetAllGuestsEvent>(GetAllGuests);
 on<AddGuestToActivityEvent>(_addGuestToActivity);
 on<SearchGuestActByname>(seachAllGuesusByname);
 on<ChangeGuestToMemberEvent>(_changeGuestToMember);
+on<DownloadAndSaveExcelEvent>(SaveExcel);
 
 
+  }
+  void SaveExcel(DownloadAndSaveExcelEvent event, Emitter<ParticpantsState> emit) async {
+    emit(state.copyWith(status: ParticpantsStatus.loadingExcel));
+    final result = await downloadExcelUseCases(event.activityId);
+    emit(_eitherDownloadedOrFailure(result));
   }
   void _changeGuestToMember(ChangeGuestToMemberEvent event, Emitter<ParticpantsState> emit) async {
     final result = await changeGuestToMemberUseCases(event.params);
@@ -372,6 +383,15 @@ void getAllguests(
         return state.copyWith(status: ParticpantsStatus.ToMember, Activeguests: Actguests, Allguests: guests, guestsSearch: Actguests, guestsAllSearch: guests);
 
 
+      },
+    );
+  }
+
+  ParticpantsState _eitherDownloadedOrFailure(Either<Failure, Uint8List> result) {
+    return result.fold(
+          (failure) => state.copyWith(status: ParticpantsStatus.empty),
+          (pdf) {
+        return state.copyWith(status: ParticpantsStatus.success,);
       },
     );
   }

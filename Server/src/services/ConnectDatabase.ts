@@ -8,7 +8,7 @@ const database= async ()=>{
       
         await mongoose.connect(MongoURI!)
         const conn = mongoose.connection;
-       
+   
         
 
             

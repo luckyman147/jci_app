@@ -117,6 +117,7 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
 
 
               ProfileComponents.hh(widget.member,context),
+    if (widget.member.description!=null && widget.member.description!.isNotEmpty)  ProfileComponents.ExpandedContainer(context, ProfileComponents.isDes(state.state), ProfileComponents.BuildDescriptionWidget(widget.member,ste,context), 'Description'.tr(context), StatesBool.Description,mediaQuery,mediaQuery.size.width/1.17,mediaQuery.size.height/4),
     ProfileComponents.ExpandedContainer(context, ProfileComponents.isObjectif(state.state), ProfileComponents.BuildObjectifsWidget(widget.member,ste,context), 'Objectives'.tr(context), StatesBool.Objectifs,mediaQuery, mediaQuery.size.width/1.17,mediaQuery.size.height/4),
 
     ProfileComponents.ExpandedContainer(context, ProfileComponents.isPoints(state.state), ProfileComponents.BuildPointsWidget(widget.member,ste,context,pointsFocusNode), 'Points'.tr(context), StatesBool.Points,mediaQuery,mediaQuery.size.width/1.17 ,mediaQuery.size.height/4),

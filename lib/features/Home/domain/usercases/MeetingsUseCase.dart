@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/core/usescases/usecase.dart';
 
@@ -128,6 +130,17 @@ class DeleteNotesUseCases extends UseCase<Unit,NoteInput> {
     return await MeetingRepository.deleteNotes(params.activityId,params.noteid!);
   }
 }
+class DownloadExcelUseCases extends UseCase<Uint8List,String> {
+  final MeetingRepo repository;
+
+  DownloadExcelUseCases(this.repository);
+
+  Future<Either<Failure,Uint8List>> call(String url) async {
+return await repository.downloadExcel(url);
+
+  }
+}
+
 class NoteInput{
   final String activityId;
   final Note? note;

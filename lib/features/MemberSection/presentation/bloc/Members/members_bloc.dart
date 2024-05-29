@@ -85,10 +85,20 @@ void getMemberByid(GetMemberByIdEvent event, Emitter<MembersState> emit)async{
 
 void getUserPrfile(GetUserProfileEvent event, Emitter<MembersState> emit)async {
   emit(state.copyWith(userStatus: UserStatus.Loading));
-
+if (event.isUpdated){
     final result= await getUserProfileUseCase(event.isUpdated );
     emit(_eitherDoneUserState(
         result, 'User Profile Loaded Successfully'));
+  }
+  else {
+    if (state.user!=null){
+      emit(state.copyWith(userStatus: UserStatus.userLoaded,user: state.user));
+    }
+    else{
+      final result= await getUserProfileUseCase(event.isUpdated );
+      emit(_eitherDoneUserState(
+          result, 'User Profile Loaded Successfully'));}
+}
   }
 
   void _getAllMembers(

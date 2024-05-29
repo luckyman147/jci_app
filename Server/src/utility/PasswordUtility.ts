@@ -30,8 +30,8 @@ export const  generateStrongPassword=(length: number): string =>{
   password += getRandomCharacter(numbers);
   password += getRandomCharacter(specialCharacters);
 
-  // Fill the rest of the password length with random characters from allCharacter
-  for (let i = password.length; i < length; i++) {
+  // Fill the rest of the password length with random characters from allCharacters
+  while (password.length < length) {
     password += getRandomCharacter(allCharacters);
   }
 
@@ -45,7 +45,8 @@ export const  generateStrongPassword=(length: number): string =>{
   };
 
   return shuffleArray(password.split('')).join('');
-}
+};
+
 
 export const ValidatePassword = async (
   enteredPassword: string,
