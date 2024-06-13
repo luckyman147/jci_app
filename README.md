@@ -74,16 +74,68 @@ Core components:
 ## Screenshots
 
 ![App Screenshot](implementation/Image4.png)
+
 When you open the app for the first time, you can choose the language. Then you'll see the JCI principles: the mission, vision, and beliefs. 
 ![App Screenshot](implementation/Image1.png)
+
 To use the app, you need to log in. If you don't have an account, you can create one. If you forget your password, you can verify your email and PIN. Once verified, you can enter a new password.
 If you keep forgetting your password I advice to login with google
 
 
 ![App Home page](https://github.com/luckyman147/jci_app/blob/testing/implementation/M%C3%A9dia1.mov)
+![App Screenshot](implementation/t.png)
+
 As mentioned on the home page,  new members have the option to view the activities of the month. To attend an activity, simply click the "Join" button. new Members can also view the leader board, which displays the names of those who are working hard. new Members also could discover activities of the year by click the calendar button
+
 ![App Screenshot](implementation/Image6.png)
+
 This page includes the top three activities you can search for a specific event by name or location. You can also filter by type of activity. The administrator can create an activity and select the type of activity. 
+![App Screenshot](implementation/h.png)
 
 ![How to create an event](https://github.com/luckyman147/jci_app/blob/testing/implementation/M%C3%A9dia2.mov)
+
+![App Screenshot](implementation/rrr.png)
+
+This page includes the top three activities you can search for a specific event by name or location. You can also filter by type of activity. The administrator can create an activity and select the type of activity. The activity details include all the necessary information, such as adding, deleting, updating notes, managing attendance of members, and adding visitors. Finally, the administrator can set reminders and update or delete the activity. 
+
+![App Screenshot](implementation/w.png)
+
+When you open the sidebar, you will see the About Us and Contact sections. In the Contact section, you can navigate to JCI Hammam Sousse Social Media. The Presentation page contains information about JCI, JCI Tunisia, and JCI Hammam Sousse.
+
+![App Screenshot](implementation/Image8.png)
+
+The board page contains boards from each year. Each board has three parts: a high board, advisors, and members. The super admin can create a new board and positions will be generated. He only needs to assign the position to a member. he could also add, update, or delete a position.
+
+![App Screenshot](implementation/Image10.png)
+The Past Presidents page lists all the presidents of JCI Hammam Sousse since 1983. The Super Admin can add, update, and delete past presidents.
+
+![App Screenshot](implementation/Image3.png)
+
+The Team Section  offers a collaborative space for private and public teams, with a search option for easy discovery. Admins can quickly access team creation or update pages.
+
+
+![How to create a Team](https://github.com/luckyman147/jci_app/blob/testing/implementation/M%C3%A9dia4.mov)
+
+
+![App Screenshot](implementation/Image9.png)
+
+The Team Details page lets members track tasks with progress bars and create new tasks. On the Task Details page, task owners can add subtasks, assign members, attach files, set timelines, and update or delete tasks.
+
+![App Screenshot](implementation/g.png)
+
+This video shows the member section. Each member has his own space, contact, bio, objectives, points, activities, and teams. The member can edit his profile information. Only the admin can change points and membership. The admin could send reminders to members like unpaid membership and inactivity reminders. The setting page has several options like changing the  password, language, and clearing the cache and signing out. 
+
+![How to manage a profile](https://github.com/luckyman147/jci_app/blob/testing/implementation/M%C3%A9dia5.mov)
+
+
+
+
+
+
+
+
+
+
+
+
 
