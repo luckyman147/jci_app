@@ -83,6 +83,8 @@ If you keep forgetting your password I advice to login with google
 
 
 ![App Home page](https://github.com/luckyman147/jci_app/blob/testing/implementation/M%C3%A9dia1.mov)
+
+
 ![App Screenshot](implementation/t.png)
 
 As mentioned on the home page,  new members have the option to view the activities of the month. To attend an activity, simply click the "Join" button. new Members can also view the leader board, which displays the names of those who are working hard. new Members also could discover activities of the year by click the calendar button
