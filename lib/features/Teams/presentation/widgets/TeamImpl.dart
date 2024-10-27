@@ -69,7 +69,7 @@ Widget GetTeamByid(String id, TextEditingController taskController, int index) {
       switch (state.status) {
         case TeamStatus.initial:
         case TeamStatus.Loading:
-          return LoadingWidget();
+          return ShimmerLoadingScreen();
 
         case TeamStatus.success:
         case TeamStatus.Updated:
@@ -87,10 +87,10 @@ Widget GetTeamByid(String id, TextEditingController taskController, int index) {
 
         case TeamStatus.error:
           context.read<GetTeamsBloc>().add(GetTeamById({"id": id, "isUpdated": true}));
-          return LoadingWidget();
+          return ShimmerLoadingScreen();
 
         default:
-          return LoadingWidget();
+          return ShimmerLoadingScreen();
       }
     },
   );

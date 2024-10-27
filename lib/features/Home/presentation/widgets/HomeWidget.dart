@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -71,7 +70,7 @@ class _HomeWidgetState extends State<HomeWidget> {
           actions: [
             Padding(
               padding: paddingSemetricHorizontal(),
-              child: CalendarButton(
+              child: const CalendarButton(
                 color: textColorWhite, IconColor: textColorBlack,),
             ),
             BlocBuilder<PermissionsBloc, PermissionsState>(
@@ -80,8 +79,9 @@ class _HomeWidgetState extends State<HomeWidget> {
                   return IconButton(
                     onPressed: () {
                       context.read<AuthBloc>().add(SignoutEvent());
+                      context.go('/login');
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.logout,
                       color: Colors.red,
                     ),
@@ -130,10 +130,19 @@ class _HomeWidgetState extends State<HomeWidget> {
                               ),
 
 
-                              Padding(
-                                padding: paddingSemetricHorizontal(h: 16),
-                                child: HomeComponents.TeamsWidget(
-                                    mediaQuery, context),
+                              BlocBuilder<PermissionsBloc, PermissionsState>(
+                                builder: (context, state) {
+                                  return Padding(
+                                    padding: paddingSemetricHorizontal(h: 16),
+                                    child:
+                                    state.status == PermStatus.NewMember
+                                        ? Container()
+                                        :
+
+                                    HomeComponents.TeamsWidget(
+                                        mediaQuery, context),
+                                  );
+                                },
                               ),
                               MemberImpl.MemberWithHighestRanks(mediaQuery)
                             ],

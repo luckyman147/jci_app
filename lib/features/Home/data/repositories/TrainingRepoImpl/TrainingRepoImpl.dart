@@ -29,21 +29,8 @@ class TrainingRepoImpl implements TrainingRepo{
   
   @override
   Future<Either<Failure, Unit>> createTraining(Training training) async{
-    final trainingMode= TrainingModel(
-      id: training.id,
-
-      name: training.name,
-      description: training.description,
-      ActivityBeginDate: training.ActivityBeginDate,
-      ActivityEndDate: training.ActivityEndDate,
-      ActivityAdress: training.ActivityAdress,
-      ActivityPoints: training.ActivityPoints,
-      categorie: training.categorie,
-      IsPaid: training.IsPaid,
-      price: training.price,
-      Participants: [],
-      CoverImages: training.CoverImages, Duration: 0, ProfesseurName: training.ProfesseurName, IsPart: false,
-
+    final trainingMode= TrainingModel.fromEntity(
+    training
     );
     if (await networkInfo.isConnected) {
       try {
@@ -173,20 +160,8 @@ return await _getMessage(trainingRemoteDataSource.deleteTraining(id));
 
   @override
   Future<Either<Failure, Unit>> updateTraining(Training training)async  {
-    final trainingMode= TrainingModel(
-      id: training.id,
+    final trainingMode= TrainingModel.fromEntity(training
 
-      name: training.name,
-      description: training.description,
-      ActivityBeginDate: training.ActivityBeginDate,
-      ActivityEndDate: training.ActivityEndDate,
-      ActivityAdress: training.ActivityAdress,
-      ActivityPoints:training.ActivityPoints,
-      categorie: training.categorie,
-      IsPaid: training.IsPaid,
-      price: training.price,
-      Participants: training.Participants,
-      CoverImages: training.CoverImages, Duration: 0, ProfesseurName: training.ProfesseurName, IsPart: training.IsPart,
 
     );
     return await _getMessage(trainingRemoteDataSource.updateTraining(trainingMode));

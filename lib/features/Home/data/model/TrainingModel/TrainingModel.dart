@@ -24,7 +24,7 @@ class TrainingModel extends Training{
     categorie: train.categorie,
     IsPaid: train.IsPaid,
     price: train.price,
-    Participants: train.Participants,
+    Participants: train.Participants!=null?train.Participants:[],
     CoverImages: train.CoverImages,
     Duration: train.Duration,
     ProfesseurName: train.ProfesseurName,

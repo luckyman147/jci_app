@@ -13,5 +13,5 @@ class LanguageCacheHelper {
     if (cachedLanguageCode != null) {
       return cachedLanguageCode;
     }
-    return "en"; // default value
+    return "fr"; // default value
   }}

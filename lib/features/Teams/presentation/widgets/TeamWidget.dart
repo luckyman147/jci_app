@@ -56,6 +56,7 @@ Widget body(List<Team> teams, int index, MediaQueryData mediaQuery,
           padding: EdgeInsetsDirectional.symmetric(
               horizontal: mediaQuery.size.width / 13),
           child: InkWell(
+            splashColor: Colors.grey,
             onTap: () {
               context.go('/TeamDetails/${teams[index].id}/$index'
 

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
 import 'package:jci_app/core/config/env/urls.dart';
 
@@ -42,6 +43,7 @@ Future <Unit> UpdateTimeline(String taskId,DateTime startdate,DateTime enddate);
 Future<Unit> deleteCheckList(String checkListId);
 Future<Unit> deleteTask(String taskid);
 Future<FileModel> UpdateFiles(String taskId, FileModel file );
+Future<Uint8List> getFile(String fileid);
 
   Future<Unit> AddComment(String taskid, String comment) ;
 
@@ -441,6 +443,27 @@ final response = await client.post(
   Future<Unit> UpdateComment(String taskid, String commentId, String comment) {
     // TODO: implement UpdateComment
     throw UnimplementedError();
+  }
+
+  @override
+  Future<Uint8List> getFile(String fileid) async{
+    final response = await client.get(
+      Uri.parse("$TeamUrl/File/$fileid"),
+      headers: {"Content-Type": "application/json"},
+    );
+
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    } else if (response.statusCode == 404) {
+      throw EmptyDataException();
+    }
+    else if (response.statusCode == 400) {
+      throw WrongCredentialsException();
+    }
+
+    else {
+      throw ServerException();
+    }
   }
 
 

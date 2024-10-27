@@ -16,7 +16,7 @@ class AuthComponents{
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CountdownTimer(
-          endTime: DateTime.now().millisecondsSinceEpoch +100000, // Set end time for 5 minutes (300,000 milliseconds)
+          endTime: DateTime.now().millisecondsSinceEpoch +300000, // Set end time for 5 minutes (300,000 milliseconds)
           widgetBuilder: (_,  time) {
             if (time == null) {
               context.read<ToggleBooleanBloc>().add(ChangeIscompleted(isCompleted: false));

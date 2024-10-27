@@ -8,6 +8,7 @@ import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_blo
 import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
+import 'package:jci_app/features/MemberSection/presentation/bloc/memberPermissions/member_permission_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/MemberImpl.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 
@@ -25,6 +26,8 @@ class _MemberSectionPageState extends State<MemberSectionPage> {
  late String _previousData ;
   @override
   void initState() {
+
+
     _previousData = widget.id;
     // TODO: implement initState
     super.initState();
@@ -45,6 +48,7 @@ class _MemberSectionPageState extends State<MemberSectionPage> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
+
       body: SafeArea(
             child:
                   MemberImpl.MemberWidget(widget.id),

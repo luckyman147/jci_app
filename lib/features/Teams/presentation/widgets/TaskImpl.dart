@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,16 +7,16 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/util/snackbar_message.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/screens/DetailsTaskScreen.dart';
+
 import 'package:jci_app/features/Teams/presentation/widgets/TaskDetailWidget.dart';
 
 import 'package:jci_app/features/Teams/presentation/widgets/TaskWidget.dart';
 
 import '../../../../core/widgets/loading_widget.dart';
-import '../../../Home/presentation/widgets/ErrorDisplayMessage.dart';
 import '../../domain/entities/Team.dart';
 import '../../domain/usecases/TaskUseCase.dart';
 import '../bloc/TaskFilter/taskfilter_bloc.dart';
+import 'ShimmerEffects.dart';
 import 'funct.dart';
 
 
@@ -34,7 +34,7 @@ Widget GetTasksWidget(Team team, MediaQueryData mediaQuery,
 
             switch (state.status) {
               case TaskStatus.initial:
-                return LoadingWidget();
+                return const TaskShimmer();
               case TaskStatus.error:
                 return Center(
                     child :Column(
@@ -60,7 +60,7 @@ Widget GetTasksWidget(Team team, MediaQueryData mediaQuery,
                 }
 
               default:
-                return LoadingWidget();
+                return  const TaskShimmer();
             }
           });
     },
@@ -87,9 +87,9 @@ Widget GetTaskByidWidget(Team team, String taskId,
             task: state.tasks[index], index: index, team: team,),
         );
       } else if (state is GetTaskError) {
-        return MessageDisplayWidget(message: "Error");
+        return const LoadingWidget();
       }
-      return MessageDisplayWidget(message: "Error");
+      return const LoadingWidget();
     },
   );
 }
@@ -111,7 +111,7 @@ Widget AddTask(mediaQuery,) =>
                     padding: const EdgeInsets.all(18.0),
                     child: Row(
                       children: [
-                        Icon(Icons.add, color: PrimaryColor, size: 30,),
+                 const       Icon(Icons.add, color: PrimaryColor, size: 30,),
 
 
                         Text('Add Task', style: PoppinsSemiBold(
@@ -159,8 +159,8 @@ Widget TaskAddField(TextEditingController controller, String id) =>
                         context.read<TaskVisibleBloc>().add(
                             ToggleTaskVisible(true));
                       },
-                      child: state.WillAdded ? Icon(
-                        Icons.cancel, color: Colors.red,) : SizedBox()
+                      child: state.WillAdded ? const  Icon(
+                        Icons.cancel, color: Colors.red,) :const SizedBox()
                   ),
                   suffixIcon: GestureDetector(
                       onTap: () {
@@ -182,12 +182,12 @@ Widget TaskAddField(TextEditingController controller, String id) =>
                               ChangeIsUpdatedEvent(true));
                         }
                       },
-                      child: state.WillAdded ? Icon(
-                        Icons.check_circle, color: PrimaryColor,) : SizedBox()
+                      child: state.WillAdded ?const  Icon(
+                        Icons.check_circle, color: PrimaryColor,) :const SizedBox()
                   ),
                   hintText: '${"Add".tr(context)} ${"Task".tr(context)}',
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(18),
+                  contentPadding:const  EdgeInsets.all(18),
                 ),
               ),
 

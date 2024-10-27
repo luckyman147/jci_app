@@ -1,5 +1,6 @@
 
-import 'dart:developer';
+import 'package:flutter_animate/flutter_animate.dart';
+
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,7 @@ import 'EventListWidget.dart';
 import 'Functions.dart';
 
 import 'package:table_calendar/table_calendar.dart';
+
 
 class MyDropdownButton extends StatefulWidget {
   @override
@@ -297,7 +299,7 @@ class MyActivityButtons extends StatelessWidget {
                   ? textColorWhite
                   : Colors.black,
               shape: RoundedRectangleBorder(
-                side: BorderSide(color: textColorBlack, width:1.0),
+
                 borderRadius: BorderRadius.circular(10.0),
               ),
             ),
@@ -624,29 +626,32 @@ class _ParticipateButtonState extends State<ParticipateButton> {
               context.read<ParticpantsBloc>().add(AddParticipantEvent( index: widget.index, act:result));
             }
           },
-          child: Container(
+          child: AnimatedContainer(
+            curve: Curves.easeIn,
             width:widget.containerWidth,
             decoration: BoxDecoration(
               color: widget.isPartFromState ? PrimaryColor : BackWidgetColor,
               borderRadius: BorderRadius.circular(10),
             ),
+            duration: Duration(milliseconds: 1600),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon( widget.isPartFromState ? Icons.check : Icons.star,
-                      color:  widget.isPartFromState ? textColorWhite : textColorBlack),
+                      color:  widget.isPartFromState ? textColorWhite : textColorBlack).
+                  animate(),
                   Text(
                     widget.isPartFromState ? "Interested".tr(context) : "Join".tr(context),
                     style: PoppinsSemiBold(widget.textSize,
                         widget.isPartFromState ? textColorWhite : textColorBlack,
                         TextDecoration.none),
-                  ),
+                  ).animate(),
                 ],
               ),
             ),
-          ),
+          ).animate(),
         );
       },
     );

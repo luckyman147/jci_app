@@ -7,6 +7,7 @@ class IsEmailException implements Exception {}
 class WrongCredentialsException implements Exception {}
 class ExpiredException implements Exception {}
 class UnauthorizedException implements Exception {}
+class NotFoundException implements Exception {}
 
 class AlreadyLogoutException implements Exception {}
 class AlreadyLoginException implements Exception {}

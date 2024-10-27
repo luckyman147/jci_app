@@ -39,6 +39,8 @@ String mapFailureToMessage(Failure failure) {
       return AlreadyParticipated;
       case WrongVerificationCodeFailure:
       return "Wrong Verification Code";
+      case NotFoundFailure:
+      return "Not Found";
 
     default:
         return "Unexpected Error , Please try again later .";

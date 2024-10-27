@@ -5,11 +5,13 @@ class GetTaskState extends Equatable {
   final List<Map<String, dynamic>> tasks;
   final List<Map<String, dynamic>> clonetasks;
   final String errorMessage;
+  final Uint8List? image;
 
 
 
   GetTaskState( {this.tasks=const [], this.status = TaskStatus.initial, this.errorMessage = "",
-    this.clonetasks=const []
+    this.clonetasks=const [],
+    this.image,
 
 
   }
@@ -20,19 +22,24 @@ class GetTaskState extends Equatable {
 
 
 
+
     List<Map<String, dynamic>>? tasks,
     List<Map<String, dynamic>>? clonetasks,
 
     TaskStatus? status,
     String? errorMessage,
+    Uint8List? image,
   }) {
     return GetTaskState(
+
 
 
       tasks: tasks ?? this.tasks,
       clonetasks: clonetasks ?? this.clonetasks,
 
+
       status: status ?? this.status,
+      image: image ?? this.image,
       errorMessage: errorMessage ?? this.errorMessage,
 
     );
@@ -40,7 +47,7 @@ class GetTaskState extends Equatable {
 
   @override
   // TODO: implement props
-  List<Object?> get props => [tasks, status, errorMessage,clonetasks];
+  List<Object?> get props => [tasks, status, errorMessage,clonetasks,image];
 
 }
 

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -19,7 +18,7 @@ import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import '../../../Home/presentation/widgets/Compoenents.dart';
 import '../../../auth/presentation/bloc/bool/toggle_bool_bloc.dart';
 import '../../domain/entities/Team.dart';
-import '../bloc/GetTasks/get_task_bloc.dart';
+
 import '../bloc/GetTeam/get_teams_bloc.dart';
 import '../bloc/TaskFilter/taskfilter_bloc.dart';
 import '../bloc/TaskIsVisible/task_visible_bloc.dart';
@@ -159,18 +158,21 @@ class TeamComponent{
 
 
 
- static  Row Header(BuildContext context, TaskVisibleState state, MediaQueryData mediaquery) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        SizedBox(
-          height: 50,
+ static  SizedBox Header(BuildContext context, TaskVisibleState state, MediaQueryData mediaquery) {
+    return SizedBox(
+      width: double.infinity,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            height: 50,
 
-          child: SeachRow(context, state, mediaquery),
-        ),
-        SecondRowPart(state, context),
+            child: SeachRow(context, state, mediaquery),
+          ),
+          SecondRowPart(state, context),
 
-      ],
+        ],
+      ),
     );
   }
 
@@ -190,10 +192,11 @@ static  Row SecondRowPart(TaskVisibleState state, BuildContext context) {
 
 
 
+        !state.willSearch?
 
       ProfileComponents.buildFutureBuilder( AddTeamButton(context), true, "", (p0) => FunctionMember.isAdminAndSuperAdmin())
 
-
+:Container(),
 
       ],
     );

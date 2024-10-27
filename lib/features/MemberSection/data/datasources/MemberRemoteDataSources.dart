@@ -209,7 +209,7 @@ class MemberRemoteImpl implements MemberRemote {
   Future<Unit> UpdateMember(MemberModel memberModel)async  {
     final tokens= await Store.GetTokens();
     final body =memberModel.toJson();
-    debugPrint(body.toString()  );
+
 
     return client.patch(
       Uri.parse(getUserProfileUrl),
@@ -226,7 +226,20 @@ class MemberRemoteImpl implements MemberRemote {
 
         final upload_response=await UpdateImage(memberModel.id, memberModel.Images[0],getUserProfileUrl+"/");
         if (upload_response.statusCode==200){
-          MemberStore.saveModel(memberModel);
+          // upload from response
+          upload_response.stream.transform(utf8.decoder).listen((value) {
+            print(value);
+          });
+          final responseBodyBytes = await upload_response.stream.toBytes();
+
+          // decode bytes to JSON string
+          final jsonString = utf8.decode(responseBodyBytes);
+
+          // parse JSON string to a JSON object
+          final jsonObject = json.decode(jsonString);
+
+          final member=MemberModel.fromJson(jsonObject);
+          await MemberStore.saveModel(member);
           return  Future.value(unit);
         }
         else if (upload_response.statusCode==400){

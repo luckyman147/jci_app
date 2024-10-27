@@ -14,6 +14,7 @@ Map<String, dynamic> _$MemberModelToJson(MemberModel instance) =>
       'firstName': instance.firstName,
       'lastName': instance.lastName,
       'phone': instance.phone,
+      "PreviousPoints": instance.PreviousPoints,
       'password': instance.password,
       'is_validated': instance.is_validated,
       'cotisation': instance.cotisation,

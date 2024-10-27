@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -76,7 +77,7 @@ bool hasCommonElement(List<dynamic> list1, List<dynamic> list2) {
   return false;
 }
 
-EditFunction(Activity event, Map<String, dynamic> body,String url ,String urlImage,http.Client client ) async {
+Future<Unit> EditFunction(Activity event, Map<String, dynamic> body,String url ,String urlImage,http.Client client ) async {
   final token = await getTokens();
 
   return client.patch(
@@ -92,7 +93,7 @@ EditFunction(Activity event, Map<String, dynamic> body,String url ,String urlIma
     if (response.statusCode == 200) {
       final Map<String, dynamic> decodedJson = json.decode(response.body) ;
 
-
+      if (event.CoverImages[0]!="assets/images/jci.png"){
       final update_response=await UpdateImage(decodedJson['_id'], event.CoverImages.first,urlImage);
       if (update_response.statusCode==200){
         return Future.value(unit);
@@ -105,7 +106,11 @@ EditFunction(Activity event, Map<String, dynamic> body,String url ,String urlIma
         throw ServerException();
       }
 
+
     }
+    return Future.value (unit);
+    }
+
     else if (response.statusCode == 400) {
       throw WrongCredentialsException();
     }

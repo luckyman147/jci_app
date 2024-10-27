@@ -233,7 +233,7 @@ class DeatailsTeamComponent{
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: SizedBox(
-                            width:  MediaQuery.of(context).size.width/2,
+                            width:  MediaQuery.of(context).size.width/1.6,
                             child: Row(
 
                               children: [
@@ -377,7 +377,7 @@ class DeatailsTeamComponent{
 
                       },),
                       SizedBox(
-                        width: mediaQuery.size.width / 1.4,
+
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 18.0),
                           child:

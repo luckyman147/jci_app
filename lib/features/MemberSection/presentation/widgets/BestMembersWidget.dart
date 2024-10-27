@@ -22,6 +22,8 @@ class BestMembersComponent{
             itemCount: members.length,
             itemBuilder: (context, index) {
               final member = members[index];
+              final isBigger = member.points >= member.PreviousPoints;
+              final diff = member.points - member.PreviousPoints;
               return SizedBox(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -49,7 +51,38 @@ visualDensity: VisualDensity.comfortable,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           imageWidget(member, 30, 18,true ,100),
-                          Text(member.points.toString(), style: PoppinsSemiBold(20, textColorBlack, TextDecoration.none)),
+                          Row(
+
+                            children: [
+                               diff == 0?const  SizedBox():isBigger
+                                  ? const Icon(
+                                Icons.arrow_upward_sharp,
+                                color: Colors.green,
+                              )
+                                  :const  Icon(
+                                Icons.arrow_downward_rounded,
+                                color: Colors.red,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(member.points.toString(), style: PoppinsSemiBold(20, textColorBlack, TextDecoration.none)),
+                              ),
+                              diff > 0
+                                  ? Text(
+                                "+" + diff.toString() + "",
+                                style: PoppinsRegular(15, Colors.green, ),
+                              )
+
+                                  :
+                              diff<0?
+                              Text(
+                                "-" + diff.toString() + "",
+                                style: PoppinsRegular(15, Colors.red, ),
+                              ):SizedBox()
+
+
+                            ],
+                          ),
 
                         ],
                       ),

@@ -1,5 +1,5 @@
 
-  final BaseUrl = "http://192.168.1.12"
+  final BaseUrl = "http://192.168.1.9"
       ":8080";
   final SuperAdminUrl = "$BaseUrl/Super";
   final BoardUrl = "$BaseUrl/Board";

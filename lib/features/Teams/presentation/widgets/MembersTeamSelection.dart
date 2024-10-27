@@ -344,7 +344,7 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
               width: 100,
               child: Text(item.firstName,
                 overflow: TextOverflow.ellipsis,
-                style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),),
+                style: PoppinsSemiBold(15, textColorBlack, TextDecoration.none),),
             ),
           ),
 

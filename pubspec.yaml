@@ -27,6 +27,8 @@ dependencies:
     # Bloc for state management
   flutter_bloc: ^8.1.2
   connectivity_plus:
+  
+  cloud_firestore:
   # Functional programming things
   dartz: ^0.10.1
   # Value equality
@@ -78,7 +80,7 @@ dev_dependencies:
 
 
     sdk: flutter
-
+  dart_code_metrics: ^5.1.0
   build_runner:
   flutter_lints: ^2.0.0
   flutter_launcher_icons: "^0.13.1"

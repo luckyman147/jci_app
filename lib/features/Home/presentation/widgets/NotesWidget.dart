@@ -277,9 +277,28 @@ default:
                   children: [
                     Padding(
                       padding: paddingSemetricHorizontal(),
-                      child: MemberTeamSelection. photo(
+                      child:
+                      (state.notes[index].owner as List).isNotEmpty?
+                      MemberTeamSelection. photo(
                       state.notes[index].owner[0]["Images"],
-                          30, 15),
+                          30, 15):
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Container(
+                          height: 30,
+                          width:30,
+                          color: textColor,
+                          child: Center(
+                            child: Icon(
+                              Icons.person,
+                              color: textColorWhite,
+                              size: 30 / 2,
+                            ),
+                          ),
+                        ),
+
+                      )
+
                     ),
                         Text(
                           state.notes[index].owner[0]["firstName"],

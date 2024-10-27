@@ -299,7 +299,7 @@ class AttachedFileWidget extends StatelessWidget {
 
     return InkWell(
       onTap: ()async  {
-        await TeamFunction.openFile(fileData, fileName);
+        await TeamFunction.openFile(context, fileData['id'],extension );
         // Open file
       },
       child: Row(
@@ -316,23 +316,13 @@ class AttachedFileWidget extends StatelessWidget {
                 child: Center(child: Icon(iconData, size: 20,color: Colors.white,)),
               )), // Adjust icon size as needed
           SizedBox(width: 10), // Adjust as needed for spacing between icon and file name
-          Text(fileName, style: PoppinsRegular(12,textColorBlack)),
+          SizedBox(
+              width: mediaQuery.size.width * 0.5,
+              child: Text(fileName,overflow:TextOverflow.ellipsis , style: PoppinsRegular(12,textColorBlack))),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              IconButton(
-                  tooltip: 'Save',
-                  onPressed: ()async {
 
-
-                    final result=await FileStorage.writeCounter(fileData['url'], fileData['path']!);
-                    if (result){
-
-                      SnackBarMessage.showSuccessSnackBar(message: "dowloaded succefully", context: context);}
-                    else{
-                      SnackBarMessage.showErrorSnackBar(message: "error dowloading file", context: context);
-                    }
-                  }, icon: Icon(Icons.save_alt,color: textColor,size: 30,)),
               IconButton(
 
                   onPressed: (){

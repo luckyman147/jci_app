@@ -54,6 +54,9 @@ on<GetUserProfileEvent>(getUserPrfile);
   }
   void _getMemberByRanks(GetMemberByHighestRAnkEvent event, Emitter<MembersState> emit)async{
 
+if (state.memberWithRank != null) {
+ emit( state.copyWith(userStatus: UserStatus.MembersRanksLoaded,memberWithRank: state.memberWithRank));
+    }
     try {
       emit(state.copyWith(userStatus: UserStatus.Loading));
       final result= await getMembeWithHighestRankUseCase(event.isUpdated);
@@ -105,6 +108,11 @@ if (event.isUpdated){
       GetAllMembersEvent event,
       Emitter<MembersState> emit,
       ) async {
+
+    if (state.members.isNotEmpty ) {
+      emit(state.copyWith(userStatus: UserStatus.MembersLoaded,members: state.members));
+    }
+
     emit(state.copyWith(userStatus: UserStatus.Loading));
 
     final result = await getAllMembersUseCase.call(event.isUpdated);

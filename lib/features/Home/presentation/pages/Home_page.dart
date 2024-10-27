@@ -17,8 +17,10 @@ import 'package:jci_app/features/Teams/presentation/screens/AllTeamsScreen.dart'
 import 'package:jci_app/features/auth/presentation/bloc/Permissions/permissions_bloc.dart';
 
 
+import '../../../../core/config/services/MemberStore.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
+import '../../../MemberSection/presentation/bloc/memberPermissions/member_permission_bloc.dart';
 import '../bloc/PageIndex/page_index_bloc.dart';
 
 
@@ -32,6 +34,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage > {
 @override
   void initState() {
+  isowner(context);
+  context.read<MemberPermissionBloc>().add(checkIsSuper());
+  context.read<MemberPermissionBloc>().add(checkIsAdmin());
+
   context.read<PermissionsBloc>().add(CheckPermissionsEvent());    
   // TODO: implement initState
     super.initState();
@@ -85,12 +91,16 @@ class _HomePageState extends State<HomePage > {
                 selectedLabelStyle: PoppinsRegular(15, PrimaryColor),
                 unselectedItemColor: ThirdColor,
                 currentIndex: state.index,
-                onTap: (index) {
+                onTap: (index)async  {
                   context.read<PageIndexBloc>().add(SetIndexEvent(index:index));
                   if (index==0){
                     context.read<GetTeamsBloc>().add(GetTeams(isPrivate: true));
                   }
                   if (index==3){
+
+
+
+
                     context.read<MembersBloc>().add(GetUserProfileEvent(false));
 
 
@@ -110,5 +120,10 @@ if (perm.status==PermStatus.Other)
                   BottomNavigationBarItem(
                       icon: Icon(Icons.person,size: 31,), label: "Profile".tr(context)),
                 ]);
+  }
+
+  Future<void> isowner(BuildContext context) async {
+      final member =await MemberStore.getModel();
+    context.read<MemberPermissionBloc>().add(checkIsowner(member!.id));
   }
 }

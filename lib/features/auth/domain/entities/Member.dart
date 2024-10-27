@@ -24,14 +24,16 @@ class Member extends Equatable {
  final bool IsSelected;
  final String language;
  final int points;
+ final int PreviousPoints;
  final List<dynamic> objectifs;
 final int rank;
   final String role;
 
-  factory Member.SignUp(String email,String password,String firstName,String lastName,String language) {
+  factory Member.SignUp(String email,String password,String firstName,String lastName,String language,String role) {
     return Member(
       language: language,
       points: 0,
+      PreviousPoints: 0,
       id: '',
       email: email,
       firstName: firstName,
@@ -44,7 +46,7 @@ final int rank;
       Activities: [],
       teams: [],
       IsSelected: false,
-      role: '',
+      role: role,
       objectifs: [], rank: 0, description: '', board: '',
     );
   }
@@ -63,6 +65,7 @@ final int rank;
   factory  Member.fromImages(Map<String, dynamic> data) {
     log('hey');
     return Member(
+      PreviousPoints: data['PreviousPoints']??0,
       language: data['language']??'fr',
 
       points: data['points']??0,
@@ -89,11 +92,12 @@ final int rank;
       language: "fr",
 
       IsSelected: false, id: "id", role: "role", is_validated: false,
-      cotisation:[false] , Images: [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password", Activities: [], teams: [], points: 0, objectifs: [], rank: 0, description: '', board: '');
+      cotisation:[false] , Images: [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password", Activities: [], teams: [], points: 0, objectifs: [], rank: 0, description: '', board: '', PreviousPoints: 0);
 
   static Member toMember(Map<String, dynamic> json) {
     return Member(
       description: json['description']??'',
+      PreviousPoints: json['PreviousPoints']??0,
       board: json['boardRole']??'',
       language: json['language']??'fr',
       objectifs: json['objectifs']??[],
@@ -121,6 +125,7 @@ final int rank;
 
       {
         required this.objectifs,
+        required this.PreviousPoints,
         required this.points,
         required this.teams,
         required this.description,
@@ -146,6 +151,6 @@ final int rank;
   // TODO: implement props
   List<Object?> get props => [email, password,teams,points,
     id, role, is_validated, cotisation, Images, firstName, lastName, phone,
-    IsSelected, Activities,rank, description, board, language, objectifs
+    IsSelected, Activities,rank, description, board, language, objectifs, PreviousPoints
 
   ];}

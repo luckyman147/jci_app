@@ -23,6 +23,7 @@ cotisation:boolean[]
    role:any
    boardRole:any
    rank:number
+   PreviousPoints:number
 }
 export const MemberSchema=new Schema({
     email:{type:String,required:true},
@@ -34,6 +35,8 @@ export const MemberSchema=new Schema({
     address:{type:String,},
 language:{type:String,default:'fr'},
     Points:{type:Number,default:0},
+    PreviousPoints:{type:Number,default:0},
+
     phone:{type:String},
     is_validated:{type:Boolean},
     cotisation:{type:[Boolean],default:[false,false]},

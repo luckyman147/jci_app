@@ -157,7 +157,7 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
                 if (state.status == TaskStatus.Loading) {
                   return AnimatedContainer(
                       height:
-                      i<3?
+                      i<3.0?
                       i *
                           89:276,
 

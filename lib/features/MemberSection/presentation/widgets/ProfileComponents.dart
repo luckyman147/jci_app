@@ -7,6 +7,7 @@ import 'package:circle_progress_bar/circle_progress_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -96,7 +97,7 @@ static     var boxDecoration = BoxDecoration(
   return   Padding(
     padding: paddingSemetricVerticalHorizontal(),
     child: AnimatedContainer(
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       width: isExpanded ? width:width,
       height: isExpanded ? height : 70,
       decoration:boxDecoration,
@@ -130,6 +131,7 @@ static     var boxDecoration = BoxDecoration(
   }
 
   static   Widget CircleProfile(Member member,BuildContext context){
+    log(member.Images.toString());
 
     return member.Images.isNotEmpty ?
     SizedBox(
@@ -139,7 +141,9 @@ static     var boxDecoration = BoxDecoration(
         foregroundColor: PrimaryColor,
         backgroundColor: textColorWhite,
         value: FunctionMember.calculateObjectifs(member.objectifs)/member.objectifs.length,
-        child: phot(member.Images[0]['url'],context,80),
+        child: 
+       member.Images[0].runtimeType!=String?
+        phot(member.Images[0]['url'],context,80):Image.asset(vip),
       ),
     ):
     NoPHoto(80,FunctionMember.calculateObjectifs(member.objectifs)/member.objectifs.length);
@@ -191,7 +195,7 @@ static     var boxDecoration = BoxDecoration(
       child: Container(
 
 
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             shape: BoxShape.circle,
 image: DecorationImage(
   image: AssetImage(vip)),
@@ -253,10 +257,11 @@ left: 0,
               children: [
              Padding(
                padding: paddingSemetricHorizontal(),
-               child: buildFutureBuilder(ShowAction(context, member,      (){
-                 context.go('/modifyUser?user=${jsonEncode(MemberModel.fromEntity(member).toJson())}');},"Edit Profile".tr(context)),
+               child:
+               MemberImpl.Isowner( ShowAction(context, member,      (){
 
-                   true, "", (po)=>FunctionMember. isOwner(member.id)),
+
+                 context.go('/modifyUser?user=${jsonEncode(MemberModel.fromEntity(member).toJson())}');},"Edit Profile".tr(context)),true)
              )
                 ,ShowAction(context, member,      (){          FunctionMember.Showinfo(context, member);},"Contact".tr(context)),
               ],
@@ -280,10 +285,10 @@ builder: (context, state) {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(state.role.toUpperCase(),style: PoppinsSemiBold(17, SecondaryColor,TextDecoration.none ),),
-          buildFutureBuilder(IconButton(onPressed: (){
-            BottomMemberSheet.ShowAdminChangeSheet(context,  member);
+        MemberImpl.iSSuperNoowner(IconButton(onPressed: (){
+          BottomMemberSheet.ShowAdminChangeSheet(context,  member);
 
-          }, icon: Icon(Icons.edit)), true, member.id, (p0) => FunctionMember.isSuperAdminANdNoOwner(member))
+        }, icon: Icon(Icons.edit)), true)
         ],
       ),
 
@@ -304,7 +309,7 @@ static ElevatedButton ShowAction(BuildContext context, Member member,Function() 
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
-                          side: BorderSide(color: textColor))),
+                          side:const  BorderSide(color: textColor))),
                 ),
                 child: Text(text,style: PoppinsRegular(17, textColorBlack, ),),
               );
@@ -398,7 +403,7 @@ static Widget AchivedmentWidget(bool isFinished,String text ) {
               ],
             ),
           ),
-          SizedBox(height: 10,),
+       const    SizedBox(height: 10,),
           buildFutureBuilder(Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -674,7 +679,7 @@ static  Stack imagezChanged(String member,MediaQueryData mediaQuery,BuildContext
 
 
   static Padding SaveChangesButton(Function() onPressed
-      ) {
+   ,BuildContext ctx   ) {
     return Padding(
       padding: paddingSemetricHorizontal(h: 20),
       child: Row(
@@ -688,7 +693,7 @@ static  Stack imagezChanged(String member,MediaQueryData mediaQuery,BuildContext
                 ),
               ),
               onPressed: onPressed,
-               child: Text("Save Changes",style: PoppinsSemiBold(20, textColorWhite, TextDecoration.none
+               child: Text("Save".tr(ctx),style: PoppinsSemiBold(20, textColorWhite, TextDecoration.none
           ),)),
         ],
       ),
@@ -882,7 +887,14 @@ keyboardType: TextInputType.emailAddress,
   static Widget BuildDescriptionWidget(Member member, MemberManagementState ste, BuildContext context) {
     return Padding(
         padding: paddingSemetricVerticalHorizontal(),
-    child: SingleChildScrollView(child: Text(member.description,style: PoppinsRegular(18, textColor, ),)));
+    child: SingleChildScrollView(child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Align(
+            alignment: Alignment.topLeft,
+            child: Text(member.description,style: PoppinsRegular(18, textColorBlack, ),)),
+      ],
+    )));
   }
 }
 

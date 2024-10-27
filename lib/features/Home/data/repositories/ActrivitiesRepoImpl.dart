@@ -208,12 +208,44 @@ await eventLocalDataSource.CacheEventById(result);
       }
 
       on EmptyDataException {
-        return Left(EmptyDataFailure());
+        switch (act) {
+          case activity.Trainings:
+
+            final localTrainings = await trainingLocalDataSource
+                .getAllCachedTrainings();
+            return Right(localTrainings);
+          case activity.Meetings:
+            final localTrainings = await meetingLocalDataSource
+                .getAllCachedMeetings();
+            return Right(localTrainings);
+          case activity.Events:
+          case activity.All:
+
+            final localTrainings = await eventLocalDataSource
+                .getAllCachedEvents();
+            return Right(localTrainings);
+        }
       } on WrongCredentialsException {
         return Left(WrongCredentialsFailure());
       }
       on ServerException {
-        return Left(ServerFailure());
+        switch (act) {
+          case activity.Trainings:
+
+            final localTrainings = await trainingLocalDataSource
+                .getAllCachedTrainings();
+            return Right(localTrainings);
+          case activity.Meetings:
+            final localTrainings = await meetingLocalDataSource
+                .getAllCachedMeetings();
+            return Right(localTrainings);
+          case activity.Events:
+          case activity.All:
+
+            final localTrainings = await eventLocalDataSource
+                .getAllCachedEvents();
+            return Right(localTrainings);
+        }
       }
     }
 

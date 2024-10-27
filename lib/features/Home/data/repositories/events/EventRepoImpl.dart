@@ -185,22 +185,8 @@ if (await networkInfo.isConnected) {
 
   @override
   Future<Either<Failure, Unit>> updateEvent(Event event)async {
-    final eventMode= EventModel(
-      id: event.id,
-      LeaderName: event.LeaderName,
-      name: event.name,
-      description: event.description,
-      ActivityBeginDate: event.ActivityBeginDate,
-      ActivityEndDate: event.ActivityEndDate,
-      ActivityAdress: event.ActivityAdress,
-      ActivityPoints:event.ActivityPoints,
-      categorie: event.categorie,
-      IsPaid: event.IsPaid,
-      price: event.price,
-      Participants: event.Participants==null?[]:event.Participants,
-      CoverImages: event.CoverImages,
-      registrationDeadline: event.registrationDeadline, IsPart: event.IsPart,
-    );
+    final eventMode= EventModel.fromEntity(
+     event);
     return await _getMessage(eventRemoteDataSource.updateEvent(eventMode));
   }
   Future<Either<Failure, Unit>> _getMessage(

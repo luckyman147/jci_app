@@ -51,7 +51,7 @@ class _SettingsPageState extends State<SettingsPage> {
         BackButton(
           onPressed: () {
             GoRouter.of(context).go('/home');
-            context.read<MembersBloc>().add(GetUserProfileEvent(false));
+            context.read<MembersBloc>().add(GetUserProfileEvent(true));
           },
 
 

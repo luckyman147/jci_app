@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
+import 'package:jci_app/features/MemberSection/presentation/bloc/memberPermissions/member_permission_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/MemberSection.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/SettingsComponents.dart';
@@ -108,4 +109,45 @@ if (state.memberWithRank == null) {
 
     });
   }
+  static Widget Isowner(Widget isowner,bool pool){
+  return  BlocBuilder<MemberPermissionBloc , MemberPermissionState>(
+      builder: (context, state) {
+
+
+       if (state.isowner && pool) {
+
+         return isowner;
+       }
+       else {
+         return SizedBox();
+       }},
+    );
+  }
+  static Widget IsNonowner(Widget isowner,){
+  return  BlocBuilder<MemberPermissionBloc , MemberPermissionState>(
+      builder: (context, state) {
+
+
+       if (!state.isowner ) {
+
+         return isowner;
+       }
+       else {
+         return SizedBox();
+       }},
+    );
+  }
+    static Widget iSSuperNoowner(Widget isowner,bool pool){
+  return  BlocBuilder<MemberPermissionBloc , MemberPermissionState>(
+      builder: (context, state) {
+       if (!state.isowner && state.isSuperAdmin) {
+
+         return isowner;
+       }
+       else {
+         return SizedBox();
+       }},
+    );
+  }
+
 }

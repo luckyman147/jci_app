@@ -4,6 +4,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
+
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/notesBloc/notes_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
@@ -12,6 +13,7 @@ import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_blo
 import 'package:jci_app/features/Home/presentation/bloc/calendar/calendar_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
+import 'package:jci_app/features/MemberSection/presentation/bloc/memberPermissions/member_permission_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 
@@ -83,6 +85,7 @@ List<SingleChildWidget> providersList = [
   BlocProvider(create: (_)=> di.sl<TimelineBloc>()),
   BlocProvider(create: (_)=> di.sl<MembersTeamCubit>()),
   BlocProvider(create: (_)=> di.sl<TaskfilterBloc>()),
+  BlocProvider(create: (_)=> di.sl<MemberPermissionBloc>()),
 
 
 

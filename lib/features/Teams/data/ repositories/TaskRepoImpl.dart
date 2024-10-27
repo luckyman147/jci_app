@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/features/Teams/data/models/CheckListModel.dart';
@@ -228,4 +230,27 @@ return _getMessageUnit(taskRemoteDataSource.updateChecklistStatus(taskid, checki
   @override
   Future<Either<Failure, Unit>> UpdateComment(String taskid, String commentId, String comment) {
     return _getMessageUnit(taskRemoteDataSource.UpdateComment(taskid, commentId, comment));
+  }
+
+  @override
+  Future<Either<Failure, Uint8List>> getFile(String fileid) async{
+    if (await networkInfo.isConnected) {
+
+
+      try {
+
+
+        final  remoteTasks= await taskRemoteDataSource.getFile(fileid);
+
+        return Right(remoteTasks);
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+      on EmptyCacheException {
+        return Left(EmptyCacheFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+
+    }
   }}

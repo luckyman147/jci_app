@@ -11,7 +11,9 @@ List<dynamic> get props => properties;}
 class OfflineFailure extends Failure {
 
 }
+class NotFoundFailure extends Failure {
 
+}
 class ServerFailure extends Failure {
 }
 

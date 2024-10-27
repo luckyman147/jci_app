@@ -61,6 +61,7 @@ static Future<List<Member>> getMembers(){
           teams: member.teams,
           Activities: member.Activities,
           points: member.points,
+          PreviousPoints: member.PreviousPoints,
           IsSelected: member.IsSelected,
           role: 'New Member                                                                 ',
           is_validated: member.is_validated,
@@ -140,6 +141,10 @@ static Future<bool> isAssignedOrLoyal(Team team, List<dynamic> assignT)async {
 static Future<bool> isMember(Member merber)async {
 
   return merber.role=='member';
+}static Future<bool> isAdmin()async {
+    final member =await MemberStore.getModel();
+
+  return member!.role=='admin';
 }
   static void Showinfo(BuildContext context, Member member) {
     showModalBottomSheet(

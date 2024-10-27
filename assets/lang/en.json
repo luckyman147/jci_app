@@ -19,6 +19,7 @@
   "Presidents": "Presidents",
   "President": "President",
   "Enter": "Enter",
+"My Bio": "My Bio",
   "Save Changes": "Save Changes",
   "Select Year": "Select Year",
   "Update President Image": "Update President Image",
@@ -28,6 +29,9 @@
   "Interested": "Interested",
 "Priority 1": "Board",
 "Priority 2": "Advisors",
+
+  "Enter  Phone Number": "Enter  Phone Number",
+  "About Me": "About Me",
 "Priority 3": "Members",
   "Join": "Join",
   "Sort": "Sort",

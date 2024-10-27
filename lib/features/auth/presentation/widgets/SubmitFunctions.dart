@@ -27,7 +27,7 @@ class SubmitFunctions{
     if (_key.currentState!.validate()) {
       final language=await context.read<localeCubit>().cachedLanguageCode();
       final member =
-      Member.SignUp(state.email.value, state.password.value, state.firstname.value, state.lastname.value, language??'fr' );
+      Member.SignUp(state.email.value, state.password.value, state.firstname.value, state.lastname.value, language??'fr',"New Member" );
 
 if (!isGoogle) {
 
@@ -70,6 +70,7 @@ static   void Listener(ResetPasswordState state, BuildContext context,String? em
           message: state.message, context: context);
       //context.go('/reset/${widget.email}');
     }
+
     else if (state.status == ResetPasswordStatus.verified) {
       context.go('/reset/${email}');
     }
@@ -104,19 +105,19 @@ static   void Listener(ResetPasswordState state, BuildContext context,String? em
   }
   static   void LoginListener(LoginState state, BuildContext context) {
     if (state is LoadingLogin) {
-      showDialog(context: context, builder:(context)=>AlertDialog(
+      showDialog(context: context, builder:(context)=>const AlertDialog(
+        backgroundColor: Colors.transparent,
           content: SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: 170,
-                ),
-                child: Column(
-                  children: [
-                    LoadingWidget(),
-                    const SizedBox(height: 10),
 
-                  ],
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+
+                  LoadingWidget(),
+                 SizedBox(height: 10),
+
+                ],
               ))));
 
     }

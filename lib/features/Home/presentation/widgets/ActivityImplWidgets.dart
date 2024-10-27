@@ -52,7 +52,7 @@ Widget BlocMonthlyWeeklyActivity(activity act,MediaQueryData mediaQuery) =>
     return BlocConsumer<AcivityFBloc, AcivityFState>(
       builder: (context, state) {
         if (state is ActivityLoadingState) {
-          return  ReloadDetailsPage.ActivityMonth();;
+          return  ReloadDetailsPage.ActivityMonth();
         } else if (state is ActivityLoadedMonthState) {
 
 
@@ -65,6 +65,8 @@ Widget BlocMonthlyWeeklyActivity(activity act,MediaQueryData mediaQuery) =>
                   onAllRefresh(context, act,state.activitys);
               },
               child:
+
+
 
           MonthWeekBuild(actState.selectedActivity, state, mediaQuery)
 

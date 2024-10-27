@@ -11,6 +11,7 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/MemberImpl.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
@@ -21,6 +22,7 @@ import '../../../Home/presentation/widgets/Functions.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../../auth/data/models/Member/AuthModel.dart';
 import '../bloc/Members/members_bloc.dart';
+import '../bloc/memberPermissions/member_permission_bloc.dart';
 
 class MemberSectionWidget extends StatefulWidget {
   final Member member;
@@ -35,7 +37,9 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
   FocusNode pointsFocusNode = FocusNode();
   @override
   void initState() {
-
+    context.read<MemberPermissionBloc>().add(checkIsowner(widget.member.id));
+    context.read<MemberPermissionBloc>().add(checkIsSuper());
+    context.read<MemberPermissionBloc>().add(checkIsAdmin());
 
     image();
     // TODO: implement initState
@@ -72,11 +76,11 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
               children: [
                 Row(
                     children: [
-                   ProfileComponents. buildFutureBuilder(  BackButton(color: textColorBlack, onPressed: () {
-                      Navigator.of(context).pop();
-                       context.read<MembersBloc>().add(GetAllMembersEvent(true));
+      MemberImpl.IsNonowner(BackButton(color: textColorBlack, onPressed: () {
+                  Navigator.of(context).pop();
+                  context.read<MembersBloc>().add(GetAllMembersEvent(false));
 
-                    },),false,widget.member.id,(po)=>FunctionMember. isOwner(widget.member.id)),
+                })),
                       SizedBox(
                         width:MediaQuery.of(context).size.width/1.5,
                         child: Padding(
@@ -91,7 +95,7 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
                       ),
 
                     ]  ),
-                ProfileComponents.buildFutureBuilder(buildIconButton(context),true,widget.member.id,(po)=>FunctionMember. isOwner(widget.member.id)),
+    MemberImpl.Isowner(buildIconButton(context),true),
 
 
               ],
@@ -117,7 +121,7 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
 
 
               ProfileComponents.hh(widget.member,context),
-    if (widget.member.description!=null && widget.member.description!.isNotEmpty)  ProfileComponents.ExpandedContainer(context, ProfileComponents.isDes(state.state), ProfileComponents.BuildDescriptionWidget(widget.member,ste,context), 'Description'.tr(context), StatesBool.Description,mediaQuery,mediaQuery.size.width/1.17,mediaQuery.size.height/4),
+  if (widget.member.description!=null && widget.member.description!.isNotEmpty)  ProfileComponents.ExpandedContainer(context, ProfileComponents.isDes(state.state), ProfileComponents.BuildDescriptionWidget(widget.member,ste,context), 'About Me'.tr(context), StatesBool.Description,mediaQuery,mediaQuery.size.width/1.17,mediaQuery.size.height/4),
     ProfileComponents.ExpandedContainer(context, ProfileComponents.isObjectif(state.state), ProfileComponents.BuildObjectifsWidget(widget.member,ste,context), 'Objectives'.tr(context), StatesBool.Objectifs,mediaQuery, mediaQuery.size.width/1.17,mediaQuery.size.height/4),
 
     ProfileComponents.ExpandedContainer(context, ProfileComponents.isPoints(state.state), ProfileComponents.BuildPointsWidget(widget.member,ste,context,pointsFocusNode), 'Points'.tr(context), StatesBool.Points,mediaQuery,mediaQuery.size.width/1.17 ,mediaQuery.size.height/4),
@@ -164,7 +168,7 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
 
     }
 context.read<MemberManagementBloc>().add(initMemberEvent(isUpdated: widget.member.is_validated, cotisation: widget.member.cotisation, points: widget.member.points.toDouble(), role: widget.member.role, objectifs: widget.member.objectifs));
-    log("sdddsdd"+widget.member.is_validated.toString());
+
   }
 
 

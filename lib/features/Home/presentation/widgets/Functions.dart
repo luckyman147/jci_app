@@ -307,11 +307,9 @@ static Future<void> launchURL(BuildContext context, String url) async {
 
   // If user confirms, launch the URL
   if (confirm == true) {
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url), webViewConfiguration: WebViewConfiguration());
-    } else {
-      throw 'Could not launch $url';
-    }
+
+      await launchUrl(Uri.parse(url),);
+
   }
 
 }

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/services.dart';
 import 'package:jci_app/features/Teams/domain/entities/Task.dart';
 import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 import 'package:jci_app/features/Teams/domain/repository/TaskRepo.dart';
@@ -174,6 +175,16 @@ class UpdateFileUseCase extends UseCase<TaskFile, inputFields> {
   @override
   Future<Either<Failure, TaskFile>> call( params) {
     return _taskRepository.UpdateFiles(params.taskid, params.file!);
+  }
+}
+class GetFileUseCase extends UseCase<Uint8List, String> {
+  final TaskRepo _taskRepository;
+
+  GetFileUseCase(this._taskRepository);
+
+  @override
+  Future<Either<Failure, Uint8List>> call( params) {
+    return _taskRepository.getFile(params);
   }
 }
 class DeleteFileUseCases extends UseCase<Unit, inputFields> {

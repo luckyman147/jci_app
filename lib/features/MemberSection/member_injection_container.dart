@@ -7,12 +7,14 @@ import 'package:jci_app/features/MemberSection/domain/usecases/MemberUseCases.da
 import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
+import 'package:jci_app/features/MemberSection/presentation/bloc/memberPermissions/member_permission_bloc.dart';
 
 final sl = GetIt.instance;
 
 Future<void> initMembers() async {
   sl.registerFactory(() => MembersBloc(sl(), sl(),sl(),sl(),sl(),sl(),sl()));
   sl.registerFactory(() => MemberManagementBloc(sl(), sl(),sl(),sl(),sl(),sl(),sl(),sl()));
+sl.registerFactory(() => MemberPermissionBloc());
 
   sl.registerFactory(()=>ChangeSboolsCubit());
   sl.registerLazySingleton<MemberRemote>(() => MemberRemoteImpl(client: sl()));

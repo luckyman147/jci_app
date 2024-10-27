@@ -358,12 +358,20 @@ class TeamFunction{
 
     file.writeAsString(decodedString);
   }
-  static  Future<void> openFile(Map<String, dynamic> fileData, String fileName) async {
+  static  Future<void> openFile(BuildContext context,String fileid,String extension) async {
     try {
       // Save the base64 string as a file
-      File tempFile = await saveBase64AsFile(fileData['url'], fileName);
 
-      await OpenFile.open(tempFile.path);
+context.read<GetTaskBloc>().add(GetFileEvent(fileid));
+final state =BlocProvider.of<GetTaskBloc>(context).state;
+await Future.delayed(Duration(seconds: 2));
+final directory = await getTemporaryDirectory();
+final file = File('${directory.path}/temp_file.$extension');
+await file.writeAsBytes(state.image!);
+
+OpenFile.open(file.path,);
+
+
       // Open file
     } catch (e) {
       log(e.toString());

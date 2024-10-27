@@ -30,10 +30,10 @@ class EventModel extends Event{
       categorie: event.categorie,
       IsPaid: event.IsPaid,
       price: event.price,
-      Participants: event.Participants,
+      Participants: event.Participants!=null?event.Participants:[],
       CoverImages: event.CoverImages,
       registrationDeadline: event.registrationDeadline,
-      IsPart: event.IsPart,
+      IsPart: false,
     );
   }
 

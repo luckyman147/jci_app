@@ -131,7 +131,7 @@ void _getActivityOfMonth(
 
     }
     else if (event.act==activity.Meetings){
-      emit(ActivityLoadingState());
+
 
       final failureOrEvents= await getAllActivitiesUseCases(event.act);
       emit(_mapFailureOrActivityMonthToState(failureOrEvents));

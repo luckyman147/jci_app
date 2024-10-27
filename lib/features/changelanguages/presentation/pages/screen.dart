@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/strings/app_strings.dart';
@@ -53,6 +54,7 @@ class LanguagePage extends StatelessWidget {
     return GestureDetector(
       onTap: (){
         context.read<localeCubit>().changeLanguage(languageCode);
+        context.go('/');
       },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10),

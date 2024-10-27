@@ -188,12 +188,12 @@ static isMode(SettingsBools state) {
                   ProfileComponents.MembersWidgetOnlyName(
                       MediaQuery.of(context),context),
                   MediaQuery.of(context),
-                  SettingsBools.Members,Icons.emoji_events,300,()=>    context.read<MembersBloc>().add(GetAllMembersEvent(false))
+                  SettingsBools.Members,Icons.emoji_events,300,()=>    context.read<MembersBloc>().add(GetAllMembersEvent(true))
               );
             }
-          else{return SizedBox();}
+          else{return const  SizedBox();}
           }
-          else{return SizedBox();}
+          else{return const SizedBox();}
 
           }, future: FunctionMember.isAdminAndSuperAdmin(),
         );
@@ -205,6 +205,7 @@ static isMode(SettingsBools state) {
           child: InkWell(
               onTap: () {
                 context.read<AuthBloc>().add(SignoutEvent());
+                context.go("/login");
               },
 
               child: Padding(
@@ -216,7 +217,7 @@ static isMode(SettingsBools state) {
                   width: MediaQuery.of(context).size.width,
                   child: Row(
                     children: [
-                      Icon(Icons.logout,color: Colors.red,size: 30,),
+                  const     Icon(Icons.logout,color: Colors.red,size: 30,),
                       Padding(
                         padding: paddingSemetricHorizontal(),
                         child: Text("Logout".tr(context),style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),),
@@ -231,7 +232,7 @@ static isMode(SettingsBools state) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children:[
-        Divider(color: textColor,),
+     const    Divider(color: textColor,),
         Padding(
           padding: paddingSemetricVertical(),
           child: InkWell(
@@ -294,7 +295,7 @@ static isMode(SettingsBools state) {
                ProfileComponents.SaveChangesButton(()async{
                  if (key.currentState!.validate()) {
                    final language=await context.read<localeCubit>().cachedLanguageCode();
-                   final  Member member=Member(email: newMember.email , password: cPassword.text, id: '', role: '', is_validated: false, cotisation: [], Images: [],teams: [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: [], points: 0, objectifs: [],language: language??'fr', rank: 0, description: '', board: "");
+                   final  Member member=Member(email: newMember.email , password: cPassword.text, id: '', role: '', is_validated: false, cotisation: [], Images: [],teams: [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: [], points: 0, objectifs: [],language: language??'fr', rank: 0, description: '', board: "", PreviousPoints: 0);
 
                    context.read<ResetBloc>().add(ResetSubmitted( member: member));
                  cPassword.clear();
@@ -307,7 +308,7 @@ static isMode(SettingsBools state) {
                  }
 
 
-               }),
+               },context),
             ],),
     );
   },

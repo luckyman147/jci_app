@@ -74,20 +74,13 @@ class _CalendarPageState extends State<CalendarPage> {
                         child: Container(
                      decoration: BoxDecoration(
                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: textColorBlack),
-                     gradient: LinearGradient(
+                        border: Border.all(color: textColorBlack, width: 2),
+                     gradient: const LinearGradient(
                      begin: Alignment.topLeft,
                      end: Alignment.bottomRight,
                      stops: [0.1, 0.9],
-                     colors: [PrimaryColor, textColorWhite]),
-                     boxShadow: [
-                       BoxShadow(
-                         color: textColorBlack.withOpacity(0.5),
-                         spreadRadius: 5,
-                         blurRadius: 7,
-                         offset: Offset(0, 3), // changes position of shadow
-                       ),
-                     ],
+                     colors: [PrimaryColor, PrimaryColor]),
+
 
                      ),
                           child: listTileCalendar(context, value, index, state,ste),
@@ -117,46 +110,58 @@ class _CalendarPageState extends State<CalendarPage> {
                           },
 
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),side: BorderSide(color: textColorBlack)),
-                        trailing: Icon(Icons.arrow_forward_ios_rounded,color: PrimaryColor,),
-      leading:ProfileComponents.buildFutureBuilder(    ReminderButton(context, value, index), true, "", (p0) => FunctionMember.isAdminAndSuperAdmin())   ,
+                        trailing: const Icon(Icons.arrow_forward_ios_rounded,color: textColorWhite,),
+
 
                           title: SizedBox(
                             width: MediaQuery.of(context).size.width/1.5,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            child: Row(
+
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(value[index].name,  overflow: TextOverflow.ellipsis,   style: PoppinsSemiBold(16, textColorWhite,TextDecoration.none),),
-                                ),
-                                Row(
+                                ProfileComponents.buildFutureBuilder(    ReminderButton(context, value, index), true, "", (p0) => FunctionMember.isAdminAndSuperAdmin()),
+
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Padding(
-                                      padding: paddingSemetricHorizontal(),
-                                      child: Icon(Icons.location_on,color: textColorWhite,),
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(value[index].name,  overflow: TextOverflow.ellipsis,   style: PoppinsSemiBold(16, textColorWhite,TextDecoration.none),),
                                     ),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: paddingSemetricHorizontal(),
+                                          child: const Icon(Icons.location_on,color: textColorWhite,),
+                                        ),
 
-                                    SizedBox(
-                                        width: MediaQuery.of(context).size.width/2.5,
-                                        child: Text(value[index].ActivityAdress,overflow: TextOverflow.ellipsis,style: PoppinsRegular(16, textColorWhite,),)),
+                                        SizedBox(
+                                            width: MediaQuery.of(context).size.width/2.5,
+                                            child: Text(value[index].ActivityAdress,overflow: TextOverflow.ellipsis,style: PoppinsRegular(16, textColorWhite,),)),
+
+
+                                      ],
+
+                                    ),
+                                    Padding(
+                                      padding: paddingSemetricVertical(),
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding: paddingSemetricHorizontal(),
+                                            child:const  Icon(Icons.calendar_today_rounded,color: textColorWhite,),
+                                          ),
+                                          Text(formattedDateTime,style: PoppinsRegular(14, textColorWhite),),
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ],
                             ),
                           ),
-                          subtitle: Padding(
-                            padding: paddingSemetricVertical(),
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: paddingSemetricHorizontal(),
-                                  child: Icon(Icons.calendar_today_rounded,color: textColorWhite,),
-                                ),
-                                    Text(formattedDateTime,style: PoppinsRegular(14, textColorWhite),),
-                              ],
-                            ),
-                          ),
+
                         );
   }
 

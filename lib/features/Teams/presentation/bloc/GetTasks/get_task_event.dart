@@ -148,3 +148,9 @@ class UpdateChecklistName extends GetTaskEvent {
   @override
   List<Object> get props => [fields];
 }
+class GetFileEvent extends GetTaskEvent {
+  final String id;
+  GetFileEvent(this.id);
+  @override
+  List<Object> get props => [id];
+}

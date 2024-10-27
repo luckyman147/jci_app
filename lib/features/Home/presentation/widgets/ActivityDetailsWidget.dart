@@ -75,16 +75,25 @@ child: SizedBox(
     },
 
 
-    child: DottedBorder(
-      borderType: BorderType.RRect,
-      radius: Radius.circular(7),
-      padding: EdgeInsets.all(6),
-      color: textColorBlack,
-        dashPattern: [12,16,13,16],
+    child: Container(
+     decoration: BoxDecoration(
+       color: textColorWhite,
+       border: Border.all(color: textColorBlack,),
+       borderRadius: BorderRadius.circular(10),
+     ),
         child: Center(
-          child: Text(" ${"View".tr(context)} Notes",style: PoppinsSemiBold(mediaQuery.devicePixelRatio*5, textColorBlack, TextDecoration.none),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: paddingSemetricHorizontal(),
+                child: const Icon(Icons.mode_comment_outlined, color: textColorBlack,),
+              ),
+              Text(" ${"View".tr(context)} Notes",style: PoppinsSemiBold(mediaQuery.devicePixelRatio*6, textColorBlack, TextDecoration.none),
 
-                ),
+                    ),
+            ],
+          ),
         )
 
                     //Align(

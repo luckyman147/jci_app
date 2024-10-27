@@ -40,7 +40,7 @@ sl.registerFactory(() => MembersTeamCubit());
       deleteChecklistUseCase: sl(),
       updateChecklistStatusUseCase: sl(),
       updateTaskNameUseCase: sl(), updateTaskTimelineUseCase: sl(),
-      UpdateMembersUseCase: sl(), updateFileUseCase: sl (), deleteFileUseCase: sl(), updateChecklistNameUseCase: sl(), addCommentUseCase: sl()));
+      UpdateMembersUseCase: sl(), updateFileUseCase: sl (), deleteFileUseCase: sl(), updateChecklistNameUseCase: sl(), addCommentUseCase: sl(), getFileUseCase: sl()));
 
   sl.registerFactory(() => GetTeamsBloc(sl(), sl()  ,sl(),sl(),sl(),sl(),sl(),sl(),sl()));
   //datasources
@@ -63,6 +63,7 @@ sl.registerFactory(() => MembersTeamCubit());
   sl.registerLazySingleton(() => UpdateTaskTimelineUseCase(sl()));
   sl.registerLazySingleton(() => UpdateTaskNameUseCase(sl()));
   sl.registerLazySingleton(() => UpdateTeamMembersUseCase(sl()));
+  sl.registerLazySingleton(() => GetFileUseCase(sl()));
 
 
   sl.registerLazySingleton(() => UpdateChecklistStatusUseCase(sl()));
