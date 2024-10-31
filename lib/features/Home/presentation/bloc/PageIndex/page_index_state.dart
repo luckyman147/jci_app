@@ -3,7 +3,7 @@ part of 'page_index_bloc.dart';
 abstract class PageIndexState  extends Equatable{
   final int index;
 
-   PageIndexState(this.index);
+   const PageIndexState(this.index);
 }
 
 

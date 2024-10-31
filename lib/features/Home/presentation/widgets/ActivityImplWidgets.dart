@@ -12,21 +12,15 @@ import 'package:jci_app/features/Home/presentation/widgets/GuestWidget.dart';
 
 
 import '../../../../core/app_theme.dart';
-import '../../../../core/widgets/loading_widget.dart';
-import '../../../auth/presentation/widgets/Text.dart';
 import '../../domain/entities/Activity.dart';
 import '../bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import '../bloc/Activity/BLOC/notesBloc/notes_bloc.dart';
 import '../bloc/Activity/activity_cubit.dart';
 
-import '../bloc/PageIndex/page_index_bloc.dart';
 import 'ActivityDetailsComponents.dart';
 import 'ActivityDetailsWidget.dart';
-import 'ErrorDisplayMessage.dart';
 import 'EventListWidget.dart';
-import 'EventOfweek.dart';
 import 'Functions.dart';
-import 'NotesWidget.dart';
 import 'ShimmerEffects.dart';
 
 
@@ -52,7 +46,7 @@ Widget BlocMonthlyWeeklyActivity(activity act,MediaQueryData mediaQuery) =>
     return BlocConsumer<AcivityFBloc, AcivityFState>(
       builder: (context, state) {
         if (state is ActivityLoadingState) {
-          return  ReloadDetailsPage.ActivityMonth();;
+          return  ReloadDetailsPage.ActivityMonth();
         } else if (state is ActivityLoadedMonthState) {
 
 
@@ -65,6 +59,8 @@ Widget BlocMonthlyWeeklyActivity(activity act,MediaQueryData mediaQuery) =>
                   onAllRefresh(context, act,state.activitys);
               },
               child:
+
+
 
           MonthWeekBuild(actState.selectedActivity, state, mediaQuery)
 
@@ -90,16 +86,16 @@ Widget ActivityDetails(activity Act, String id,index) {
       return BlocBuilder<AcivityFBloc, AcivityFState>(
           builder: (context, state) {
             if (state is ActivityLoadingState) {
-              return ReloadDetailsPage();
+              return const ReloadDetailsPage();
             } else if (state is ACtivityByIdLoadedState) {
 
               return ActivityDetail(activitys: state.activity, act: Act, index: index,);
             }
             else if (state is ErrorActivityState) {
-              return ReloadDetailsPage();
+              return const ReloadDetailsPage();
             }
             else {
-              return ReloadDetailsPage();
+              return const ReloadDetailsPage();
             }
           }
       );
@@ -109,7 +105,7 @@ Widget ActivityDetails(activity Act, String id,index) {
 Widget ShowCalendarWidget()=>BlocBuilder<AcivityFBloc, AcivityFState>(
 builder: (context, state) {
 if (state is ActivityLoadingState) {
-return SizedBox();
+return const SizedBox();
 } else if (state is ActivityLoadedState) {
 
   return CalendarPage(activities: state.activitys,);
@@ -119,9 +115,9 @@ else if (state is ActivityLoadedMonthState){
 return CalendarPage(activities: state.activitys,);
 }
 else if (state is ErrorActivityState) {
-  return SizedBox();
+  return const SizedBox();
 }
-return SizedBox();
+return const SizedBox();
 },
 );
 
@@ -207,7 +203,7 @@ Widget AddButtonWi(Color color,Color IconColor, IconData ICON ,Function() onPres
           return AddButton(
             color: color, IconColor: IconColor, icon: ICON, onPressed:onPressed,);
         }
-        return SizedBox();
+        return const SizedBox();
       }
       return Container();
     },
@@ -223,7 +219,7 @@ Widget AddDots(Activity activitys,MediaQueryData mediaQuery){
           return             ActivityDetailsComponent.dots(context, mediaQuery, activitys);
 
       }
-        return SizedBox();
+        return const SizedBox();
       }
       return Container();
     },
@@ -271,7 +267,7 @@ return ShimmerButton.shimmerparticipants();
           
           
           case ParticpantsStatus.empty:
-          return SizedBox();
+          return const SizedBox();
             
             case ParticpantsStatus.success:
           case ParticpantsStatus.LoadedGuests:
@@ -298,22 +294,22 @@ Widget ShowAllGuests(String activityId){
 
         return ShimmerButton.shimmerparticipants();
       case ParticpantsStatus.failed:  case ParticpantsStatus.changed:
-        context.read<ParticpantsBloc>().add(GetAllGuestsEvent(isUpdated: true));
+        context.read<ParticpantsBloc>().add(const GetAllGuestsEvent(isUpdated: true));
 
         return ShimmerButton.shimmerparticipants();
       case ParticpantsStatus.loaded:
       case ParticpantsStatus.ToMember:
 
-        context.read<ParticpantsBloc>().add(GetAllGuestsEvent());
+        context.read<ParticpantsBloc>().add(const GetAllGuestsEvent());
         return ShimmerButton.shimmerparticipants();
           case ParticpantsStatus.empty:
-          return SizedBox();
+          return const SizedBox();
 
             case ParticpantsStatus.success:
           case ParticpantsStatus.LoadedGuests:
         return GuestWidget.GuestALL(context,state.Allguests,activityId);
       default:
-        context.read<ParticpantsBloc>().add(GetAllGuestsEvent());
+        context.read<ParticpantsBloc>().add(const GetAllGuestsEvent());
 
         return ShimmerButton.shimmerparticipants();
     }

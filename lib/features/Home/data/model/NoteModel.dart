@@ -1,7 +1,7 @@
 import 'package:jci_app/features/Home/domain/entities/Note.dart';
 
 class NoteModel extends Note{
-  NoteModel({required super.title, required super.content, required super.date, required super.owner, required super.id});
+  const NoteModel({required super.title, required super.content, required super.date, required super.owner, required super.id});
 
   factory NoteModel.fromJson(Map<String, dynamic> json){
     return NoteModel(

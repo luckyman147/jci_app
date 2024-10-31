@@ -8,7 +8,7 @@ part 'toggle_bool_event.dart';
 part 'toggle_bool_state.dart';
 
 class ToggleBooleanBloc extends Bloc<ToggleBooleanEvent, ToggleBooleanState> {
-  ToggleBooleanBloc() : super(ToggleBooleanState()) {
+  ToggleBooleanBloc() : super(const ToggleBooleanState()) {
     on<ToggleBoolean>((event, emit) {
       emit(state.copyWith(value: !state.value));
     });

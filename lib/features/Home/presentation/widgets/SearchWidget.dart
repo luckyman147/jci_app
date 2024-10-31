@@ -1,17 +1,10 @@
-import 'dart:convert';
 
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 
-import '../../../../core/widgets/loading_widget.dart';
-import '../../../auth/domain/entities/Member.dart';
 
-import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
-import 'ErrorDisplayMessage.dart';
 enum SearchType { All,Name }
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -43,7 +36,7 @@ class _SearchPageState extends State<SearchPage> {
 
               decoration: InputDecoration(
 
-                suffixIcon: Icon(Icons.search, color: textColorBlack,),
+                suffixIcon: const Icon(Icons.search, color: textColorBlack,),
                 hintStyle: PoppinsSemiBold(17, textColorBlack, TextDecoration.none),
 
                 hintText: 'Search Activity Name'.tr(context),

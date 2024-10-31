@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
@@ -22,6 +21,8 @@ class BestMembersComponent{
             itemCount: members.length,
             itemBuilder: (context, index) {
               final member = members[index];
+              final isBigger = member.points >= member.PreviousPoints;
+              final diff = member.points - member.PreviousPoints;
               return SizedBox(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -49,7 +50,38 @@ visualDensity: VisualDensity.comfortable,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           imageWidget(member, 30, 18,true ,100),
-                          Text(member.points.toString(), style: PoppinsSemiBold(20, textColorBlack, TextDecoration.none)),
+                          Row(
+
+                            children: [
+                               diff == 0?const  SizedBox():isBigger
+                                  ? const Icon(
+                                Icons.arrow_upward_sharp,
+                                color: Colors.green,
+                              )
+                                  :const  Icon(
+                                Icons.arrow_downward_rounded,
+                                color: Colors.red,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(member.points.toString(), style: PoppinsSemiBold(20, textColorBlack, TextDecoration.none)),
+                              ),
+                              diff > 0
+                                  ? Text(
+                                "+$diff",
+                                style: PoppinsRegular(15, Colors.green, ),
+                              )
+
+                                  :
+                              diff<0?
+                              Text(
+                                "-$diff",
+                                style: PoppinsRegular(15, Colors.red, ),
+                              ):const SizedBox()
+
+
+                            ],
+                          ),
 
                         ],
                       ),
@@ -59,7 +91,7 @@ visualDensity: VisualDensity.comfortable,
                 ),
               );
             }, separatorBuilder: (BuildContext context, int index) {
-            return SizedBox(
+            return const SizedBox(
               height: 10,
             );
           },
@@ -99,7 +131,7 @@ visualDensity: VisualDensity.comfortable,
                     padding: const EdgeInsets.only(top: 50.0),
                     child: ColumBestMembers(members[1],Colors.grey,"2",78,context),
                   ),
-                  ColumBestMembers(members[0],Color(0xFFFFD700),"1",78,context),
+                  ColumBestMembers(members[0],const Color(0xFFFFD700),"1",78,context),
                   Padding(
                     padding: const EdgeInsets.only(top: 50.0),
                     child: ColumBestMembers(members[2],Colors.brown,"3",78,context),
@@ -129,7 +161,7 @@ visualDensity: VisualDensity.comfortable,
             color: Colors.grey.withOpacity(0.5),
             spreadRadius: 2,
             blurRadius: 7,
-            offset: Offset(0, 3), // changes position of shadow
+            offset: const Offset(0, 3), // changes position of shadow
           ),
         ],
       border: Border.all(color: color,width: 1)
@@ -207,7 +239,7 @@ visualDensity: VisualDensity.comfortable,
   }
   static void ShowRankMembers(MediaQueryData mediaQuery, BuildContext context) {
 
-    context.read<MembersBloc>().add(getRanksOfMembers(true));
+    context.read<MembersBloc>().add(const getRanksOfMembers(true));
 
     showModalBottomSheet(
         useSafeArea: true,
@@ -216,7 +248,7 @@ visualDensity: VisualDensity.comfortable,
 
    
         context: context, builder: (context) => SingleChildScrollView(
-          child: Container(
+          child: SizedBox(
           
           
           height: mediaQuery.size.height ,
@@ -257,11 +289,11 @@ boxShadow: [
                 color: Colors.grey.withOpacity(0.5),
                 spreadRadius: 2,
                 blurRadius: 7,
-                offset: Offset(0, 3), // changes position of shadow
+                offset: const Offset(0, 3), // changes position of shadow
               ),
 ],
 
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [backgroundColored, textColorWhite],

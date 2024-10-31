@@ -94,7 +94,7 @@ void _initStatus(initStatus event, Emitter<GetTeamsState> emit) {
       final result = await updateTeamUseCase(event.team);
       emit(_updateTeamName(result,event.team));
     } catch (error) {
-      log("fffff"+error.toString());
+      log("fffff$error");
       emit(state.copyWith(status: TeamStatus.error, errorMessage: error.toString()));
     }
   }
@@ -132,7 +132,11 @@ void deleteTeam(DeleteTeam event, Emitter<GetTeamsState> emit) async {
   //  if (state.hasReachedMax ) return;
     try {
       if (state.status == TeamStatus.initial || state.status == TeamStatus.error|| state.status == TeamStatus.IsRefresh||state.teams.isEmpty) {
-        state.copyWith(status: TeamStatus.Loading);
+
+        if (state.teams.isEmpty) {
+          emit(state.copyWith(status: TeamStatus.Loading));
+        }
+
       final result = await getAllTeamsUseCase.call(isPrivate: event.isPrivate,updated: event.isUpdated);
       final teams= result.getOrElse(() => []);
 

@@ -34,7 +34,7 @@ class ShimmerEffects{
                 );
               },
               separatorBuilder: (BuildContext context, int index) {
-                return SizedBox(width: 10);
+                return const SizedBox(width: 10);
               },
             ),
           ),
@@ -51,7 +51,7 @@ class ShimmerEffects{
         child: Container(
           height: height,
           width: width,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.white,
           ),
@@ -101,6 +101,8 @@ class ShimmerEffects{
 
 
 }class ShimmerPostsWidget extends StatelessWidget {
+  const ShimmerPostsWidget({super.key});
+
 
 
 
@@ -114,14 +116,14 @@ class ShimmerEffects{
           child: ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: 1,
             itemBuilder: (context, priorityIndex) {
 
               return
               GridView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
     gridDelegate:const  SliverGridDelegateWithFixedCrossAxisCount(
     mainAxisSpacing: 10,
     crossAxisSpacing: 20,

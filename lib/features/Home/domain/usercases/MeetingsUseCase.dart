@@ -45,6 +45,7 @@ class CreateMeetingUseCase extends UseCase<Unit,Meeting> {
 
   CreateMeetingUseCase(this.MeetingRepository);
 
+  @override
   Future<Either<Failure,Unit>> call(Meeting Meeting) async {
     return await MeetingRepository.createMeeting(Meeting);
   }
@@ -54,6 +55,7 @@ class UpdateMeetingUseCase extends UseCase<Unit,Meeting>{
 
   UpdateMeetingUseCase(this.MeetingRepository);
 
+  @override
   Future<Either<Failure,Unit>> call(Meeting Meeting) async {
     return await MeetingRepository.updateMeeting(Meeting);
   }
@@ -63,6 +65,7 @@ class DeleteMeetingUseCase  extends UseCase<Unit,String>{
 
   DeleteMeetingUseCase(this.MeetingRepository);
 
+  @override
   Future<Either<Failure,Unit>> call(String id) async {
     return await MeetingRepository.deleteMeeting(id);
   }
@@ -80,6 +83,7 @@ class LeaveMeetingUseCase {
 
   ParticipateMeetingUseCase(this.MeetingRepository);
 
+  @override
   Future<Either<Failure,Unit>> call(String id) async {
     return await MeetingRepository.participateMeeting(id);
   }
@@ -106,6 +110,7 @@ class GetNotesOfActivityUseCase {
 
   CreateNotesUseCases(this.MeetingRepository);
 
+  @override
   Future<Either<Failure,Note>> call(param) async {
     return await MeetingRepository.addNotes(param.activityId,param.note!);
   }
@@ -116,6 +121,7 @@ class UpdateNotesUseCases extends UseCase<Unit,Note> {
 
   UpdateNotesUseCases(this.MeetingRepository);
 
+  @override
   Future<Either<Failure,Unit>> call(param) async {
     return await MeetingRepository.UpdateNotes(param);
   }
@@ -126,6 +132,7 @@ class DeleteNotesUseCases extends UseCase<Unit,NoteInput> {
 
   DeleteNotesUseCases(this.MeetingRepository);
 
+  @override
   Future<Either<Failure,Unit>> call(params) async {
     return await MeetingRepository.deleteNotes(params.activityId,params.noteid!);
   }
@@ -135,6 +142,7 @@ class DownloadExcelUseCases extends UseCase<Uint8List,String> {
 
   DownloadExcelUseCases(this.repository);
 
+  @override
   Future<Either<Failure,Uint8List>> call(String url) async {
 return await repository.downloadExcel(url);
 

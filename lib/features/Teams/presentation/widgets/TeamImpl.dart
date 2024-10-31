@@ -1,15 +1,8 @@
 
-import 'dart:developer';
 
-import 'package:dartz/dartz.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jci_app/core/widgets/loading_widget.dart';
-import 'package:jci_app/features/Home/presentation/widgets/ErrorDisplayMessage.dart';
 import 'package:jci_app/features/Teams/data/models/TeamModel.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/DetailTeamWidget.dart';
@@ -29,12 +22,12 @@ Widget allTeams(String id,ScrollController scrollController,bool isHome) {
 
               switch (state.status){
                 case TeamStatus.error:
-                  return ShimmerListView(itemCount: 3,);
+                  return const ShimmerListView(itemCount: 3,);
                 case TeamStatus.success:
 
 
                   if (state.teams.isEmpty) {
-                    return ShimmerListView(itemCount: 3);
+                    return const ShimmerListView(itemCount: 3);
                   }
                   return RefreshIndicator(onRefresh: () {
                     context.read<GetTeamsBloc>().add(GetTeams(isPrivate: isHome?true:false ));
@@ -46,11 +39,9 @@ Widget allTeams(String id,ScrollController scrollController,bool isHome) {
                       TeamWidget(teams: state.teams,scrollController: scrollController,hasReachedMax: state.teams.length<=3?true: state.hasReachedMax,));
                 case TeamStatus.initial:
                 case TeamStatus.IsRefresh:
-                  return ShimmerListView(itemCount: 3);
-
-                  ;
+                  return const ShimmerListView(itemCount: 3); {}
                 default:
-                  return ShimmerListView(itemCount: 3);}
+                  return const ShimmerListView(itemCount: 3);}
 
             }, listener: (BuildContext context, GetTeamsState state) {
 
@@ -69,7 +60,7 @@ Widget GetTeamByid(String id, TextEditingController taskController, int index) {
       switch (state.status) {
         case TeamStatus.initial:
         case TeamStatus.Loading:
-          return LoadingWidget();
+          return const ShimmerLoadingScreen();
 
         case TeamStatus.success:
         case TeamStatus.Updated:
@@ -87,10 +78,10 @@ Widget GetTeamByid(String id, TextEditingController taskController, int index) {
 
         case TeamStatus.error:
           context.read<GetTeamsBloc>().add(GetTeamById({"id": id, "isUpdated": true}));
-          return LoadingWidget();
+          return const ShimmerLoadingScreen();
 
         default:
-          return LoadingWidget();
+          return const ShimmerLoadingScreen();
       }
     },
   );

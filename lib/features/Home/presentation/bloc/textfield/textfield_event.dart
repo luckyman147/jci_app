@@ -8,12 +8,12 @@ abstract class TextFieldEvent extends Equatable {
 class ChangeTextFieldEvent extends TextFieldEvent {
  final List<TextEditingController> text;
 
-  ChangeTextFieldEvent(this.text);
+  const ChangeTextFieldEvent(this.text);
 }
 class AddTextFieldEvent extends TextFieldEvent {}
 class AddTwoTextFieldEvent extends TextFieldEvent {}
 class RemoveTextFieldEvent extends TextFieldEvent {
   final List<int> indicesToRemove;
 
-  RemoveTextFieldEvent(this.indicesToRemove);
+  const RemoveTextFieldEvent(this.indicesToRemove);
 }

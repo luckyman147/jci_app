@@ -7,7 +7,7 @@ abstract class AddDeleteUpdateEvent extends Equatable {
 class AddACtivityEvent extends AddDeleteUpdateEvent {
   final activityParams params;
 
-  AddACtivityEvent({required  this.params});
+  const AddACtivityEvent({required  this.params});
 
   @override
   List<Object> get props => [params];

@@ -1,14 +1,11 @@
 import 'dart:developer';
 
 import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/Home/domain/usercases/MeetingsUseCase.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/notesBloc/notes_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
@@ -96,9 +93,9 @@ GlobalKey<FormState> formKey = GlobalKey<FormState>();
     return PageView.builder(
       controller: PageController(),
       itemBuilder: (BuildContext context, int index) {
-      if (state.noteIndex==0)
-      return buildBlocConsumer();
-      else{
+      if (state.noteIndex==0) {
+        return buildBlocConsumer();
+      } else{
         return addnoTes(titleController,contentController,widget.activityId, formKey);
       }
     },
@@ -161,17 +158,17 @@ default:
       child: DottedBorder(
 
         borderType: BorderType.RRect,
-        radius: Radius.circular(12),
-        padding: EdgeInsets.all(6),
-        dashPattern: [12, 16],
+        radius: const Radius.circular(12),
+        padding: const EdgeInsets.all(6),
+        dashPattern: const [12, 16],
         color: textColor,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(Icons.add,size: 50,color: textColor,),
-              SizedBox(height: 10,),
+              const Icon(Icons.add,size: 50,color: textColor,),
+              const SizedBox(height: 10,),
               Text('Add The First Note',style: PoppinsRegular(14, textColorBlack),),
 
 
@@ -208,7 +205,7 @@ default:
           itemBuilder: (context, index) {
 
             if (index >= state.notes.length ) {
-              return SizedBox();
+              return const SizedBox();
             } else {
               return InkWell(
                 onTap: (){
@@ -258,7 +255,7 @@ default:
           },
           itemCount: state.hasReachedMax ? state.notes.length : state.notes.length + 1,
           controller: _scrollController, separatorBuilder: (BuildContext context, int index) {
-            return SizedBox(height: 10,);
+            return const SizedBox(height: 10,);
         },
         ),
       );
@@ -277,9 +274,28 @@ default:
                   children: [
                     Padding(
                       padding: paddingSemetricHorizontal(),
-                      child: MemberTeamSelection. photo(
+                      child:
+                      (state.notes[index].owner as List).isNotEmpty?
+                      MemberTeamSelection. photo(
                       state.notes[index].owner[0]["Images"],
-                          30, 15),
+                          30, 15):
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Container(
+                          height: 30,
+                          width:30,
+                          color: textColor,
+                          child: const Center(
+                            child: Icon(
+                              Icons.person,
+                              color: textColorWhite,
+                              size: 30 / 2,
+                            ),
+                          ),
+                        ),
+
+                      )
+
                     ),
                         Text(
                           state.notes[index].owner[0]["firstName"],
@@ -299,7 +315,7 @@ default:
                       ));
 
 
-                    }, icon: Icon(Icons.edit))
+                    }, icon: const Icon(Icons.edit))
 
                     , true, "", (p0) => FunctionMember.isOwner(state.notes[index].owner[0]["_id"], ),
                     ),
@@ -353,14 +369,14 @@ default:
         ],
       );
   }
-  Widget addnoTes(TextEditingController title, TextEditingController content,String activityId,GlobalKey<FormState> _formKey,
+  Widget addnoTes(TextEditingController title, TextEditingController content,String activityId,GlobalKey<FormState> formKey,
       ){
     return Padding(
       padding: paddingSemetricVerticalHorizontal(),
       child: BlocBuilder<NotesBloc, NotesState>(
   builder: (context, state) {
     return Form(
-        key: _formKey,
+        key: formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -372,7 +388,7 @@ default:
                   context.read<ActivityCubit>().changeNotePage(0);
                   title.clear();
                   content.clear();
-                  context.read<NotesBloc>().add(changeNoteActionEvent("",action: NotesAction.create
+                  context.read<NotesBloc>().add(const changeNoteActionEvent("",action: NotesAction.create
 
                   ));
 
@@ -391,10 +407,10 @@ default:
                   Visibility(
                    visible: state.action==NotesAction.update,
                     child: IconButton(
-                      icon: Icon(Icons.archive,color: SecondaryColor,),
+                      icon: const Icon(Icons.archive,color: SecondaryColor,),
                       tooltip: 'ARCHIVE',
                       onPressed: () {
-                        if (_formKey.currentState!.validate()) {
+                        if (formKey.currentState!.validate()) {
                           final note=Note(id: state.noteId, title: title.text, content: content.text, date: DateTime.now(), owner:"" );
 
                           if (state.action==NotesAction.update){
@@ -409,10 +425,10 @@ default:
                   Visibility(
                     visible: state.action==NotesAction.create,
                     child: IconButton(
-                      icon: Icon(Icons.send,color: PrimaryColor,),
+                      icon: const Icon(Icons.send,color: PrimaryColor,),
                       tooltip: 'Send',
                       onPressed: () {
-                        if (_formKey.currentState!.validate()) {
+                        if (formKey.currentState!.validate()) {
                           final note=Note(id: '', title: title.text, content: content.text, date: DateTime.now(), owner:"" );
                           final noteIput=NoteInput(activityId, note,null);
 

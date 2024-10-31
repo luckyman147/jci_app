@@ -5,7 +5,6 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 
 
-import '../../../../core/config/services/store.dart';
 import '../widgets/button_intro.dart';
 import '../widgets/caroussel.dart';
 

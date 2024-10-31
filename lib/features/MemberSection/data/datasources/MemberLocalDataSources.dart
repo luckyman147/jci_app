@@ -1,8 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:jci_app/features/Home/presentation/widgets/MemberSelection.dart';
 
 import '../../../../core/config/services/MemberStore.dart';
-import '../../../../core/config/services/store.dart';
 import '../../../auth/data/models/Member/AuthModel.dart';
 
 abstract class MemberLocalDatasoources{

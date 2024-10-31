@@ -15,24 +15,24 @@ class ActivityLoadingState extends AcivityFState {
 }
 class ActivityLoadedState extends AcivityFState  {
   final List<Activity> activitys;
-  ActivityLoadedState({required this.activitys});
+  const ActivityLoadedState({required this.activitys});
   @override
   List<Object> get props => [activitys];
 }class ActivityLoadedMonthState extends AcivityFState  {
   final List<Activity> activitys;
-  ActivityLoadedMonthState({required this.activitys});
+  const ActivityLoadedMonthState({required this.activitys});
   @override
   List<Object> get props => [activitys];
 }
 class ACtivityByIdLoadedState extends AcivityFState  {
   final Activity activity;
-  ACtivityByIdLoadedState({required this.activity});
+  const ACtivityByIdLoadedState({required this.activity});
   @override
   List<Object> get props => [activity];
 }
 class ErrorActivityState extends AcivityFState {
   final String message;
-  ErrorActivityState({required this.message});
+  const ErrorActivityState({required this.message});
   @override
   List<Object> get props => [message];
 }

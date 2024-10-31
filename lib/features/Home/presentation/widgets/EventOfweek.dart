@@ -5,8 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
-import 'package:jci_app/features/Home/domain/entities/Event.dart';
-import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Compoenents.dart';
 
@@ -31,7 +29,7 @@ class ActivityOfWeekListWidget extends StatelessWidget {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: (){
-            context.go('/activity/${ activity[index].id}/${state.selectedActivity.name}/${index} ');
+            context.go('/activity/${ activity[index].id}/${state.selectedActivity.name}/$index ');
 
           },
           child: Container(

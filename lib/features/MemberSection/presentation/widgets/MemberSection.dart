@@ -1,26 +1,22 @@
 import 'dart:convert';
-import 'dart:developer';
 
 
-import 'package:circle_progress_bar/circle_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
-import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/MemberImpl.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
-import '../../../../core/config/services/verification.dart';
-import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import '../../../Home/presentation/widgets/Functions.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../../auth/data/models/Member/AuthModel.dart';
 import '../bloc/Members/members_bloc.dart';
+import '../bloc/memberPermissions/member_permission_bloc.dart';
 
 class MemberSectionWidget extends StatefulWidget {
   final Member member;
@@ -35,7 +31,9 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
   FocusNode pointsFocusNode = FocusNode();
   @override
   void initState() {
-
+    context.read<MemberPermissionBloc>().add(checkIsowner(widget.member.id));
+    context.read<MemberPermissionBloc>().add(const checkIsSuper());
+    context.read<MemberPermissionBloc>().add(const checkIsAdmin());
 
     image();
     // TODO: implement initState
@@ -57,7 +55,7 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
       Navigator.of(context).pop();
       Navigator.of(context).pop();
 
-      context.read<MembersBloc>().add(GetAllMembersEvent(true));
+      context.read<MembersBloc>().add(const GetAllMembersEvent(true));
     }
     // TODO: implement listener}
   },
@@ -72,11 +70,11 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
               children: [
                 Row(
                     children: [
-                   ProfileComponents. buildFutureBuilder(  BackButton(color: textColorBlack, onPressed: () {
-                      Navigator.of(context).pop();
-                       context.read<MembersBloc>().add(GetAllMembersEvent(true));
+      MemberImpl.IsNonowner(BackButton(color: textColorBlack, onPressed: () {
+                  Navigator.of(context).pop();
+                  context.read<MembersBloc>().add(const GetAllMembersEvent(false));
 
-                    },),false,widget.member.id,(po)=>FunctionMember. isOwner(widget.member.id)),
+                })),
                       SizedBox(
                         width:MediaQuery.of(context).size.width/1.5,
                         child: Padding(
@@ -91,13 +89,13 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
                       ),
 
                     ]  ),
-                ProfileComponents.buildFutureBuilder(buildIconButton(context),true,widget.member.id,(po)=>FunctionMember. isOwner(widget.member.id)),
+    MemberImpl.Isowner(buildIconButton(context),true),
 
 
               ],
             ),
 
-                    SizedBox(height: 20,),
+                    const SizedBox(height: 20,),
 
 
 
@@ -117,7 +115,7 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
 
 
               ProfileComponents.hh(widget.member,context),
-    if (widget.member.description!=null && widget.member.description!.isNotEmpty)  ProfileComponents.ExpandedContainer(context, ProfileComponents.isDes(state.state), ProfileComponents.BuildDescriptionWidget(widget.member,ste,context), 'Description'.tr(context), StatesBool.Description,mediaQuery,mediaQuery.size.width/1.17,mediaQuery.size.height/4),
+  if (widget.member.description.isNotEmpty)  ProfileComponents.ExpandedContainer(context, ProfileComponents.isDes(state.state), ProfileComponents.BuildDescriptionWidget(widget.member,ste,context), 'About Me'.tr(context), StatesBool.Description,mediaQuery,mediaQuery.size.width/1.17,mediaQuery.size.height/4),
     ProfileComponents.ExpandedContainer(context, ProfileComponents.isObjectif(state.state), ProfileComponents.BuildObjectifsWidget(widget.member,ste,context), 'Objectives'.tr(context), StatesBool.Objectifs,mediaQuery, mediaQuery.size.width/1.17,mediaQuery.size.height/4),
 
     ProfileComponents.ExpandedContainer(context, ProfileComponents.isPoints(state.state), ProfileComponents.BuildPointsWidget(widget.member,ste,context,pointsFocusNode), 'Points'.tr(context), StatesBool.Points,mediaQuery,mediaQuery.size.width/1.17 ,mediaQuery.size.height/4),
@@ -143,11 +141,11 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
 
 
                   },
-                  icon: Icon(Icons.settings, color: textColorBlack,),
+                  icon: const Icon(Icons.settings, color: textColorBlack,),
                 );
   }
   void image()async {
-    if(widget.member.Images != null && widget.member.Images.isNotEmpty){
+    if(widget.member.Images.isNotEmpty){
       final image=await ActivityAction. convertBase64ToXFile(widget.member.Images[0]['url']!);
       if (!mounted) return;
       if    (image!=null){
@@ -155,16 +153,16 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
         context.read<TaskVisibleBloc>().add(ChangeImageEvent(image.path,));
       }
       else{
-        context.read<TaskVisibleBloc>().add(ChangeImageEvent("assets/images/jci.png",));
+        context.read<TaskVisibleBloc>().add(const ChangeImageEvent("assets/images/jci.png",));
       }
 
     }
     else{
-      context.read<TaskVisibleBloc>().add(ChangeImageEvent("assets/images/jci.png",));
+      context.read<TaskVisibleBloc>().add(const ChangeImageEvent("assets/images/jci.png",));
 
     }
 context.read<MemberManagementBloc>().add(initMemberEvent(isUpdated: widget.member.is_validated, cotisation: widget.member.cotisation, points: widget.member.points.toDouble(), role: widget.member.role, objectifs: widget.member.objectifs));
-    log("sdddsdd"+widget.member.is_validated.toString());
+
   }
 
 

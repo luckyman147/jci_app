@@ -6,8 +6,6 @@ import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 import 'package:jci_app/core/config/env/urls.dart';
 import 'package:jci_app/core/error/Exception.dart';
-import 'package:jci_app/features/about_jci/Domain/entities/BoardYear.dart';
-import 'package:jci_app/features/about_jci/data/models/PostModel.dart';
 
 import '../../../../../core/config/services/store.dart';
 import '../../models/BoardRoleModel.dart';
@@ -96,9 +94,9 @@ return client.get(Uri.parse(getYearsUrl)).then((response) {
     if (response.statusCode == 200) {
       final List<String> years = [];
       final List<dynamic> decodedJson = json.decode(response.body);
-      decodedJson.forEach((element) {
+      for (var element in decodedJson) {
         years.add(element);
-      });
+      }
       return years;
     } else {
       throw EmptyDataException();

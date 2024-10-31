@@ -11,7 +11,6 @@ import '../../../../Domain/entities/BoardYear.dart';
 import '../../../../Domain/useCases/BoardUseCases.dart';
 import 'package:jci_app/core/error/Failure.dart';
 
-import '../YearsBloc/years_bloc.dart';
 
 part 'boord_event.dart';
 part 'boord_state.dart';
@@ -73,7 +72,7 @@ class BoordBloc extends Bloc<BoordEvent, BoordState> {
   }
   void onFetchBoardYearsEvent(FetchBoardYearsEvent event,Emitter<BoordState>emit)async {
     try{
-      emit(BoordState(state: BoardStatus.Loading,));
+      emit(const BoordState(state: BoardStatus.Loading,));
       final result = await getBoardByYearUseCase.call(event.year);
      emit( await _mapGetBoardOrFailure(result, emit));
 

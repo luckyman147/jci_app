@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/core/util/snackbar_message.dart';
-import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import '../../../../core/app_theme.dart';
@@ -21,8 +19,8 @@ import 'funct.dart';
 Widget BuildActions(Function( )act1,Function()act2)=>Row(
   mainAxisAlignment: MainAxisAlignment.spaceAround,
   children: [
-    IconButton.outlined(onPressed: act2, icon: Icon(Icons.edit),),
-    IconButton.outlined(onPressed: act1, icon: Icon(Icons.add),),
+    IconButton.outlined(onPressed: act2, icon: const Icon(Icons.edit),),
+    IconButton.outlined(onPressed: act1, icon: const Icon(Icons.add),),
   ],
 );
 
@@ -41,7 +39,7 @@ Widget buildAddButton(Function() onadd) {
             color: PrimaryColor,
           ),
 
-          child: Center(child: Icon(Icons.add_rounded,color: textColorWhite,))), ),
+          child: const Center(child: Icon(Icons.add_rounded,color: textColorWhite,))), ),
   );
 }
 
@@ -67,7 +65,7 @@ Widget BorderSelection(String text , Section sec) {
                 )
             ),
 
-            child: Text("$text",style: PoppinsRegular(18, state.section==sec?textColorBlack:ThirdColor),),),
+            child: Text(text,style: PoppinsRegular(18, state.section==sec?textColorBlack:ThirdColor),),),
         ),
       );
     },
@@ -93,7 +91,7 @@ Widget buildTextField(FocusNode tasknode,bool title, TextEditingController TaskN
     );
 }
 
-Padding buildTextName(onTap(), TextEditingController TaskName) {
+Padding buildTextName(Function() onTap, TextEditingController TaskName) {
   return Padding(
     padding: paddingSemetricVerticalHorizontal(),
     child: InkWell(
@@ -123,7 +121,7 @@ Padding buildtextfield(FocusNode taskNode,bool isTrue,TextEditingController Task
 
           suffixIcon: IconButton(
             onPressed: OnPressed,
-            icon: Icon(Icons.check_circle,color: PrimaryColor,size: 20,),
+            icon: const Icon(Icons.check_circle,color: PrimaryColor,size: 20,),
           ),
 
           hintText: hintText
@@ -213,7 +211,7 @@ Widget BottomShetTaskBody(
 
             context.read<GetTaskBloc>().add(UpdateTimeline(input));
             context.pop();
-            context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+            context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
 
           },
           child: Center(
@@ -250,7 +248,7 @@ void AssignBottomSheetBuilder(BuildContext context, MediaQueryData mediaQuery,
           List<Member> membersList = members.map((e) => Member.fromImages(e)).toList();
           List<Member> ListAssignTo = ff.map((e) => Member.fromImages(e)).toList();
           if (state.status== TaskStatus.Loading || state.status== TaskStatus.error ) {
-            return Text("");
+            return const Text("");
           }
           else if  (state.status== TaskStatus.success || state.status== TaskStatus.Changed || state.status== TaskStatus.ErrorUpdate ){
             return MemberTeamSelection. MembersAssignToBottomSheet(mediaQuery, onRemoveTap, onAddTap,membersList,ListAssignTo,context);}
@@ -275,7 +273,7 @@ class AttachedFileWidget extends StatelessWidget {
   final List<Map<String, dynamic>> fileList;
   final String idTask;
 
-  AttachedFileWidget({required this.fileList, required this.idTask});
+  const AttachedFileWidget({super.key, required this.fileList, required this.idTask});
 
   @override
   Widget build(BuildContext context) {
@@ -299,7 +297,7 @@ class AttachedFileWidget extends StatelessWidget {
 
     return InkWell(
       onTap: ()async  {
-        await TeamFunction.openFile(fileData, fileName);
+        await TeamFunction.openFile(context, fileData['id'],extension );
         // Open file
       },
       child: Row(
@@ -315,34 +313,24 @@ class AttachedFileWidget extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Center(child: Icon(iconData, size: 20,color: Colors.white,)),
               )), // Adjust icon size as needed
-          SizedBox(width: 10), // Adjust as needed for spacing between icon and file name
-          Text(fileName, style: PoppinsRegular(12,textColorBlack)),
+          const SizedBox(width: 10), // Adjust as needed for spacing between icon and file name
+          SizedBox(
+              width: mediaQuery.size.width * 0.5,
+              child: Text(fileName,overflow:TextOverflow.ellipsis , style: PoppinsRegular(12,textColorBlack))),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              IconButton(
-                  tooltip: 'Save',
-                  onPressed: ()async {
 
-
-                    final result=await FileStorage.writeCounter(fileData['url'], fileData['path']!);
-                    if (result){
-
-                      SnackBarMessage.showSuccessSnackBar(message: "dowloaded succefully", context: context);}
-                    else{
-                      SnackBarMessage.showErrorSnackBar(message: "error dowloading file", context: context);
-                    }
-                  }, icon: Icon(Icons.save_alt,color: textColor,size: 30,)),
               IconButton(
 
                   onPressed: (){
                     final inputFields input=inputFields(taskid: idTask, teamid:null, file: null, memberid: null, status: null, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: null, fileid: fileData['id'], );
 
                     context.read<GetTaskBloc>().add(DeleteFileEvent(input));
-                    context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+                    context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
 
 
-                  }, icon: Icon(Icons. delete,color: textColor,size: 30,)),
+                  }, icon: const Icon(Icons. delete,color: textColor,size: 30,)),
             ],
           ),
 

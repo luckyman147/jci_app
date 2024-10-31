@@ -1,7 +1,6 @@
 
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -15,7 +14,6 @@ import 'package:jci_app/features/Teams/data/models/TeamModel.dart';
 
 import '../../../../../core/config/services/store.dart';
 import '../../../../../core/config/services/uploadImage.dart';
-import '../../../../../core/config/services/verification.dart';
 import '../../../../../core/error/Exception.dart';
 
 
@@ -58,15 +56,15 @@ final tokens= await Store.GetTokens();
       final Map<String, dynamic> decodedJson = json.decode(response.body) ;
 
       if (Team.CoverImage!="assets/images/jci.png"){
-      final upload_response=await uploadImages(decodedJson['id'], Team.CoverImage,TeamUrl,"CoverImage");
-    if (upload_response.statusCode==200){
-      final bodyStream = upload_response.stream;
+      final uploadResponse=await uploadImages(decodedJson['id'], Team.CoverImage,TeamUrl,"CoverImage");
+    if (uploadResponse.statusCode==200){
+      final bodyStream = uploadResponse.stream;
       final bodyBytes = await bodyStream.toBytes();
       final bodyString = utf8.decode(bodyBytes);
       return  TeamModel.fromJson(jsonDecode(bodyString));
       }
-      else if (upload_response.statusCode==400){
-        debugPrint(upload_response.reasonPhrase.toString());
+      else if (uploadResponse.statusCode==400){
+        debugPrint(uploadResponse.reasonPhrase.toString());
         deleteTeam(decodedJson["_id"]);
         throw EmptyDataException();
 
@@ -96,7 +94,7 @@ final tokens= await Store.GetTokens();
   Future<Unit> deleteTeam(String id)async {
     final response = await client.delete(
 
-      Uri.parse(TeamUrl+"$id"),
+      Uri.parse("$TeamUrl$id"),
       headers: {"Content-Type": "application/json"},
     );
     if (response.statusCode==204){
@@ -144,7 +142,7 @@ final tokens= await Store.GetTokens();
 
 
     final response =  await client.get(
-      Uri.parse( TeamUrl+ 'get/$id'),
+      Uri.parse( '${TeamUrl}get/$id'),
 
       headers: {"Content-Type": "application/json"},
 
@@ -181,12 +179,12 @@ final tokens= await Store.GetTokens();
         final Map<String, dynamic> decodedJson = json.decode(response.body) ;
 
 
-        final update_response=await UpdateImage(decodedJson['_id'], Team.CoverImage,TeamUrl);
-        if (update_response.statusCode==200){
+        final updateResponse=await UpdateImage(decodedJson['_id'], Team.CoverImage,TeamUrl);
+        if (updateResponse.statusCode==200){
 
           return Future.value(unit);
         }
-        else if (update_response.statusCode==400){
+        else if (updateResponse.statusCode==400){
 
           throw EmptyDataException();
 
@@ -208,7 +206,7 @@ final tokens= await Store.GetTokens();
   Future<List<TeamModel>> getTeamByName(String name) async{
     final tokens=await Store.GetTokens();
     final response =  client.get(
-      Uri.parse( TeamUrl+ 'get?name=$name'),
+      Uri.parse( '${TeamUrl}get?name=$name'),
 
       headers: {"Content-Type": "application/json",
       "Authorization": "Bearer ${tokens[1]}"

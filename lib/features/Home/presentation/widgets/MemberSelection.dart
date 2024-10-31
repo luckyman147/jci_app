@@ -1,10 +1,7 @@
 import 'dart:convert';
-import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 
@@ -37,7 +34,7 @@ Widget MemberContainer(mediaQuery,Member item)=>BlocBuilder<FormzBloc, FormzStat
             },
             child: AnimatedContainer(
               width: mediaQuery.size.width / 3,
-              duration: Duration(milliseconds: 800),
+              duration: const Duration(milliseconds: 800),
               curve: Curves.easeIn,
               decoration: BoxDecoration(
                 color: ff.id == item.id?PrimaryColor:BackWidgetColor,
@@ -47,7 +44,7 @@ Widget MemberContainer(mediaQuery,Member item)=>BlocBuilder<FormzBloc, FormzStat
                       color: Colors.grey.withOpacity(0.2),
                       spreadRadius: 1,
                       blurRadius: 1,
-                      offset: Offset(0, 1))
+                      offset: const Offset(0, 1))
                 ],
               ),
               child: Padding(
@@ -94,8 +91,8 @@ Widget bottomMemberSheet(BuildContext context, MediaQueryData mediaQuery,
             child: Padding(
               padding: paddingSemetricHorizontal(),
               child:
-              member!=null&& member.firstName.isNotEmpty?imageWidget(member,40,23,true,150):
-              Text("$text",style: PoppinsNorml(18, ThirdColor),),
+              member.firstName.isNotEmpty?imageWidget(member,40,23,true,150):
+              Text(text,style: PoppinsNorml(18, ThirdColor),),
             ),
           )),
     ),
@@ -149,7 +146,7 @@ Widget MembersBottomSheet(String text,
                     if (state.memberName.value.length > 1){
                       context.read<MembersBloc>().add(GetMemberByNameEvent( name: state.memberName.value));}
                     else if (state.memberName.value.isEmpty|| state.memberName.displayError!= null ){
-                      context.read<MembersBloc>().add(GetAllMembersEvent(false));
+                      context.read<MembersBloc>().add(const GetAllMembersEvent(false));
                     }
 
                     // BlocProvider.of<MembersBloc>(context)
@@ -157,7 +154,7 @@ Widget MembersBottomSheet(String text,
                   },
                   decoration: InputDecoration(
                     errorText: state.memberName.displayError!= null?"Empty Field":null,
-                    prefixIcon: Icon(
+                    prefixIcon: const Icon(
                       Icons.search,
                       color: textColor,
                     ),
@@ -202,7 +199,7 @@ Widget MembersBottomSheet(String text,
 Widget MembersWidget(MediaQueryData mediaQuery,String name)=>BlocConsumer<MembersBloc, MembersState>(
   builder: (context, state) {
     if (state .userStatus==UserStatus.Loading) {
-      return LoadingWidget();
+      return const LoadingWidget();
     } else if (state.userStatus == UserStatus.MembersLoaded) {
       return RefreshIndicator(
           onRefresh: () {
@@ -233,17 +230,17 @@ Widget MembersWidget(MediaQueryData mediaQuery,String name)=>BlocConsumer<Member
             child: MembersDetails( state.memberByName,mediaQuery));
       }
       else{
-        context.read<MembersBloc>().add(GetAllMembersEvent(true));
+        context.read<MembersBloc>().add(const GetAllMembersEvent(true));
       }
 
     }
     else if (state .userStatus==UserStatus.Error) {
       return MessageDisplayWidget(message: state.Errormessage);
     }
-    return LoadingWidget();
+    return const LoadingWidget();
   }, listener: (BuildContext context, MembersState state) {
   if (state .userStatus==UserStatus.Error) {
-    context.read<MembersBloc>().add(GetAllMembersEvent(true));
+    context.read<MembersBloc>().add(const GetAllMembersEvent(true));
   }
 
 
@@ -252,10 +249,11 @@ Widget MembersWidget(MediaQueryData mediaQuery,String name)=>BlocConsumer<Member
 
 );
 Future<void> RefreshMembers(BuildContext context,SearchType type,String name) async {
-  if (type==SearchType.All||name.isEmpty)
-    context.read<MembersBloc>().add(GetAllMembersEvent(true));
-  else
+  if (type==SearchType.All||name.isEmpty) {
+    context.read<MembersBloc>().add(const GetAllMembersEvent(true));
+  } else {
     context.read<MembersBloc>().add(GetMemberByNameEvent(name: name));
+  }
 
 }
 
@@ -313,7 +311,7 @@ ClipRRect PhotoReeact(Member item, double height) {
   return item.Images.isEmpty
         ?  ClipRRect(
       borderRadius: BorderRadius.circular(100),
-      child: Container(
+      child: SizedBox(
         height: height,
         width: height,
         child:Image.asset(vip)

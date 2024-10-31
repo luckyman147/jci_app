@@ -1,13 +1,15 @@
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/strings/app_strings.dart';
 
 import '../bloc/locale_cubit.dart';
-
+@RoutePage()
 class LanguagePage extends StatelessWidget {
   const LanguagePage({super.key});
 
@@ -30,7 +32,7 @@ class LanguagePage extends StatelessWidget {
                 SizedBox(
                     width:mediaquery.size.width/1.2 ,
 
-                    child: Text("Choose the language",style: PoppinsSemiBold(30, textColorBlack, TextDecoration.none),)),
+                    child: Text("Choose the language",style: PoppinsSemiBold(30,ColorsApp. textColorBlack, TextDecoration.none),)),
                 Padding(
                   padding:  EdgeInsets.only(top: mediaquery.size.height/30),
 
@@ -45,7 +47,7 @@ class LanguagePage extends StatelessWidget {
             ),
           );
         }
-        return SizedBox();
+        return const SizedBox();
       }),
     );
   }
@@ -53,15 +55,16 @@ class LanguagePage extends StatelessWidget {
     return GestureDetector(
       onTap: (){
         context.read<localeCubit>().changeLanguage(languageCode);
+        context.go('/');
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         width: mediaquery.size.width/1.2,
         decoration: BoxDecoration(
-          color: textColorWhite,
+          color:ColorsApp. textColorWhite,
 
           borderRadius: BorderRadius.circular(16.0),
-          border: Border.all(color: textColorBlack, width: 2.0),
+          border: Border.all(color: ColorsApp.textColorBlack, width: 2.0),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -70,7 +73,7 @@ class LanguagePage extends StatelessWidget {
               padding:  EdgeInsets.symmetric(horizontal: mediaquery.size.width/33),
               child: SvgPicture.string(flag),
             ),
-            Center(child: Text(language,style:  PoppinsNorml(27, textColorBlack),)),
+            Center(child: Text(language,style:  PoppinsNorml(27, ColorsApp.textColorBlack),)),
           ],
         ),
 

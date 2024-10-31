@@ -81,8 +81,8 @@ part of 'formz_bloc.dart';
         description: description ?? this.description,
         imageInput: imageInput ?? this.imageInput,
         endTimeInput: endTimeInput ?? this.endTimeInput,
-        joker: jokerTimeInput?? this.joker,
-        jokertime: jokerDateofDayInput??this.jokertime,
+        joker: jokerTimeInput?? joker,
+        jokertime: jokerDateofDayInput??jokertime,
 
 
         beginTimeInput: beginTimeInput ?? this.beginTimeInput,

@@ -7,7 +7,6 @@ import 'package:jci_app/features/MemberSection/presentation/widgets/SettingsComp
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import '../../../../core/util/snackbar_message.dart';
-import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import '../../../auth/domain/entities/Member.dart';
 import '../../../auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
@@ -51,7 +50,7 @@ class _SettingsPageState extends State<SettingsPage> {
         BackButton(
           onPressed: () {
             GoRouter.of(context).go('/home');
-            context.read<MembersBloc>().add(GetUserProfileEvent(false));
+            context.read<MembersBloc>().add(const GetUserProfileEvent(true));
           },
 
 
@@ -72,7 +71,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 SnackBarMessage.showSuccessSnackBar(
                     message: state.message, context: context);
                 context.go('/home');
-                context.read<MembersBloc>().add(GetUserProfileEvent(false));
+                context.read<MembersBloc>().add(const GetUserProfileEvent(false));
               }
               else if (state.status == ResetPasswordStatus.error) {
                 SnackBarMessage.showErrorSnackBar(

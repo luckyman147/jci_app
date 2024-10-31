@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -17,7 +16,7 @@ class IndexBloc extends Bloc<IndexEvent, IndexState> {
       // TODO: implement event handler
     });
     on<resetIndex>((event, emit) =>
-        emit(IndexInitial(0))
+        emit(const IndexInitial(0))
 
     );
   }

@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:jci_app/core/app_theme.dart';
@@ -62,10 +61,10 @@ class _PresentationsPageState extends State<PresentationsPage> {
             TextButton(child: Row(
               children: [
                 Text('Board'.tr(context),style:PoppinsSemiBold(16,PrimaryColor, TextDecoration.underline)),
-Icon(Icons.arrow_forward_ios_rounded,color: PrimaryColor,)
+const Icon(Icons.arrow_forward_ios_rounded,color: PrimaryColor,)
               ],
             ),onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>BoardPage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>const BoardPage()));
 
             },)
           ],
@@ -124,7 +123,7 @@ Icon(Icons.arrow_forward_ios_rounded,color: PrimaryColor,)
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       PresWidgets.HeaderText("jci_presentations".tr(context),context),
                       PresWidgets.description("description_jci_Inter".tr(context), henry,context),
                       PresWidgets.HeaderText("PRESENTATION OF JCI TUNISIA".tr(context),context),

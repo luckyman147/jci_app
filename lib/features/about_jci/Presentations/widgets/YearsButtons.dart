@@ -5,18 +5,15 @@ import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
-import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../../../MemberSection/presentation/widgets/ProfileComponents.dart';
-import '../../../Teams/presentation/widgets/TaskComponents.dart';
 import '../bloc/Board/BoardBloc/boord_bloc.dart';
 import 'dialogs.dart';
 
 class YearsButtons extends StatefulWidget {
   final ScrollController _scrollController;
 final List<String> years;
-  YearsButtons(this._scrollController, this.years);
+  const YearsButtons(this._scrollController, this.years, {super.key});
 
   @override
   State<YearsButtons> createState() => _YearsButtonsState();
@@ -86,7 +83,7 @@ class _YearsButtonsState extends State<YearsButtons> {
       ),
                   );
                 }, separatorBuilder: (BuildContext context, int index) {
-                  return SizedBox(width: 10,);
+                  return const SizedBox(width: 10,);
               },
               ),
             ),
@@ -110,7 +107,7 @@ class _YearsButtonsState extends State<YearsButtons> {
 
                },
                 child: DottedBorder(
-                        radius: Radius.circular(10),
+                        radius: const Radius.circular(10),
                         dashPattern:const  [10,12,10,12],
                         color: textColor,
                         strokeWidth: 3,

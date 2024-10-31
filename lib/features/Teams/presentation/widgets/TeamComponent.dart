@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -19,7 +18,7 @@ import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import '../../../Home/presentation/widgets/Compoenents.dart';
 import '../../../auth/presentation/bloc/bool/toggle_bool_bloc.dart';
 import '../../domain/entities/Team.dart';
-import '../bloc/GetTasks/get_task_bloc.dart';
+
 import '../bloc/GetTeam/get_teams_bloc.dart';
 import '../bloc/TaskFilter/taskfilter_bloc.dart';
 import '../bloc/TaskIsVisible/task_visible_bloc.dart';
@@ -51,17 +50,17 @@ class TeamComponent{
                   dropdownStyleData:  DropdownStyleData(
                     elevation: 2,
                     maxHeight: 120,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.white,
 
                     ),
-                    offset: Offset(-5, 0),
+                    offset: const Offset(-5, 0),
                     width: mediaQuery.size.width / 3,
                     // Keep width at 180
 
 
-                    scrollbarTheme: ScrollbarThemeData(
-                      radius: const Radius.circular(14),
+                    scrollbarTheme: const ScrollbarThemeData(
+                      radius: Radius.circular(14),
                     ),
                   ),
                   menuItemStyleData: const MenuItemStyleData(
@@ -112,7 +111,7 @@ class TeamComponent{
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "${text} ${"Team".tr(context)}",
+                "$text ${"Team".tr(context)}",
                 style: PoppinsRegular(
                     mediaQuery.devicePixelRatio * 8, textColorBlack),
               ),
@@ -128,20 +127,20 @@ class TeamComponent{
 
 
         StatusContainer((){
-          context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
+          context.read<TaskVisibleBloc>().add(const changePrivacyEvent(Privacy.Primary));
 
           // Dispatch event to initialize GetTeamsBloc and fetch teams with updated privacy
           context.read<GetTeamsBloc>().add(initStatus());
           context.read<GetTeamsBloc>().add(GetTeams(isPrivate: false,isUpdated: state.isUpdated));
         },"Primary".tr(context),state.privacy==Privacy.Primary,Privacy.Primary),
-        SizedBox(width: 10,),
+        const SizedBox(width: 10,),
         StatusContainer((){
-          context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Private));
+          context.read<TaskVisibleBloc>().add(const changePrivacyEvent(Privacy.Private));
 
           // Dispatch event to initialize GetTeamsBloc and fetch teams with updated privacy
           context.read<GetTeamsBloc>().add(initStatus());
-          context.read<GetTeamsBloc>().add(GetTeams(isPrivate: true,isUpdated: true));
-          context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(false));
+          context.read<GetTeamsBloc>().add(const GetTeams(isPrivate: true,isUpdated: true));
+          context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(false));
 
         },"Private".tr(context),state.privacy==Privacy.Private,Privacy.Private),
 
@@ -159,18 +158,21 @@ class TeamComponent{
 
 
 
- static  Row Header(BuildContext context, TaskVisibleState state, MediaQueryData mediaquery) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        SizedBox(
-          height: 50,
+ static  SizedBox Header(BuildContext context, TaskVisibleState state, MediaQueryData mediaquery) {
+    return SizedBox(
+      width: double.infinity,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            height: 50,
 
-          child: SeachRow(context, state, mediaquery),
-        ),
-        SecondRowPart(state, context),
+            child: SeachRow(context, state, mediaquery),
+          ),
+          SecondRowPart(state, context),
 
-      ],
+        ],
+      ),
     );
   }
 
@@ -179,21 +181,22 @@ static  Row SecondRowPart(TaskVisibleState state, BuildContext context) {
       children: [
         state.willSearch==false?
         iconButton(context,Icons.search, () {
-          context.read<TaskVisibleBloc>().add(ChangeWillSearchEvent(true));
+          context.read<TaskVisibleBloc>().add(const ChangeWillSearchEvent(true));
         },):
 
         iconButton(context,Icons.cancel, (){
-          context.read<TaskVisibleBloc>().add(ChangeWillSearchEvent(false));
+          context.read<TaskVisibleBloc>().add(const ChangeWillSearchEvent(false));
           context.read<GetTeamsBloc>().add(GetTeams(isPrivate: state.privacy==Privacy.Private));
 
         }),
 
 
 
+        !state.willSearch?
 
       ProfileComponents.buildFutureBuilder( AddTeamButton(context), true, "", (p0) => FunctionMember.isAdminAndSuperAdmin())
 
-
+:Container(),
 
       ],
     );
@@ -203,7 +206,7 @@ static AddButton AddTeamButton(BuildContext context) {
   return AddButton(color: PrimaryColor, IconColor: textColorBlack, icon: Icons.add_rounded,
 onPressed: () {
 final team=jsonEncode(Team.empty().toJson());
-context.go('/CreateTeam?team=${team}');
+context.go('/CreateTeam?team=$team');
 });
 }
 
@@ -247,6 +250,8 @@ static IconButton iconButton(BuildContext context,IconData icon, Function() onPr
 
 
 class myTaskButtons extends StatelessWidget {
+  const myTaskButtons({super.key});
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -281,7 +286,7 @@ class myTaskButtons extends StatelessWidget {
                   ? textColorWhite
                   : Colors.black,
               shape: RoundedRectangleBorder(
-                side: BorderSide(color: textColorBlack, width: 1.0),
+                side: const BorderSide(color: textColorBlack, width: 1.0),
                 borderRadius: BorderRadius.circular(10.0),
               ),
             ),

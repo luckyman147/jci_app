@@ -1,5 +1,5 @@
 import express from "express";
-import { ChangeGuestToNewMember, ChangeToMember, GetAllPermissions, GetMemberById, GetMembers, UpdateCotisation, UpdateMemberPermissions, UpdatePoints, createRole, searchByName, validateMember } from "../controllers";
+import { ChangeGuestToNewMember, ChangeToMember, GetAllPermissions, GetMemberById, GetMembers, UpdateCotisation, UpdateMemberPermissions, UpdatePoints, searchByName, validateMember } from "../controllers";
 import { AuthenticateAdmin } from "../middleware/CommonAuth";
 
 
@@ -26,7 +26,7 @@ const router =express.Router()
  router.get('/Member/name/:name',searchByName)
 router.post('/guest/ChangeToMember/:guestId',ChangeGuestToNewMember)
  router.get("/Permissions",GetAllPermissions)
- router.post('/Role',createRole)
+
  router.patch('/changeRole/:id',ChangeToMember)
  router.patch('/Member/:id/validate',validateMember)
  router.patch('/Member/:id/UpdatePoints',UpdatePoints)

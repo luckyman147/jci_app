@@ -1,11 +1,8 @@
 
 
 import 'dart:convert';
-import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
@@ -34,7 +31,7 @@ return  Row(
             },
             child: AnimatedContainer(
               width: mediaQuery.size.width / 3,
-              duration: Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 500),
               decoration: BoxDecoration(
                   color: ff.id == item.id?PrimaryColor:BackWidgetColor,
                   borderRadius: BorderRadius.circular(10),
@@ -43,7 +40,7 @@ return  Row(
                         color: Colors.grey.withOpacity(0.2),
                         spreadRadius: 1,
                         blurRadius: 1,
-                        offset: Offset(0, 1))
+                        offset: const Offset(0, 1))
                   ],
               ),
               child: Padding(
@@ -117,7 +114,7 @@ Widget EventsWidget(MediaQueryData mediaQuery,String name)=>
 BlocConsumer<AcivityFBloc, AcivityFState>(
   builder: (context, state) {
     if (state is ActivityLoadingState) {
-      return LoadingWidget();
+      return const LoadingWidget();
     } else if (state is ActivityLoadedState) {
       return RefreshIndicator(
           onRefresh: () {
@@ -138,7 +135,7 @@ BlocConsumer<AcivityFBloc, AcivityFState>(
     else if (state is ErrorActivityState) {
       return MessageDisplayWidget(message: state.message);
     }
-    return LoadingWidget();
+    return const LoadingWidget();
   }, listener: (BuildContext context, AcivityFState state) {
 
 });
@@ -148,8 +145,9 @@ BlocConsumer<AcivityFBloc, AcivityFState>(
 
 
 Future<void> RefreshEvents(BuildContext context,SearchType type,String name) async {
-  if (type==SearchType.All||name.isEmpty)
-   context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: activity.Events));
+  if (type==SearchType.All||name.isEmpty) {
+    context.read<AcivityFBloc>().add(const GetAllActivitiesEvent(act: activity.Events));
+  }
   //else
    // context.read<EventsBloc>().add(GetEventByNameEvent(name: name));
 

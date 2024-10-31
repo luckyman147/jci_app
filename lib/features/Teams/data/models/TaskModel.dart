@@ -1,13 +1,11 @@
-import 'package:jci_app/features/Teams/domain/entities/Checklist.dart';
 import 'package:jci_app/features/Teams/domain/entities/Task.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../domain/entities/Comment.dart';
 import 'CheckListModel.dart';
 import 'CommentsModel.dart';
 import 'FileModel.dart';
 
-@JsonSerializable()
+
 class TaskModel extends Tasks{
   TaskModel({required super.name, required super.AssignTo,
     required super.Deadline, required super.attachedFile, required super.CheckLists, required super.isCompleted, required super.id, required super.StartDate, required super.description, required super.comments});
@@ -42,6 +40,7 @@ class TaskModel extends Tasks{
             .toList(),
       );
 
+  @override
   Map<String, dynamic> toJson() => {
     'name': name,
     'AssignTo': AssignTo,

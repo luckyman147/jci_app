@@ -4,7 +4,7 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/auth/presentation/bloc/bool/toggle_bool_bloc.dart';
 
 
-import '../../../../core/app_theme.dart';
+import '../../../../../core/app_theme.dart';
 
 
 class FormText extends StatelessWidget {
@@ -60,7 +60,7 @@ enableSuggestions: false,
  validator: (value) {
   if (value!.isEmpty) {
     return 'Password Empty'.tr (context);
-    
+
   }
   return null;
 },

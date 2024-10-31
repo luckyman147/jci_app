@@ -8,7 +8,7 @@ part 'bools_event.dart';
 part 'bools_state.dart';
 
 class BoolBloc extends Bloc<BoolEvent, BoolState> {
-  BoolBloc() : super(Bool1State(true)) {
+  BoolBloc() : super(const Bool1State(true)) {
     on<SetBool1Event>(_onBool1);
     on<SetBool2Event>(_onBool2);
     on<SetBool3Event>(_onBool3);

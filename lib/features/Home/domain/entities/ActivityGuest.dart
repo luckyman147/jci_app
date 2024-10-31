@@ -8,7 +8,7 @@ class ActivityGuest extends Equatable{
 
   final String status;
 
-  ActivityGuest({required this.guest, required this.status});
+  const ActivityGuest({required this.guest, required this.status});
 
   @override
   // TODO: implement props

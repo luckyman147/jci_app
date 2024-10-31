@@ -1,23 +1,16 @@
-import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
-import 'package:jci_app/features/Home/domain/usercases/MeetingsUseCase.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Functions.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
-import '../../../../../../../core/config/services/verification.dart';
 import   '../../../../../../../core/error/Failure.dart';
 import '../../../../../../../core/strings/failures.dart';
 import '../../../../../../../core/usescases/usecase.dart';
-import '../../../../../domain/entities/Event.dart';
-import '../../../../../domain/entities/Meeting.dart';
-import '../../../../../domain/entities/training.dart';
 import '../../../../../domain/usercases/ActivityUseCases.dart';
 import '../../../../../domain/usercases/EventUseCases.dart';
 import '../../../../../domain/usercases/TrainingUseCase.dart';
@@ -131,7 +124,7 @@ void _getActivityOfMonth(
 
     }
     else if (event.act==activity.Meetings){
-      emit(ActivityLoadingState());
+
 
       final failureOrEvents= await getAllActivitiesUseCases(event.act);
       emit(_mapFailureOrActivityMonthToState(failureOrEvents));
@@ -151,7 +144,7 @@ AcivityFState _mapFailureOrActivityToState(Either<Failure, List<Activity>> eithe
           (failure) => ErrorActivityState(message: mapFailureToMessage(failure)),
           (act) {
 
-            participantBloc.add(initstateList(act: ActivityAction.mapObjects(act))); log("eee"+participantBloc.state.toString());
+            participantBloc.add(initstateList(act: ActivityAction.mapObjects(act))); log("eee${participantBloc.state}");
             return ActivityLoadedState(
        activitys: act,
       );}
@@ -180,8 +173,9 @@ void SearchCat(SearchTextChanged event,Emitter<AcivityFState>emit ) async {
 
         final categories = _filterCategories(event.searchText);
        emit( SearchLoaded(categories));
-     if (categories.isEmpty)
-        emit(SearchError("not found"));
+     if (categories.isEmpty) {
+       emit(const SearchError("not found"));
+     }
 
 
   }

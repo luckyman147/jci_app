@@ -51,6 +51,7 @@ class CreateTrainingUseCase extends UseCase<Unit,Training> {
 
   CreateTrainingUseCase(this.TrainingRepository);
 
+  @override
   Future<Either<Failure,Unit>> call(Training Training) async {
     return await TrainingRepository.createTraining(Training);
   }
@@ -60,6 +61,7 @@ class UpdateTrainingUseCase extends UseCase<Unit,Training> {
 
   UpdateTrainingUseCase(this.TrainingRepository);
 
+  @override
   Future<Either<Failure,Unit>> call(Training Training) async {
     return await TrainingRepository.updateTraining(Training);
   }
@@ -69,6 +71,7 @@ class DeleteTrainingUseCase extends UseCase<Unit,String> {
 
   DeleteTrainingUseCase(this.TrainingRepository);
 
+  @override
   Future<Either<Failure,Unit>> call(String id) async {
     return await TrainingRepository.deleteTraining(id);
   }
@@ -78,6 +81,7 @@ class LeaveTrainingUseCase  extends UseCase<Unit,String>{
 
   LeaveTrainingUseCase(this.TrainingRepository);
 
+  @override
   Future<Either<Failure,Unit>> call(String id) async {
     return await TrainingRepository.leaveTraining(id);
   }
@@ -86,6 +90,7 @@ class LeaveTrainingUseCase  extends UseCase<Unit,String>{
 
   ParticipateTrainingUseCase(this.TrainingRepository);
 
+  @override
   Future<Either<Failure,Unit>> call(String id) async {
     return await TrainingRepository.participateTraining(id);
   }
@@ -95,6 +100,7 @@ class CheckTrainingPermissionsUseCase  extends UseCase<bool,NoParams>{
 
   CheckTrainingPermissionsUseCase(this.TrainingRepository);
 
+  @override
   Future<Either<Failure,bool>> call(NoParams params) async {
     return await TrainingRepository.CheckPermissions();
   }

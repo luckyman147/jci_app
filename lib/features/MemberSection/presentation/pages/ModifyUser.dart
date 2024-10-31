@@ -12,7 +12,6 @@ import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
 import '../../../../core/util/snackbar_message.dart';
 import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
-import '../../../Home/presentation/widgets/Functions.dart';
 
 class ModifyUser extends StatefulWidget {
   final Member member;
@@ -68,7 +67,7 @@ class _ModifyUserState extends State<ModifyUser> {
               },
             ),
             Text(
-              "Edit Profile",
+              "${"Edit".tr(context)} Profile",
               style: PoppinsSemiBold(22, textColorBlack, TextDecoration.none),
             ),
           ],
@@ -79,12 +78,14 @@ class _ModifyUserState extends State<ModifyUser> {
   builder: (context, state) {
     return BlocListener<MembersBloc,MembersState>(
   listener: (context, state) {
-
+if (state.userStatus == UserStatus.Loading) {
+  showDialog(context: context, builder: (context) =>  LoadingDialog());
+}
      if(state .userStatus==UserStatus.Updated){
       SnackBarMessage.showSuccessSnackBar(message: "Updated Succefully", context: context);
 
       context.go('/home');
-      context.read<MembersBloc>().add(GetUserProfileEvent(true));
+      context.read<MembersBloc>().add(const GetUserProfileEvent(true));
     }
     else if(state.userStatus ==UserStatus.Error){
       SnackBarMessage.showErrorSnackBar(message: state.Errormessage, context: context);
@@ -99,12 +100,12 @@ class _ModifyUserState extends State<ModifyUser> {
 
        ProfileComponents.imagezChanged(state.image,med,context)
     ,
-              TextfieldNormal(context,"First Name".tr(context), "Enter your first name",firstNameController,(poo){}),
-              TextfieldNormal(context,"Last Name".tr(context), "Enter your Last name",lastNameController,(poo){}),
-              TextfieldDescription(context, "Your Bio", "Enter Your Bio", descriptionController, (p0) => null),
-              ProfileComponents.TextfieldNum("Phone Number", "Enter your Phone Number",NumberController,(poo){}),
+              TextfieldNormal(context,"First Name".tr(context), "Enter First Name".tr(context),firstNameController,(poo){}),
+              TextfieldNormal(context,"Last Name".tr(context), "Enter Last Name". tr(context),lastNameController,(poo){}),
+              TextfieldDescription(context, "My Bio".tr(context), "Enter A Bio".tr(context), descriptionController, (p0) => null),
+              ProfileComponents.TextfieldNum("Phone Number".tr(context), "Enter  Phone Number".tr(context),NumberController,(poo){}),
               ProfileComponents.SaveChangesButton(()async{  FunctionMember.saveMember(  widget.member,firstNameController,lastNameController,NumberController,
-                  state.image,context,_formKey,descriptionController);}),
+                  state.image,context,_formKey,descriptionController);},context),
           ]),
   ),
 );

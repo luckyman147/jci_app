@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
-import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/strings/app_strings.dart';
-import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
-import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/ShimmerEffects.dart';
 
-import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
-import '../../../Home/presentation/widgets/Functions.dart';
 import '../../Domain/entities/President.dart';
 import 'dialogs.dart';
 
@@ -47,7 +40,7 @@ childAspectRatio: .8,
   }
 
   Widget body(int index, BuildContext context,bool mounted,President? president,TextEditingController name,) {
-    PersistentBottomSheetController? _bottomSheetController;
+    PersistentBottomSheetController? bottomSheetController;
     var boxDecoration = BoxDecoration(
               border: Border.all(color: textColorBlack,width: 2),
     borderRadius: BorderRadius.circular(20),
@@ -102,7 +95,7 @@ childAspectRatio: .8,
   }
 
   Container pho(President president, BuildContext context) {
-    return president.CoverImage==null|| president.CoverImage.isEmpty?Container(
+    return president.CoverImage.isEmpty?Container(
       height: 110,
       width: 110,
       decoration: BoxDecoration(
@@ -111,7 +104,7 @@ childAspectRatio: .8,
         border: Border.all(color: textColor, width: 4.0),
 
       ),
-      child:CircleAvatar(
+      child:const CircleAvatar(
 backgroundColor: textColorWhite,
         backgroundImage: AssetImage(vip),
       )

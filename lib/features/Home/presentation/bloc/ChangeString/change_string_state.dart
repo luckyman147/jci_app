@@ -4,7 +4,7 @@ part of 'change_string_bloc.dart';
 abstract class ChangeStringState extends Equatable{
   final String value;
 
-  ChangeStringState(this.value);
+  const ChangeStringState(this.value);
 
 }
 

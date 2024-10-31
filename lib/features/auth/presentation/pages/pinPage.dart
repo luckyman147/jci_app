@@ -1,18 +1,21 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
+import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/bool/toggle_bool_bloc.dart';
 import 'package:jci_app/features/auth/presentation/widgets/Components.dart';
 
-import 'package:jci_app/features/auth/presentation/widgets/PinForm.dart';
+import 'package:jci_app/features/auth/presentation/widgets/Inputs/PinForm.dart';
 import 'package:jci_app/features/auth/presentation/widgets/SubmitFunctions.dart';
 
+import '../../../../core/util/snackbar_message.dart';
 import '../../domain/entities/Member.dart';
 
 import '../widgets/Text.dart';
@@ -33,8 +36,8 @@ class _PincodeState extends State<Pincode> {
   final _controller1 = TextEditingController();
 @override
   void initState() {
-  context.read<ToggleBooleanBloc>().add(ChangeIscompleted(isCompleted: false));
-  context.read<ToggleBooleanBloc>().add(ChangeIsEnabled(isEnabled: true));
+  context.read<ToggleBooleanBloc>().add(const ChangeIscompleted(isCompleted: false));
+  context.read<ToggleBooleanBloc>().add(const ChangeIsEnabled(isEnabled: true));
 
     // TODO: implement initState
     super.initState();
@@ -54,7 +57,16 @@ class _PincodeState extends State<Pincode> {
         title: Text ('Verification Code'.tr(context), style: PoppinsSemiBold(16, textColorBlack,TextDecoration.none),),
       ),
       body: Center(
-        child: BlocListener<ResetBloc, ResetPasswordState>(
+        child: BlocListener<SignUpBloc, SignUpState>(
+  listener: (context, state) {
+    if (state.signUpStatus==SignUpStatus.MessageSignUp){
+      SnackBarMessage.showSuccessSnackBar(
+          message: state.message, context: context);
+      context.go('/login');
+    }
+    // TODO: implement listener}
+  },
+  child: BlocListener<ResetBloc, ResetPasswordState>(
   listener: (context, state) {
    SubmitFunctions. Listener(state, context,widget.email);
     // TODO: implement listener}
@@ -82,6 +94,7 @@ class _PincodeState extends State<Pincode> {
 
           ]
         ),
+),
 ),
       ),
     );

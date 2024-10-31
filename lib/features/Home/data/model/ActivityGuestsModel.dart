@@ -4,7 +4,7 @@ import 'package:jci_app/features/Home/domain/entities/ActivityGuest.dart';
 import '../../domain/entities/Guest.dart';
 
 class ActivityguestModel extends ActivityGuest{
-  ActivityguestModel({required guest, required status})
+  const ActivityguestModel({required guest, required status})
       : super(guest: guest, status: status);
 
   factory ActivityguestModel.fromJson(Map<String, dynamic> json) {

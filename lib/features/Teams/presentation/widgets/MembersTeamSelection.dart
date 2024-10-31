@@ -195,7 +195,7 @@ class MemberTeamSelection{
                       return MembersDetails(
                           members, mediaQuery, onRemoveTap, onAddTap, ff);}
                     else{
-                      return Center(child: LoadingWidget());}
+                      return const Center(child: LoadingWidget());}
 
                   },
                 )
@@ -242,7 +242,7 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
          builder: (context, state) {
            switch (state.userStatus) {
              case UserStatus.Loading:
-               return LoadingWidget();
+               return const LoadingWidget();
 
              case UserStatus.MembersLoaded:
                return RefreshIndicator(
@@ -273,9 +273,9 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
                return MessageDisplayWidget(message: state.Errormessage);
 
              default:
-               return LoadingWidget();
+               return const LoadingWidget();
            }
-           return LoadingWidget();
+           return const LoadingWidget();
          },
          listener: (BuildContext context, MembersState state) {
            if (state.userStatus == UserStatus.Error) {
@@ -344,7 +344,7 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
               width: 100,
               child: Text(item.firstName,
                 overflow: TextOverflow.ellipsis,
-                style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),),
+                style: PoppinsSemiBold(15, textColorBlack, TextDecoration.none),),
             ),
           ),
 
@@ -451,7 +451,7 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
                          border: Border.all(color: textColor, width: 2),
                          shape: BoxShape.circle,
                          image: DecorationImage(
-                             image: AssetImage(vip),
+                             image: const AssetImage(vip),
                              colorFilter: ColorFilter.mode(
                                  isAssign ?
                                  Colors.white.withOpacity(0.1) :
@@ -479,7 +479,7 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
                    Padding(
                      padding: const EdgeInsets.all(8.0),
                      child: Text(
-                       member.firstName + ' ' + member.lastName,
+                       '${member.firstName} ${member.lastName}',
                        style: PoppinsRegular(
                          15.0,
                         isAssign

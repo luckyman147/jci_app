@@ -1,10 +1,6 @@
-import 'dart:async';
-import 'dart:collection';
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../domain/entities/Task.dart';
 
@@ -12,7 +8,7 @@ part 'task_visible_event.dart';
 part 'task_visible_state.dart';
 
 class TaskVisibleBloc extends Bloc<TaskVisibleEvent, TaskVisibleState> {
-  TaskVisibleBloc() : super(TaskVisibleInitial()) {
+  TaskVisibleBloc() : super(const TaskVisibleInitial()) {
     on<TaskVisibleEvent>((event, emit) {
     });
     on<ToggleTaskVisible>(_onToggleTaskVisible);
@@ -61,7 +57,7 @@ void _changeTextFieldsTitle(ChangeTextFieldsTitle event, Emitter<TaskVisibleStat
   }
 
   void resetTaskVisible( Emitter<TaskVisibleState> emit) {
-    emit(TaskVisibleInitial());
+    emit(const TaskVisibleInitial());
   }
 
   void _ChangeSectionEvent(ChangeSectionEvent event, Emitter<TaskVisibleState> emit) {

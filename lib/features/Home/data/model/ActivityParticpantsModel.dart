@@ -1,7 +1,7 @@
 import 'package:jci_app/features/Home/domain/entities/ActivityParticpants.dart';
 
 class ActivityParticipantsModel extends ActivityParticipants{
-  ActivityParticipantsModel({required member, required status})
+  const ActivityParticipantsModel({required member, required status})
       : super(member: member, status: status);
 
   factory ActivityParticipantsModel.fromJson(Map<String, dynamic> json) {

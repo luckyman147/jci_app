@@ -64,16 +64,16 @@ class ActivityRepoImpl implements ActivitiesRepo{
             final event=EventModel.fromEntity(act as Event);
        await eventRemoteDataSource.createEvent(event);
 
-            return Right(unit);
+            return const Right(unit);
 
           case activity.Meetings:
 final result= MeetingModel.fromEntities(act as Meeting);
          await meetingRemoteDataSource.createMeeting(result);
-            return Right(unit);
+            return const Right(unit);
           case activity.Trainings:
             final result= TrainingModel.fromEntity(act as Training);
             await trainingRemoteDataSource.createTraining(result);
-            return Right(unit);
+            return const Right(unit);
         }
 
 
@@ -106,15 +106,15 @@ final result= MeetingModel.fromEntities(act as Meeting);
 
           await eventRemoteDataSource.deleteEvent(id);
 
-            return Right(unit);
+            return const Right(unit);
 
           case activity.Meetings:
     await meetingRemoteDataSource.deleteMeeting(id);
-            return Right(unit);
+            return const Right(unit);
           case activity.Trainings:
     await trainingRemoteDataSource.deleteTraining(id);
 
-            return Right(unit);
+            return const Right(unit);
         }
 
 
@@ -208,12 +208,44 @@ await eventLocalDataSource.CacheEventById(result);
       }
 
       on EmptyDataException {
-        return Left(EmptyDataFailure());
+        switch (act) {
+          case activity.Trainings:
+
+            final localTrainings = await trainingLocalDataSource
+                .getAllCachedTrainings();
+            return Right(localTrainings);
+          case activity.Meetings:
+            final localTrainings = await meetingLocalDataSource
+                .getAllCachedMeetings();
+            return Right(localTrainings);
+          case activity.Events:
+          case activity.All:
+
+            final localTrainings = await eventLocalDataSource
+                .getAllCachedEvents();
+            return Right(localTrainings);
+        }
       } on WrongCredentialsException {
         return Left(WrongCredentialsFailure());
       }
       on ServerException {
-        return Left(ServerFailure());
+        switch (act) {
+          case activity.Trainings:
+
+            final localTrainings = await trainingLocalDataSource
+                .getAllCachedTrainings();
+            return Right(localTrainings);
+          case activity.Meetings:
+            final localTrainings = await meetingLocalDataSource
+                .getAllCachedMeetings();
+            return Right(localTrainings);
+          case activity.Events:
+          case activity.All:
+
+            final localTrainings = await eventLocalDataSource
+                .getAllCachedEvents();
+            return Right(localTrainings);
+        }
       }
     }
 
@@ -254,15 +286,15 @@ await eventLocalDataSource.CacheEventById(result);
 
             await eventRemoteDataSource.leaveEvent(id);
 
-            return Right(unit);
+            return const Right(unit);
 
           case activity.Meetings:
             await meetingRemoteDataSource.leaveMeeting(id);
-            return Right(unit);
+            return const Right(unit);
           case activity.Trainings:
             await trainingRemoteDataSource.leaveTraining(id);
 
-            return Right(unit);
+            return const Right(unit);
         }
 
 
@@ -295,15 +327,15 @@ await eventLocalDataSource.CacheEventById(result);
 
             await eventRemoteDataSource.participateEvent(id);
 
-            return Right(unit);
+            return const Right(unit);
 
           case activity.Meetings:
             await meetingRemoteDataSource.participateMeeting(id);
-            return Right(unit);
+            return const Right(unit);
           case activity.Trainings:
             await trainingRemoteDataSource.participateTraining(id);
 
-            return Right(unit);
+            return const Right(unit);
         }
 
 
@@ -337,16 +369,16 @@ await eventLocalDataSource.CacheEventById(result);
             final event=EventModel.fromEntity(act as Event);
             await eventRemoteDataSource.updateEvent(event);
 
-            return Right(unit);
+            return const Right(unit);
 
           case activity.Meetings:
             final result= MeetingModel.fromEntities(act as Meeting);
             await meetingRemoteDataSource.updateMeeting(result);
-            return Right(unit);
+            return const Right(unit);
           case activity.Trainings:
             final result= TrainingModel.fromEntity(act as Training);
             await trainingRemoteDataSource.updateTraining(result);
-            return Right(unit);
+            return const Right(unit);
         }
 
       }
@@ -372,7 +404,7 @@ await eventLocalDataSource.CacheEventById(result);
     if (await networkInfo.isConnected) {
       try {
         await trainingRemoteDataSource.checkAbsence(activityId, memberId, status);
-        return Right(unit);
+        return const Right(unit);
       } on EmptyDataException {
         return Left(EmptyDataFailure());
       } on WrongCredentialsException {
@@ -387,7 +419,7 @@ await eventLocalDataSource.CacheEventById(result);
     if (await networkInfo.isConnected) {
       try {
         await response;
-        return Right(unit);
+        return const Right(unit);
       } on EmptyDataException {
         return Left(EmptyDataFailure());
       } on WrongCredentialsException {
@@ -512,7 +544,7 @@ if (await networkInfo.isConnected) {
     if (await networkInfo.isConnected) {
       final localguests=await trainingLocalDataSource.getAllCachedGuests();
       try {
-        log("message"+isUpdated.toString());
+        log("message$isUpdated");
         if (isUpdated){
         final result = await trainingRemoteDataSource.getAllGuest();
         return Right(result); }

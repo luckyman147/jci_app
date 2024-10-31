@@ -1,15 +1,12 @@
 
 
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
 
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
-import '../../../../../core/usescases/usecase.dart';
 import '../../../../auth/domain/entities/Member.dart';
 import '../../../domain/usecases/MemberUseCases.dart';
 
@@ -47,19 +44,22 @@ on<GetUserProfileEvent>(getUserPrfile);
       final result= await getMembersByRanksUseCases(event.isUpdated);
       emit(_eitherRanksOrFailure(
           result));
-    } on Exception catch (e) {
+    } on Exception {
        emit(state.copyWith(Errormessage: 'Failed to load ranks',userStatus: UserStatus.Error));
       // TODO
     }
   }
   void _getMemberByRanks(GetMemberByHighestRAnkEvent event, Emitter<MembersState> emit)async{
 
+if (state.memberWithRank != null) {
+ emit( state.copyWith(userStatus: UserStatus.MembersRanksLoaded,memberWithRank: state.memberWithRank));
+    }
     try {
       emit(state.copyWith(userStatus: UserStatus.Loading));
       final result= await getMembeWithHighestRankUseCase(event.isUpdated);
       emit(_eitherRankOrFailure(
           result));
-    } on Exception catch (e) {
+    } on Exception {
        emit(state.copyWith(Errormessage: 'Failed to load ranks',userStatus: UserStatus.Error));
       // TODO
     }
@@ -105,6 +105,11 @@ if (event.isUpdated){
       GetAllMembersEvent event,
       Emitter<MembersState> emit,
       ) async {
+
+    if (state.members.isNotEmpty ) {
+      emit(state.copyWith(userStatus: UserStatus.MembersLoaded,members: state.members));
+    }
+
     emit(state.copyWith(userStatus: UserStatus.Loading));
 
     final result = await getAllMembersUseCase.call(event.isUpdated);
@@ -120,7 +125,7 @@ if (event.isUpdated){
     if(event.name.isEmpty){
       emit(state.copyWith(userStatus: UserStatus.Error));
 
-      add(GetAllMembersEvent(true));
+      add(const GetAllMembersEvent(true));
 
     }
     final result = await getMemberByNameUseCase.call(event.name);

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,7 +9,6 @@ import 'package:jci_app/features/about_jci/Presentations/screens/BoardPage.dart'
 import '../../../../core/app_theme.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
-import '../../../MemberSection/presentation/widgets/ProfileComponents.dart';
 import '../../../Teams/domain/entities/Team.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../../Teams/presentation/widgets/TeamWidget.dart';
@@ -86,7 +84,7 @@ class HomeComponents{
                                       (){
 
 
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>PresentationsPage()));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const PresentationsPage()));
 
                                   },'Presentation'.tr(context),context,null
 
@@ -94,20 +92,20 @@ class HomeComponents{
                                 BuildPres(
                                         (){
 
-                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>BoardPage()));
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>const BoardPage()));
 
                                         },'Board'.tr(context),context,null,Icons.group
                                 ), BuildPres(
                                         (){
                                           context.read<PresidentsBloc>().add(GetAllPresidentsEvent());
-                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>PresidentsPage()));
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>const PresidentsPage()));
 
 
                                         },'Last Presidents'.tr(context),context,null,Icons.person_pin_rounded),
                                 SizedBox(
                                     width: mediaQuery.size.width/1,
                                     height: 3,
-                                    child: Divider( color: textColor,))
+                                    child: const Divider( color: textColor,))
                               ],
                             ),
 
@@ -122,7 +120,7 @@ class HomeComponents{
                              child: SizedBox(
                                   width: mediaQuery.size.width/1,
                                   height: 3,
-                                  child: Divider( color: textColor,)),
+                                  child: const Divider( color: textColor,)),
                            )
 
                           ],
@@ -146,9 +144,9 @@ class HomeComponents{
                                 Row(
                                   children: [
                                     Icon(icon,color: textColorBlack,)
-                                    ,SizedBox(width: 10,)
+                                    ,const SizedBox(width: 10,)
                                     ,Text(
-                                      "$text",
+                                      text,
                                       style: PoppinsSemiBold(
                                           18, Colors.black, TextDecoration.none),
                                     ),
@@ -167,7 +165,7 @@ class HomeComponents{
                   height: 170,
                   decoration:  BoxDecoration(
                       gradient: LinearGrdi(),
-image: DecorationImage(
+image: const DecorationImage(
                       image: AssetImage("assets/images/cap.png"),
                       fit: BoxFit.cover,
   opacity: 0.5
@@ -181,7 +179,7 @@ image: DecorationImage(
                       children: [
                         Container(
 
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             color: backgroundColored,
                           ),
@@ -192,7 +190,7 @@ image: DecorationImage(
                             width: 100,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
 
@@ -203,7 +201,7 @@ image: DecorationImage(
  }
 
  static LinearGradient LinearGrdi() {
-   return LinearGradient(
+   return const LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
@@ -278,7 +276,7 @@ static   Widget buildTeamWidget(MediaQueryData mediaQuery, BuildContext context,
           child: TeamHomeWidget(teams: teams),
         )
       ],
-    ) : SizedBox();
+    ) : const SizedBox();
   }
 
 static   Widget buildteam(MediaQueryData mediaQuery, BuildContext context) {
@@ -293,7 +291,7 @@ static   Widget buildteam(MediaQueryData mediaQuery, BuildContext context) {
             onTap: () {
               context.read<PageIndexBloc>().add(SetIndexEvent(index: 2));
               context.read<TaskVisibleBloc>().add(
-                  changePrivacyEvent(Privacy.Private));
+                  const changePrivacyEvent(Privacy.Private));
             },
             child: Text("See more".tr(context), style: PoppinsSemiBold(
                 mediaQuery.devicePixelRatio * 4.5, PrimaryColor,
@@ -333,14 +331,14 @@ static   Widget TeamsWidget(MediaQueryData mediaQuery,BuildContext context) =>
 BlocBuilder<GetTeamsBloc,GetTeamsState>(builder: (ctx,state){
   switch(state.status){
     case TeamStatus.Loading:
-      return LoadingWidget();
-    case TeamStatus.error:return SizedBox();
+      return const LoadingWidget();
+    case TeamStatus.error:return const SizedBox();
     case TeamStatus.success:
     case TeamStatus.IsRefresh:
     case TeamStatus.DeletedError:
     case TeamStatus.Deleted:
     return buildTeamWidget(mediaQuery, context, state.teams);
-    default:return SizedBox();
+    default:return const SizedBox();
   }
 
 });

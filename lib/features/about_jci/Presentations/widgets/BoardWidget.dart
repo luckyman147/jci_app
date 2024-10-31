@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -6,10 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
-import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/BoardBloc/boord_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
-import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/dialogs.dart';
 
 import '../../../../core/app_theme.dart';
@@ -21,7 +18,7 @@ class BoardYearPostsWidget extends StatefulWidget {
   final List<List<Post>> posts;
   final PageController pageController ;
 
-  BoardYearPostsWidget({required this.posts, required this.pageController, });
+  const BoardYearPostsWidget({super.key, required this.posts, required this.pageController, });
 
   @override
   State<BoardYearPostsWidget> createState() => _BoardYearPostsWidgetState();
@@ -45,7 +42,7 @@ TextEditingController controller = TextEditingController();
     return ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
               itemCount: widget.posts.length,
               itemBuilder: (context, priorityIndex) {
                 final postList = widget.posts[priorityIndex];
@@ -79,7 +76,7 @@ TextEditingController controller = TextEditingController();
   builder: (context, state) {
     return GridView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     gridDelegate:const  SliverGridDelegateWithFixedCrossAxisCount(
                       mainAxisSpacing: 10,
                       crossAxisSpacing: 10,
@@ -117,7 +114,7 @@ TextEditingController controller = TextEditingController();
                            Dialogs.showAddPosition(context,widget.pageController,nameController);
                          },
                          child: DottedBorder(
-                           radius: Radius.circular(10),
+                           radius: const Radius.circular(10),
                            dashPattern:const  [21,17,21,17],
                                                       color: textColor,
                            strokeWidth: 2,
@@ -176,7 +173,7 @@ TextEditingController controller = TextEditingController();
                       PoppinsRegular(16, textColorBlack, )
                       ,),
                   ],
-                ):SizedBox(),
+                ):const SizedBox(),
                 Text(" ${post.role}",
                   textAlign: TextAlign.center,
                   style:PoppinsSemiBold(MediaQuery.of(context).devicePixelRatio*5, textColorBlack, TextDecoration.none)
@@ -200,7 +197,7 @@ TextEditingController controller = TextEditingController();
           border: Border.all(color: textColor, width: 4.0),
 
         ),
-        child:CircleAvatar(
+        child:const CircleAvatar(
           backgroundColor: textColorWhite,
           backgroundImage: AssetImage(vip),
         )

@@ -1,12 +1,11 @@
 
-import 'dart:developer';
+import 'package:flutter_animate/flutter_animate.dart';
 
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 
 import 'package:jci_app/core/app_theme.dart';
@@ -18,12 +17,8 @@ import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/Home/domain/usercases/ActivityUseCases.dart';
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
-import 'package:jci_app/features/Home/presentation/bloc/calendar/calendar_cubit.dart';
 import 'package:jci_app/features/Home/presentation/widgets/ActivityDetailsComponents.dart';
-import 'package:jci_app/features/Home/presentation/widgets/CalendarPage.dart';
 //import 'package:jci_app/features/auth/presentation/bloc/Members/members_bloc.dart';
-import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
-import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import '../../../../core/strings/app_strings.dart';
 
@@ -43,9 +38,11 @@ import 'EventListWidget.dart';
 
 import 'Functions.dart';
 
-import 'package:table_calendar/table_calendar.dart';
+
 
 class MyDropdownButton extends StatefulWidget {
+  const MyDropdownButton({super.key});
+
   @override
   _MyDropdownButtonState createState() => _MyDropdownButtonState();
 }
@@ -71,7 +68,7 @@ class _MyDropdownButtonState extends State<MyDropdownButton> {
             width: 170,
             height: 65,
 
-            padding: EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(12.0),
             decoration: BoxDecoration(
 
 
@@ -95,10 +92,10 @@ class _MyDropdownButtonState extends State<MyDropdownButton> {
 
 
                   ),
-                  offset: const Offset(-14, 0),
+                  offset: Offset(-14, 0),
                   scrollbarTheme: ScrollbarThemeData(
 
-                    radius: const Radius.circular(14),
+                    radius: Radius.circular(14),
 
                   ),
                 ),
@@ -241,7 +238,7 @@ class _CalendarButtonState extends State<CalendarButton> {
                   ),
                   Padding(
                     padding: paddingSemetricVertical(),
-                    child: MyActivityButtons(),
+                    child: const MyActivityButtons(),
                   ),
                   SingleChildScrollView(child: ShowCalendarWidget()),
                 ],
@@ -264,6 +261,8 @@ class _CalendarButtonState extends State<CalendarButton> {
 }
 
 class MyActivityButtons extends StatelessWidget {
+  const MyActivityButtons({super.key});
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -297,7 +296,7 @@ class MyActivityButtons extends StatelessWidget {
                   ? textColorWhite
                   : Colors.black,
               shape: RoundedRectangleBorder(
-                side: BorderSide(color: textColorBlack, width:1.0),
+
                 borderRadius: BorderRadius.circular(10.0),
               ),
             ),
@@ -373,7 +372,7 @@ class MyCategoryButtons extends StatelessWidget {
                         ? textColorWhite
                         : Colors.black,
                     shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.black, width: 1.0),
+                      side: const BorderSide(color: Colors.black, width: 1.0),
                       borderRadius: BorderRadius.circular(16.0),
                     ),
                   ),
@@ -442,7 +441,7 @@ class MyCategoryButtons extends StatelessWidget {
     return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 18.0),
                 child:
-                Text("${state.category.name}",style: PoppinsNorml(18, textColorBlack),),
+                Text(state.category.name,style: PoppinsNorml(18, textColorBlack),),
               );
   },
 ),
@@ -507,7 +506,7 @@ class MyCategoryButtons extends StatelessWidget {
                     },
                     decoration: InputDecoration(
 
-                      prefixIcon: Icon(
+                      prefixIcon: const Icon(
                         Icons.search,
                         color: textColor,
                       ),
@@ -541,7 +540,7 @@ class MyCategoryButtons extends StatelessWidget {
                         child:BlocBuilder<AcivityFBloc, AcivityFState>(
   builder: (context, state) {
     if (state is SearchLoading){
-      return LoadingWidget();
+      return const LoadingWidget();
     }
     if(state is SearchLoaded){
       return CategoryDetails (state.categories,mediaQuery);
@@ -624,29 +623,32 @@ class _ParticipateButtonState extends State<ParticipateButton> {
               context.read<ParticpantsBloc>().add(AddParticipantEvent( index: widget.index, act:result));
             }
           },
-          child: Container(
+          child: AnimatedContainer(
+            curve: Curves.easeIn,
             width:widget.containerWidth,
             decoration: BoxDecoration(
               color: widget.isPartFromState ? PrimaryColor : BackWidgetColor,
               borderRadius: BorderRadius.circular(10),
             ),
+            duration: const Duration(milliseconds: 1600),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon( widget.isPartFromState ? Icons.check : Icons.star,
-                      color:  widget.isPartFromState ? textColorWhite : textColorBlack),
+                      color:  widget.isPartFromState ? textColorWhite : textColorBlack).
+                  animate(),
                   Text(
                     widget.isPartFromState ? "Interested".tr(context) : "Join".tr(context),
                     style: PoppinsSemiBold(widget.textSize,
                         widget.isPartFromState ? textColorWhite : textColorBlack,
                         TextDecoration.none),
-                  ),
+                  ).animate(),
                 ],
               ),
             ),
-          ),
+          ).animate(),
         );
       },
     );
@@ -657,7 +659,7 @@ Widget MySearchBar(BuildContext context,activity Activity) {
     padding: const EdgeInsets.all(8.0),
     child: BlocBuilder<ActivityCubit, ActivityState>(
       builder: (context, state) {
-        return Container(
+        return SizedBox(
           width: MediaQuery.of(context).size.width * 0.85,
           height: 50,
           child: TextField(
@@ -681,11 +683,11 @@ Widget MySearchBar(BuildContext context,activity Activity) {
                 showModalBottomSheet(context: context, builder: (ctx){
                   return ChangeactivityDialog(context, state);
                 });
-              }, icon: Icon(Icons.filter_alt_outlined),),
+              }, icon: const Icon(Icons.filter_alt_outlined),),
               suffixIcon: IconButton( onPressed: () {
                 context.read<ActivityCubit>().search(false);
 
-              }, icon: Icon(Icons.cancel),),
+              }, icon: const Icon(Icons.cancel),),
 
               border:border(PrimaryColor),
               focusedBorder: border(PrimaryColor),
@@ -728,9 +730,9 @@ Widget ChangeactivityDialog(BuildContext context, ActivityState state) {
               tileColor: Colors.white,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
-                  side: BorderSide(color: PrimaryColor)),
+                  side: const BorderSide(color: PrimaryColor)),
               selected: item == state.selectedSearchActivity,
-              checkboxShape: CircleBorder(),
+              checkboxShape: const CircleBorder(),
               selectedTileColor: PrimaryColor,
               controlAffinity: ListTileControlAffinity.trailing,
             ),
@@ -773,7 +775,7 @@ Widget MonthWeekBuild (activity act,ActivityLoadedMonthState state,MediaQueryDat
     else {
       context.read<ParticpantsBloc>().add(initstateList(act: ActivityAction.mapObjects(state.activitys)));
 
-      return LoadingWidget();
+      return const LoadingWidget();
     }
   },
 );
@@ -787,7 +789,7 @@ Column WidgetMonthActivity(BuildContext context, activity act, MediaQueryData me
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("${"$text".tr(context)} ${act.name.tr(context)}", style: PoppinsSemiBold(
+                Text("${text.tr(context)} ${act.name.tr(context)}", style: PoppinsSemiBold(
                     mediaQuery.devicePixelRatio*6, Colors.black,
                     TextDecoration.none),),
                 InkWell(

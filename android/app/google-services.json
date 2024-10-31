@@ -12,7 +12,20 @@
           "package_name": "com.example.jci_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "651392688142-5nor7q3rv99v1527o0prduon3snmuhco.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jci_app",
+            "certificate_hash": "e93533dd405f6e0a5a9bcb0e51ee6aae6e49e653"
+          }
+        },
+        {
+          "client_id": "651392688142-lf584vt3g79funeejg9np3drunf1n7ci.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBZmpFXZ3JrUdLbWLGCu7200Gfvsfwir70"
@@ -20,7 +33,55 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "651392688142-lf584vt3g79funeejg9np3drunf1n7ci.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "651392688142-qbkk2h2h5431b53sou9svn18c4q5onao.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.jciapp.jciApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:651392688142:android:122856597a6af03ee25c5f",
+        "android_client_info": {
+          "package_name": "com.exemple.jci"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "651392688142-lf584vt3g79funeejg9np3drunf1n7ci.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZmpFXZ3JrUdLbWLGCu7200Gfvsfwir70"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "651392688142-lf584vt3g79funeejg9np3drunf1n7ci.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "651392688142-qbkk2h2h5431b53sou9svn18c4q5onao.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.jciapp.jciApp"
+              }
+            }
+          ]
         }
       }
     }

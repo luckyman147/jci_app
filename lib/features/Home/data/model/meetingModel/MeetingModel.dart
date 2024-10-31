@@ -46,7 +46,7 @@ factory MeetingModel.fromJson(Map<String, dynamic> json) {
       price:0,
       Participants: json['Participants'] != null ? (json['Participants'] as List<dynamic>).map((e) => e ).toList() :(json['participants'] as List<dynamic>).toList(),
 
-      CoverImages: [],
+      CoverImages: const [],
       Director: json['Director'],
       agenda: json['agenda'] != null?
       (json['agenda'] as List<dynamic>).map((e) => e as String).toList():(json['Agenda'] as List<dynamic>).map((e) => e as String).toList(),

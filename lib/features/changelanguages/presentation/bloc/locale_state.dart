@@ -18,6 +18,7 @@ class LocaleState  extends Equatable{
  class LocaleInitial extends LocaleState {}
 
 class ChangeLocalState extends LocaleState {
+  @override
   final Locale locale;
-  ChangeLocalState(this.locale);
+  const ChangeLocalState(this.locale);
 }

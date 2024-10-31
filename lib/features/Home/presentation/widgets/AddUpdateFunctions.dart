@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 
-import '../../../../core/app_theme.dart';
 import '../../../../core/config/services/EventStore.dart';
 import '../../../../core/config/services/MeetingStore.dart';
 import '../../../../core/config/services/MemberStore.dart';
@@ -28,11 +26,8 @@ import '../bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dar
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../bloc/Activity/activity_cubit.dart';
 import '../bloc/IsVisible/bloc/visible_bloc.dart';
-import '../bloc/PageIndex/page_index_bloc.dart';
 import '../bloc/textfield/textfield_bloc.dart';
 import '../pages/CreateUpdateActivityPage.dart';
-import 'AddActivityWidgets.dart';
-import 'Compoenents.dart';
 import 'Functions.dart';
 import 'ActivityDetailsComponents.dart';
 class AddUpdateFunctions{
@@ -44,14 +39,14 @@ class AddUpdateFunctions{
       Navigator.of(context).pop();
     } else {
       context.read<ActivityCubit>().selectActivity(activity.Events);
-      context.read<AddDeleteUpdateBloc>().add(CheckPermissions(act: activity.Events));
-      context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: activity.Events));
+      context.read<AddDeleteUpdateBloc>().add(const CheckPermissions(act: activity.Events));
+      context.read<AcivityFBloc>().add(const GetAllActivitiesEvent(act: activity.Events));
 
       Navigator.of(context).pop(); }
   }
   static void SaveActionFunction(ActivityState acti, GlobalKey<FormState> formKey, TaskVisibleState state, TextEditingController Price, FormzState ste, TextEditingController LeaderController, TextEditingController namecontroller, TextEditingController descriptionController, TextEditingController LocationController, TextEditingController Points, VisibleState vis, List<String> part, String action, String id, BuildContext context, TextEditingController ProfesseurName, TextFieldState statef) {
      final dur = DateTime.now().add(
-        Duration(hours: 2));
+        const Duration(hours: 2));
 
     Activity? act;
     switch (acti.selectedActivity) {
@@ -137,7 +132,6 @@ class AddUpdateFunctions{
 
   static bool IsValidated(GlobalKey<FormState> formKey, TaskVisibleState state) {
     return formKey.currentState!.validate() &&
-                                      state.image != null &&
                                       state.image.isNotEmpty;
   }
 
@@ -157,7 +151,7 @@ class AddUpdateFunctions{
         IsPaid: false,
         price: 0,
         Participants: part,
-        CoverImages: [],
+        CoverImages: const [],
         id: id,
         Director: [ste.memberFormz.value!.id],
         agenda:ActivityAction. combineTextFields(
@@ -194,7 +188,7 @@ class AddUpdateFunctions{
 
   static Activity EventAction(TextEditingController Price, FormzState ste, DateTime dur, TextEditingController LeaderController, TextEditingController namecontroller, TextEditingController descriptionController, TextEditingController LocationController, TextEditingController Points, VisibleState vis, List<String> part, String action, String id,
       BuildContext context,TaskVisibleState taskS) {
-    log("sss"+Price.text);
+    log("sss${Price.text}");
     return Event(
         registrationDeadline: ste
             .registrationTimeInput
@@ -242,7 +236,7 @@ class AddUpdateFunctions{
       context.pop();
     }
     if (ste is LoadingAddDeleteUpdateState) {
-      LoadingWidget();
+      const LoadingWidget();
     }
   }
   static void DeleteAction(BuildContext context, Activity activitys,ActivityState state) {
@@ -273,12 +267,12 @@ class AddUpdateFunctions{
 
 
 
-  static void reset(BuildContext context, TextEditingController _price){
-    _price.text="0";
+  static void reset(BuildContext context, TextEditingController price){
+    price.text="0";
     context.read<FormzBloc>().add(BeginTimeChanged(date: DateTime.now()));
-    context.read<FormzBloc>().add(CategoryChanged(  category:Category.Comity));
-    context.read<FormzBloc>().add(RegistraTimeChanged(date: DateTime.now().add(Duration(days: 1))));
-    context.read<FormzBloc>().add(EndTimeChanged(date: DateTime.now().add(Duration(days: 1))));
+    context.read<FormzBloc>().add(const CategoryChanged(  category:Category.Comity));
+    context.read<FormzBloc>().add(RegistraTimeChanged(date: DateTime.now().add(const Duration(days: 1))));
+    context.read<FormzBloc>().add(EndTimeChanged(date: DateTime.now().add(const Duration(days: 1))));
     context.read<FormzBloc>().add(MemberFormzChanged( memberFormz: Member.memberTest));
     context.read<TextFieldBloc>().add(ChangeTextFieldEvent([TextEditingController(),TextEditingController()]));
     context.read<FormzBloc>().add(ImageInputChanged(  imageInput: XFile("")));
@@ -287,7 +281,7 @@ class AddUpdateFunctions{
   static bool validateTime(DateTime beginTime, DateTime endTime) {
     return beginTime.isBefore(endTime);
   }
-  static void check(String work,String act, BuildContext context, String id, TextEditingController _price,List< String> part,
+  static void check(String work,String act, BuildContext context, String id, TextEditingController price,List< String> part,
       TextEditingController LocationController, TextEditingController Points, TextEditingController namecontroller, TextEditingController descriptionController, TextEditingController LeaderController, TextEditingController Professeur
       ,
 
@@ -299,7 +293,7 @@ class AddUpdateFunctions{
         case "Events":
           CheckFunctionPerAct(id, context,activity.Events, (id) {
             _loadEventModel(id,
-                _price,
+                price,
                 LeaderController,
                 context,
                 namecontroller,
@@ -323,12 +317,12 @@ class AddUpdateFunctions{
 
         default:
           CheckFunctionPerAct(id, context,activity.Trainings, (id) {
-            _loadTrainingModel(id,_price,Professeur,context,namecontroller,descriptionController,LocationController,Points,mounted);
+            _loadTrainingModel(id,price,Professeur,context,namecontroller,descriptionController,LocationController,Points,mounted);
           });
       }
     }
     else{
-      AddUpdateFunctions.reset(context,_price);
+      AddUpdateFunctions.reset(context,price);
 
 
     }
@@ -341,35 +335,35 @@ class AddUpdateFunctions{
 
   }
   static void EventUpdateInfo(Event event,ha,
-      TextEditingController _price, TextEditingController _LeaderController, BuildContext context,TextEditingController _namecontroller,
-      TextEditingController _descriptionController,TextEditingController _LocationController,TextEditingController _Points, List<String> part
+      TextEditingController price, TextEditingController LeaderController, BuildContext context,TextEditingController namecontroller,
+      TextEditingController descriptionController,TextEditingController LocationController,TextEditingController Points, List<String> part
       )async{
-    ActivityBasics(event,context,_LocationController,_Points,_namecontroller,_descriptionController);
-    _price.text=event.price.toString();
-    _LeaderController.text=event.LeaderName;
+    ActivityBasics(event,context,LocationController,Points,namecontroller,descriptionController);
+    price.text=event.price.toString();
+    LeaderController.text=event.LeaderName;
     context.read<FormzBloc>().add(EndTimeChanged(date: event.ActivityEndDate));
     context.read<FormzBloc>().add(RegistraTimeChanged(date: event.registrationDeadline));
     context.read<TaskVisibleBloc>().add(ChangeImageEvent(  ha.path??"assets/images/blankjci.jpeg"));
     context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent(event.IsPaid));
   }
   static void TrainingUpdateInfo(Training train,ha,
-      TextEditingController _price, TextEditingController _ProfesseurName, BuildContext context,TextEditingController _namecontroller,TextEditingController _descriptionController,TextEditingController _LocationController,TextEditingController _Points,
+      TextEditingController price, TextEditingController ProfesseurName, BuildContext context,TextEditingController namecontroller,TextEditingController descriptionController,TextEditingController LocationController,TextEditingController Points,
 
       )async{
-    ActivityBasics(train,context,_LocationController,_Points,_namecontroller,_descriptionController);
-    _price.text=train.price.toString();
+    ActivityBasics(train,context,LocationController,Points,namecontroller,descriptionController);
+    price.text=train.price.toString();
 
-    _ProfesseurName.text=train.ProfesseurName;
+    ProfesseurName.text=train.ProfesseurName;
     context.read<FormzBloc>().add(EndTimeChanged(date: train.ActivityEndDate));
     context.read<TaskVisibleBloc>().add(ChangeImageEvent(  ha.path??"assets/images/blankjci.jpeg"));
 
     context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent(train.IsPaid));
   }
   static void MeetingUpdateInfo(Meeting meeting,BuildContext context,bool mounted,
-      TextEditingController _LocationController, TextEditingController _Points, TextEditingController _namecontroller, TextEditingController _descriptionController,
+      TextEditingController LocationController, TextEditingController Points, TextEditingController namecontroller, TextEditingController descriptionController,
       )async{
 
-    ActivityBasics(meeting,context,_LocationController,_Points,_namecontroller,_descriptionController);
+    ActivityBasics(meeting,context,LocationController,Points,namecontroller,descriptionController);
     List<Member> members=await MemberStore.getCachedMembers();
 
     debugPrint(meeting.agenda.toString());
@@ -379,7 +373,6 @@ class AddUpdateFunctions{
 
     Member? member=members.firstWhere((element) => element.id==meeting.Director);
     if (!mounted) return ;
-    if (member!=null)
     context.read<FormzBloc>().add(MemberFormzChanged( memberFormz: member));
 
 
@@ -387,8 +380,8 @@ class AddUpdateFunctions{
 
   }
   static void  _loadEventModel(String id,
-      TextEditingController _price, TextEditingController _LeaderController, BuildContext context,TextEditingController _namecontroller,TextEditingController _descriptionController,TextEditingController _LocationController,
-      TextEditingController _Points, List<String> part
+      TextEditingController price, TextEditingController LeaderController, BuildContext context,TextEditingController namecontroller,TextEditingController descriptionController,TextEditingController LocationController,
+      TextEditingController Points, List<String> part
       ,bool mounted
 
       ) async {
@@ -401,17 +394,17 @@ class AddUpdateFunctions{
 
     );
 
-    final ha=await ActivityAction.convertBase64ToXFile( event.CoverImages!.isEmpty?"":event.CoverImages[0]!);
+    final ha=await ActivityAction.convertBase64ToXFile( event.CoverImages.isEmpty?"":event.CoverImages[0]!);
     if (!mounted) return ;
-    EventUpdateInfo(event,ha, _price, _LeaderController, context, _namecontroller, _descriptionController, _LocationController, _Points, part);
+    EventUpdateInfo(event,ha, price, LeaderController, context, namecontroller, descriptionController, LocationController, Points, part);
 
 
 
   }
  static  void  _loadTrainingModel(String id,
-     TextEditingController _price, TextEditingController ProfesseurController,
-     BuildContext context,TextEditingController _namecontroller,
-     TextEditingController _descriptionController,TextEditingController _LocationController,TextEditingController _Points
+     TextEditingController price, TextEditingController ProfesseurController,
+     BuildContext context,TextEditingController namecontroller,
+     TextEditingController descriptionController,TextEditingController LocationController,TextEditingController Points
      ,bool mounted
 
 
@@ -424,16 +417,14 @@ class AddUpdateFunctions{
           (event) => event.id == id,
 
     );
-    if (train != null) {
-      final ha=await ActivityAction.convertBase64ToXFile( train.CoverImages!.isEmpty?"":train.CoverImages[0]!);
+    final ha=await ActivityAction.convertBase64ToXFile( train.CoverImages.isEmpty?"":train.CoverImages[0]!);
 if (!mounted) return ;
-      TrainingUpdateInfo(train, ha, _price,ProfesseurController, context, _namecontroller, _descriptionController, _LocationController, _Points);
-    }
-
+    TrainingUpdateInfo(train, ha, price,ProfesseurController, context, namecontroller, descriptionController, LocationController, Points);
+  
 
   }
  static  void  _loadMeetingModel(String id,
-     BuildContext context,bool mounted,TextEditingController _LocationController, TextEditingController _Points, TextEditingController _namecontroller, TextEditingController _descriptionController
+     BuildContext context,bool mounted,TextEditingController LocationController, TextEditingController Points, TextEditingController namecontroller, TextEditingController descriptionController
      ,
 
 
@@ -448,21 +439,19 @@ if (!mounted) return ;
           (meet) => meet.id == id,
 
     );
-    if (meeting != null) {
-      if (!mounted) return ;
-      MeetingUpdateInfo(meeting,context,mounted,_LocationController,_Points,_namecontroller,_descriptionController);
-    }
-
+    if (!mounted) return ;
+    MeetingUpdateInfo(meeting,context,mounted,LocationController,Points,namecontroller,descriptionController);
+  
 
   }
   static void ActivityBasics(Activity act , BuildContext context,
 
-      TextEditingController _LocationController, TextEditingController _Points, TextEditingController _namecontroller, TextEditingController _descriptionController){
+      TextEditingController LocationController, TextEditingController Points, TextEditingController namecontroller, TextEditingController descriptionController){
 
-    _LocationController.text=act.ActivityAdress;
-    _Points.text=act.ActivityPoints.toString();
-    _namecontroller.text=act.name;
-    _descriptionController.text=act.description; context.read<FormzBloc>().add(BeginTimeChanged(date: act.ActivityBeginDate));
+    LocationController.text=act.ActivityAdress;
+    Points.text=act.ActivityPoints.toString();
+    namecontroller.text=act.name;
+    descriptionController.text=act.description; context.read<FormzBloc>().add(BeginTimeChanged(date: act.ActivityBeginDate));
     context.read<FormzBloc>().add(CategoryChanged(  category:ActivityAction.getCategoryFromString(act.categorie)));
 
   }

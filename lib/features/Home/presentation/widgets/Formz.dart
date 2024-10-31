@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 
-import '../bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../bloc/IsVisible/bloc/visible_bloc.dart';
 import 'AddActivityWidgets.dart';
@@ -66,8 +65,8 @@ class _EndDateWidgetState extends State<EndDateWidget> {
                   sheetTitle: widget.SheetTitle,
                   hintTextDate: widget.HintTextDate,
                   hintTextTime: widget.HintTextTime,
-                  date:  state.isVisible ?ste.endTimeInput.value ?? DateTime.now().add(Duration(days: 1)):
-                  ste.beginTimeInput.value==null ?DateTime.now().add(Duration(days: 1)):ste.beginTimeInput.value!.add(Duration(days: 1)),
+                  date:  state.isVisible ?ste.endTimeInput.value ?? DateTime.now().add(const Duration(days: 1)):
+                  ste.beginTimeInput.value==null ?DateTime.now().add(const Duration(days: 1)):ste.beginTimeInput.value!.add(const Duration(days: 1)),
                 
                 
                

@@ -15,7 +15,6 @@ import 'package:jci_app/features/Teams/presentation/widgets/CheckList.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
-import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 
 import '../../../../core/app_theme.dart';
@@ -24,7 +23,6 @@ import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart'
 import '../../../Home/presentation/widgets/MemberSelection.dart';
 
 
-import '../../domain/entities/Task.dart';
 import '../../domain/entities/Team.dart';
 
 import '../../domain/usecases/TaskUseCase.dart';
@@ -38,7 +36,7 @@ class TaskDetailsWidget extends StatefulWidget {
   final int index;
   final Team team;
 
-  TaskDetailsWidget({Key? key, required this.task, required this.index, required this.team})
+  const TaskDetailsWidget({Key? key, required this.task, required this.index, required this.team})
       : super(key: key);
 
   @override
@@ -80,7 +78,7 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
 
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 Container(
 
                   decoration: taskdex,
@@ -88,10 +86,10 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
                     mediaQuery, state, TaskName, context,),
                 ),
 
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
 
                 buildChecklist(mediaQuery, context, checklistFocus),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 Container(
                   decoration: taskdex,
                   child: ListView(
@@ -157,11 +155,11 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
                 if (state.status == TaskStatus.Loading) {
                   return AnimatedContainer(
                       height:
-                      i<3?
+                      i<3.0?
                       i *
                           89:276,
 
-                      duration: Duration(milliseconds: 100),
+                      duration: const Duration(milliseconds: 100),
                       child: CheckListWidget(
                         checkList:
                             state.tasks[widget.index]['CheckLists'],
@@ -172,7 +170,7 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
                     (
 
                       height:i<3? i * 89.6:277,
-                      duration: Duration(milliseconds: 100),
+                      duration: const Duration(milliseconds: 100),
                       child: CheckListWidget(
                         checkList:
                         List<Map<String, dynamic>>.from(
@@ -299,9 +297,9 @@ child: SizedBox(
                 ? IconButton(
                 onPressed: () {
                   context.read<TaskVisibleBloc>().add(
-                      ChangeTextFieldsTitle(TextFieldsTitle.Inactive));
+                      const ChangeTextFieldsTitle(TextFieldsTitle.Inactive));
                 },
-                icon: Icon(Icons.cancel, color: PrimaryColor, size: 20,))
+                icon: const Icon(Icons.cancel, color: PrimaryColor, size: 20,))
                 :
             BackButton(
               onPressed: () {
@@ -318,7 +316,7 @@ child: SizedBox(
 
                   if (await FunctionMember.isAssignedOrLoyal(widget.team, widget.task["AssignTo"])){
               context.read<TaskVisibleBloc>().add(
-                  ChangeTextFieldsTitle(TextFieldsTitle.Active));
+                  const ChangeTextFieldsTitle(TextFieldsTitle.Active));
               FocusScope.of(context).requestFocus(taskNameFocusNode);}
             },
                 "TaskName here",
@@ -329,8 +327,8 @@ child: SizedBox(
                   context.read<GetTaskBloc>().add(UpdateTaskName(
                       input));
                   context.read<TaskVisibleBloc>().add(
-                      ChangeTextFieldsTitle(TextFieldsTitle.Inactive));
-                  context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+                      const ChangeTextFieldsTitle(TextFieldsTitle.Inactive));
+                  context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
 
                     }
 
@@ -351,7 +349,7 @@ child: SizedBox(
           children: [
             Padding(
               padding: paddingSemetricHorizontal(h: 5),
-              child: Icon(Icons.access_time_rounded,),
+              child: const Icon(Icons.access_time_rounded,),
             ),
             BlocBuilder<localeCubit, LocaleState>(
   builder: (context, state) {
@@ -360,7 +358,7 @@ child: SizedBox(
 
               children: [
                 Text(date, style: PoppinsRegular(15, ThirdColor),),
-                Text("${DateFormat("MMM,dd,yyyy",state.locale==Locale("en")?"en":'fr').format(time)}",
+                Text(DateFormat("MMM,dd,yyyy",state.locale==const Locale("en")?"en":'fr').format(time),
                   style: PoppinsRegular(
                       mediaQuery.devicePixelRatio * 4, textColorBlack),),
               ],
@@ -393,7 +391,7 @@ child: SizedBox(
                 Row(
                   children: [
                     state.tasks[widget.index]['AssignTo'].isEmpty ||
-                        state.tasks[widget.index]['AssignTo']== null ? SizedBox() :
+                        state.tasks[widget.index]['AssignTo']== null ? const SizedBox() :
 
                     GestureDetector(
                       onTap: (){
@@ -447,7 +445,7 @@ child: SizedBox(
                           UpdateMember(
 
                             input));
-                      context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+                      context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
   }
 
   void AddAssignTo(GetTaskState state, Member member, BuildContext context) {
@@ -456,7 +454,7 @@ child: SizedBox(
     //add member
                       context.read<GetTaskBloc>().add(UpdateMember(
                           input));
-                      context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+                      context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
   }
 
   Widget buildAttachedfile(BuildContext context, MediaQueryData mediaQuery,Team  team,Map<String, dynamic> task) {
@@ -477,7 +475,7 @@ child: SizedBox(
                     padding: paddingSemetricHorizontal(),
                     child: buildAddButton(() async{
                       FileStorage.pickFile(mounted, context, widget.task['id']);
-                      context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+                      context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
 
                     }
                     ),
@@ -491,7 +489,7 @@ child: SizedBox(
               children: [
                 state.tasks[widget.index]['attachedFile'] .isEmpty ||
                     state.tasks[widget.index]['attachedFile']  == null
-                    ? SizedBox() :
+                    ? const SizedBox() :
 
                 AttachedFileWidget (  fileList: state.tasks[widget.index]['attachedFile'] as List<Map<String,dynamic>>, idTask: state.tasks[widget.index]['id'] as String,),
 
@@ -507,7 +505,7 @@ child: SizedBox(
 
   Row TaskDetailHeader(BuildContext context, int index, String text,
       bool isEnable, Map<String, dynamic> task, MediaQueryData mediaQuery) {
-    return Row(
+    return const Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Row(

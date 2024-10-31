@@ -14,7 +14,6 @@ import '../../../changelanguages/presentation/bloc/locale_cubit.dart';
 import '../../domain/entities/Activity.dart';
 import '../bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import '../bloc/calendar/calendar_cubit.dart';
-import 'Compoenents.dart';
 
 class CalendarPage extends StatefulWidget {
   final List<Activity> activities;
@@ -48,7 +47,7 @@ class _CalendarPageState extends State<CalendarPage> {
               children: [
 
                 calendar(state),
-                SizedBox(height: 20,),
+                const SizedBox(height: 20,),
                 EvnetBuilder(state)],
 
             ),
@@ -74,20 +73,13 @@ class _CalendarPageState extends State<CalendarPage> {
                         child: Container(
                      decoration: BoxDecoration(
                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: textColorBlack),
-                     gradient: LinearGradient(
+                        border: Border.all(color: textColorBlack, width: 2),
+                     gradient: const LinearGradient(
                      begin: Alignment.topLeft,
                      end: Alignment.bottomRight,
                      stops: [0.1, 0.9],
-                     colors: [PrimaryColor, textColorWhite]),
-                     boxShadow: [
-                       BoxShadow(
-                         color: textColorBlack.withOpacity(0.5),
-                         spreadRadius: 5,
-                         blurRadius: 7,
-                         offset: Offset(0, 3), // changes position of shadow
-                       ),
-                     ],
+                     colors: [PrimaryColor, PrimaryColor]),
+
 
                      ),
                           child: listTileCalendar(context, value, index, state,ste),
@@ -105,9 +97,9 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   ListTile listTileCalendar(BuildContext context, List<Activity> value, int index, ActivityState state,LocaleState lste) {
-    String formattedDate = DateFormat('dd MMM yyyy', lste.locale == Locale("en") ? "en_US" : "fr_FR").format(value[index].ActivityBeginDate);
+    String formattedDate = DateFormat('dd MMM yyyy', lste.locale == const Locale("en") ? "en_US" : "fr_FR").format(value[index].ActivityBeginDate);
     String formattedTime = DateFormat('HH:mm').format(value[index].ActivityBeginDate);
-    String formattedDateTime = lste.locale == Locale("en") ? "$formattedDate At $formattedTime" : "$formattedDate A $formattedTime";
+    String formattedDateTime = lste.locale == const Locale("en") ? "$formattedDate At $formattedTime" : "$formattedDate A $formattedTime";
 
     return ListTile(
                           onTap: (){
@@ -116,53 +108,65 @@ class _CalendarPageState extends State<CalendarPage> {
                                     .selectedActivity.name}/$index');
                           },
 
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),side: BorderSide(color: textColorBlack)),
-                        trailing: Icon(Icons.arrow_forward_ios_rounded,color: PrimaryColor,),
-      leading:ProfileComponents.buildFutureBuilder(    ReminderButton(context, value, index), true, "", (p0) => FunctionMember.isAdminAndSuperAdmin())   ,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),side: const BorderSide(color: textColorBlack)),
+                        trailing: const Icon(Icons.arrow_forward_ios_rounded,color: textColorWhite,),
+
 
                           title: SizedBox(
                             width: MediaQuery.of(context).size.width/1.5,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            child: Row(
+
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(value[index].name,  overflow: TextOverflow.ellipsis,   style: PoppinsSemiBold(16, textColorWhite,TextDecoration.none),),
-                                ),
-                                Row(
+                                ProfileComponents.buildFutureBuilder(    ReminderButton(context, value, index), true, "", (p0) => FunctionMember.isAdminAndSuperAdmin()),
+
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Padding(
-                                      padding: paddingSemetricHorizontal(),
-                                      child: Icon(Icons.location_on,color: textColorWhite,),
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(value[index].name,  overflow: TextOverflow.ellipsis,   style: PoppinsSemiBold(16, textColorWhite,TextDecoration.none),),
                                     ),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: paddingSemetricHorizontal(),
+                                          child: const Icon(Icons.location_on,color: textColorWhite,),
+                                        ),
 
-                                    SizedBox(
-                                        width: MediaQuery.of(context).size.width/2.5,
-                                        child: Text(value[index].ActivityAdress,overflow: TextOverflow.ellipsis,style: PoppinsRegular(16, textColorWhite,),)),
+                                        SizedBox(
+                                            width: MediaQuery.of(context).size.width/2.5,
+                                            child: Text(value[index].ActivityAdress,overflow: TextOverflow.ellipsis,style: PoppinsRegular(16, textColorWhite,),)),
+
+
+                                      ],
+
+                                    ),
+                                    Padding(
+                                      padding: paddingSemetricVertical(),
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding: paddingSemetricHorizontal(),
+                                            child:const  Icon(Icons.calendar_today_rounded,color: textColorWhite,),
+                                          ),
+                                          Text(formattedDateTime,style: PoppinsRegular(14, textColorWhite),),
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ],
                             ),
                           ),
-                          subtitle: Padding(
-                            padding: paddingSemetricVertical(),
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: paddingSemetricHorizontal(),
-                                  child: Icon(Icons.calendar_today_rounded,color: textColorWhite,),
-                                ),
-                                    Text(formattedDateTime,style: PoppinsRegular(14, textColorWhite),),
-                              ],
-                            ),
-                          ),
+
                         );
   }
 
   IconButton ReminderButton(BuildContext context, List<Activity> value, int index) {
     return IconButton(icon:
-      Icon(Icons.alarm_on_outlined,color: textColorWhite,), onPressed: () {
+      const Icon(Icons.alarm_on_outlined,color: textColorWhite,), onPressed: () {
       context.read<ParticpantsBloc>().add(SendReminderEvent(activityId: value[index].id));
 
     }
@@ -192,14 +196,14 @@ class _CalendarPageState extends State<CalendarPage> {
                           todayTextStyle: PoppinsRegular(16, textColorBlack),
                           selectedTextStyle: PoppinsRegular(16, textColorBlack),
                       markersAlignment: Alignment.topCenter,
-                          selectedDecoration: BoxDecoration(
+                          selectedDecoration: const BoxDecoration(
 
                               border: Border(
 
                                 top: BorderSide(color: SecondaryColor,width: 2),
                               )
                           ),
-                          todayDecoration: BoxDecoration(
+                          todayDecoration: const BoxDecoration(
 
                            border: Border(
 
@@ -208,7 +212,7 @@ class _CalendarPageState extends State<CalendarPage> {
                           ),
                           defaultTextStyle: PoppinsRegular(16, textColorBlack),
                           outsideTextStyle: PoppinsRegular(16, textColorBlack),
-                          outsideDecoration: BoxDecoration(
+                          outsideDecoration: const BoxDecoration(
                             color: Colors.transparent,
                             shape: BoxShape.circle,
                           ),
@@ -216,16 +220,16 @@ class _CalendarPageState extends State<CalendarPage> {
                           outsideDaysVisible: true,
                          ),
                         eventLoader: (day) => _getEventsForDay(day),
-                        locale: state.locale==Locale("en")?"en_Us":"fr_FR",
+                        locale: state.locale==const Locale("en")?"en_Us":"fr_FR",
                         rowHeight: 40,
                         headerStyle: HeaderStyle(
                           titleTextStyle: PoppinsSemiBold(20, textColorBlack, TextDecoration.none),
                           formatButtonVisible: false,
-                          leftChevronIcon: Icon(Icons.arrow_back_ios_rounded,color: textColorBlack,),
-                          rightChevronIcon: Icon(Icons.arrow_forward_ios_rounded,color: textColorBlack,),
+                          leftChevronIcon: const Icon(Icons.arrow_back_ios_rounded,color: textColorBlack,),
+                          rightChevronIcon: const Icon(Icons.arrow_forward_ios_rounded,color: textColorBlack,),
                           titleCentered: true,
-                          headerPadding: EdgeInsets.all(0),
-                          headerMargin: EdgeInsets.all(0),
+                          headerPadding: const EdgeInsets.all(0),
+                          headerMargin: const EdgeInsets.all(0),
 
 
                         ),
@@ -245,7 +249,7 @@ class _CalendarPageState extends State<CalendarPage> {
                         }
                         ,
                         availableGestures: AvailableGestures.all,
-                        focusedDay: se.selectedDate!, firstDay: DateTime(2024,1,1), lastDay: DateTime.now().add(Duration(days: 356)),),
+                        focusedDay: se.selectedDate!, firstDay: DateTime(2024,1,1), lastDay: DateTime.now().add(const Duration(days: 356)),),
                     ),
                   );
                 },

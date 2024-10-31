@@ -198,10 +198,10 @@ void _reset_form(
     );
   }
 
-  SignUpState _eitherRegisterGoogle(Either<Failure, Unit> failureOrDoneMessage, String signup_success_mess) {
+  SignUpState _eitherRegisterGoogle(Either<Failure, Unit> failureOrDoneMessage, String signupSuccessMess) {
     return failureOrDoneMessage.fold(
           (l) => state.copyWith(message: mapFailureToMessage(l),signUpStatus: SignUpStatus.ErrorSignUp),
-          (r) => state.copyWith(message: signup_success_mess,signUpStatus: SignUpStatus.RegisterGoogle),
+          (r) => state.copyWith(message: signupSuccessMess,signUpStatus: SignUpStatus.RegisterGoogle),
     );
   }
 }

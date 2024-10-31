@@ -16,7 +16,6 @@ import '../../../../../../../core/error/Failure.dart';
 
 import '../../../../../data/model/ActivityParticpantsModel.dart';
 
-import '../../../../../data/model/GuestModel.dart';
 import '../../../../../domain/entities/Guest.dart';
 import '../../../../../domain/usercases/ActivityUseCases.dart';
 import '../../../../../domain/usercases/MeetingsUseCase.dart';
@@ -55,7 +54,7 @@ final ChangeGuestToMemberUseCases changeGuestToMemberUseCases;
 
 
   })
-      : super(ParticpantsInitial( isParticipantAdded: [])) {
+      : super(const ParticpantsInitial( isParticipantAdded: [])) {
     on<ParticpantsEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -169,7 +168,6 @@ void init(initstateList event, Emitter<ParticpantsState> emit) {
 
 
    emit(  state.copyWith(isParticipantAdded: event.act,status: ParticpantsStatus.changed));
-   ;
 
 
 }

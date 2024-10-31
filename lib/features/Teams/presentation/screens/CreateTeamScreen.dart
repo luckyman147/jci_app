@@ -11,10 +11,8 @@ import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/CreateTeamWIdgets.dart';
-import 'package:jci_app/features/Teams/presentation/widgets/EventSelection.dart';
 
 import '../../../../core/app_theme.dart';
-import '../../../../core/util/snackbar_message.dart';
 import '../../../Home/domain/entities/Event.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../../../Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
@@ -43,9 +41,9 @@ if (!widget.team .isEmpty) {
     }
 
 else{
-  context.read<TaskVisibleBloc>().add(ChangeImageEvent("assets/images/jci.png",));
-  context.read<MembersBloc>().add(GetAllMembersEvent(false));
-  context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: activity.Events));
+  context.read<TaskVisibleBloc>().add(const ChangeImageEvent("assets/images/jci.png",));
+  context.read<MembersBloc>().add(const GetAllMembersEvent(false));
+  context.read<AcivityFBloc>().add(const GetAllActivitiesEvent(act: activity.Events));
   context.read<FormzBloc>().add(EventChanged( eventChanged: Event.EventTest));
 
 

@@ -6,7 +6,7 @@ abstract class IndexState extends Equatable {
 
 class IndexInitial extends IndexState {
   final int index;
-  IndexInitial(this.index);
+  const IndexInitial(this.index);
   @override
   List<Object> get props => [index];
 }
@@ -20,13 +20,13 @@ class IndexLoaded extends IndexState {
 }
 class ResetState extends IndexState {
   final int index;
-  ResetState(this.index);
+  const ResetState(this.index);
   @override
   List<Object> get props => [index];
 }
 class IndexError extends IndexState {
   final String error;
-  IndexError(this.error);
+  const IndexError(this.error);
   @override
   List<Object> get props => [error];
 }

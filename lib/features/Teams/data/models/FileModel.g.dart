@@ -8,9 +8,9 @@ part of 'FileModel.dart';
 
 FileModel _$FileModelFromJson(Map<String, dynamic> json) => FileModel(
       url: json['url'] as String,
-      id: json['id'] ?? json['_id'],
       path: json['path'] as String,
       extension: json['extension'] as String,
+      id: json['id'] as String,
     );
 
 Map<String, dynamic> _$FileModelToJson(FileModel instance) => <String, dynamic>{

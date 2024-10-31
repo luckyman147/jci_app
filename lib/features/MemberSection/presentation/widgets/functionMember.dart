@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
@@ -61,15 +60,16 @@ static Future<List<Member>> getMembers(){
           teams: member.teams,
           Activities: member.Activities,
           points: member.points,
+          PreviousPoints: member.PreviousPoints,
           IsSelected: member.IsSelected,
           role: 'New Member                                                                 ',
           is_validated: member.is_validated,
-          password: 'password', objectifs: [], language: member.language, rank: 0, description:description.text, board: member.board ,
+          password: 'password', objectifs: const [], language: member.language, rank: 0, description:description.text, board: member.board ,
         );
         context.read<MembersBloc>().add(
             UpdateMemberProfileEvent(memberUpdate));
         formKey.currentState!.reset();
-        context.read<MembersBloc>().add(GetUserProfileEvent(true));
+        context.read<MembersBloc>().add(const GetUserProfileEvent(true));
 
 
       }
@@ -104,7 +104,7 @@ static Future<bool> isReAdmin(Member other)async {
   static bool isChef(Team team, int index) => Member.toMember(team.Members[index]).id!= Member.toMember(team.TeamLeader[0]).id;
 static Future<bool> isChefAndSuperAdmin(Team team,)async {
   final member = await MemberStore.getModel();
-  return Member.toMember(team.TeamLeader[0]).id==member!.id || member!.role=='superadmin'|| member.role=='admin';
+  return Member.toMember(team.TeamLeader[0]).id==member!.id || member.role=='superadmin'|| member.role=='admin';
 }
  static  bool checkIfIdExists(List<Member> list, String idToCheck) {
   if (list.isEmpty) {
@@ -128,7 +128,7 @@ static Future<bool> isAssignedOrLoyal(Team team, List<dynamic> assignT)async {
 
   static Future<bool> IsNotExistedAndPublic(Team team) async {
     final  member=await MemberStore.getModel();
-    final result=!checkIfIdExists(team.Members.map((e) => Member.toMember(e)).toList(), member!.id);log('message'+result.toString());
+    final result=!checkIfIdExists(team.Members.map((e) => Member.toMember(e)).toList(), member!.id);log('message$result');
 
     return TeamFunction.IsPublic(team) &&result ;
   }
@@ -140,6 +140,10 @@ static Future<bool> isAssignedOrLoyal(Team team, List<dynamic> assignT)async {
 static Future<bool> isMember(Member merber)async {
 
   return merber.role=='member';
+}static Future<bool> isAdmin()async {
+    final member =await MemberStore.getModel();
+
+  return member!.role=='admin';
 }
   static void Showinfo(BuildContext context, Member member) {
     showModalBottomSheet(
@@ -154,8 +158,8 @@ static Future<bool> isMember(Member merber)async {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             member.phone.isNotEmpty?
-          ProfileComponents.  BuildInfoRow( Icons.phone, member.phone):SizedBox(),
-            SizedBox(height: 10,),
+          ProfileComponents.  BuildInfoRow( Icons.phone, member.phone):const SizedBox(),
+            const SizedBox(height: 10,),
         ProfileComponents.    BuildInfoRow( Icons.email, member.email),
 
           ],),

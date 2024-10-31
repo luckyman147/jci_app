@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
@@ -9,7 +7,6 @@ import 'package:jci_app/features/Home/domain/entities/ActivityGuest.dart';
 import 'package:jci_app/features/Home/domain/entities/Guest.dart';
 import 'package:jci_app/features/Home/domain/usercases/ActivityUseCases.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
-import 'package:jci_app/features/Home/presentation/widgets/AddActivityWidgets.dart';
 
 import '../../../../core/strings/app_strings.dart';
 import '../bloc/Activity/activity_cubit.dart';
@@ -23,7 +20,7 @@ class GuestWidget extends StatelessWidget {
   final int index  ;
 
 
-   GuestWidget({ required this.guests, required this.activityId, required this.index}) ;
+   GuestWidget({super.key,  required this.guests, required this.activityId, required this.index}) ;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>(debugLabel: 'guestFormKey0');  PageController pageController = PageController();
   TextEditingController controller = TextEditingController();
   TextEditingController controller2 = TextEditingController();
@@ -55,7 +52,7 @@ class GuestWidget extends StatelessWidget {
         ),
         Container(
           height: MediaQuery.of(context).size.height / 3.2,
-          margin: EdgeInsets.all(8),
+          margin: const EdgeInsets.all(8),
           decoration:BoxDecoration(
             border: Border.all(color: textColor),
 
@@ -67,7 +64,7 @@ class GuestWidget extends StatelessWidget {
 
 
         scrollDirection: Axis.horizontal,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
 
             itemCount: 3,
             onPageChanged: (int page) {
@@ -75,9 +72,9 @@ class GuestWidget extends StatelessWidget {
 
             },
             itemBuilder: (BuildContext context, int index) {
-              if (state.index == 0)
-              return buildguests(context);
-              else  if (state.index == 1){
+              if (state.index == 0) {
+                return buildguests(context);
+              } else  if (state.index == 1){
                 return buildAddGuest(context, controller, controller2, controller3);
               }
               return ShowAllGuests(activityId);
@@ -104,13 +101,13 @@ Widget buildAddGuest(BuildContext context, TextEditingController controller, Tex
                 IconButton.outlined(onPressed: (){
                   context.read<ActivityCubit>().selectIndex(0);
 
-                }, icon: Icon(Icons.arrow_back)),
+                }, icon: const Icon(Icons.arrow_back)),
                 Text("${"Add".tr(context)} ${"Visitor".tr(context)}",textAlign: TextAlign.center, style: PoppinsRegular(16, textColorBlack, )),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(onPressed: (){
-                      context.read<ParticpantsBloc>().add(GetAllGuestsEvent(isUpdated: true));
+                      context.read<ParticpantsBloc>().add(const GetAllGuestsEvent(isUpdated: true));
 
                       context.read<ActivityCubit>().selectIndex(2);
 
@@ -149,7 +146,7 @@ Padding biuildguiestfiels(TextEditingController controller, String HintText, Tex
 
               controller: controller,
               decoration: InputDecoration(
-                labelText: '$labetext',
+                labelText: labetext,
                 border: border(PrimaryColor),
                 hintText: HintText,
                 hintStyle: PoppinsRegular(15, textColor, ),
@@ -165,7 +162,7 @@ Padding biuildguiestfiels(TextEditingController controller, String HintText, Tex
     return Column(
               children: [
                 SingleChildScrollView(
-                  key: PageStorageKey("guests"),
+                  key: const PageStorageKey("guests"),
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
@@ -175,7 +172,7 @@ Padding biuildguiestfiels(TextEditingController controller, String HintText, Tex
                       IconButton.outlined(onPressed: (){
                         context.read<ActivityCubit>().selectIndex(1);
                   
-                      }, icon: Icon(Icons.arrow_forward)),
+                      }, icon: const Icon(Icons.arrow_forward)),
                     ],
                   ),
                 ),
@@ -186,20 +183,20 @@ Padding biuildguiestfiels(TextEditingController controller, String HintText, Tex
                     itemCount: guests.length,
                     itemBuilder: (context, index) {
                       return _buildGuestCard(context, guests[index]);
-                    }, separatorBuilder: (BuildContext context, int index) { return SizedBox(height: 10,); },
+                    }, separatorBuilder: (BuildContext context, int index) { return const SizedBox(height: 10,); },
                   ),
                 ):Center(
                   child: IconButton.outlined(
                       style:ButtonStyle(
 
 
-    shape: MaterialStateProperty.all(CircleBorder()),
+    shape: WidgetStateProperty.all(const CircleBorder()),
     )
 ,
     onPressed: (){
                     context.read<ActivityCubit>().selectIndex(1);
                   },
-                      icon: Icon(Icons.add,size: 40,)),
+                      icon: const Icon(Icons.add,size: 40,)),
                 )
               ],
             );
@@ -212,7 +209,7 @@ Padding biuildguiestfiels(TextEditingController controller, String HintText, Tex
 ActivityAction.        DeleteGestFunction(context, guest.guest,activityId);
       },
       child: Container(
-        margin: EdgeInsets.all(8),
+        margin: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: guest.status=="present" ? Colors.green : textColorWhite,
           borderRadius: BorderRadius.circular(15),
@@ -222,14 +219,14 @@ ActivityAction.        DeleteGestFunction(context, guest.guest,activityId);
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 5,
               blurRadius: 7,
-              offset: Offset(0, 3), // changes position of shadow
+              offset: const Offset(0, 3), // changes position of shadow
             ),
           ],
 
         ),
 
         child: Padding(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           child: Row(
 
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -240,7 +237,7 @@ ActivityAction.        DeleteGestFunction(context, guest.guest,activityId);
                 mainAxisAlignment: MainAxisAlignment.end,
                               children: [
 
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   IconButton(
                     icon: Icon(
                       guest.status!="present" ? Icons.check_circle : Icons.cancel,
@@ -248,10 +245,11 @@ ActivityAction.        DeleteGestFunction(context, guest.guest,activityId);
 
                     ),
                     onPressed: () {
-                      if (guest.status!="present")
-                ActivityAction.      ConfirmPreence(guest.guest, context,activityId,"present");
-                      else
+                      if (guest.status!="present") {
+                        ActivityAction.      ConfirmPreence(guest.guest, context,activityId,"present");
+                      } else {
                         ActivityAction.      ConfirmPreence(guest.guest, context,activityId,"absent");
+                      }
 
                     },
                   ), IconButton(
@@ -276,7 +274,7 @@ static   Row GuestInfo(BuildContext context, Guest guest,bool act) {
           children: [
             ClipRRect(
             borderRadius: BorderRadius.circular(100),
-            child: Container(
+            child: SizedBox(
                 height: 30,
                 width: 30,
                 child:Image.asset(vip,color:act?textColorWhite:textColorBlack ,)
@@ -321,7 +319,7 @@ static Widget GuestALL(BuildContext context,List<Guest> guests,String activityId
             itemCount: guests.length,
             itemBuilder: (context, index) {
               return _BuiltAllGuestCard(context, guests[index],activityId);
-            }, separatorBuilder: (BuildContext context, int index) { return SizedBox(height: 10,); },
+            }, separatorBuilder: (BuildContext context, int index) { return const SizedBox(height: 10,); },
           ),
         ):Center(
           child: IconButton.outlined(
@@ -333,7 +331,7 @@ static Widget GuestALL(BuildContext context,List<Guest> guests,String activityId
 
        context.read<ActivityCubit>().selectIndex(1);
 
-     }, icon: Icon(Icons.add),),
+     }, icon: const Icon(Icons.add),),
         )
       ],
     );
@@ -371,7 +369,7 @@ static Widget GuestALL(BuildContext context,List<Guest> guests,String activityId
        ));
       },
       child: Container(
-        margin: EdgeInsets.all(8),
+        margin: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: status==null? textColorWhite : status=="present" || status=='pending'? Colors.green:Colors.red,
           borderRadius: BorderRadius.circular(15),
@@ -381,14 +379,14 @@ static Widget GuestALL(BuildContext context,List<Guest> guests,String activityId
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 5,
               blurRadius: 7,
-              offset: Offset(0, 3), // changes position of shadow
+              offset: const Offset(0, 3), // changes position of shadow
             ),
           ],
 
         ),
 
         child: Padding(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           child: Row(
 
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -399,10 +397,10 @@ static Widget GuestALL(BuildContext context,List<Guest> guests,String activityId
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
 
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   status==null?
                   IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.add,
                       color:  textColorBlack,
 
@@ -416,7 +414,7 @@ static Widget GuestALL(BuildContext context,List<Guest> guests,String activityId
                       context.read<ActivityCubit>().selectIndex(2);
 
                     }
-                  ):SizedBox(), IconButton(
+                  ):const SizedBox(), IconButton(
                     onPressed: () {
                       ActivityAction.showGuestDetails(context, guest);
                     },

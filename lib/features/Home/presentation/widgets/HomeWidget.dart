@@ -1,8 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:jci_app/core/config/services/MemberStore.dart';
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
@@ -14,12 +12,10 @@ import '../../../../core/app_theme.dart';
 import '../../../MemberSection/presentation/widgets/MemberImpl.dart';
 import '../../../Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import '../../../auth/data/models/Member/AuthModel.dart';
 import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
 
 
 import '../bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
-import 'ActivityImplWidgets.dart';
 import 'Compoenents.dart';
 
 import 'HomeComp.dart';
@@ -39,12 +35,12 @@ class _HomeWidgetState extends State<HomeWidget> {
     context.read<AcivityFBloc>().add(
         GetActivitiesOfMonthEvent(act: widget.Activity));
     context.read<MembersBloc>().add(
-        GetMemberByHighestRAnkEvent(isUpdated: true));
+        const GetMemberByHighestRAnkEvent(isUpdated: true));
     context.read<AddDeleteUpdateBloc>().add(
         CheckPermissions(act: widget.Activity));
 
-    context.read<GetTeamsBloc>().add(GetTeams(isPrivate: true));
-    context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Private));
+    context.read<GetTeamsBloc>().add(const GetTeams(isPrivate: true));
+    context.read<TaskVisibleBloc>().add(const changePrivacyEvent(Privacy.Private));
 
     super.initState();
   }
@@ -71,7 +67,7 @@ class _HomeWidgetState extends State<HomeWidget> {
           actions: [
             Padding(
               padding: paddingSemetricHorizontal(),
-              child: CalendarButton(
+              child: const CalendarButton(
                 color: textColorWhite, IconColor: textColorBlack,),
             ),
             BlocBuilder<PermissionsBloc, PermissionsState>(
@@ -79,9 +75,10 @@ class _HomeWidgetState extends State<HomeWidget> {
                 if (state.status == PermStatus.NewMember) {
                   return IconButton(
                     onPressed: () {
-                      context.read<AuthBloc>().add(SignoutEvent());
+                      context.read<AuthBloc>().add(const SignoutEvent());
+                      context.go('/login');
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.logout,
                       color: Colors.red,
                     ),
@@ -120,7 +117,7 @@ class _HomeWidgetState extends State<HomeWidget> {
 
                               Padding(
                                 padding: paddingSemetricVertical(),
-                                child: MyActivityButtons(),
+                                child: const MyActivityButtons(),
                               ),
                               Padding(
                                 padding: paddingSemetricHorizontal(h: 10),
@@ -130,10 +127,19 @@ class _HomeWidgetState extends State<HomeWidget> {
                               ),
 
 
-                              Padding(
-                                padding: paddingSemetricHorizontal(h: 16),
-                                child: HomeComponents.TeamsWidget(
-                                    mediaQuery, context),
+                              BlocBuilder<PermissionsBloc, PermissionsState>(
+                                builder: (context, state) {
+                                  return Padding(
+                                    padding: paddingSemetricHorizontal(h: 16),
+                                    child:
+                                    state.status == PermStatus.NewMember
+                                        ? Container()
+                                        :
+
+                                    HomeComponents.TeamsWidget(
+                                        mediaQuery, context),
+                                  );
+                                },
                               ),
                               MemberImpl.MemberWithHighestRanks(mediaQuery)
                             ],

@@ -17,10 +17,8 @@ import 'package:jci_app/features/auth/presentation/widgets/Text.dart';
 import '../../../../core/widgets/backbutton.dart';
 
 
-import '../../domain/entities/Member.dart';
-import '../bloc/auth/auth_bloc.dart';
-import '../pages/pinPage.dart';
-import 'inputs.dart';
+import 'Inputs/inputs.dart';
+
 
 
 class SignUpForm extends StatefulWidget {
@@ -116,7 +114,14 @@ void _resetform(){
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     header("Email".tr(context),mediaquery),
-                    UsernameInput(controller: _emailController,),
+                   BlocBuilder<SignUpBloc, SignUpState >(
+  builder: (context, state) {
+    return EmailInput(controller: _emailController, onTap: (String ) { 
+                      context.read<SignUpBloc>().add(SignUpEmailnameChanged(String));
+                    }, inputkey: 'signEmail', errorText: state.email.displayError != null ? "Invalid Email" : null,
+                   );
+  },
+),
                   ],
                 ),
               ),
@@ -126,7 +131,17 @@ void _resetform(){
                 child: Column(
                   children: [
                     header("Password".tr(context),mediaquery),
-                    PasswordInput(controller: _passwordController,),
+                    PasswordInput(controller: _passwordController, onTap: (String ) {  
+                      context.read<SignUpBloc>().add(SignUpPasswordChanged(String));
+                    }, inputkey: 'signPassword', validator: (String ) {
+                      if(String.isEmpty) {
+                        return 'Empty';
+                      }
+                      if(String.length < 6) {
+                        return 'Too Short';
+                      }
+                      return null;
+                    },),
 
                   ],
                 ),

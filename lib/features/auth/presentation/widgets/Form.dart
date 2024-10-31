@@ -1,22 +1,20 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:formz/formz.dart';
-import 'package:go_router/go_router.dart';
-import 'package:jci_app/core/app_theme.dart';
-import 'package:jci_app/core/config/locale/app__localizations.dart';
 
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
-import 'package:jci_app/features/auth/presentation/widgets/SubmitFunctions.dart';
 
-import 'package:jci_app/features/auth/presentation/widgets/Text.dart';
+
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:jci_app/features/Home/presentation/widgets/Compoenents.dart';
+import 'package:jci_app/features/Teams/presentation/widgets/MembersTeamSelection.dart';
+import 'package:jci_app/features/auth/presentation/bloc/bool/INPUTS/inputs_cubit.dart';
 import 'package:jci_app/features/auth/presentation/widgets/button_auth.dart';
-import 'package:jci_app/features/auth/presentation/widgets/formText.dart';
 
-import '../../../../core/strings/app_strings.dart';
-import '../../../../core/util/snackbar_message.dart';
+
 import '../../../../core/widgets/backbutton.dart';
+import '../../AuthWidget..global.dart';
 import '../bloc/login/login_bloc.dart';
+import 'Buttons/ButtonsComponents.dart';
+import 'Buttons/SubmitButton.dart';
+import 'Inputs/formText.dart';
+import 'Inputs/inputs.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -44,176 +42,174 @@ final mediaquery = MediaQuery.of(context);
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, state) {
 
-   return  Form(
-     key: _key,
-     child: Column(
-           mainAxisAlignment: MainAxisAlignment.start,
-
-          children: [
-            Backbutton(mediaquery, context, "/Intro"),
-            TextWidget(text: "Sign In".tr(context), size: 43),
+   return  Column(
 
 
-            Padding(
-              padding: paddingSemetricHorizontal(h: 25),
-              child: Column(
+
+     children: [
+       Backbutton(mediaquery, context, "/Intro"),
+       BlocBuilder<InputsCubit, InputsState>(
+  builder: (context, sta) {
+    return Form(
+         key: _key,
+         child: Padding(
+           padding:EdgeInsets.only(top: mediaquery.padding.top*2),
+
+           child: Center(
+             child: Column(
+               mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Align(
-                      alignment:    Alignment.topLeft,
-                      child: Label(text: "Email", size: mediaquery.size.width/22.5)),
-                  _UsernameInput(controller: _emailController,),
-                ],
-              ),
-            ),
-            const Padding(padding: EdgeInsets.all(12)),
-            Padding(
-              padding: paddingSemetricHorizontal(h: 25),
-              child: Column(
-                children: [
-                  Align(
-                      alignment:    Alignment.topLeft,
-                      child: Label(text: "Password".tr(context), size: mediaquery.size.width/22.5)),
-                  _PasswordInput(controller: _passwordController,),
-                  Padding(
-                    padding: paddingSemetricAll(),
-                    child: Align(
-                    alignment:  Alignment.centerRight,
-                        child: InkWell(
-                          splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            onTap: (){
-                              context.go('/forget');
-                            },
-                            child: LinkedText(text: "Forgot Password?".tr(context), size:  mediaquery.size.width/27.5))),
-                  ),
-                ],
-              ),
-            ),
 
-            Padding(
-              padding: paddingSemetricVerticalHorizontal(v: 18,h: 25),
-              child: _LoginButton( _key,),
-            ),
-          divider(mediaquery),
-            Padding(
-              padding: paddingSemetricVerticalHorizontal(v: 18,h: 25),
-              child: Column(
 
-                children: [
-                  authButton(onPressed: (){
+                  children: [
 
-                    context.read<LoginBloc>().add(SignInWithGoogleEvent());
+                    TextWidget(text: "Sign In".tr(context), size: 33),
+                    GoogleButton(state: state,),
+                   const LoginWithEmailButton(),
+                    const LoginWithPhoneButton(),
+                    BlocBuilder<LoginBloc, LoginState>(
+               builder: (context, state) {
+                 return EmailWithText(mediaquery: mediaquery, emailController: _emailController, state: state, inputState: sta,);
+               },
+             ),
+                    const Padding(padding: EdgeInsets.all(12)),
+                    BlocBuilder<LoginBloc, LoginState>(
+               builder: (context, state) {
+                 return PassWordWithText(mediaquery: mediaquery, passwordController: _passwordController, state: state, inputState: sta,);
+               },
+             ),
+                    LoginButton(  keyConr: _key ,),
 
-                  }, text: 'Login With Google'.tr(context), string: google),
-
-                // authButton(onPressed: (){}, text: 'Login With Facebook'.tr(context), string: facebook),
-                ],
-
-              ),
-            ),
-     Row(
-     mainAxisAlignment: MainAxisAlignment.center,
-       children: [
-      Padding(
-        padding: paddingSemetricHorizontal(h:  mediaquery.size.width/60.5),
-        child: Text("Don't have an account?".tr(context),style:PoppinsLight( mediaquery.size.width/30.5, textColorBlack),),
-      ),
-      InkWell(
-        highlightColor: Colors.transparent,
-        splashColor: Colors.transparent,
-        radius: 10.0,
-        borderRadius: BorderRadius.circular(10.0),
-        onTap: (){
-          context.go('/SignUp/${null}/${null}');
-        },
-        child: LinkedText(text: "SignUp".tr(context), size: mediaquery.size.width/30.5
-        ),
-      )
-       ],
-     )
-          ],
-        ),
+                    DontHaveAccountWidget(mediaquery, context)
+                  ],
+                ),
+           ),
+         ),
+       );
+  },
+),
+     ],
    );}
     );
   }
-  Widget _LoginButton  (
-      GlobalKey<FormState> keyConr,
-      ) {
-    return BlocBuilder<LoginBloc, LoginState>(
-      builder: (context, state) {
-        return state.status.isInProgress
-            ? const CircularProgressIndicator()
-            : Container(
-          width: double.infinity,
-          height: 66,
-          decoration: BoxDecoration(
-            color: PrimaryColor,
 
-            borderRadius: BorderRadius.circular(16.0),
-            border: Border.all(color: textColorBlack, width: 2.0),
-          ),
-          child: InkWell(
-
-
-            onTap: () {
-SubmitFunctions.Login(context, state, keyConr, () {
-  resetform();
-
-});
-
-            },
-
-            child: Center(child: Text('Login'.tr(context),
-              style: PoppinsSemiBold(18, textColorWhite, TextDecoration.none),)),
-          ),
-        );
+  Row DontHaveAccountWidget(MediaQueryData mediaquery, BuildContext context) {
+    return Row(
+   mainAxisAlignment: MainAxisAlignment.center,
+     children: [
+    Text("Don't have an account?".tr(context),style:PoppinsLight( mediaquery.size.width/30.5, textColorBlack),),
+    InkWell(
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      radius: 10.0,
+      borderRadius: BorderRadius.circular(10.0),
+      onTap: (){
+        context.go('/SignUp/${null}/${null}');
       },
-    );
+      child: LinkedText(text: "SignUp".tr(context), size: mediaquery.size.width/30.5
+      ),
+    )
+     ],
+   );
   }
+
 
 }
 
-class _UsernameInput extends StatelessWidget {
-  final TextEditingController controller;
+class PassWordWithText extends StatelessWidget {
+  final LoginState state;
+  final InputsState inputState;
+  const PassWordWithText({
+    super.key,
+    required this.mediaquery,
+    required TextEditingController passwordController, required this.state, required this.inputState,
+  }) : _passwordController = passwordController;
 
-  const _UsernameInput({super.key, required this.controller});
+  final MediaQueryData mediaquery;
+  final TextEditingController _passwordController;
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
-      buildWhen: (previous, current) => previous.email != current.email,
-      builder: (context, state) {
-        return FormText(inputkey: "loginForm_EmailInput_textField",
-            Onchanged:
-            (email) => context.read<LoginBloc>().add(LoginEmailnameChanged(email)),
+    return Visibility(
+      visible: inputState.inputsValue !=Inputs.Google,
+      child: Padding(
+        padding: paddingSemetricHorizontal(h: 25),
+        child: Column(
+          children: [
+            Align(
+                alignment:    Alignment.topLeft,
+                child: Label(text: "Password".tr(context), size: mediaquery.size.width/22.5)),
+            PasswordInput(controller: _passwordController, onTap: (pass ) {
+              context.read<LoginBloc>().add(LoginPasswordChanged(pass));
 
-            errorText:  state.  email.displayError!=null?"Invalid Email":null, controller: controller,);
-      },
-    );
+            }, inputkey: "sign up password",
+              errorText: state.password.displayError != null ? "Invalid Password" : null,
+              validator: (string ) {
+            if(string.isEmpty) {
+            return 'Empty';
+            }
+            if(string.length < 6) {
+            return 'Too Short';
+            }
+            return null;
+            },),
+            Padding(
+              padding: paddingSemetricAll(),
+              child: Align(
+              alignment:  Alignment.centerRight,
+                  child: InkWell(
+                    splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onTap: (){
+                        context.go('/forget');
+                      },
+                      child: LinkedText(text: "Forgot Password?".tr(context), size:  mediaquery.size.width/27.5))),
+            ),
+          ],
+        ),
+      ),
+    ).animate();
   }
 }
 
-class _PasswordInput extends StatelessWidget {
-  final TextEditingController controller;
+class EmailWithText extends StatelessWidget {
+  final InputsState inputState;
+  const EmailWithText({                      
+    super.key,
+    required this.mediaquery,
+    required TextEditingController emailController, required this.state, required this.inputState,
+  }) : _emailController = emailController;
+final LoginState state;
+  final MediaQueryData mediaquery;
+  final TextEditingController _emailController;
 
-  const _PasswordInput({super.key, required this.controller});
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
-      buildWhen: (previous, current) => previous.password != current.password,
-      builder: (context, state) {
-        return FormTextPassword(inputkey: "loginForm_passwordInput_textField",
-            Onchanged: (password) =>
-                context.read<LoginBloc>().add(LoginPasswordChanged(password)),
-            errortext:
-           null, controller: controller, validator: (String ) {  },
-        );}
+    return Visibility(
+      visible: inputState.inputsValue == Inputs.Email,
+      child: Padding(
+        padding: paddingSemetricHorizontal(h: 25),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Align(
+                alignment:    Alignment.topLeft,
+                child: Label(text: "Email", size: mediaquery.size.width/22.5)),
+            EmailInput(controller: _emailController, inputkey: "loginForm_emailInput_textField", onTap: (email) => context.read<LoginBloc>().add(LoginEmailnameChanged(email)),
+              errorText: state.email.displayError != null ? "Invalid Email" : null,),
+          ],
+        ),
+      ),
     );
   }
 }
+
+
+
+
 
 
 Widget line(double width)=> SizedBox(
 width: width, // Set a fixed width for the Divider
-child: Divider(color:ThirdColor ,thickness: 1,height: 20,),
+child: const Divider(color:ThirdColor ,thickness: 1,height: 20,),
 );

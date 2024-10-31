@@ -25,7 +25,7 @@ final TextFieldsDescription textFieldsDescription;
 final Status status;
 
 
-   TaskVisibleState({this.WillAdded=false,this.WillDeleted=false,
+   const TaskVisibleState({this.WillAdded=false,this.WillDeleted=false,
       this.willSearch=false,
       this.privacy=Privacy.Primary,
      this.isUpdated=false,
@@ -79,7 +79,7 @@ final Status status;
 
 
 class TaskVisibleInitial extends TaskVisibleState {
-  TaskVisibleInitial();
+  const TaskVisibleInitial();
 
   @override
   List<Object> get props => [];

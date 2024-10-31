@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:jci_app/core/config/env/providersList.dart';
-import 'package:jci_app/features/auth/presentation/bloc/Permissions/permissions_bloc.dart';
+import 'package:jci_app/core/routes.dart';
 
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
@@ -10,7 +11,6 @@ import 'core/config/locale/app__localizations.dart';
 import 'features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import 'core/app_theme.dart';
-import 'core/routes.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 

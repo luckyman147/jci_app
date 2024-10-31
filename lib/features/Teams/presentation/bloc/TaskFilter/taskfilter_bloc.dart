@@ -1,9 +1,7 @@
-import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../domain/entities/Task.dart';
 
 part 'taskfilter_event.dart';
 part 'taskfilter_state.dart';

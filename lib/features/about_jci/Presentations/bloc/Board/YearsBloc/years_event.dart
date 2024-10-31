@@ -13,7 +13,7 @@ class GerBoardYearsEvent extends YearsEvent {
 }
 class ChangeRoleEvent  extends YearsEvent{
   final BoardRole? role;
-  ChangeRoleEvent({required this.role});
+  const ChangeRoleEvent({required this.role});
 
   @override
   // TODO: implement props
@@ -28,7 +28,7 @@ class ChangeRoleEvent  extends YearsEvent{
 class AddRoleEvent extends YearsEvent {
   final BoardRole role;
 
-  AddRoleEvent({required this.role});
+  const AddRoleEvent({required this.role});
 
   @override
 
@@ -37,14 +37,14 @@ class AddRoleEvent extends YearsEvent {
 class GetBoardRolesEvent extends YearsEvent {
   final int priority;
 
-  GetBoardRolesEvent({required this.priority});
+  const GetBoardRolesEvent({required this.priority});
 
   @override
   List<Object?> get props => [priority];
 }
 class ChangeCloneYear extends YearsEvent {
   final String year;
-  ChangeCloneYear({required this.year});
+  const ChangeCloneYear({required this.year});
 
   @override
 
@@ -52,7 +52,7 @@ class ChangeCloneYear extends YearsEvent {
 }
 class ChangeBoardYears extends YearsEvent {
   final String year;
-  ChangeBoardYears({required this.year});
+  const ChangeBoardYears({required this.year});
 
   @override
   // TODO: implement props
@@ -61,7 +61,7 @@ class ChangeBoardYears extends YearsEvent {
 
 class AddYear extends YearsEvent {
   final String year;
-  AddYear({required this.year});
+  const AddYear({required this.year});
 
   @override
   // TODO: implement props
@@ -69,7 +69,7 @@ class AddYear extends YearsEvent {
 }
 class RemoveYear extends YearsEvent {
   final String year;
-  RemoveYear({required this.year});
+  const RemoveYear({required this.year});
 
   @override
 
@@ -78,7 +78,7 @@ class RemoveYear extends YearsEvent {
 class AddPosition extends YearsEvent {
   final PostField postField;
 
-  AddPosition({required this.postField});
+  const AddPosition({required this.postField});
 
   @override
   // TODO: implement props
@@ -89,7 +89,7 @@ class AddPosition extends YearsEvent {
 class RemovePosition extends YearsEvent {
   final PostField post;
 
-  RemovePosition({required this.post});
+  const RemovePosition({required this.post});
 
   @override
   // TODO: implement props
@@ -99,14 +99,14 @@ class RemovePosition extends YearsEvent {
 
 class AddNewRole extends YearsEvent {
   final BoardRole role;
-  AddNewRole({required this.role});
+  const AddNewRole({required this.role});
 
   @override
 
   List<Object?> get props => [role];}
 class RemoveRole extends YearsEvent {
   final String  roleid;
-  RemoveRole({required this.roleid});
+  const RemoveRole({required this.roleid});
 
   @override
   List<Object?> get props => [roleid];

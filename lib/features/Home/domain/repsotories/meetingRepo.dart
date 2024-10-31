@@ -3,11 +3,8 @@ import 'dart:typed_data';
 import 'package:dartz/dartz.dart';
 
 import 'package:jci_app/features/Home/domain/entities/Note.dart';
-import 'package:jci_app/features/Home/domain/repsotories/EventRepo.dart';
 
 import '../../../../core/error/Failure.dart';
-import '../../presentation/bloc/Activity/activity_cubit.dart';
-import '../entities/Activity.dart';
 import '../entities/Meeting.dart';
 
 abstract class MeetingRepo  {

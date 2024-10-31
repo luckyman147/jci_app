@@ -1,18 +1,16 @@
-import 'dart:async';
 import 'dart:collection';
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:jci_app/features/Teams/domain/entities/Task.dart';
 
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
-import '../../../../auth/domain/entities/Member.dart';
 
 import '../../../domain/entities/Checklist.dart';
 import '../../../domain/usecases/TaskUseCase.dart';
@@ -37,6 +35,7 @@ class GetTaskBloc extends Bloc<GetTaskEvent, GetTaskState> {
   final DeleteFileUseCases deleteFileUseCase;
   final AddCommentUseCase addCommentUseCase;
   final UpdateChecklistNameUseCase updateChecklistNameUseCase;
+  final GetFileUseCase getFileUseCase;
   GetTaskBloc({ required this.getTasksOfTeamUseCase, required this.getTasksByIdUseCase,
     required this.addTaskUseCase,required this.addChecklistUseCase,
     required this.updateTaskNameUseCase,
@@ -46,13 +45,16 @@ class GetTaskBloc extends Bloc<GetTaskEvent, GetTaskState> {
     required this.updateChecklistNameUseCase,
     required this.deleteFileUseCase,
     required this.addCommentUseCase,
+    required this.getFileUseCase,
 
     required this.updateIsCompletedUseCases, required this.deleteTaskUseCase,
-    required this.deleteChecklistUseCase, required this.updateChecklistStatusUseCase,}) : super(GetTaskInitial()) {
+    required this.deleteChecklistUseCase, required this.updateChecklistStatusUseCase,}) : super(const GetTaskInitial()) {
     on<GetTasks>(onGetTasks,);
     on<GetTaskById>(onGetTaskById);
     on<CreateTask>(_CreateTask);
     on<AddCheckList>(_CreateChecklist);
+    on<GetFileEvent>(GetFile);
+
 
     on<UpdateStatus>(taskStatusUpdated);
     on<initTasks>(_initTasks);
@@ -70,11 +72,20 @@ class GetTaskBloc extends Bloc<GetTaskEvent, GetTaskState> {
     on<resetevent>(reset);
 
   }
+void GetFile(GetFileEvent event,Emitter<GetTaskState> emit )async{
+ try {
+ final file=await getFileUseCase(event.id);
+     emit (_GetFile(file));
+ } on Exception catch (e) {
+  emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "$e + error occurred"));
+ // TODO
+ }
+  }
 
   void _updateChecklistName(UpdateChecklistName event, Emitter<GetTaskState> emit)async  {
     try{
       final result = await updateChecklistNameUseCase(event.fields);
-      emit(_mapFailureOrUpdatedChecklistStatusToState(result,emit,event.fields.taskid!,event.fields.checkid!,
+      emit(_mapFailureOrUpdatedChecklistStatusToState(result,emit,event.fields.taskid!,event.fields.checkid,
           event.fields.name ,"name"));
     }
     catch(e){
@@ -83,10 +94,6 @@ class GetTaskBloc extends Bloc<GetTaskEvent, GetTaskState> {
     }
   }
   void _deleteFile(DeleteFileEvent event ,Emitter<GetTaskState> emit)async {
-    if (event.fields.taskid == null) {
-      emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "An error occurred"));
-      return;
-    }
     if (event.fields.fileid == null) {
       emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "An error occurred"));
       return;
@@ -122,11 +129,6 @@ class GetTaskBloc extends Bloc<GetTaskEvent, GetTaskState> {
 
 
   void _updateFiles(UpdateFile event, Emitter<GetTaskState> emit) async {
-
-    if (event.fields.taskid == null) {
-      emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "An error occurred"));
-      return;
-    }
 
     try {
       final result = await updateFileUseCase(event.fields);
@@ -233,7 +235,7 @@ class GetTaskBloc extends Bloc<GetTaskEvent, GetTaskState> {
 
         ));
       }
-    } on Exception catch (e) {
+    } on Exception {
       emit(state.copyWith(status: TaskStatus.error, errorMessage: ""));
     }
 
@@ -249,14 +251,14 @@ class GetTaskBloc extends Bloc<GetTaskEvent, GetTaskState> {
 
       }
     } catch (error) {
-      emit(GetTaskError(message: 'An error occurred'));
+      emit(const GetTaskError(message: 'An error occurred'));
     }
   }
   void taskStatusUpdated(UpdateStatus event, Emitter<GetTaskState> emit) async {
     try{
       final result = await updateIsCompletedUseCases(event.isCompleted);
 
-      UpdateTaskField(event, emit,"isCompleted",event.isCompleted.isCompleted ,event.isCompleted.taskid!);
+      UpdateTaskField(event, emit,"isCompleted",event.isCompleted.isCompleted ,event.isCompleted.taskid);
 
     }
     catch(e){
@@ -267,7 +269,7 @@ class GetTaskBloc extends Bloc<GetTaskEvent, GetTaskState> {
   }
   void _taskUpdateTime(UpdateTimeline event, Emitter<GetTaskState> emit) async {
     try{
-      log(event.timeline.toString()+"timeline");
+      log("${event.timeline}timeline");
       final result = await updateTaskTimelineUseCase(event.timeline);
 
       UpdateTimelineFun(event, emit,);
@@ -437,5 +439,16 @@ class GetTaskBloc extends Bloc<GetTaskEvent, GetTaskState> {
     List<Map<String, dynamic>> updatedTasks = List.from(state.tasks);
     updatedTasks[updatedTasks.indexOf(updatedTask)] = updatedTask;
     return updatedTasks;
+  }
+
+  GetTaskState _GetFile(Either<Failure, Uint8List> file, ) {
+    return file.fold(
+            (failure) => state.copyWith(status: TaskStatus.error, errorMessage: mapFailureToMessage(failure))
+        ,
+            (act) {
+
+          return state.copyWith(status: TaskStatus.success, image: act);
+        }
+    );
   }
 }

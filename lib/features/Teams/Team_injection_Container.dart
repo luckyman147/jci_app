@@ -1,10 +1,11 @@
 import 'package:get_it/get_it.dart';
-import 'package:jci_app/features/Teams/data/%20repositories/TaskRepoImpl.dart';
-import 'package:jci_app/features/Teams/data/%20repositories/TeamRepoImpl.dart';
+
 import 'package:jci_app/features/Teams/data/datasources/TaskLocalDataSources.dart';
 import 'package:jci_app/features/Teams/data/datasources/TaskRemoteDatasources.dart';
 import 'package:jci_app/features/Teams/data/datasources/TeamLocalDataSources.dart';
 import 'package:jci_app/features/Teams/data/datasources/TeamRemoteDatasources.dart';
+import 'package:jci_app/features/Teams/data/repositories/TaskRepoImpl.dart';
+import 'package:jci_app/features/Teams/data/repositories/TeamRepoImpl.dart';
 import 'package:jci_app/features/Teams/domain/repository/TaskRepo.dart';
 import 'package:jci_app/features/Teams/domain/repository/TeamRepo.dart';
 import 'package:jci_app/features/Teams/domain/usecases/TeamUseCases.dart';
@@ -40,7 +41,7 @@ sl.registerFactory(() => MembersTeamCubit());
       deleteChecklistUseCase: sl(),
       updateChecklistStatusUseCase: sl(),
       updateTaskNameUseCase: sl(), updateTaskTimelineUseCase: sl(),
-      UpdateMembersUseCase: sl(), updateFileUseCase: sl (), deleteFileUseCase: sl(), updateChecklistNameUseCase: sl(), addCommentUseCase: sl()));
+      UpdateMembersUseCase: sl(), updateFileUseCase: sl (), deleteFileUseCase: sl(), updateChecklistNameUseCase: sl(), addCommentUseCase: sl(), getFileUseCase: sl()));
 
   sl.registerFactory(() => GetTeamsBloc(sl(), sl()  ,sl(),sl(),sl(),sl(),sl(),sl(),sl()));
   //datasources
@@ -63,6 +64,7 @@ sl.registerFactory(() => MembersTeamCubit());
   sl.registerLazySingleton(() => UpdateTaskTimelineUseCase(sl()));
   sl.registerLazySingleton(() => UpdateTaskNameUseCase(sl()));
   sl.registerLazySingleton(() => UpdateTeamMembersUseCase(sl()));
+  sl.registerLazySingleton(() => GetFileUseCase(sl()));
 
 
   sl.registerLazySingleton(() => UpdateChecklistStatusUseCase(sl()));

@@ -3,7 +3,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:formz/formz.dart';
 import 'package:jci_app/features/auth/domain/entities/Member.dart';
 import 'package:jci_app/features/auth/domain/usecases/authusecase.dart';
 

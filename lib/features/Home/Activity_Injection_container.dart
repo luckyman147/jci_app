@@ -26,7 +26,6 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.
 import 'package:jci_app/features/Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/calendar/calendar_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/textfield/textfield_bloc.dart';
-import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
 
 import 'domain/usercases/ActivityUseCases.dart';
 import 'domain/usercases/MeetingsUseCase.dart';

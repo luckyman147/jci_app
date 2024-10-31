@@ -29,26 +29,13 @@ class TrainingRepoImpl implements TrainingRepo{
   
   @override
   Future<Either<Failure, Unit>> createTraining(Training training) async{
-    final trainingMode= TrainingModel(
-      id: training.id,
-
-      name: training.name,
-      description: training.description,
-      ActivityBeginDate: training.ActivityBeginDate,
-      ActivityEndDate: training.ActivityEndDate,
-      ActivityAdress: training.ActivityAdress,
-      ActivityPoints: training.ActivityPoints,
-      categorie: training.categorie,
-      IsPaid: training.IsPaid,
-      price: training.price,
-      Participants: [],
-      CoverImages: training.CoverImages, Duration: 0, ProfesseurName: training.ProfesseurName, IsPart: false,
-
+    final trainingMode= TrainingModel.fromEntity(
+    training
     );
     if (await networkInfo.isConnected) {
       try {
         await trainingRemoteDataSource.createTraining(trainingMode);
-        return Right(unit);
+        return const Right(unit);
       } on WrongCredentialsException {
         return Left(WrongCredentialsFailure());
       }
@@ -173,20 +160,8 @@ return await _getMessage(trainingRemoteDataSource.deleteTraining(id));
 
   @override
   Future<Either<Failure, Unit>> updateTraining(Training training)async  {
-    final trainingMode= TrainingModel(
-      id: training.id,
+    final trainingMode= TrainingModel.fromEntity(training
 
-      name: training.name,
-      description: training.description,
-      ActivityBeginDate: training.ActivityBeginDate,
-      ActivityEndDate: training.ActivityEndDate,
-      ActivityAdress: training.ActivityAdress,
-      ActivityPoints:training.ActivityPoints,
-      categorie: training.categorie,
-      IsPaid: training.IsPaid,
-      price: training.price,
-      Participants: training.Participants,
-      CoverImages: training.CoverImages, Duration: 0, ProfesseurName: training.ProfesseurName, IsPart: training.IsPart,
 
     );
     return await _getMessage(trainingRemoteDataSource.updateTraining(trainingMode));
@@ -197,7 +172,7 @@ return await _getMessage(trainingRemoteDataSource.deleteTraining(id));
     if (await networkInfo.isConnected) {
       try {
         await training;
-        return Right(unit);
+        return const Right(unit);
       }
 
       on EmptyDataException {
@@ -221,11 +196,11 @@ return await _getMessage(trainingRemoteDataSource.deleteTraining(id));
     final eventPermission=await TrainingStore.getTrainPer();
     final userPermissions=await Store.getPermissions();
     if(eventPermission .isEmpty || userPermissions.isEmpty){
-      return Right(false);
+      return const Right(false);
     }
     else{
 
-      return hasCommonElement(eventPermission, userPermissions)?Right(true):Right(false);
+      return hasCommonElement(eventPermission, userPermissions)?const Right(true):const Right(false);
     }
   }
 }

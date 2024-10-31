@@ -28,8 +28,8 @@ class _AllTeamsScreenState extends State<AllTeamsScreen> {
   void initState() {
 
      context.read<GetTaskBloc>().add(resetevent());
-    context.read<GetTeamsBloc>().add(GetTeams(isPrivate: false));
-    context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
+    context.read<GetTeamsBloc>().add(const GetTeams(isPrivate: false));
+    context.read<TaskVisibleBloc>().add(const changePrivacyEvent(Privacy.Primary));
 
 
      _scrollController.addListener(_onScroll);
@@ -49,7 +49,7 @@ class _AllTeamsScreenState extends State<AllTeamsScreen> {
     return currentScroll >= (maxScroll * 0.9);
   }
   void _onScroll() {
-    if (_isBottom) context.read<GetTeamsBloc>().add(GetTeams(isPrivate: false));
+    if (_isBottom) context.read<GetTeamsBloc>().add(const GetTeams(isPrivate: false));
   }
 
   @override

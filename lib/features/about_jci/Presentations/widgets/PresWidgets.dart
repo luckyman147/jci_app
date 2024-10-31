@@ -11,7 +11,6 @@ import '../../../Home/presentation/widgets/Functions.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../Domain/entities/President.dart';
 import '../bloc/ActionJci/action_jci_cubit.dart';
-import '../screens/AddUpdatePresidentsPage.dart';
 import 'Fubnctions.dart';
 import 'dialogs.dart';
 
@@ -49,7 +48,7 @@ width: MediaQuery.of(context).size.width/1.1,
 
                   style:PoppinsRegular(17, textColorBlack, ))),
 
-          SizedBox(height: 10,),
+          const SizedBox(height: 10,),
 
 
         ],
@@ -61,7 +60,7 @@ static   Container BorderGradients() {
     return Container(
       width: 200.0,
       height: 5.0,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: Border(
           bottom: BorderSide(
             width: 4.0,
@@ -94,7 +93,7 @@ static   Container BorderGradients() {
           } else {
             // Divider
             int dividerIndex = (index - 1) ~/ 2;
-            return Container(
+            return SizedBox(
               height: heights[dividerIndex]-20,
               child: VerticalDivider(
                 color: colors[dividerIndex],
@@ -109,7 +108,7 @@ static   Container BorderGradients() {
 
   static Center avatarImage(String images) {
     return Center(
-            child: Container(
+            child: SizedBox(
               width: 100.0,
               height: 100.0,
               child: CircleAvatar(
@@ -159,11 +158,11 @@ if (image!=null){
 }
 else{
   context.read<TaskVisibleBloc>().add(
-      ChangeImageEvent(vip));
+      const ChangeImageEvent(vip));
 
 }
 
-JCIFunctions.UpdatePresidentsImage(context,president!);
+JCIFunctions.UpdatePresidentsImage(context,president);
                   }),   ButtonActions(context, boxDecoration,Icons.delete,"Delete",(){
                     context.read<ActionJciCubit>().changeAction(PresidentsAction.Delete);
                     context.read<PresidentsBloc>().add(DeletePresident(president!.id));

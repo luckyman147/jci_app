@@ -47,7 +47,7 @@ final List<Guest> guestsAllSearch;
 }
 
 class ParticpantsInitial extends ParticpantsState {
-  ParticpantsInitial({required super.isParticipantAdded}) ;
+  const ParticpantsInitial({required super.isParticipantAdded}) ;
 
   @override
   List<Object> get props => [isParticipantAdded];

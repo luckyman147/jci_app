@@ -71,7 +71,7 @@ class MemberRemoteImpl implements MemberRemote {
       print(" ya get ${Response.statusCode}");
       if (Response.statusCode == 200) {
         final Map<String, dynamic> response = jsonDecode(Response.body);
-        print("response ${response}");
+        print("response $response");
         final  MemberModel member=MemberModel.fromJson(response);
         await  MemberStore.saveModel(member);
 
@@ -209,7 +209,7 @@ class MemberRemoteImpl implements MemberRemote {
   Future<Unit> UpdateMember(MemberModel memberModel)async  {
     final tokens= await Store.GetTokens();
     final body =memberModel.toJson();
-    debugPrint(body.toString()  );
+
 
     return client.patch(
       Uri.parse(getUserProfileUrl),
@@ -224,13 +224,26 @@ class MemberRemoteImpl implements MemberRemote {
 
 
 
-        final upload_response=await UpdateImage(memberModel.id, memberModel.Images[0],getUserProfileUrl+"/");
-        if (upload_response.statusCode==200){
-          MemberStore.saveModel(memberModel);
+        final uploadResponse=await UpdateImage(memberModel.id, memberModel.Images[0],"$getUserProfileUrl/");
+        if (uploadResponse.statusCode==200){
+          // upload from response
+          uploadResponse.stream.transform(utf8.decoder).listen((value) {
+            print(value);
+          });
+          final responseBodyBytes = await uploadResponse.stream.toBytes();
+
+          // decode bytes to JSON string
+          final jsonString = utf8.decode(responseBodyBytes);
+
+          // parse JSON string to a JSON object
+          final jsonObject = json.decode(jsonString);
+
+          final member=MemberModel.fromJson(jsonObject);
+          await MemberStore.saveModel(member);
           return  Future.value(unit);
         }
-        else if (upload_response.statusCode==400){
-          debugPrint(upload_response.reasonPhrase.toString());
+        else if (uploadResponse.statusCode==400){
+          debugPrint(uploadResponse.reasonPhrase.toString());
 
           throw EmptyDataException();
 
@@ -262,7 +275,7 @@ class MemberRemoteImpl implements MemberRemote {
 
   try {
     final Response = await client.get(
-      Uri.parse(getMember+"/$id"),
+      Uri.parse("$getMember/$id"),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $AccessToken',

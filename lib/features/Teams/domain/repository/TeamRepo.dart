@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:jci_app/features/Teams/domain/entities/Checklist.dart';
 
 import '../../../../core/error/Failure.dart';
 import '../entities/Team.dart';

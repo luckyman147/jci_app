@@ -42,24 +42,7 @@ class _SignUpPageState extends State<SignUpPage> {
         padding: const EdgeInsets.all(12),
         child: BlocConsumer<SignUpBloc, SignUpState>(
           listener: (context, state) {
-            if (state.signUpStatus ==SignUpStatus. Loading){
-
-            }
-            if (state.signUpStatus ==SignUpStatus. EmailSuccessState){
-              SnackBarMessage.showSuccessSnackBar(message: state.message, context: context);
-
-            }
-
-            if (state.signUpStatus ==SignUpStatus. RegisterGoogle) {
-
-SnackBarMessage.showSuccessSnackBar(message: state.message, context: context);
-context.go('/login');
-            }
-            else if (state.signUpStatus ==SignUpStatus. ErrorSignUp) {
-
-              SnackBarMessage.showErrorSnackBar(message: state.message, context: context);
-            }
-
+            listenerBloc(state, context);
 
           },
           builder: (context, state) {
@@ -75,5 +58,30 @@ context.go('/login');
         ),
       ),
     );
+  }
+
+  void listenerBloc(SignUpState state, BuildContext context) {
+           switch (state.signUpStatus) {
+      case SignUpStatus.Loading:
+      // Handle loading state if necessary
+        break;
+
+      case SignUpStatus.EmailSuccessState:
+        SnackBarMessage.showSuccessSnackBar(message: state.message, context: context);
+        break;
+
+      case SignUpStatus.RegisterGoogle:
+        SnackBarMessage.showSuccessSnackBar(message: state.message, context: context);
+        context.go('/login');
+        break;
+
+      case SignUpStatus.ErrorSignUp:
+        SnackBarMessage.showErrorSnackBar(message: state.message, context: context);
+        break;
+
+      default:
+      // Handle any other cases if necessary
+        break;
+    }
   }
 }

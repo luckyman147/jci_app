@@ -19,13 +19,13 @@ class TeamModel extends Team{
         tasks:  json['tasks'] == null ? [] : (json['tasks'] as List<dynamic>)
             .map((e) => TaskModel.fromJson(e as Map<String, dynamic>))
             .toList(),
-        id: json['id']==null?json['_id']??""
-              :json['id'] ,
+        id: json['id'] ?? json['_id']??"" ,
         TeamLeader: json['TeamLeader'] ?? "",
         status: json['status'] != null ? json['status'] as bool : false
       );
 
 
+  @override
   Map<String, dynamic> toJson() =>
 
       {
@@ -82,7 +82,7 @@ class TeamModel extends Team{
 factory TeamModel.empty(){
     return TeamModel(name: "",description: "",event: {},Members: [],CoverImage: "",tasks: [],id: "",TeamLeader: "",status: false);}
   getidsObTasks(List<Tasks> objects) {
-    if (objects.isEmpty || objects == null  ) {
+    if (objects.isEmpty  ) {
       return [];
     }
     return objects.map((obj) => obj.id ).toList();

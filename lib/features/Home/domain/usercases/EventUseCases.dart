@@ -49,6 +49,7 @@ class CreateEventUseCase extends UseCase<Unit,Event> {
 
   CreateEventUseCase(this.eventRepository);
 
+  @override
   Future<Either<Failure,Unit>> call(Event event) async {
     return await eventRepository.createEvent(event);
   }
@@ -58,6 +59,7 @@ class UpdateEventUseCase  extends UseCase<Unit,Event>{
 
   UpdateEventUseCase(this.eventRepository);
 
+  @override
   Future<Either<Failure,Unit>> call(Event event) async {
     return await eventRepository.updateEvent(event);
   }
@@ -67,6 +69,7 @@ class DeleteEventUseCase extends UseCase<Unit,String>{
 
   DeleteEventUseCase(this.eventRepository);
 
+  @override
   Future<Either<Failure,Unit>> call(String params) async {
     return await eventRepository.deleteEvent(params);
   }
@@ -86,6 +89,7 @@ class ParticipateEventUseCase  extends UseCase<Unit,String>{
 
   ParticipateEventUseCase(this.eventRepository);
 
+  @override
   Future<Either<Failure,Unit>> call(String params) async {
     return await eventRepository.participateEvent(params);
   }
@@ -95,6 +99,7 @@ class CheckPermissionsUseCase extends UseCase<bool,NoParams>{
 
   CheckPermissionsUseCase(this.eventRepository);
 
+  @override
   Future<Either<Failure,bool>> call(NoParams params) async {
     return await eventRepository.CheckPermissions();
   }

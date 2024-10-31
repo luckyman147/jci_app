@@ -13,14 +13,12 @@ MeetingModel _$MeetingModelFromJson(Map<String, dynamic> json) => MeetingModel(
       ActivityBeginDate: DateTime.parse(json['ActivityBeginDate'] as String),
       ActivityEndDate: DateTime.parse(json['ActivityEndDate'] as String),
       ActivityAdress: json['ActivityAdress'] as String,
-      ActivityPoints: json['ActivityPoints'] as int,
+      ActivityPoints: (json['ActivityPoints'] as num).toInt(),
       categorie: json['categorie'] as String,
       IsPaid: json['IsPaid'] as bool,
-      price: json['price'] as int,
+      price: (json['price'] as num).toInt(),
       Participants: json['Participants'] as List<dynamic>,
-      CoverImages: (json['CoverImages'] as List<dynamic>)
-          .map((e) => e as String?)
-          .toList(),
+      CoverImages: json['CoverImages'] as List<dynamic>,
       Director: json['Director'],
       agenda:
           (json['agenda'] as List<dynamic>).map((e) => e as String).toList(),

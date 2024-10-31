@@ -47,7 +47,7 @@ console.log(role)
         lastName:lastName,
         role:role,
         Permissions:Permissions,
-        boardRole:""
+
 
     })
     if (result){
@@ -338,7 +338,7 @@ export const MemberGoogleLoginSignUp= async(req:Request,res:Response,next:NextFu
             }
 
 
-async function ExtractMembersInfo(MemberInfo: Document<unknown, {}, MemberDoc> & MemberDoc & { _id: mongoose.Types.ObjectId; }) {
+export async function ExtractMembersInfo(MemberInfo: Document<unknown, {}, MemberDoc> & MemberDoc & { _id: mongoose.Types.ObjectId; }) {
     const [role, teamsInfo, activitiesInfo, trainingsinfo, meetingsInfo, FilesInfo, objectifs, rank, boardRole] = await Promise.all([
         findroleByid(MemberInfo.role),
         getteamsInfo(MemberInfo.Teams),

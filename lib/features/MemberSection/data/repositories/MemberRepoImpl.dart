@@ -10,10 +10,8 @@ import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
 import '../../../../core/error/Exception.dart';
 import '../../../../core/network/network_info.dart';
-import '../../../auth/data/datasources/authLocal.dart';
 import '../../../auth/data/models/Member/AuthModel.dart';
 import '../../domain/repositories/MemberRepo.dart';
-import '../../presentation/bloc/memberBloc/member_management_bloc.dart';
 
 class MemberRepoImpl extends MemberRepo {
   final MemberRemote memberRemote;
@@ -38,7 +36,7 @@ class MemberRepoImpl extends MemberRepo {
     if (await networkInfo.isConnected) {
       try {
         await AuthReset;
-        return Right(unit);
+        return const Right(unit);
       }
 
 

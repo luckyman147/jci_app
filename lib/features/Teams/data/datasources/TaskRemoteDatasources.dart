@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
 import 'package:jci_app/core/config/env/urls.dart';
 
@@ -14,7 +14,6 @@ import 'package:jci_app/core/config/services/uploadImage.dart';
 
 import 'package:jci_app/features/Teams/data/models/CheckListModel.dart';
 import 'package:jci_app/features/Teams/data/models/FileModel.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 
 import '../../../../../core/error/Exception.dart';
 import '../models/TaskModel.dart';
@@ -42,6 +41,7 @@ Future <Unit> UpdateTimeline(String taskId,DateTime startdate,DateTime enddate);
 Future<Unit> deleteCheckList(String checkListId);
 Future<Unit> deleteTask(String taskid);
 Future<FileModel> UpdateFiles(String taskId, FileModel file );
+Future<Uint8List> getFile(String fileid);
 
   Future<Unit> AddComment(String taskid, String comment) ;
 
@@ -145,7 +145,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource{
 
 
     final response =  await client.get(
-      Uri.parse( '${TeamUrl}$id/tasks/$taskid'),
+      Uri.parse( '$TeamUrl$id/tasks/$taskid'),
 
       headers: {"Content-Type": "application/json"},
 
@@ -268,7 +268,7 @@ body: jsonEncode({"IsCompleted":"$isCompleted"})
 
         Uri.parse("$TeamUrl$taskId/UpdateMembers"),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"Member":"$MemberId","Status":"$status"})
+        body: jsonEncode({"Member":MemberId,"Status":"$status"})
     );
     log(response.statusCode.toString());
     log(response.body);
@@ -319,7 +319,7 @@ body: jsonEncode({"IsCompleted":"$isCompleted"})
 
         Uri.parse("$TeamUrl/tasks/$taskId/UpdateName"),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"name":"$name"})
+        body: jsonEncode({"name":name})
     );
     log(response.statusCode.toString());
     log(response.body);
@@ -386,7 +386,7 @@ body: jsonEncode({"IsCompleted":"$isCompleted"})
 
         Uri.parse("$TeamUrl$taskId/UpdateCheckName/$checkListId"),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"name":"$name"})
+        body: jsonEncode({"name":name})
     );
     log(response.statusCode.toString());
     log(response.body);
@@ -411,7 +411,7 @@ body: jsonEncode({"IsCompleted":"$isCompleted"})
 final response = await client.post(
       Uri.parse(Urls.AddCommentUrl(taskid)),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"comment": "$comment"}),
+      body: jsonEncode({"comment": comment}),
     );
     log(response.statusCode.toString());
     log(response.body);
@@ -441,6 +441,27 @@ final response = await client.post(
   Future<Unit> UpdateComment(String taskid, String commentId, String comment) {
     // TODO: implement UpdateComment
     throw UnimplementedError();
+  }
+
+  @override
+  Future<Uint8List> getFile(String fileid) async{
+    final response = await client.get(
+      Uri.parse("$TeamUrl/File/$fileid"),
+      headers: {"Content-Type": "application/json"},
+    );
+
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    } else if (response.statusCode == 404) {
+      throw EmptyDataException();
+    }
+    else if (response.statusCode == 400) {
+      throw WrongCredentialsException();
+    }
+
+    else {
+      throw ServerException();
+    }
   }
 
 

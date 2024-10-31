@@ -4,10 +4,8 @@ import 'dart:developer';
 
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -20,7 +18,6 @@ import 'package:jci_app/features/Teams/presentation/widgets/CreateTeamWIdgets.da
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import '../../../../core/app_theme.dart';
-import '../../../../core/strings/app_strings.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../../auth/domain/entities/Member.dart';
 import '../bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
@@ -28,7 +25,6 @@ import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../bloc/Activity/activity_cubit.dart';
 import '../bloc/IsVisible/bloc/visible_bloc.dart';
 import '../bloc/textfield/textfield_bloc.dart';
-import '../pages/CreateUpdateActivityPage.dart';
 import 'AddUpdateFunctions.dart';
 import 'Compoenents.dart';
 import 'Functions.dart';
@@ -84,11 +80,11 @@ class AddWidgetComponents {
         padding:
         const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
         child:RegistrationTime(Registration: time,)
-    ):SizedBox();
+    ):const SizedBox();
   }
 static   Widget showImagePicker(activity act ,mediaQuery)=>
       act==activity.Meetings?
-      SizedBox():
+      const SizedBox():
       Padding(
 
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -167,7 +163,7 @@ static   Widget showImagePicker(activity act ,mediaQuery)=>
 
 
 
- static Widget showDetails(mediaQuery,activity act,DateTime time,BuildContext context ,TextEditingController _price,TextEditingController _LocationController)=>
+ static Widget showDetails(mediaQuery,activity act,DateTime time,BuildContext context ,TextEditingController price,TextEditingController LocationController)=>
       act==activity.Meetings?
       Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -209,12 +205,12 @@ static   Widget showImagePicker(activity act ,mediaQuery)=>
 
 
           showRegistration(act, time,),
-          TextfieldNormal(context,"Location", "Location Here".tr(context), _LocationController,
+          TextfieldNormal(context,"Location", "Location Here".tr(context), LocationController,
                   (value){
                 context.read<FormzBloc>().add(LocationChanged(location: value));
               }
           ),
-          PriceWidget(mediaQuery,_price),
+          PriceWidget(mediaQuery,price),
 
         ],
       );
@@ -246,10 +242,10 @@ static   Widget showImagePicker(activity act ,mediaQuery)=>
                       PoppinsSemiBold(18, textColorBlack, TextDecoration.none))
                       : Text("Edit".tr(context), style: PoppinsSemiBold(
                       18, textColorBlack, TextDecoration.none)),
-                  work != "edit" ? Padding(
-                    padding: const EdgeInsets.only(bottom: 2),
+                  work != "edit" ? const Padding(
+                    padding: EdgeInsets.only(bottom: 2),
                     child: MyDropdownButton(),
-                  ) : SizedBox(),
+                  ) : const SizedBox(),
                 ],
               ),
               Padding(
@@ -294,7 +290,7 @@ static   Widget showImagePicker(activity act ,mediaQuery)=>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
                         child: Icon(
                           Icons.calendar_today,
                           color: SecondaryColor,
@@ -325,7 +321,7 @@ final TimeType timeType;
   final MediaQueryData mediaQuery;
 
 
-  DateFieldWidget({
+  const DateFieldWidget({
     Key? key,
     required this.labelText,
     required this.sheetTitle,
@@ -398,7 +394,7 @@ class _DateFieldWidgetState extends State<DateFieldWidget> {
 
                  firstDate:DateTime.now(),
                  currentDate: time,
-                 lastDate: DateTime.now().add(Duration(days: 365)),
+                 lastDate: DateTime.now().add(const Duration(days: 365)),
                  onDatePickerModeChange: (mode) {
 
                  },
@@ -489,7 +485,7 @@ Widget imagePicker(mediaQuery) {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.add_a_photo,
                                   size: 40,
                                   color: PrimaryColor,
@@ -532,7 +528,7 @@ Widget imagePicker(mediaQuery) {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text("Edit".tr(context), style: PoppinsRegular(18, textColorBlack)),
-                            Icon(
+                            const Icon(
                               Icons.edit,
                               color: textColorBlack,
                             ),
@@ -541,7 +537,7 @@ Widget imagePicker(mediaQuery) {
                       ),
                                         ),
                                       ),
-                    ) ):SizedBox()
+                    ) ):const SizedBox()
               ],
             ),
           ),
@@ -665,7 +661,7 @@ Widget chooseDate(DateTime todayDate, MediaQueryData mediaQuery, String Format,
                 ),
               ),
               Text(
-                DateFormat(Format,locale.locale==Locale("en")?"en":"fr").format(todayDate),
+                DateFormat(Format,locale.locale==const Locale("en")?"en":"fr").format(todayDate),
                 style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 5,
                     textColorBlack, TextDecoration.none),
               ),
@@ -804,7 +800,7 @@ Widget container(mediaQuery,DateTime date)=>BlocBuilder<FormzBloc, FormzState>(
   child: Padding(
     padding: const EdgeInsets.all(15.0),
     child: Text(
-      "${DateFormat("MMM,dd,yyyy, HH:mm a").format(date)}",
+      DateFormat("MMM,dd,yyyy, HH:mm a").format(date),
       style: PoppinsRegular(
         19,
         textColorBlack,
@@ -864,7 +860,7 @@ time,
           style: ElevatedButton.styleFrom(
             backgroundColor: PrimaryColor,
             shape: RoundedRectangleBorder(
-              side: BorderSide(
+              side: const BorderSide(
                 color: Colors.black,
                 width: 1.0,
               ),
@@ -893,7 +889,7 @@ class PrefixIconButton extends StatelessWidget {
   final VoidCallback onPressed;
   final IconData iconData;
 
-  const PrefixIconButton({required this.onPressed, required this.iconData});
+  const PrefixIconButton({super.key, required this.onPressed, required this.iconData});
 
   @override
   Widget build(BuildContext context) {
@@ -964,7 +960,7 @@ style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),
                     ),
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Expanded(
                   child: TextFormField(
                     style: PoppinsSemiBold(18, textColorBlack,TextDecoration.none),

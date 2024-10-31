@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
 class Activity extends Equatable{
 final String id;
@@ -57,7 +56,7 @@ Activity get ActivityTest=>Activity(name: "", id: "id", description: "descriptio
     ActivityBeginDate: DateTime.now(), ActivityEndDate: DateTime.now(),
     ActivityAdress: "ActivityAdress",
     ActivityPoints:2, categorie: "", IsPaid: false,
-    price: 1, Participants: [], CoverImages: [], IsPart: false);
+    price: 1, Participants: const [], CoverImages: const [], IsPart: false);
 
 
 }

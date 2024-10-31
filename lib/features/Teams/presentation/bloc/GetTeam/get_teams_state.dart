@@ -56,19 +56,20 @@ class GetTeamsLoading extends GetTeamsState {
 }
 class GetTeamsLoaded extends GetTeamsState {
 
+  @override
   final List<Team> teams;
-  GetTeamsLoaded(this.teams);
+  const GetTeamsLoaded(this.teams);
   @override
   List<Object> get props => [teams,];
 }
 class GetTeamsError extends GetTeamsState {
   final String message;
-  GetTeamsError(this.message);
+  const GetTeamsError(this.message);
   @override
   List<Object> get props => [message];
 }
 class GetTeamsLoadedByid extends GetTeamsState{
   final Team team;
-  GetTeamsLoadedByid(this.team);
+  const GetTeamsLoadedByid(this.team);
   @override
   List<Object> get props => [team];}

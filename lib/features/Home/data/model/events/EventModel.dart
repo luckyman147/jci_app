@@ -1,9 +1,7 @@
 
 
-import 'package:jci_app/features/Home/presentation/widgets/EventListWidget.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../../domain/entities/Activity.dart';
 import '../../../domain/entities/Event.dart';
 
 
@@ -30,10 +28,10 @@ class EventModel extends Event{
       categorie: event.categorie,
       IsPaid: event.IsPaid,
       price: event.price,
-      Participants: event.Participants,
+      Participants: event.Participants ?? [],
       CoverImages: event.CoverImages,
       registrationDeadline: event.registrationDeadline,
-      IsPart: event.IsPart,
+      IsPart: false,
     );
   }
 

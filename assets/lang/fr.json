@@ -1,4 +1,5 @@
 {
+
   "Get Started": "Commencer",
   "Explore": "Explorer",
   "Create Account": "Créer un compte",
@@ -9,17 +10,23 @@
   "Events": "Événements",
   "Event": "Événement",
   "Choose": "Choisir",
+  "Login With Phone": "Se connecter avec téléphone",
   "Change To Member": "Changer en membre",
-  "Change To": "Changer à",
+  "Change To": "Changer à",  "Login With Email": "Se connecter avec Email",
   "Cotisation": "Cotisation",
   "st": "er",
   "nd": "ème",
   "Not Paid": "Non payé",
   "View": "Voir",
   "Sort": "Trier",
+  "My Bio": "Ma bio",
+
+  "Enter  Phone Number": "Entrez le numéro de téléphone",
+
   "Membership": "Cotisation",
 "Filter by Activity Type": "Filtrer par type d'activité",
 
+  "About Me": "À propos de moi",
 
 
 
@@ -45,8 +52,8 @@
   "Meeting": "Réunion",
   "Previous ": "Les dernieres",
   "All": "Tous",
-  "Membership Report": "Rapport de cotisation",
-  "Inactivity Report": "Rapport d'inactivité",
+  "Membership Report": "Rappel de cotisation",
+  "Inactivity Report": "Rappel d'inactivité",
 "Edit President": "Modifier le président",
   "Change  Image": "Changer l'image",
   "Trainings": "Formations",

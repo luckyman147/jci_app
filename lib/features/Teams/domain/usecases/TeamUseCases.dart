@@ -3,7 +3,6 @@ import 'package:jci_app/features/Teams/domain/repository/TeamRepo.dart';
 
 import '../../../../core/error/Failure.dart';
 import '../../../../core/usescases/usecase.dart';
-import '../../../auth/domain/entities/Member.dart';
 import '../entities/Team.dart';
 
 class GetAllTeamsUseCase {

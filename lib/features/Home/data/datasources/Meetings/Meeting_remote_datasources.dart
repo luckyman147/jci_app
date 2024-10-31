@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
 import 'package:jci_app/core/config/env/urls.dart';
 
 
@@ -12,8 +11,6 @@ import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/features/Home/data/model/NoteModel.dart';
 
 
-import '../../../../../core/config/services/store.dart';
-import '../../../../../core/config/services/uploadImage.dart';
 import '../../../../../core/config/services/verification.dart';
 import '../../../../../core/error/Exception.dart';
 import '../../model/meetingModel/MeetingModel.dart';
@@ -77,7 +74,7 @@ final body = Meeting.toJson();
     final token = await getTokens();
     final response = await client.delete(
 
-      Uri.parse(getMeetingsUrl+"$id"),
+      Uri.parse("$getMeetingsUrl$id"),
       headers: {"Content-Type": "application/json",
         "Authorization": "Bearer ${token[1]}"
 
@@ -127,7 +124,7 @@ final body = Meeting.toJson();
     final member = await MemberStore.getModel();
     final memberId = member!.id;
     final response =  await client.post(
-      Uri.parse(getMeetingsUrl + 'get/$id'),
+      Uri.parse('${getMeetingsUrl}get/$id'),
       headers: {"Content-Type": "application/json"},
       body: json.encode({"id": memberId}),
     );
@@ -193,7 +190,7 @@ final body = Meeting.toJson();
     final tokens= await getTokens();
     final body =Meeting.toJson();
     return client.patch(
-      Uri.parse(getMeetingsUrl+Meeting.id+"/edit"),
+      Uri.parse("$getMeetingsUrl${Meeting.id}/edit"),
       headers: {"Content-Type": "application/json",
         "Authorization": "Bearer ${tokens[1]}"},
       body: json.encode(body),

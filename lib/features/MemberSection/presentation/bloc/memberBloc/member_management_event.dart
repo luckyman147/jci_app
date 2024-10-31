@@ -9,26 +9,26 @@ class initMemberEvent extends MemberManagementEvent{
   final double points;
   final String role;
   final List<dynamic> objectifs;
-  initMemberEvent({required this.isUpdated,required this.cotisation,required this.points,required this.role,required this.objectifs});
+  const initMemberEvent({required this.isUpdated,required this.cotisation,required this.points,required this.role,required this.objectifs});
   @override
   List<Object> get props => [isUpdated,cotisation,points,role,objectifs];}
 
 class UpdateCotisation extends MemberManagementEvent{
 final UpdateCotisationParams updateCotisationParams;
-  UpdateCotisation({ required this.updateCotisationParams});
+  const UpdateCotisation({ required this.updateCotisationParams});
   @override
   List<Object> get props => [updateCotisationParams];}
 
 class UpdatePoints extends MemberManagementEvent{
 final UpdatePointsParams updatePointsParams;
-  UpdatePoints({ required this.updatePointsParams});
+  const UpdatePoints({ required this.updatePointsParams});
   @override
   List<Object> get props => [updatePointsParams];}
 
 class ChangeRoleEvent extends MemberManagementEvent {
   final ChangeRoleParams changeRoleParams;
 
-  ChangeRoleEvent(this.changeRoleParams);
+  const ChangeRoleEvent(this.changeRoleParams);
 
   @override
   List<Object?> get props => [changeRoleParams];
@@ -37,47 +37,47 @@ class ChangeRoleEvent extends MemberManagementEvent {
 
 class validateMember extends MemberManagementEvent{
 final String memberid;
-  validateMember({ required this.memberid});
+  const validateMember({ required this.memberid});
   @override
   List<Object> get props => [memberid];
 }
 class AddPoints extends MemberManagementEvent{
 
-  AddPoints();
+  const AddPoints();
   @override
   List<Object> get props => [];
 }
 class RemovePoints extends MemberManagementEvent{
-  RemovePoints();
+  const RemovePoints();
   @override
   List<Object> get props => [];
 }
 class AddCotisation extends MemberManagementEvent{
-  AddCotisation();
+  const AddCotisation();
   @override
   List<Object> get props => [];
 }
 class ChangeLanguageEvent extends MemberManagementEvent{
   final String language;
-  ChangeLanguageEvent({required this.language});
+  const ChangeLanguageEvent({required this.language});
   @override
   List<Object> get props => [language];
 }
 class SendMembershipReportEvent extends MemberManagementEvent{
   final String id;
-  SendMembershipReportEvent({required this.id});
+  const SendMembershipReportEvent({required this.id});
   @override
   List<Object> get props => [id];
 }
 class SendInactivityReportEvent extends MemberManagementEvent{
   final String id;
-  SendInactivityReportEvent({required this.id});
+  const SendInactivityReportEvent({required this.id});
   @override
   List<Object> get props => [id];
 }
 class deleteMemberEvent extends MemberManagementEvent{
   final String id;
-  deleteMemberEvent({required this.id});
+  const deleteMemberEvent({required this.id});
   @override
   List<Object> get props => [id];
 }

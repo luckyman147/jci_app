@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -15,11 +13,9 @@ import 'package:jci_app/features/Home/data/model/ActivityModel.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 
 
-import '../../../../../core/config/services/store.dart';
 import '../../../../../core/config/services/uploadImage.dart';
 import '../../../../../core/config/services/verification.dart';
 import '../../../../../core/error/Exception.dart';
-import '../../../domain/entities/Activity.dart';
 import '../../model/events/EventModel.dart';
 import '../activities/ActivityRemote.dart';
 
@@ -61,11 +57,11 @@ final token = await getTokens();
         final Map<String, dynamic> decodedJson = json.decode(response.body) ;
 
 if (event.CoverImages[0]!="assets/images/jci.png"){
-        final upload_response=await uploadImages(decodedJson['_id'], event.CoverImages.first,getEventsUrl,"CoverImages");
-        if (upload_response.statusCode==200){
+        final uploadResponse=await uploadImages(decodedJson['_id'], event.CoverImages.first,getEventsUrl,"CoverImages");
+        if (uploadResponse.statusCode==200){
           return Future.value(unit);
         }
-        else if (upload_response.statusCode==400){
+        else if (uploadResponse.statusCode==400){
 
           deleteEvent(decodedJson["_id"]);
           throw EmptyDataException();
@@ -93,7 +89,7 @@ if (event.CoverImages[0]!="assets/images/jci.png"){
     final token = await getTokens();
     final response = await client.delete(
 
-      Uri.parse(getEventsUrl+"$id"),
+      Uri.parse("$getEventsUrl$id"),
       headers: {"Content-Type": "application/json",
         "Authorization": "Bearer ${token[1]}"
       },
@@ -142,7 +138,7 @@ if (event.CoverImages[0]!="assets/images/jci.png"){
     final member = await MemberStore.getModel();
 
  final response =  await client.post(
-      Uri.parse(getEventsUrl + 'get/$id'),
+      Uri.parse('${getEventsUrl}get/$id'),
 
       headers: {"Content-Type": "application/json"},
       body:jsonEncode({"id": member!.id}),
@@ -241,7 +237,7 @@ print(eventModels.first.name);
   Future<Unit> updateEvent(EventModel event) async {
     final body =event.toJson();
 
-    return await EditFunction(event, body,getEventsUrl+event.id+"/edit",getEventsUrl,client);
+    return await EditFunction(event, body,"$getEventsUrl${event.id}/edit",getEventsUrl,client);
   }
 
   @override

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:math';
 
 import 'package:circle_progress_bar/circle_progress_bar.dart';
@@ -9,14 +8,11 @@ import 'package:intl/intl.dart';
 import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/widgets/TaskComponents.dart';
-import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../domain/entities/Task.dart';
 import '../../domain/entities/Team.dart';
 import 'DetailTeamComponents.dart';
-import 'DetailTeamWidget.dart';
 import 'MembersTeamSelection.dart';
 
 class TeamWidget extends StatelessWidget {
@@ -38,7 +34,7 @@ class TeamWidget extends StatelessWidget {
         itemBuilder: (ctx, index) {
 
           return index >= teams.length ?
-          LoadingWidget() : body(teams, index, mediaQuery, context);
+          const LoadingWidget() : body(teams, index, mediaQuery, context);
         },
         separatorBuilder: (BuildContext context, int index) {
           return const SizedBox(
@@ -56,6 +52,7 @@ Widget body(List<Team> teams, int index, MediaQueryData mediaQuery,
           padding: EdgeInsetsDirectional.symmetric(
               horizontal: mediaQuery.size.width / 13),
           child: InkWell(
+            splashColor: Colors.grey,
             onTap: () {
               context.go('/TeamDetails/${teams[index].id}/$index'
 
@@ -172,8 +169,8 @@ Padding IsPublic(bool status) {
 Row eventRow(MediaQueryData mediaQuery, List<Team> teams, int index) {
   return Row(
     children: [
-      Icon(Icons.event,color: SecondaryColor,),
-      SizedBox(width: 5,),
+      const Icon(Icons.event,color: SecondaryColor,),
+      const SizedBox(width: 5,),
       SizedBox(
         width:mediaQuery.size.width/5,
         child: Text(
@@ -231,7 +228,7 @@ Widget Images(List<Team> teams, int index) =>
           Container(
             height: 30,
             width: 30,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: backgroundColored,
               shape: BoxShape.circle,
             ),
@@ -266,7 +263,7 @@ Widget CircleProgess(List<Team> teams, int index,MediaQueryData mediaQuery
                 ),
               ),
         )
-        : SizedBox();
+        : const SizedBox();
 
 SizedBox progresscircle(List<Team> teams, int index) {
   return SizedBox(
@@ -291,7 +288,7 @@ SizedBox progresscircle(List<Team> teams, int index) {
               teams[index].tasks) /
               teams[index].tasks.length)*100,
           unit: "%",
-          duration: Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 500),
         ),
       ),
     ),
@@ -310,7 +307,7 @@ Widget TaskRow(List<Team> teams, int index) {
       child: Flex(
           direction: Axis.horizontal,
           children: [
-            Icon(
+            const Icon(
               Icons.check_box_outlined,
               color: PrimaryColor,
               size: 20,
@@ -371,7 +368,6 @@ class TeamHomeWidget extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         itemBuilder: (ctx, index) {
 
-          ;
 
 
           return SingleChildScrollView(
@@ -401,7 +397,7 @@ class TeamHomeWidget extends StatelessWidget {
                         color: Colors.grey.withOpacity(0.5),
 
                         blurRadius: 7,
-                        offset: Offset(0, 1), // changes position of shadow
+                        offset: const Offset(0, 1), // changes position of shadow
                       ),
                     ],
 

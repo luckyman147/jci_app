@@ -23,7 +23,6 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../../core/config/services/TeamStore.dart';
 
 import '../../../../core/util/snackbar_message.dart';
-import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 
 import '../../../MemberSection/domain/usecases/MemberUseCases.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
@@ -99,7 +98,7 @@ class TeamFunction{
     return list.any((element) => element.id == targetObject.id)||list.contains(targetObject);
   }
   static List<String> getIds(List<Member> objects) {
-    if (objects.isEmpty || objects == null  ) {
+    if (objects.isEmpty  ) {
       return [];
     }
     return objects.map((obj) => obj.id ).toList();
@@ -170,7 +169,7 @@ class TeamFunction{
       'attachedFile': object.attachedFile.map((e) => toMapFile(e)).toList(), 'CheckLists': object.CheckLists.map((e) => toMapChecklist(e)),};
   }
   static List<String> getidsObTask(List<Tasks> objects) {
-    if (objects.isEmpty || objects == null  ) {
+    if (objects.isEmpty  ) {
       return [];
     }
     return objects.map((obj) => obj.id ).toList();
@@ -251,7 +250,7 @@ class TeamFunction{
 
       firstDate: DateTime(DateTime.now().year, DateTime.now().month,),
       currentDate: time,
-      lastDate: DateTime.now().add(Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
 
     );
 
@@ -264,11 +263,11 @@ class TeamFunction{
     GoRouter.of(context).go('/home');
     context.read<GetTaskBloc>().add(resetevent());
 
-    context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
+    context.read<TaskVisibleBloc>().add(const changePrivacyEvent(Privacy.Primary));
     context.read<GetTeamsBloc>().add(GetTeams(isPrivate: false,isUpdated: ste.isUpdated));
     context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(ste.isUpdated));
 
-    context.read<TaskfilterBloc>().add(filterTask([]));
+    context.read<TaskfilterBloc>().add(const filterTask([]));
   }
 
 
@@ -307,7 +306,7 @@ class TeamFunction{
   static  void init(String id,BuildContext context)async{
     final store=await TeamStore.getUpdated();
     context.read<GetTaskBloc>().add(GetTasks(id: id, filter: TaskFilter.All));
-    context.read<TaskVisibleBloc>().add(ToggleTaskVisible(true));
+    context.read<TaskVisibleBloc>().add(const ToggleTaskVisible(true));
     context.read<GetTeamsBloc>().add(GetTeamById({"id": id,"isUpdated": store}));
 
   }
@@ -353,17 +352,25 @@ class TeamFunction{
   }
   void saveFile(String decodedString, String filed) async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String filePath = documentsDirectory.path + '/'+filed;
+    String filePath = '${documentsDirectory.path}/$filed';
     File file = File(filePath);
 
     file.writeAsString(decodedString);
   }
-  static  Future<void> openFile(Map<String, dynamic> fileData, String fileName) async {
+  static  Future<void> openFile(BuildContext context,String fileid,String extension) async {
     try {
       // Save the base64 string as a file
-      File tempFile = await saveBase64AsFile(fileData['url'], fileName);
 
-      await OpenFile.open(tempFile.path);
+context.read<GetTaskBloc>().add(GetFileEvent(fileid));
+final state =BlocProvider.of<GetTaskBloc>(context).state;
+await Future.delayed(const Duration(seconds: 2));
+final directory = await getTemporaryDirectory();
+final file = File('${directory.path}/temp_file.$extension');
+await file.writeAsBytes(state.image!);
+
+OpenFile.open(file.path,);
+
+
       // Open file
     } catch (e) {
       log(e.toString());
@@ -377,15 +384,15 @@ class FileStorage {
       // If not we will ask for permission first
       await Permission.storage.request();
     }
-    Directory _directory = Directory("");
+    Directory directory = Directory("");
     if (Platform.isAndroid) {
       // Redirects it to download folder in android
-      _directory = Directory("/storage/emulated/0/Download");
+      directory = Directory("/storage/emulated/0/Download");
     } else {
-      _directory = await getApplicationDocumentsDirectory();
+      directory = await getApplicationDocumentsDirectory();
     }
 
-    final exPath = _directory.path;
+    final exPath = directory.path;
     print("Saved Path: $exPath");
     await Directory(exPath).create(recursive: true);
     return exPath;

@@ -16,8 +16,8 @@ import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
 import '../../domain/repositories/AuthRepo.dart';
 import '../datasources/authLocal.dart';
-typedef Future<bool> Auth();
-typedef Future<Unit> ResetPassword();
+typedef Auth = Future<bool> Function();
+typedef ResetPassword = Future<Unit> Function();
 class AuthRepositoryImpl implements AuthRepo {
 final AuthLocalDataSources local;
   final AuthRemote api ;
@@ -29,7 +29,7 @@ final NetworkInfo networkInfo;
     if (await networkInfo.isConnected) {
       try {
         await Auth;
-        return Right(true);
+        return const Right(true);
       }
 
       on EmptyCacheException {
@@ -49,7 +49,7 @@ final NetworkInfo networkInfo;
     if (await networkInfo.isConnected) {
       try {
         await AuthReset;
-        return Right(unit);
+        return const Right(unit);
       }
 
 
@@ -131,7 +131,8 @@ Future<Either<Failure, Unit>> LogInWithCredentials(String email ,String password
   }
 
 
-Future<Either<Failure, Unit>> signUpWithCredentials(Member member,String otp)async {
+@override
+  Future<Either<Failure, Unit>> signUpWithCredentials(Member member,String otp)async {
   final otpModel=await local.getOtp();
   if (otpModel==otp){
     final MemberModel memberModelSignUp = MemberModel.fromEntity(member);
@@ -159,7 +160,7 @@ Future<Either<Failure, Unit>> signUpWithCredentials(Member member,String otp)asy
   Future<Either<Failure, bool>> checkOtp(String otp) async{
     final otpModel=await local.getOtp();
     if (otpModel==otp){
-      return Right(true);
+      return const Right(true);
     }
     else{
       return Left(WrongVerificationCodeFailure());
@@ -186,7 +187,7 @@ else{
   Future<Either<Failure, Unit>> updateOtp(String otp) async{
     try{
       await local.updateOtp(otp);
-      return Right(unit);
+      return const Right(unit);
     }
     catch(e){
       return Left(ServerFailure());

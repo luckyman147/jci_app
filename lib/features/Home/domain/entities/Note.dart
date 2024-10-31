@@ -7,7 +7,7 @@ class Note extends Equatable {
   final DateTime date;
   final dynamic owner;
 
-  Note({
+  const Note({
     required this.id,
     required this.title,
     required this.content,

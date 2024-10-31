@@ -1,5 +1,4 @@
 
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,7 +35,7 @@ class BoardComponents{
     );
   }
 
-  static BlocBuilder<YearsBloc, YearsState> AddPositionWidget(PageController pageController,TextEditingController name_controller) {
+  static BlocBuilder<YearsBloc, YearsState> AddPositionWidget(PageController pageController,TextEditingController nameController) {
     return BlocBuilder<YearsBloc, YearsState>(
       builder: (context, state) {
         return SizedBox(
@@ -45,7 +44,7 @@ class BoardComponents{
           child: BlocBuilder<ActionJciCubit, ActionJciState>(
   builder: (context, ste) {
     return PageView.builder(
-      scrollBehavior: ScrollBehavior(),
+      scrollBehavior: const ScrollBehavior(),
 
             scrollDirection: Axis.vertical,
               controller: pageController,
@@ -58,7 +57,7 @@ context.read<ActionJciCubit>().changePageNum(page);
               if (ste.pageNum == 0){
               return AddPositionColumn(context, state);}
               else{
-                return AddNewRoleWidget(context,state,name_controller);
+                return AddNewRoleWidget(context,state,nameController);
               }
             }
           );
@@ -126,7 +125,7 @@ context.read<ActionJciCubit>().changePageNum(page);
         ),
       ), ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(PrimaryColor),
+          backgroundColor: WidgetStateProperty.all<Color>(PrimaryColor),
         ),
         onPressed: () {
           context.read<BoordBloc>().add(AddBoardEvent(year: state.cloneyear));
@@ -170,7 +169,7 @@ context.read<ActionJciCubit>().changePageNum(page);
             ),
             child: Center(
               child: Text(
-                '${yearsList[index]}',
+                yearsList[index],
                 style: PoppinsRegular(16, JCIFunctions.stringExistsOrselectedInList(state.years, yearsList[index],)?textColor:state.cloneyear==yearsList[index]?textColorWhite:textColorBlack, ),
               ),
             ),
@@ -257,7 +256,7 @@ else{
       ),
     );
   }
-  static Widget showPosWidget(BuildContext context,Post post, TextEditingController _searchController) {
+  static Widget showPosWidget(BuildContext context,Post post, TextEditingController searchController) {
 
 
     return SizedBox(
@@ -272,7 +271,7 @@ else{
 
     Column(
       children: [
-        buildsSearchNumber(context, _searchController),
+        buildsSearchNumber(context, searchController),
           BoardImpl.AssignToWidget(post.id),
       ],
     ),
@@ -306,17 +305,17 @@ else{
           onTAp();
         },
         child: Text(
-          '$text', style: PoppinsRegular(16.0,
+          text, style: PoppinsRegular(16.0,
             !isactive?textColor:
             Textcolor),)
     );
   }
 
-  static  Padding buildsSearchNumber(BuildContext context, TextEditingController _searchController) {
+  static  Padding buildsSearchNumber(BuildContext context, TextEditingController searchController) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
-        controller: _searchController,
+        controller: searchController,
         onChanged: (value){
           if (value.isEmpty) {
             context.read<MembersBloc>().add(const GetAllMembersEvent(false));
@@ -328,7 +327,7 @@ else{
         decoration: InputDecoration(
 
           labelText: 'Search for member name'.tr(context),
-          prefixIcon: Icon(Icons.search),
+          prefixIcon: const Icon(Icons.search),
           labelStyle: PoppinsRegular(14.0, textColor),
           border: border(textColorBlack),
           focusedBorder: border(PrimaryColor),
@@ -348,11 +347,11 @@ else{
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
-            mainAxisAlignment:post.assignTo!=null&&post.assignTo[0].id.isNotEmpty? MainAxisAlignment.spaceAround:MainAxisAlignment.center,
+            mainAxisAlignment:post.assignTo[0].id.isNotEmpty? MainAxisAlignment.spaceAround:MainAxisAlignment.center,
             children:[
 
           Visibility(
-            visible: post.assignTo!=null&&post.assignTo[0].id.isNotEmpty,
+            visible: post.assignTo[0].id.isNotEmpty,
 
             child: buildCircularIconButton(Icons.close, () {
           final Pos=PostField(year: "", role: post.role, assignTo: post.assignTo[0].id, id: post.id);
@@ -385,7 +384,7 @@ colors: [backgroundColored, backgroundColored]),
             color: Colors.black.withOpacity(0.3), // Shadow color
             spreadRadius: 2,
             blurRadius: 5,
-            offset: Offset(0, -3), // Negative offset to position shadow above the container
+            offset: const Offset(0, -3), // Negative offset to position shadow above the container
           ),
         ],
 
@@ -416,9 +415,9 @@ static  Widget buildCircularIconButton(IconData iconData, VoidCallback onPressed
             ),
           ),
         ),
-        SizedBox(height: 8.0), // Spacer between button and text, adjust as needed
+        const SizedBox(height: 8.0), // Spacer between button and text, adjust as needed
         Text(
-          '$text', // Replace with your button text or make it dynamic
+          text, // Replace with your button text or make it dynamic
           style:PoppinsLight(MediaQuery.of(context).devicePixelRatio*4, textColorBlack),
         ),
       ],
@@ -451,7 +450,7 @@ static  Widget buildCircularIconButton(IconData iconData, VoidCallback onPressed
     final roles=BoardRole.createBoardRoles();
     return Container(
       height: MediaQuery.of(context).size.height * 0.6,
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -490,7 +489,7 @@ static  Widget buildCircularIconButton(IconData iconData, VoidCallback onPressed
               child: IconButton.outlined(onPressed: (){
 
                 context.read<ActionJciCubit>().changePageNum(0);
-              }, icon: Icon(Icons.arrow_upward_sharp,color: textColor,)),
+              }, icon: const Icon(Icons.arrow_upward_sharp,color: textColor,)),
             )
           ],
         );

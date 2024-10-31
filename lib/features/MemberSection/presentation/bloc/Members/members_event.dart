@@ -22,7 +22,7 @@ class GetMemberByNameEvent extends MembersEvent {
   final String name;
 
 
-  GetMemberByNameEvent({required this.name});
+  const GetMemberByNameEvent({required this.name});
 
   @override
   List<Object?> get props => [name];
@@ -30,7 +30,7 @@ class GetMemberByNameEvent extends MembersEvent {
   final bool isUpdated;
 
 
-  GetMemberByHighestRAnkEvent({required this.isUpdated});
+  const GetMemberByHighestRAnkEvent({required this.isUpdated});
 
   @override
   List<Object?> get props => [isUpdated];
@@ -39,7 +39,7 @@ class MemberAddEvent extends MembersEvent {
   final int index;
   final Member member;
 
-  MemberAddEvent(this.index, this.member);
+  const MemberAddEvent(this.index, this.member);
 
   @override
   // TODO: implement props
@@ -54,7 +54,7 @@ class UpdateMemberProfileEvent extends MembersEvent {
   final Member member;
 
 
-  UpdateMemberProfileEvent(this.member,);
+  const UpdateMemberProfileEvent(this.member,);
 
   @override
   List<Object?> get props => [member];
@@ -63,7 +63,7 @@ class GetMemberByIdEvent extends MembersEvent {
   final MemberInfoParams para;
 
 
-  GetMemberByIdEvent(this.para);
+  const GetMemberByIdEvent(this.para);
 
   @override
   List<Object?> get props => [para];
@@ -71,14 +71,14 @@ class GetMemberByIdEvent extends MembersEvent {
 class ChangeToAdminEvent extends MembersEvent {
   final String id;
 
-  ChangeToAdminEvent(this.id);
+  const ChangeToAdminEvent(this.id);
 
   @override
   List<Object?> get props => [id];
 }
 class getRanksOfMembers extends MembersEvent {
 final bool isUpdated;
-  getRanksOfMembers(this.isUpdated);
+  const getRanksOfMembers(this.isUpdated);
 
   @override
   List<Object?> get props => [isUpdated];

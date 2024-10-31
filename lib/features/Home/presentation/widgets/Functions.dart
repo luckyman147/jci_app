@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:async';
-import 'package:flutter_web_browser/flutter_web_browser.dart';
+
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
@@ -15,7 +15,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
-import 'package:jci_app/core/util/snackbar_message.dart';
 import 'package:jci_app/features/Home/domain/entities/ActivityGuest.dart';
 import 'package:jci_app/features/Home/domain/entities/ActivityParticpants.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
@@ -64,7 +63,7 @@ final guestA=ActivityGuest(guest: guest, status: status);
             "${"Delete".tr(context)} ${"Visitor".tr(context)}",
             style: PoppinsRegular(19, textColorBlack),
           ),
-          contentPadding: EdgeInsets.symmetric(vertical: 20.0), // Adjust vertical padding
+          contentPadding: const EdgeInsets.symmetric(vertical: 20.0), // Adjust vertical padding
           content: SizedBox(
             // Set the desired height
             child: Column(
@@ -151,7 +150,7 @@ final guestA=ActivityGuest(guest: guest, status: status);
         return AlertDialog(
 
           title: Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,7 +158,7 @@ final guestA=ActivityGuest(guest: guest, status: status);
                 Text('Email:',style: PoppinsLight(15, textColor),),
                 Text(' ${guest.email}',style: PoppinsLight(17, textColorBlack),),
                 Text('Phone Number: ',style: PoppinsLight(15, textColor),),
-                Text('${guest.phone}',style: PoppinsLight(17, textColorBlack),),
+                Text(guest.phone,style: PoppinsLight(17, textColorBlack),),
 
               ],
             ),
@@ -187,7 +186,7 @@ final guestA=ActivityGuest(guest: guest, status: status);
       controller2.clear();
       controller3.clear();
       context.read<ActivityCubit>().selectIndex(0);
-      context.read<ParticpantsBloc>().add(GetAllGuestsEvent(isUpdated: true));
+      context.read<ParticpantsBloc>().add(const GetAllGuestsEvent(isUpdated: true));
 
 
 
@@ -200,7 +199,7 @@ static   Future<void> DatePicker(BuildContext context, DateTime time,
 
       firstDate: DateTime.now(),
       currentDate: time,
-      lastDate: DateTime.now().add(Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
       onDatePickerModeChange: (mode) {
 
       },
@@ -307,11 +306,9 @@ static Future<void> launchURL(BuildContext context, String url) async {
 
   // If user confirms, launch the URL
   if (confirm == true) {
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url), webViewConfiguration: WebViewConfiguration());
-    } else {
-      throw 'Could not launch $url';
-    }
+
+      await launchUrl(Uri.parse(url),);
+
   }
 
 }
@@ -482,7 +479,7 @@ static Future<void> launchURL(BuildContext context, String url) async {
 
 static   String calculateDurationhour(DateTime beginDateTime, DateTime endDateTime,LocaleState state) {
     final duration = endDateTime.difference(beginDateTime);
-    final dateFormat = DateFormat('EEE HH:mm ',state.locale==Locale('en')?'en_US':'fr');
+    final dateFormat = DateFormat('EEE HH:mm ',state.locale==const Locale('en')?'en_US':'fr');
     final timeFormat = DateFormat('HH:mm');
     if (duration.inDays > 0) {
       return ' ${dateFormat.format(beginDateTime)} - ${dateFormat.format(
@@ -544,7 +541,7 @@ static   String DisplayDuration(DateTime beginDateTime, DateTime endDateTime,
  static  Future<List<Team>> fetchData(BuildContext context) async {
     final teams = await TeamStore.getCachedTeams(CacheStatus.Private);
     if (teams.isEmpty) {
-      context.read<GetTeamsBloc>().add(GetTeams(isPrivate: true));
+      context.read<GetTeamsBloc>().add(const GetTeams(isPrivate: true));
     }
 
     return teams;

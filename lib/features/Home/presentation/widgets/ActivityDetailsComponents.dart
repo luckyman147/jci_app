@@ -2,9 +2,7 @@
 import 'dart:convert';
 
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +14,6 @@ import 'package:jci_app/features/Home/domain/entities/training.dart';
 import 'package:jci_app/features/Home/domain/usercases/ActivityUseCases.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import 'package:jci_app/features/Home/presentation/widgets/MemberSelection.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import '../../../../core/app_theme.dart';
@@ -24,18 +21,14 @@ import '../../../../core/strings/app_strings.dart';
 import '../../../../core/util/snackbar_message.dart';
 import '../../../MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import '../../../Teams/presentation/widgets/DetailTeamComponents.dart';
-import '../../../Teams/presentation/widgets/DetailTeamWidget.dart';
 import '../../../auth/domain/entities/Member.dart';
 import '../../data/model/TrainingModel/TrainingModel.dart';
-import '../../data/model/events/EventModel.dart';
 import '../../data/model/meetingModel/MeetingModel.dart';
 import '../bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import '../bloc/Activity/activity_cubit.dart';
 import '../bloc/DescriptionBoolean/description_bool_bloc.dart';
-import '../bloc/PageIndex/page_index_bloc.dart';
 import '../pages/CreateUpdateActivityPage.dart';
 import 'ActivityImplWidgets.dart';
-import 'AddActivityWidgets.dart';
 import 'AddUpdateFunctions.dart';
 import 'Compoenents.dart';
 import 'Functions.dart';
@@ -54,7 +47,7 @@ class ActivityDetailsComponent{
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: PoppinsRegular(15, textColor),
-          prefixIcon: Icon(Icons.search),
+          prefixIcon: const Icon(Icons.search),
           border: border(textColorBlack),
             focusedBorder: border(PrimaryColor),
             enabledBorder: border(PrimaryColor),
@@ -81,7 +74,7 @@ class ActivityDetailsComponent{
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
 
-                activitys.runtimeType == MeetingModel ?  AgendaWidget(boxDecoration, context, mediaQuery, activitys):SizedBox(),
+                activitys.runtimeType == MeetingModel ?  AgendaWidget(boxDecoration, context, mediaQuery, activitys):const SizedBox(),
               Padding(
                 padding: paddingSemetricVertical(),
                 child: Container(
@@ -120,7 +113,7 @@ class ActivityDetailsComponent{
      Navigator.of(context).push(
        MaterialPageRoute(
          builder: (BuildContext context) {
-           return  CreateUpdateActivityPage(id: 'id', activity: act, work: work, part: [],);
+           return  CreateUpdateActivityPage(id: 'id', activity: act, work: work, part: const [],);
          },
        ),
      );
@@ -173,7 +166,7 @@ class ActivityDetailsComponent{
 
                    return PartcipantsBody(tileColor, participant, activityid, ctx);
                  }, separatorBuilder: (BuildContext context, int index) {
-                   return SizedBox(height: 11,);
+                   return const SizedBox(height: 11,);
                },
                ),
              ),
@@ -195,7 +188,7 @@ class ActivityDetailsComponent{
                      color: Colors.grey.withOpacity(0.5),
                      spreadRadius: 5,
                      blurRadius: 7,
-                     offset: Offset(0, 3), // changes position of shadow
+                     offset: const Offset(0, 3), // changes position of shadow
                    ),
                  ],
                  border: Border.all(color: textColorBlack,),
@@ -219,13 +212,13 @@ class ActivityDetailsComponent{
                            final param = ParticipantsParams(ActivityId: activityid, partipantId: participant.member[0]["_id"], status: "absent");
                            ctx.read<ParticpantsBloc>().add(CheckAbsenceEvent(params: param));
 
-                         }):SizedBox(),
+                         }):const SizedBox(),
                          participant.status!="present"?
                          AbsenceButton(participant, activityid, ctx, Icons.check, () {
                            final param = ParticipantsParams(ActivityId: activityid, partipantId: participant.member[0]["_id"], status: "present");
                            ctx.read<ParticpantsBloc>().add(CheckAbsenceEvent(params: param));
                            // Add your logic to check participant
-                         }):SizedBox()
+                         }):const SizedBox()
 
                        ],
                      ),
@@ -326,7 +319,7 @@ class ActivityDetailsComponent{
                  );
                },
                separatorBuilder: (BuildContext context, int index) {
-                 return SizedBox(height: 10);
+                 return const SizedBox(height: 10);
                },
              );
  }
@@ -386,8 +379,8 @@ class ActivityDetailsComponent{
             width: 40,
 
             decoration:
-            BoxDecoration(color: BackWidgetColor, borderRadius: BorderRadius.all(Radius.circular(10))),
-            child: Icon(Icons.more_horiz_sharp, color: textColorBlack, size: 30),
+            const BoxDecoration(color: BackWidgetColor, borderRadius: BorderRadius.all(Radius.circular(10))),
+            child: const Icon(Icons.more_horiz_sharp, color: textColorBlack, size: 30),
           ),
         ),
       ));
@@ -443,7 +436,7 @@ showDragHandle: true,
                              ),
                              IconButton(onPressed: (){
                                context.read<ParticpantsBloc>().add(DownloadAndSaveExcelEvent(activityId: activitys.id));
-                             }, icon: Icon(Icons.download_for_offline,color: Colors.green,))
+                             }, icon: const Icon(Icons.download_for_offline,color: Colors.green,))
                            ],
                          ),
                        ],
@@ -475,7 +468,7 @@ showDragHandle: true,
 
  static Widget DEleteEditACtivityWidget(MediaQueryData mediaQuery, Activity activitys, BuildContext context) {
    return Container(
-     margin: EdgeInsets.symmetric(horizontal: 15),
+     margin: const EdgeInsets.symmetric(horizontal: 15),
                  height: mediaQuery.size.height / 7,
                  decoration: BoxDecoration(
 
@@ -528,7 +521,7 @@ showDragHandle: true,
         decoration:  BoxDecoration(
           border: Border.all(color: textColorBlack),
             color: textColorWhite,
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
 
         ),
         child: Padding(
@@ -568,7 +561,7 @@ showDragHandle: true,
                 height: mediaQuery.size.height / 15,
                 decoration: BoxDecoration(
                     color: PrimaryColor.withOpacity(.2),
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Center(
@@ -588,7 +581,7 @@ showDragHandle: true,
         child: Container(
 
           decoration:
-          BoxDecoration(color: BackWidgetColor,borderRadius: BorderRadius.all(Radius.circular(10))  ),
+          const BoxDecoration(color: BackWidgetColor,borderRadius: BorderRadius.all(Radius.circular(10))  ),
           child: SvgPicture.string(
             pic,
             width: 20,
@@ -641,7 +634,7 @@ showDragHandle: true,
 
  static AnimatedSwitcher FutureJoinButton(ParticpantsState state, int index, Activity activitys, activity act, MediaQueryData mediaQuery,double width,double textsize) {
    return AnimatedSwitcher(
-       duration: Duration(milliseconds: 1000), // Set the duration for the animation
+       duration: const Duration(milliseconds: 1000), // Set the duration for the animation
        child: FutureBuilder(
          future: ActivityAction.checkifMemberExist(state.isParticipantAdded[index]["participants"].cast<Map<String, dynamic>>()),// Your asynchronous function that returns a Future
          builder: (context, snapshot) {
@@ -654,7 +647,7 @@ showDragHandle: true,
            } else {
              // Show the ParticipateButton with data when data is available
              return AnimatedSwitcher(
-               duration: Duration(milliseconds: 500), // Set the duration for the animation
+               duration: const Duration(milliseconds: 500), // Set the duration for the animation
                child: ParticipateButton(
                  key: UniqueKey(), // Ensure widget is rebuilt when its properties change
                  acti: activitys,
@@ -746,7 +739,7 @@ showDragHandle: true,
                       SizedBox(
                         width: mediaQuery.size.width/1.5,
                         child: Text(
-                              DateFormat('dd EEEE MMM yyyy',state.locale==Locale('en')?'en_US' : 'fr_FR').format(activitys.ActivityBeginDate).toUpperCase(),
+                              DateFormat('dd EEEE MMM yyyy',state.locale==const Locale('en')?'en_US' : 'fr_FR').format(activitys.ActivityBeginDate).toUpperCase(),
                         overflow: TextOverflow.ellipsis,
                           style: PoppinsSemiBold(
                               19, textColorBlack,TextDecoration.none),
@@ -867,7 +860,7 @@ showDragHandle: true,
                     elevation: 5,
                    shape: RoundedRectangleBorder(
                      borderRadius: BorderRadius.circular(10),
-                     side: BorderSide(color: PrimaryColor, width: 1.5),
+                     side: const BorderSide(color: PrimaryColor, width: 1.5),
                    ),
        
                    child: Padding(
@@ -905,7 +898,7 @@ showDragHandle: true,
              );
            },
            separatorBuilder: (BuildContext context, int index) {
-             return SizedBox(height: 10);
+             return const SizedBox(height: 10);
            },
          )
        ),
@@ -917,7 +910,7 @@ showDragHandle: true,
 class DescriptionToggle extends StatelessWidget {
   final String description;
 
-  DescriptionToggle({required this.description});
+  const DescriptionToggle({super.key, required this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -928,7 +921,7 @@ class DescriptionToggle extends StatelessWidget {
             ? description
             : description.length < 100
             ? description
-            : description.substring(0, 100) + '...';
+            : '${description.substring(0, 100)}...';
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -989,7 +982,7 @@ Widget actionRow(
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "${action} ${activity.runtimeType.toString().split("Model")[0].tr(context)}",
+                  "$action ${activity.runtimeType.toString().split("Model")[0].tr(context)}",
                   textAlign: TextAlign.center,
                   style: PoppinsRegular(
                       mediaQuery.devicePixelRatio * 4, color),

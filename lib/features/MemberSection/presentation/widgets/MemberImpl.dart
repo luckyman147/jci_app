@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
+import 'package:jci_app/features/MemberSection/presentation/bloc/memberPermissions/member_permission_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/MemberSection.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/SettingsComponents.dart';
 
-import '../../../Home/presentation/widgets/ErrorDisplayMessage.dart';
 import 'BestMembersWidget.dart';
 import 'ShimmerEffects.dart';
 
@@ -25,7 +24,7 @@ class MemberImpl{
           case UserStatus.MembersRanksLoaded:
             return MemberSectionWidget(member: state.user!);
           case UserStatus.Error:
-            context.read<MembersBloc>().add(GetUserProfileEvent(false));
+            context.read<MembersBloc>().add(const GetUserProfileEvent(false));
 
             return SettingsComponent.signoput(context);
           default:
@@ -39,7 +38,7 @@ class MemberImpl{
 
       switch (state.userStatus) {
         case UserStatus.Loading:
-          return ShimmerGridView();
+          return const ShimmerGridView();
         case UserStatus.MembersLoaded:
         case UserStatus.MemberByname:
         case UserStatus.MembersRanksLoaded:
@@ -59,7 +58,7 @@ class MemberImpl{
             ],
           );
         default:
-          return ShimmerGridView();
+          return const ShimmerGridView();
       }
 
     });
@@ -69,7 +68,7 @@ class MemberImpl{
 
       switch (state.userStatus) {
         case UserStatus.Loading:
-          return ShimmerGridView();
+          return const ShimmerGridView();
         case UserStatus.MembersLoaded:
         case UserStatus.MemberByname:
         case UserStatus.MembersRanksLoaded:
@@ -78,7 +77,7 @@ class MemberImpl{
 
           return BestMembersComponent.MembersRanksBody(context, state.membersWithRanks,);
         default:
-          return ShimmerGridView();
+          return const ShimmerGridView();
       }
 
     });
@@ -88,7 +87,7 @@ class MemberImpl{
 
       switch (state.userStatus) {
         case UserStatus.Loading:
-          return ShimmerGridView();
+          return const ShimmerGridView();
         case UserStatus.MembersLoaded:
         case UserStatus.MemberByname:
         case UserStatus.MembersRanksLoaded:
@@ -96,16 +95,57 @@ class MemberImpl{
 
 if (state.memberWithRank == null) {
   context.read<MembersBloc>().add(
-      GetMemberByHighestRAnkEvent(isUpdated: true));
-  return ShimmerGridView();
+      const GetMemberByHighestRAnkEvent(isUpdated: true));
+  return const ShimmerGridView();
 }
           return BestMembersComponent.showHighestRankMembers(context, state.memberWithRank!,);
         default:
           context.read<MembersBloc>().add(
-              GetMemberByHighestRAnkEvent(isUpdated: true));
-          return ShimmerGridView();
+              const GetMemberByHighestRAnkEvent(isUpdated: true));
+          return const ShimmerGridView();
       }
 
     });
   }
+  static Widget Isowner(Widget isowner,bool pool){
+  return  BlocBuilder<MemberPermissionBloc , MemberPermissionState>(
+      builder: (context, state) {
+
+
+       if (state.isowner && pool) {
+
+         return isowner;
+       }
+       else {
+         return const SizedBox();
+       }},
+    );
+  }
+  static Widget IsNonowner(Widget isowner,){
+  return  BlocBuilder<MemberPermissionBloc , MemberPermissionState>(
+      builder: (context, state) {
+
+
+       if (!state.isowner ) {
+
+         return isowner;
+       }
+       else {
+         return const SizedBox();
+       }},
+    );
+  }
+    static Widget iSSuperNoowner(Widget isowner,bool pool){
+  return  BlocBuilder<MemberPermissionBloc , MemberPermissionState>(
+      builder: (context, state) {
+       if (!state.isowner && state.isSuperAdmin) {
+
+         return isowner;
+       }
+       else {
+         return const SizedBox();
+       }},
+    );
+  }
+
 }

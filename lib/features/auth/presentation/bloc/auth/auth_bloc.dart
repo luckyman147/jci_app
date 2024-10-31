@@ -9,7 +9,6 @@ import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
 import '../../../../../core/usescases/usecase.dart';
 
-import '../../../domain/entities/Member.dart';
 import '../../../domain/usecases/authusecase.dart';
 
 part 'auth_event.dart';
@@ -81,7 +80,7 @@ final statu=await Store.getStatus();
             if (vakue){
          return   AuthSuccessState();
           }
-          return AuthFailureState(message: 'Signout Failed');
+          return const AuthFailureState(message: 'Signout Failed');
           }
     );
   }  AuthState _eitherDoneRefreshedOrErrorState(

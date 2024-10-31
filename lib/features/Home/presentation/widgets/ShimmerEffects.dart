@@ -3,6 +3,8 @@ import 'package:jci_app/core/app_theme.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ReloadDetailsPage extends StatelessWidget {
+  const ReloadDetailsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -27,7 +29,7 @@ class ReloadDetailsPage extends StatelessWidget {
                     BoxShadow(
                       color: Colors.grey[300]!,
                       blurRadius: 5,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -120,7 +122,7 @@ class ReloadDetailsPage extends StatelessWidget {
           ),
         );
       }, separatorBuilder: (BuildContext context, int index) {
-      return SizedBox(height: 10,);
+      return const SizedBox(height: 10,);
     },
     );
   }
@@ -135,7 +137,7 @@ class ReloadDetailsPage extends StatelessWidget {
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Container(
                 height: 400,
                 width: MediaQuery
@@ -191,7 +193,7 @@ class ReloadDetailsPage extends StatelessWidget {
           );
         },
         separatorBuilder: (BuildContext context, int index) {
-          return SizedBox(width: 10);
+          return const SizedBox(width: 10);
         },
       ),
     );
@@ -212,7 +214,7 @@ return    ListView.separated(itemBuilder: (context, index) {
               BoxShadow(
                 color: Colors.grey[300]!,
                 blurRadius: 5,
-                offset: Offset(0, 3),
+                offset: const Offset(0, 3),
               ),
             ],
           ),
@@ -230,7 +232,7 @@ return    ListView.separated(itemBuilder: (context, index) {
         ),
       );
     }, separatorBuilder: (BuildContext context, int index) {
-      return SizedBox(height: 10,);
+      return const SizedBox(height: 10,);
 }, itemCount: count,);
   }
 
@@ -241,6 +243,8 @@ return    ListView.separated(itemBuilder: (context, index) {
       child: Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
             highlightColor: Colors.grey[100]!,
+            direction: ShimmerDirection.rtl,
+            period: const Duration(milliseconds: 1000),
             child: Container(
               height: height,
               width: width,
@@ -250,8 +254,6 @@ return    ListView.separated(itemBuilder: (context, index) {
                 borderRadius: BorderRadius.circular(8.0),
               ),
             ),
-            direction: ShimmerDirection.rtl,
-            period: Duration(milliseconds: 1000),
           ),
     );
   }
@@ -268,12 +270,12 @@ return    ListView.separated(itemBuilder: (context, index) {
             Container(
               width: 50,
               height: 50,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
               ),
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             // Column with shimmer text
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -282,7 +284,7 @@ return    ListView.separated(itemBuilder: (context, index) {
                   width: 150,
                   height: 20,
                   color: Colors.white,
-                  margin: EdgeInsets.only(bottom: 5),
+                  margin: const EdgeInsets.only(bottom: 5),
                 ),
                 Container(
                   width: 100,
@@ -298,8 +300,8 @@ return    ListView.separated(itemBuilder: (context, index) {
   }
   Widget _buildContainer() {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      padding: EdgeInsets.all(10),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      padding: const EdgeInsets.all(10),
       height: 100, // Adjust height as needed
       decoration: BoxDecoration(
         color: Colors.white,
@@ -308,7 +310,7 @@ return    ListView.separated(itemBuilder: (context, index) {
           BoxShadow(
             color: Colors.grey[300]!,
             blurRadius: 5,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -332,7 +334,7 @@ class ShimmerButton {
   }
 
   static Widget shimmerparticipants()=>GridView.builder(
-    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
       crossAxisCount: 3,
       childAspectRatio: 1.5, // Aspect ratio of each grid item
       // Number of columns in the grid
@@ -343,7 +345,7 @@ class ShimmerButton {
         baseColor: Colors.grey[300]!, // Specify base color for shimmer effect
         highlightColor: Colors.grey[100]!, // Specify highlight color for shimmer effect
         child: Container(
-          margin: EdgeInsets.all(8),
+          margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),

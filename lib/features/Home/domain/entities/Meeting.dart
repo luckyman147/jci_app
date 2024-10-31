@@ -1,5 +1,4 @@
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
 class Meeting extends Activity{
 

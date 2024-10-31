@@ -15,7 +15,7 @@ import '../../../../../core/config/services/verification.dart';
 import '../../../../../core/error/Exception.dart';
 import '../../../domain/repsotories/EventRepo.dart';
 import '../../model/events/EventModel.dart';
-typedef Future<Unit> eventAction();
+typedef eventAction = Future<Unit> Function();
 class EventRepoImpl implements EventRepo{
   final EventRemoteDataSource eventRemoteDataSource;
   final EventLocalDataSource eventLocalDataSource;
@@ -37,14 +37,14 @@ class EventRepoImpl implements EventRepo{
     categorie: event.categorie,
     IsPaid: event.IsPaid,
     price: event.price,
-    Participants: [],
+    Participants: const [],
     CoverImages: event.CoverImages,
     registrationDeadline: event.registrationDeadline, IsPart: false,
   );
     if (await networkInfo.isConnected) {
       try {
         await eventRemoteDataSource.createEvent(eventMode);
-        return Right(unit);
+        return const Right(unit);
       } on WrongCredentialsException {
         return Left(WrongCredentialsFailure());
       }
@@ -185,22 +185,8 @@ if (await networkInfo.isConnected) {
 
   @override
   Future<Either<Failure, Unit>> updateEvent(Event event)async {
-    final eventMode= EventModel(
-      id: event.id,
-      LeaderName: event.LeaderName,
-      name: event.name,
-      description: event.description,
-      ActivityBeginDate: event.ActivityBeginDate,
-      ActivityEndDate: event.ActivityEndDate,
-      ActivityAdress: event.ActivityAdress,
-      ActivityPoints:event.ActivityPoints,
-      categorie: event.categorie,
-      IsPaid: event.IsPaid,
-      price: event.price,
-      Participants: event.Participants==null?[]:event.Participants,
-      CoverImages: event.CoverImages,
-      registrationDeadline: event.registrationDeadline, IsPart: event.IsPart,
-    );
+    final eventMode= EventModel.fromEntity(
+     event);
     return await _getMessage(eventRemoteDataSource.updateEvent(eventMode));
   }
   Future<Either<Failure, Unit>> _getMessage(
@@ -208,7 +194,7 @@ if (await networkInfo.isConnected) {
     if (await networkInfo.isConnected) {
       try {
         await event;
-        return Right(unit);
+        return const Right(unit);
       }
 
 on EmptyDataException {
@@ -231,7 +217,7 @@ on EmptyDataException {
     if (await networkInfo.isConnected) {
       try {
         await event;
-        return Right(true);
+        return const Right(true);
       }
 
 on EmptyDataException {
@@ -255,11 +241,11 @@ on EmptyDataException {
    final eventPermission=await  eventLocalDataSource.getPermissions();
   final userPermissions=await Store.getPermissions();
 if(eventPermission .isEmpty || userPermissions.isEmpty){
-    return Right(false);
+    return const Right(false);
   }
   else{
     log(eventPermission.toString());
-  return hasCommonElement(eventPermission, userPermissions)?Right(true):Right(false);
+  return hasCommonElement(eventPermission, userPermissions)?const Right(true):const Right(false);
   }
 
   }

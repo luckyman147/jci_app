@@ -4,13 +4,15 @@ import 'package:shimmer/shimmer.dart';
 import '../../../../core/app_theme.dart';
 
 class ShimmerGridView extends StatelessWidget {
+  const ShimmerGridView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 200.0,
       child: GridView.builder(
         itemCount: 6, // Number of items in your grid view
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2, // Number of items per row
         ),
         itemBuilder: (context, index) {
@@ -23,7 +25,7 @@ class ShimmerGridView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.0),
                 border: Border.all(color: Colors.grey),
               ),
-              margin: EdgeInsets.all(8.0),
+              margin: const EdgeInsets.all(8.0),
               width: 50,
               height: 20,
 
@@ -66,7 +68,7 @@ class ShimmerGridView extends StatelessWidget {
               child: Container(
                 height: 100,
                 width: 100,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white, // You can set a background color for the shimmer effect
                 shape: BoxShape.circle,
                 ),
@@ -82,7 +84,7 @@ class ShimmerGridView extends StatelessWidget {
                     Shimmer.fromColors(
                       baseColor: Colors.grey[300]!,
                       highlightColor: Colors.grey[100]!,
-                      child: SizedBox(
+                      child: const SizedBox(
                         height: 30,
                         width: 200,
                       )  ,
@@ -93,7 +95,7 @@ class ShimmerGridView extends StatelessWidget {
                         Shimmer.fromColors(
                           baseColor: Colors.grey[300]!,
                           highlightColor: Colors.grey[100]!,
-                          child: SizedBox(
+                          child: const SizedBox(
                             height: 30,
                             width: 200,
                           )  ,
@@ -127,7 +129,7 @@ class ShimmerGridView extends StatelessWidget {
                           baseColor: Colors.grey[300]!,
                           highlightColor: Colors.grey[100]!,
                           child: Container(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: Colors.white, // You can set a background color for the shimmer effect
                               shape: BoxShape.circle,
                             ),

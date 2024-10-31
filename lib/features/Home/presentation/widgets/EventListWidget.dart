@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:math';
 
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -79,7 +77,7 @@ scrollDirection: Axis.vertical,
                             onTap: () {
                               context.go(
                                   '/activity/${ widget.Activities[index].id}/${state
-                                      .selectedActivity.name}/${index}');
+                                      .selectedActivity.name}/$index');
                             },
                             child: ClipRRect(
 
@@ -102,7 +100,7 @@ scrollDirection: Axis.vertical,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
 
-                              child: Container(
+                              child: SizedBox(
                                   height: mediaQuery.size.height / 5.8,
 
 
@@ -124,7 +122,7 @@ scrollDirection: Axis.vertical,
                                   width: mediaQuery.size.width / 2.5,
 
                                   child:Text(
-                                    "${DateFormat('EEEE MMM d',state.locale==Locale('en')?'en_US' : 'fr_FR').format(widget.Activities[index].ActivityBeginDate)} ",
+                                    "${DateFormat('EEEE MMM d',state.locale==const Locale('en')?'en_US' : 'fr_FR').format(widget.Activities[index].ActivityBeginDate)} ",
                                     style: PoppinsLight(mediaQuery.devicePixelRatio*5, isBefore?Colors.red:isBetween?Colors.green:textColorBlack),
                                   ),
 
@@ -148,7 +146,7 @@ scrollDirection: Axis.vertical,
 
                                   child: Row(
                                     children: [
-                                      Icon(Icons.location_on_outlined, color: textColorBlack, size: 20,),
+                                      const Icon(Icons.location_on_outlined, color: textColorBlack, size: 20,),
                                       SizedBox(
                                         width: mediaQuery.size.width / 3,
 
@@ -209,13 +207,13 @@ required   BuildContext   context}) {
       builder: (context, state) {
 
         return AnimatedSwitcher(
-          duration: Duration(milliseconds: 500), // Set the duration for the animation
+          duration: const Duration(milliseconds: 500), // Set the duration for the animation
           child: FutureBuilder(
           future: ActivityAction.checkifMemberExist(state.isParticipantAdded[index]["participants"].cast<Map<String, dynamic>>()), // Your asynchronous function that returns a Future
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 // Show a loading indicator while data is being fetched
-                return Center(
+                return const Center(
                   child: CircularProgressIndicator(),
                 );
               } else if (snapshot.hasError) {
@@ -226,7 +224,7 @@ required   BuildContext   context}) {
               } else {
                 // Show the ParticipateButton with data when data is available
                 return AnimatedSwitcher(
-                  duration: Duration(milliseconds: 500), // Set the duration for the animation
+                  duration: const Duration(milliseconds: 500), // Set the duration for the animation
                   child: ParticipateButton(
                     key: UniqueKey(), // Ensure widget is rebuilt when its properties change
                     acti: Activities[index],
@@ -280,7 +278,7 @@ class ActivityOfMonthListWidget extends StatelessWidget {
 
           onTap: (){
 
-            context.go('/activity/${ Activities[index].id}/${state.selectedActivity.name}/${index}');
+            context.go('/activity/${ Activities[index].id}/${state.selectedActivity.name}/$index');
 
           },
           child: Container(
@@ -328,7 +326,7 @@ ClipRRect images(mediaQuery,List<Activity> activity,int index,double height,doub
       child: Container(
         height: height,
         width: width,
-       decoration: BoxDecoration(
+       decoration: const BoxDecoration(
          image: DecorationImage(
            image: AssetImage('assets/images/jci.png'),
            fit: BoxFit.cover
@@ -353,7 +351,7 @@ Positioned details(MediaQueryData mediaQuery, List<Activity> activity,int index,
         children: [
           SizedBox(
             child: Text(
-              "${DateFormat('dd MMMM yyyy',state.locale==Locale("en")?'en_US' : 'fr_FR').format(activity[index].ActivityBeginDate)} à ${DateFormat('HH:mm').format(activity[index].ActivityBeginDate)}",
+              "${DateFormat('dd MMMM yyyy',state.locale==const Locale("en")?'en_US' : 'fr_FR').format(activity[index].ActivityBeginDate)} à ${DateFormat('HH:mm').format(activity[index].ActivityBeginDate)}",
               style: PoppinsNorml(mediaQuery.devicePixelRatio * 4.5, textColorBlack),
             ),
           ),

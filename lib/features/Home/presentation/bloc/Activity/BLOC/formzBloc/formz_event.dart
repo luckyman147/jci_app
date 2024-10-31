@@ -6,14 +6,14 @@ abstract class FormzEvent extends Equatable {
 class LeaderNameChanged extends FormzEvent {
   final String leaderName;
 
-  LeaderNameChanged({required this.leaderName});
+  const LeaderNameChanged({required this.leaderName});
 
   @override
   List<Object> get props => [leaderName];
 }class ProfesseurNameChanged extends FormzEvent {
   final String profName;
 
-  ProfesseurNameChanged({required this.profName});
+  const ProfesseurNameChanged({required this.profName});
 
   @override
   List<Object> get props => [profName];
@@ -22,7 +22,7 @@ class LeaderNameChanged extends FormzEvent {
 class ActivityNameChanged extends FormzEvent {
   final String activityName;
 
-  ActivityNameChanged({required this.activityName});
+  const ActivityNameChanged({required this.activityName});
 
   @override
   List<Object> get props => [activityName];
@@ -40,7 +40,7 @@ class LocationChanged extends FormzEvent {
 class BeginTimeChanged extends FormzEvent {
   final DateTime date;
 
-  BeginTimeChanged({required this.date});
+  const BeginTimeChanged({required this.date});
   @override
   // TODO: implement props
   List<Object?> get props => [date];
@@ -49,7 +49,7 @@ class BeginTimeChanged extends FormzEvent {
 class EndTimeChanged extends FormzEvent {
   final DateTime date;
 
-  EndTimeChanged({required this.date});
+  const EndTimeChanged({required this.date});
   @override
   // TODO: implement props
   List<Object?> get props => [date];
@@ -58,7 +58,7 @@ class EndTimeChanged extends FormzEvent {
 class RegistraTimeChanged extends FormzEvent {
   final DateTime date;
 
-  RegistraTimeChanged({required this.date});
+  const RegistraTimeChanged({required this.date});
   @override
   // TODO: implement props
   List<Object?> get props => [date];
@@ -67,7 +67,7 @@ class RegistraTimeChanged extends FormzEvent {
 class jokerChanged extends FormzEvent{
   final DateTime joke;
 
-  jokerChanged({required this.joke});
+  const jokerChanged({required this.joke});
 
   @override
   // TODO: implement props
@@ -76,7 +76,7 @@ class jokerChanged extends FormzEvent{
 }class jokerTimeChanged extends FormzEvent{
   final TimeOfDay joketimer;
 
-  jokerTimeChanged({required this.joketimer});
+  const jokerTimeChanged({required this.joketimer});
 
   @override
   // TODO: implement props
@@ -86,7 +86,7 @@ class jokerChanged extends FormzEvent{
 class CategoryChanged extends FormzEvent {
   final Category category;
 
-  CategoryChanged({required this.category});
+  const CategoryChanged({required this.category});
 
   @override
   // TODO: implement props

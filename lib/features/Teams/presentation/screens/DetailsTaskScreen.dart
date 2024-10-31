@@ -31,8 +31,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     final inputFields input=inputFields(taskid: widget.taskId, teamid: widget.team.id, file: null, memberid: null, status: null, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: null, fileid: null, );
     context.read<GetTaskBloc>().add(
         GetTaskById(ids: input));
-    context.read<TaskVisibleBloc>().add(ToggleTaskVisible(true));
-    context.read<TaskVisibleBloc>().add(ChangeTextFieldsTitle(TextFieldsTitle.Inactive));
+    context.read<TaskVisibleBloc>().add(const ToggleTaskVisible(true));
+    context.read<TaskVisibleBloc>().add(const ChangeTextFieldsTitle(TextFieldsTitle.Inactive));
 
     //   context.read<MembersBloc>().add(GetAllMembersEvent());
     // TODO: implement initState

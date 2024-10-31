@@ -1,7 +1,6 @@
 
 import 'dart:convert';
 import 'package:circle_progress_bar/circle_progress_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -44,7 +43,7 @@ class DeatailsTeamComponent{
         child:   Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            state.tasks.isNotEmpty?   const    Icon(Icons.check_circle_outline, color: PrimaryColor, size: 20,):SizedBox()
+            state.tasks.isNotEmpty?   const    Icon(Icons.check_circle_outline, color: PrimaryColor, size: 20,):const SizedBox()
             ,Text("${calculateSumCompletedTasks(state.tasks)}/${state.tasks.length} ",
               style: PoppinsRegular(16, textColorBlack),),
           ],
@@ -147,7 +146,7 @@ class DeatailsTeamComponent{
   static IconButton InviteBuitton(BuildContext context,Team team) {
     return IconButton.filled(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(PrimaryColor),
+          backgroundColor: WidgetStateProperty.all(PrimaryColor),
 
         ),
         onPressed: (){
@@ -233,19 +232,19 @@ class DeatailsTeamComponent{
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: SizedBox(
-                            width:  MediaQuery.of(context).size.width/2,
+                            width:  MediaQuery.of(context).size.width/1.6,
                             child: Row(
 
                               children: [
                                 MemberTeamSelection.  imageWidget(Member.toMember(team.Members[team.Members.length-index-1])),
-                                ProfileComponents.buildFutureBuilder(Icon(Icons.person_sharp,),  true, Member.toMember(team.Members[team.Members.length-index-1]).id, (p0) => FunctionMember.isOwner(Member.toMember(team.Members[team.Members.length-index-1]).id))
+                                ProfileComponents.buildFutureBuilder(const Icon(Icons.person_sharp,),  true, Member.toMember(team.Members[team.Members.length-index-1]).id, (p0) => FunctionMember.isOwner(Member.toMember(team.Members[team.Members.length-index-1]).id))
                               ],
                             ),
                           ),
                         ),
                         FunctionMember.isChef(team, team.Members.length-index-1)?
                         ProfileComponents.buildFutureBuilder(KickButton(context, team, index), true, "", (p0) => FunctionMember.isChefAndSuperAdmin(team)):
-                        Icon(Icons.stars_sharp,color: PrimaryColor,),
+                        const Icon(Icons.stars_sharp,color: PrimaryColor,),
                       ],
                     ),
                   ),
@@ -254,7 +253,7 @@ class DeatailsTeamComponent{
             ),
           );
         }, separatorBuilder: (context,int){
-      return SizedBox(height: 10,);
+      return const SizedBox(height: 10,);
     }, itemCount: team.Members.length);
   }
 
@@ -263,7 +262,7 @@ class DeatailsTeamComponent{
       final TeamInput tam=TeamInput(team.id, Member.toMember(team.Members[team.Members.length-index-1]).id.toString(), "kick",team.Members[team.Members.length-index-1]);
       context.read<GetTeamsBloc>().add(UpdateTeamMember(fields: tam));
       Navigator.pop(context);
-    }, child: Icon( Icons.remove_circle,color: Colors.red,),);
+    }, child: const Icon( Icons.remove_circle,color: Colors.red,),);
   }
 
 
@@ -291,7 +290,7 @@ class DeatailsTeamComponent{
                 if (entry.key == 0) {
                   // Apply border radius to the first container
                   return AnimatedContainer(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: PrimaryColor,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(10),
@@ -299,13 +298,13 @@ class DeatailsTeamComponent{
                       ),
                     ),
                     width: containerWidth,
-                    height: 10, duration: Duration(milliseconds: 1000),
+                    height: 10, duration: const Duration(milliseconds: 1000),
                   );
                 } else {
                   // Don't apply border radius to the other containers
                   return AnimatedContainer(
-                    duration: Duration(milliseconds: 1000),
-                    decoration: BoxDecoration(
+                    duration: const Duration(milliseconds: 1000),
+                    decoration: const BoxDecoration(
                       color: PrimaryColor,
                     ),
                     width: containerWidth,
@@ -319,8 +318,8 @@ class DeatailsTeamComponent{
                 if (entry.key == sasks.length - 1) {
                   // Apply border radius to the last container
                   return AnimatedContainer(
-                    duration: Duration(milliseconds: 1000),
-                    decoration: BoxDecoration(
+                    duration: const Duration(milliseconds: 1000),
+                    decoration: const BoxDecoration(
                       color: textColor,
                       borderRadius: BorderRadius.only(
                         topRight: Radius.circular(10),
@@ -341,7 +340,7 @@ class DeatailsTeamComponent{
                 else {
                   // Don't apply border radius to the other containers
                   return Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: textColor,
                     ),
                     width: containerWidth,
@@ -377,7 +376,7 @@ class DeatailsTeamComponent{
 
                       },),
                       SizedBox(
-                        width: mediaQuery.size.width / 1.4,
+
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 18.0),
                           child:
@@ -416,7 +415,7 @@ class DeatailsTeamComponent{
                                   ),
 
                                 ),
-                                ProfileComponents.buildFutureBuilder(IconButton(icon:Icon(Icons.more_vert, color: textColorBlack,), onPressed: () {
+                                ProfileComponents.buildFutureBuilder(IconButton(icon:const Icon(Icons.more_vert, color: textColorBlack,), onPressed: () {
                                   eleteUpdateTeamSHeet(context, mediaQuery,team,mounted);
                                 },
                                 ), true, "member", (p0) => FunctionMember.isChefAndSuperAdmin(team))   ,
@@ -464,7 +463,7 @@ class DeatailsTeamComponent{
             final  image=  await  ActivityAction.convertBase64ToXFile(team.CoverImage);
 
             if (!mounted) return;
-            context.go('/CreateTeam?team=${jsonEncode(team.toJson())}&&image=${image}');
+            context.go('/CreateTeam?team=${jsonEncode(team.toJson())}&&image=$image');
             context.read<MembersTeamCubit>().initMembers( team.Members.map((e) => Member.toMember(e)).toList());
 
             context.read<TaskVisibleBloc>().add(ChangeImageEvent(
@@ -475,7 +474,7 @@ class DeatailsTeamComponent{
 
           ,TeamComponent.actionTeamRow(context,mediaQuery, TeamAction.delete, Icons.delete, "Delete".tr(context), () {
             context.read<GetTeamsBloc>().add(DeleteTeam( team.id));
-            context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+            context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
 
           }),
 
@@ -496,7 +495,7 @@ class DeatailsTeamComponent{
                   , children: [
                 Row(
                   children: [
-                    Icon(Icons.timer, color: Colors.red,),
+                    const Icon(Icons.timer, color: Colors.red,),
                     Text('Deadline', style: PoppinsNorml(14, textColorBlack,),),
                   ],
                 ),
@@ -563,7 +562,7 @@ class DeatailsTeamComponent{
                   tasks) /
                   team.tasks.length) * 100,
               unit: '%',
-              duration: Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 500),
             ),
           ),
         ),

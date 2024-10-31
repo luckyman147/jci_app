@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/services.dart';
 import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 
 import '../../../../core/error/Failure.dart';
 import '../entities/Checklist.dart';
@@ -24,6 +24,7 @@ Future <Either<Failure,Unit>> UpdateMembers(String taskid, bool Status, String m
   Future<Either<Failure,Unit>> AddComment( String taskid, String comment);
   Future<Either<Failure,Unit>> UpdateComment( String taskid,String commentId, String comment);
   Future<Either<Failure,Unit>> DeleteComment( String taskid, String commentId);
+  Future<Either<Failure,Uint8List>> getFile( String fileid);
 
   Future<Either<Failure,Unit>> deleteChecklist(String checklistid);
   Future<Either<Failure,TaskFile>> UpdateFiles(String taskid, TaskFile file);

@@ -10,12 +10,9 @@ import 'package:http/http.dart' as http;
 import 'package:jci_app/core/config/services/verification.dart';
 import 'package:jci_app/features/Home/data/model/ActivityParticpantsModel.dart';
 import 'package:jci_app/features/Home/data/model/GuestModel.dart';
-import 'package:jci_app/features/Home/domain/entities/ActivityGuest.dart';
-import 'package:jci_app/features/Home/domain/entities/Guest.dart';
 
 
 import '../../../../../core/config/services/MemberStore.dart';
-import '../../../../../core/config/services/store.dart';
 import '../../../../../core/config/services/uploadImage.dart';
 import '../../../../../core/error/Exception.dart';
 
@@ -77,14 +74,14 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
         final Map<String, dynamic> decodedJson = json.decode(response.body) ;
 
 if (Training.CoverImages[0]!=null) {
-  final upload_response = await uploadImages(
+  final uploadResponse = await uploadImages(
       decodedJson['_id'], Training.CoverImages.first, getTrainingsUrl,
       "CoverImages");
-  if (upload_response.statusCode == 200) {
+  if (uploadResponse.statusCode == 200) {
     return Future.value(unit);
   }
-  else if (upload_response.statusCode == 400) {
-    debugPrint(upload_response.reasonPhrase.toString());
+  else if (uploadResponse.statusCode == 400) {
+    debugPrint(uploadResponse.reasonPhrase.toString());
     deleteTraining(decodedJson["_id"]);
     throw EmptyDataException();
   } else {
@@ -109,7 +106,7 @@ else{
     final token = await getTokens();
     final response = await client.delete(
 
-      Uri.parse(getTrainingsUrl+"$id"),
+      Uri.parse("$getTrainingsUrl$id"),
       headers: {"Content-Type": "application/json",
         "Authorization": "Bearer ${token[1]}"
 
@@ -159,7 +156,7 @@ else{
     final member = await MemberStore.getModel();
     final memberId = member!.id;
     final response =  await client.post(
-      Uri.parse(getTrainingsUrl + 'get/$id'),
+      Uri.parse('${getTrainingsUrl}get/$id'),
       headers: {"Content-Type": "application/json"},
       body: json.encode({"id": memberId}),
     );
@@ -252,7 +249,7 @@ return await ParticiActivity(id, client, getTrainingsUrl);
   @override
   Future<Unit> updateTraining(TrainingModel Training) async {
     final body =Training.toJson();
-   return await  EditFunction(Training, body, getTrainingsUrl+Training.id+"/edit", getTrainingsUrl, client);}
+   return await  EditFunction(Training, body, "$getTrainingsUrl${Training.id}/edit", getTrainingsUrl, client);}
 
   @override
   Future<Unit>  checkAbsence(String activityId, String memberId, String status) async{

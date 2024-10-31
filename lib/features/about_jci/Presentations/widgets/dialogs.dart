@@ -40,14 +40,14 @@ class Dialogs{
     );
 
   }
-  static void showPosAction(BuildContext context,Post post , TextEditingController _SearchController) {
+  static void showPosAction(BuildContext context,Post post , TextEditingController SearchController) {
     showModalBottomSheet(
       isScrollControlled: true,
       useSafeArea: true,
       showDragHandle: true,
       context: context,
       builder: (BuildContext context) {
-        return BoardComponents. showPosWidget(context,post,_SearchController);
+        return BoardComponents. showPosWidget(context,post,SearchController);
       },
     );
   }
@@ -72,7 +72,7 @@ class Dialogs{
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return BoardComponents. alertDialogDelete(year,roleid ,context,typeDelete,typeDelete==TypeDelete.Board? '${typeDelete.name} $year ':'${typeDelete.name}');
+          return BoardComponents. alertDialogDelete(year,roleid ,context,typeDelete,typeDelete==TypeDelete.Board? '${typeDelete.name} $year ':typeDelete.name);
 
 
 

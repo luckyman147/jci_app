@@ -16,11 +16,11 @@ class AuthComponents{
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CountdownTimer(
-          endTime: DateTime.now().millisecondsSinceEpoch +100000, // Set end time for 5 minutes (300,000 milliseconds)
+          endTime: DateTime.now().millisecondsSinceEpoch +300000, // Set end time for 5 minutes (300,000 milliseconds)
           widgetBuilder: (_,  time) {
             if (time == null) {
-              context.read<ToggleBooleanBloc>().add(ChangeIscompleted(isCompleted: false));
-              context.read<ToggleBooleanBloc>().add(ChangeIsEnabled(isEnabled: false));
+              context.read<ToggleBooleanBloc>().add(const ChangeIscompleted(isCompleted: false));
+              context.read<ToggleBooleanBloc>().add(const ChangeIsEnabled(isEnabled: false));
               return TextButton(child: Text('Time Expired',style:
               PoppinsSemiBold(15, Colors.red,TextDecoration.none)
                 ,), onPressed: () {
@@ -36,7 +36,7 @@ class AuthComponents{
                     style: PoppinsRegular(18, textColor)
 
                 ),
-                SizedBox(width: 5,),
+                const SizedBox(width: 5,),
                 Text(formattedTime,
                     style: PoppinsRegular(18, PrimaryColor)
                 ),
@@ -97,7 +97,7 @@ static Widget NumberInput(BuildContext context,Function(String) onChanged,TextEd
     ),
   );
 }
-  static BlocBuilder<ToggleBooleanBloc, ToggleBooleanState> buildButtonPin(MediaQueryData mediaquery,TextEditingController _controller1,GlobalKey<FormState> formKey,VerifyEvent verifyEvent,Member? member) {
+  static BlocBuilder<ToggleBooleanBloc, ToggleBooleanState> buildButtonPin(MediaQueryData mediaquery,TextEditingController controller1,GlobalKey<FormState> formKey,VerifyEvent verifyEvent,Member? member) {
     return BlocBuilder<ToggleBooleanBloc, ToggleBooleanState>(
       builder: (context, state) {
         return SizedBox(
@@ -105,7 +105,7 @@ static Widget NumberInput(BuildContext context,Function(String) onChanged,TextEd
 
           child: InkWell(
             onTap:  () {
-              SubmitFunctions.      SUbmitPin(state, context,verifyEvent, _controller1,formKey,member);
+              SubmitFunctions.      SUbmitPin(state, context,verifyEvent, controller1,formKey,member);
             },
             child: Container(
               width: double.infinity,

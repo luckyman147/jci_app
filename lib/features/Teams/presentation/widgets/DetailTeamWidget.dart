@@ -22,7 +22,7 @@ class TeamDetailWidget extends StatefulWidget {
 
   final TextEditingController taskController;
 
-  TeamDetailWidget({Key? key, required this.team, required this.taskController})
+  const TeamDetailWidget({Key? key, required this.team, required this.taskController})
       : super(key: key);
 
   @override
@@ -65,7 +65,7 @@ class _TeamDetailWidgetState extends State<TeamDetailWidget> {
                   ),
                 ),
 
-                state.tasks.isEmpty ? SizedBox() :
+                state.tasks.isEmpty ? const SizedBox() :
                 Column(
                   children: [
                     DeatailsTeamComponent.buildProgressText(state),
@@ -90,7 +90,7 @@ class _TeamDetailWidgetState extends State<TeamDetailWidget> {
                       Text("${"Task".tr(context)}s", style: PoppinsSemiBold(
                           mediaQuery.devicePixelRatio * 6, textColorBlack,
                           TextDecoration.none),),
-                      state.tasks.isEmpty ? SizedBox() :
+                      state.tasks.isEmpty ? const SizedBox() :
                       DeatailsTeamComponent. buillLinkedtext(mediaQuery, widget.team),
 
                     ],
@@ -106,7 +106,7 @@ class _TeamDetailWidgetState extends State<TeamDetailWidget> {
                       scrollDirection: Axis.horizontal,
                       child: Padding(
                         padding: paddingSemetricVerticalHorizontal(v: 10, h: 0),
-                        child: myTaskButtons(),
+                        child: const myTaskButtons(),
                       ),
                     )
                     , SizedBox(

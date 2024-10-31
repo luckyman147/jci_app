@@ -1,13 +1,10 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/domain/repositories/MemberRepo.dart';
-import 'package:jci_app/features/MemberSection/domain/usecases/MemberUseCases.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
-import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
@@ -55,7 +52,7 @@ builder: (context, state) {
     height:state.IsActive ? MediaQuery.of(context).size.height*.6 : 250,
 
         width: double.infinity,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         child: BlocBuilder<MemberManagementBloc, MemberManagementState>(
           builder: (context, state) {
 
@@ -67,7 +64,7 @@ builder: (context, state) {
                   child: ListTile(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
-                        side: BorderSide(color: textColor, width: 2)),
+                        side: const BorderSide(color: textColor, width: 2)),
                    title: SingleChildScrollView(
                        scrollDirection: Axis.horizontal,
                        child: ChangePoints(mediaQuery, state,  pointsFocusNode,context,member.id)),
@@ -84,8 +81,8 @@ builder: (context, state) {
                       FunctionMember.UpdateCotisationAction(member.id, 1, valu!,context);
 
                     },context):IconButton.outlined(onPressed: (){
-                      context.read<MemberManagementBloc>().add(AddCotisation());
-                    }, icon: Icon(Icons.add)),
+                      context.read<MemberManagementBloc>().add(const AddCotisation());
+                    }, icon: const Icon(Icons.add)),
                   ],
                 ),
 
@@ -136,50 +133,35 @@ builder: (context, state) {
   builder: (context, ste) {
     return SizedBox(
                           height: 59,
-                          width: mediaQuery.size.width * 0.6,
-                          child: GestureDetector(
-                            onTap: () {
-                              if (!ste.IsActive){
-                              pointsFocusNode.requestFocus();
-                              context.read<ChangeSboolsCubit>().changeActive(true);}
-                              else{
-                                pointsFocusNode.unfocus();
-                                context.read<ChangeSboolsCubit>().changeActive(false);
-                              }
-                            },
-                            child: TextField(
-                              enabled:ste.IsActive ,
-                              focusNode: pointsFocusNode,
-                              style: PoppinsRegular(19, textColorBlack),
-                             keyboardType: TextInputType.number,
-                             keyboardAppearance: Brightness.dark,
-                             textAlign: TextAlign.center,
-                             onSubmitted: (valu) {
-                               FunctionMember.savePoints(id,state.clone,context);
-
-                               // context.read<MemberManagementBloc>().add(UpdatePointsEvent(int.parse(valu)));
-                             },
-
-
-                             controller: TextEditingController(text: state.clone.toInt().toString()),
-
-                              decoration: InputDecoration(
-                             prefix: InkWell(onTap: (){
-                                context.read<MemberManagementBloc>().add(RemovePoints());
-                             }, child: Icon(Icons.remove)),
-                                  suffix: InkWell(onTap: (){
-
-                                    context.read<MemberManagementBloc>().add(AddPoints());
-
-                                  }, child: Icon(Icons.add)),
-                            border: InputBorder.none //none
-
-                                  ),
-                            ),
+                          width: mediaQuery.size.width * 0.5,
+                          child: Row(
+                            children: [
+                              InkWell(
+                                onTap:  () {
+                                  context.read<MemberManagementBloc>().add(const RemovePoints());
+                                },
+                                child:const  Icon(Icons.remove, color:  Colors.black ),
+                              ),
+                              Expanded(
+                                child: Center(
+                                  child: Text(
+                                    state.clone.toInt().toString(),
+                                    style: PoppinsRegular(16, Colors.black
+                                    )),
+                                ),
+                              ),
+                              InkWell(
+                                onTap:  () {
+                                  context.read<MemberManagementBloc>().add(const AddPoints());
+                                },
+                                child:const  Icon(Icons.add, color:Colors.black ),
+                              ),
+                            ],
                           ),
                         );
   },
 ),
+                  const       SizedBox(width: 7,),
                         InkWell(onTap:(){
 
                           FunctionMember.savePoints(id,state.clone,context);
@@ -207,7 +189,7 @@ builder: (context, state) {
                         child: ListTile(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
-                              side: BorderSide(color: textColor, width: 2)),
+                              side:const  BorderSide(color: textColor, width: 2)),
                           title: Text(text, style: PoppinsSemiBold(
                               MediaQuery.devicePixelRatioOf(context)*5.5, textColorBlack, TextDecoration.none)),
 
@@ -273,7 +255,7 @@ builder: (context, state) {
             },
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
-                side: BorderSide(color: textColor, width: 2)),
+                side: const BorderSide(color: textColor, width: 2)),
             title: Text(text, style: PoppinsSemiBold(
                 16, textColorBlack, TextDecoration.none))
           )

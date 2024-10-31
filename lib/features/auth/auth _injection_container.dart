@@ -49,7 +49,7 @@ sl.registerLazySingleton<AuthLocalDataSources>(() => AuthLocalImpl());
 //use cases
 
   sl.registerLazySingleton(() => UpdatePasswordUseCase(authRepository: sl()));
-  sl.registerLazySingleton(() => GoogleRegisterUseCase(sl()));
+  //sl.registerLazySingleton(() => GoogleRegisterUseCase(sl()));
   sl.registerLazySingleton(() => GoogleSignUseCase(sl()));
   sl.registerLazySingleton(() => IsNewMemberUseCase(authRepository:  sl()));
 
@@ -60,6 +60,7 @@ sl.registerLazySingleton<AuthLocalDataSources>(() => AuthLocalImpl());
   sl.registerLazySingleton(() => RefreshTokenUseCase( authRepository: sl()));
   sl.registerLazySingleton(() => SignUpUseCase( authRepository: sl  ()));
   sl.registerLazySingleton(() => LoginUseCase(sl()));
+  sl.registerLazySingleton(() => GoogleRegisterUseCase(sl()));
 
   // Repositories
 
@@ -69,7 +70,9 @@ sl.registerLazySingleton<AuthRepo>(() => AuthRepositoryImpl(api: sl(), networkIn
   // Register http.Client first
 
   sl.registerLazySingleton(() => http.Client());
-  sl.registerLazySingleton(() => GoogleSignIn());
+  sl.registerLazySingleton(() => GoogleSignIn(
+
+  ));
   sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
 
 

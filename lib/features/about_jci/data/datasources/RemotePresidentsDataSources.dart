@@ -1,11 +1,8 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
-import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/core/config/services/verification.dart';
-import 'package:jci_app/features/about_jci/Domain/entities/President.dart';
 import 'package:jci_app/features/about_jci/data/models/PresidentModel.dart';
 
 import 'package:http/http.dart' as http;
@@ -61,13 +58,13 @@ class RemotePresidentsDataSourcesImpl implements RemotePresidentsDataSources {
   }
 
   Future<PresidentModel> uploadimagefunct(Map<String, dynamic> decodedJson, PresidentModel president, PresidentModel presidents) async {
-         final upload_response=await uploadImages(decodedJson['_id'], president.CoverImage,SuperAdminUrl+'/',"CoverImage");
+         final uploadResponse=await uploadImages(decodedJson['_id'], president.CoverImage,'$SuperAdminUrl/',"CoverImage");
 
-    if (upload_response.statusCode==201){
+    if (uploadResponse.statusCode==201){
      return presidents;
     }
-    else if (upload_response.statusCode==400){
-      debugPrint(upload_response.reasonPhrase.toString());
+    else if (uploadResponse.statusCode==400){
+      debugPrint(uploadResponse.reasonPhrase.toString());
       DeletePresident(decodedJson["_id"]);
       throw EmptyDataException();
 
@@ -104,13 +101,13 @@ class RemotePresidentsDataSourcesImpl implements RemotePresidentsDataSources {
 
   @override
   Future<PresidentModel> UpdateImagePresident(PresidentModel presidentModel)async {
-    final upload_response=await uploadImages(presidentModel.id, presidentModel.CoverImage,SuperAdminUrl+"/","CoverImage");
-    if (upload_response.statusCode==201){
-      final decodedJson = json.decode(await upload_response.stream.bytesToString());
+    final uploadResponse=await uploadImages(presidentModel.id, presidentModel.CoverImage,"$SuperAdminUrl/","CoverImage");
+    if (uploadResponse.statusCode==201){
+      final decodedJson = json.decode(await uploadResponse.stream.bytesToString());
       return //display the image// ;
 PresidentModel.fromJson(decodedJson);
     }
-    else if (upload_response.statusCode==400){
+    else if (uploadResponse.statusCode==400){
 
       throw EmptyDataException();
 

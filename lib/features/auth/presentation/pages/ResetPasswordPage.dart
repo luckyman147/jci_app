@@ -11,15 +11,15 @@ import '../../../../core/app_theme.dart';
 import '../../../../core/config/services/store.dart';
 import '../../../../core/util/snackbar_message.dart';
 import '../../../changelanguages/presentation/bloc/locale_cubit.dart';
-import '../bloc/SignUp/sign_up_bloc.dart';
 import '../bloc/bool/toggle_bool_bloc.dart';
+import '../widgets/Inputs/ResetPaswordInput.dart';
+import '../widgets/Inputs/inputs.dart';
 import '../widgets/Text.dart';
-import '../widgets/formText.dart';
-import '../widgets/inputs.dart';
+
 
 class ResetPassword extends StatefulWidget {
 
-   ResetPassword({Key? key, required this.email}) : super(key: key);
+   const ResetPassword({Key? key, required this.email}) : super(key: key);
 final String email;
 
   @override
@@ -89,7 +89,7 @@ else if(state.status== ResetPasswordStatus. Updated){
                 child: Label(text: 'New Password'.tr(context), size: 20,),
               ),
               PasswordInputText(controller: Passwordcontroller),
-                        SizedBox(height: 20,),
+                        const SizedBox(height: 20,),
               Align(
                 alignment: Alignment.topLeft,
                 child: Label(text: 'Confirm Password'.tr(context), size: 20,),
@@ -130,7 +130,7 @@ else if(state.status== ResetPasswordStatus. Updated){
                 if (_key.currentState!.validate()){
 
 final language=await context.read<localeCubit>().cachedLanguageCode();
-                  final  Member member=Member(email: email, password: state.password.value, id: '', role: '', is_validated: false, cotisation: [], Images: [],teams: [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: [], points: 0, objectifs: [],language: language??'fr', rank: 0, description: '', board: "");
+                  final  Member member=Member(email: email, password: state.password.value, id: '', role: '', is_validated: false, cotisation: const [], Images: const [],teams: const [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: const [], points: 0, objectifs: const [],language: language??'fr', rank: 0, description: '', board: "", PreviousPoints: 0);
 
                   context.read<ResetBloc>().add(ResetSubmitted( member: member));
 

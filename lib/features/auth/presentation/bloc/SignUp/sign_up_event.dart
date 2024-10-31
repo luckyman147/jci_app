@@ -63,7 +63,7 @@ class SendVerificationEmailEventOrRegister extends SignUpEvent{
   final String email;
   final bool isGoogle;
   final Member? member;
-  SendVerificationEmailEventOrRegister(this.isGoogle, this.member, {required this.email});
+  const SendVerificationEmailEventOrRegister(this.isGoogle, this.member, {required this.email});
   @override
   List<Object> get props => [email,isGoogle];
 

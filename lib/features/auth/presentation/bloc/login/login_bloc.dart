@@ -125,7 +125,7 @@ LoginState _eitherDoneMessageOrErrorState(
       ),
       (user) {
         if (user == null || status ) {
-          return MessageLogin(message: "Login Successful");
+          return const MessageLogin(message: "Login Successful");
         }
         else{
         return  RegisterGoogle(user: user );}

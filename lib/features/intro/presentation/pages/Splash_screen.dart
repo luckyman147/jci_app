@@ -1,15 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:go_router/go_router.dart';
+
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+
 import 'package:jci_app/core/app_theme.dart';
-import 'package:jci_app/core/config/services/store.dart';
 import 'package:jci_app/core/config/services/verification.dart';
 
 import 'package:jci_app/core/widgets/loading_widget.dart';
 
-import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
+@RoutePage(
 
+)
 class SplashScreen extends StatefulWidget {
 
   const SplashScreen({super.key,
@@ -40,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
 
         return Container(
-            decoration: BoxDecoration(color: backgroundColored),
+            decoration: const BoxDecoration(color: backgroundColored),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -50,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       child: Image.asset("assets/images/jci.png",
                           width: 250, height: 250, fit: BoxFit.contain))),
 
-                  LoadingWidget()
+                  const LoadingWidget()
                 ],
               ),
             ));

@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 
 import 'package:flutter/material.dart';
@@ -10,8 +9,6 @@ import 'package:jci_app/features/MemberSection/presentation/widgets/functionMemb
 import 'package:jci_app/features/Teams/domain/usecases/TaskUseCase.dart';
 
 import '../../../../core/util/snackbar_message.dart';
-import '../../domain/entities/Checklist.dart';
-import '../../domain/entities/Task.dart';
 import '../../domain/entities/Team.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/TaskIsVisible/task_visible_bloc.dart';
@@ -34,7 +31,7 @@ class CheckListWidget extends StatelessWidget {
               return Container(
                 decoration:  buildBoxDecoration(),
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 5),
+                  padding: const EdgeInsets.symmetric(vertical: 5),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
@@ -65,7 +62,7 @@ class CheckListWidget extends StatelessWidget {
             },
           ),
         ),
-        separatorBuilder: (context, index) => SizedBox(height: 10,),
+        separatorBuilder: (context, index) => const SizedBox(height: 10,),
         itemCount: checkList.length);
   }
 
@@ -73,10 +70,10 @@ class CheckListWidget extends StatelessWidget {
     return IconButton(
                   onPressed: () {
                       context.read<GetTaskBloc>().add(DeleteChecklist(id,checkList[index]['id']));
-                      context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+                      context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
 
                   },
-                  icon: Icon(Icons.delete, color: Colors.red, size: 20,),
+                  icon: const Icon(Icons.delete, color: Colors.red, size: 20,),
                 );
   }
 
@@ -88,7 +85,7 @@ class CheckListWidget extends StatelessWidget {
                     color: Colors.grey.withOpacity(0.1),
                     spreadRadius: 1,
                     blurRadius: 1,
-                    offset: Offset(0, 1), // changes position of shadow
+                    offset: const Offset(0, 1), // changes position of shadow
                   ),
                 ],
 
@@ -103,13 +100,13 @@ class CheckListWidget extends StatelessWidget {
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   splashRadius: 70,
                   checkColor: textColorWhite,
-                  side: BorderSide(color: textColorBlack),
+                  side: const BorderSide(color: textColorBlack),
 
 
                   value:checkList[index]['isCompleted'], onChanged: (bool? value) {
 final CheckInputFields checkInputFields = CheckInputFields(taskid: id, checkid: checkList[index]["id"], IsCompleted: value!, checklist: null, name: null, teamid: null);
                   context.read<GetTaskBloc>().add(UpdateChecklistStatus(checkInputFields));
-                  context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+                  context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
 
 
     },);
@@ -123,7 +120,7 @@ final CheckInputFields checkInputFields = CheckInputFields(taskid: id, checkid: 
                     final CheckInputFields checkInputFields = CheckInputFields(taskid: id, checkid: checkList[index]['id'], IsCompleted: null, checklist: null, name: value, teamid: null);
 
                     context.read<GetTaskBloc>().add(UpdateChecklistName(checkInputFields));
-                    context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+                    context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
 
                   },
         onChanged: (value){
@@ -133,7 +130,7 @@ final CheckInputFields checkInputFields = CheckInputFields(taskid: id, checkid: 
                   controller: TextEditingController(
                       text: checkList[index]['name']),
                   style: PoppinsSemiBold(MediaQuery.devicePixelRatioOf(context)*4, textColorBlack,checkList[index]['isCompleted']?TextDecoration.lineThrough:TextDecoration.none),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(18),
                   ),
@@ -150,7 +147,7 @@ Widget CheckListAddField(TextEditingController controller, String id,FocusNode f
             onTap: () async {
               if (await FunctionMember.isAssignedOrLoyal(team, task['AssignTo'])) {
                 if (!mounted) return ;
-              context.read<TaskVisibleBloc>().add(ToggleTaskVisible(false));
+              context.read<TaskVisibleBloc>().add(const ToggleTaskVisible(false));
             FocusScope.of(context).requestFocus(focus);}
             },
             child: Container(
@@ -194,11 +191,11 @@ focusNode: focus ,
                 prefixIcon: GestureDetector(
                     onTap: () {
                       context.read<TaskVisibleBloc>().add(
-                          ToggleTaskVisible(true));
+                          const ToggleTaskVisible(true));
                     focus.unfocus();
                     },
-                    child: state.WillAdded ? Icon(
-                      Icons.cancel, color: Colors.red,) : SizedBox()
+                    child: state.WillAdded ? const Icon(
+                      Icons.cancel, color: Colors.red,) : const SizedBox()
                 ),
                 suffixIcon: GestureDetector(
                     onTap: () {
@@ -210,22 +207,22 @@ focusNode: focus ,
                         final CheckInputFields checkInputFields = CheckInputFields(taskid: id, checkid: '', IsCompleted: null, checklist: null, name: controller.text, teamid: null);
 
                         context.read<TaskVisibleBloc>().add(
-                            ToggleTaskVisible(true));
+                            const ToggleTaskVisible(true));
                         context.read<GetTaskBloc>().add(AddCheckList(
                             checkInputFields));
 
 
                         controller.clear();
-                        context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(true));
+                        context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
 
                       }
                     },
-                    child: state.WillAdded ? Icon(
-                      Icons.check_circle, color: PrimaryColor,) : SizedBox()
+                    child: state.WillAdded ? const Icon(
+                      Icons.check_circle, color: PrimaryColor,) : const SizedBox()
                 ),
                 hintText: '${"Add".tr(context)} ${"Subtask".tr(context)}',
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.all(18),
+                contentPadding: const EdgeInsets.all(18),
               ),
             );
 }

@@ -7,13 +7,7 @@ import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/features/MemberSection/domain/usecases/MemberUseCases.dart';
 import 'package:jci_app/features/MemberSection/presentation/pages/memberProfilPage.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
-import 'package:jci_app/features/about_jci/Domain/useCases/BoardUseCases.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
-import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
-import 'package:jci_app/features/about_jci/Presentations/bloc/Board/BoardBloc/boord_bloc.dart';
-import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
-import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
-import 'package:jci_app/features/about_jci/Presentations/widgets/BoardComponents.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -33,7 +27,7 @@ class MemberGridView extends StatefulWidget {
 }
 
 class _MemberGridViewState extends State<MemberGridView> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
 
   List<Member> filteredMembers = [];
@@ -142,7 +136,7 @@ class _MemberGridViewState extends State<MemberGridView> {
                           border: Border.all(color: textColor, width: 2),
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                              image: AssetImage(vip),
+                              image: const AssetImage(vip),
                               colorFilter: ColorFilter.mode(
                                   JCIFunctions.isExist(member, state.member) ?
                                   Colors.white.withOpacity(0.1) :
@@ -171,7 +165,7 @@ class _MemberGridViewState extends State<MemberGridView> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        member.firstName + ' ' + member.lastName,
+                        '${member.firstName} ${member.lastName}',
                         style: PoppinsRegular(
                           15.0,
                           JCIFunctions.isExist(member, state.member)
@@ -194,7 +188,9 @@ class _MemberGridViewState extends State<MemberGridView> {
 
 
 class ShimmerMember extends StatelessWidget {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+
+  ShimmerMember({super.key});
 
 
   @override
@@ -225,7 +221,7 @@ class ShimmerMember extends StatelessWidget {
           Expanded(
             child: GridView.builder(
               itemCount: 3, // Change the number of items to display
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 7,
 

@@ -4,7 +4,6 @@ import 'package:jci_app/features/MemberSection/domain/repositories/MemberRepo.da
 import '../../../../core/error/Failure.dart';
 import '../../../../core/usescases/usecase.dart';
 import '../../../auth/domain/entities/Member.dart';
-import '../../presentation/bloc/memberBloc/member_management_bloc.dart';
 
 class GetUserProfile extends UseCase<Member , bool>{
   final MemberRepo authRepository;

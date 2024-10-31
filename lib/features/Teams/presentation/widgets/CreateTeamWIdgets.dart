@@ -52,9 +52,9 @@ void LIstenerAdd(GetTeamsState state, BuildContext context) {
   }
  else if (  state.status == TeamStatus.Created) {
     SnackBarMessage.showSuccessSnackBar(message: "Team Created Successfully".tr(context), context: context);
-    context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
+    context.read<TaskVisibleBloc>().add(const changePrivacyEvent(Privacy.Primary));
     GoRouter.of(context).go('/home');
-    context.read<GetTeamsBloc>().add(GetTeams(isPrivate: false));
+    context.read<GetTeamsBloc>().add(const GetTeams(isPrivate: false));
 
 
 
@@ -135,11 +135,11 @@ Row Header(BuildContext context,String text) {
           BackButton(
             onPressed: () {
               GoRouter.of(context).go('/home');
-              context.read<TaskVisibleBloc>().add(ChangeImageEvent("assets/images/jci.png",));
+              context.read<TaskVisibleBloc>().add(const ChangeImageEvent("assets/images/jci.png",));
               context.read<GetTaskBloc>().add(resetevent());
-              context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
+              context.read<TaskVisibleBloc>().add(const changePrivacyEvent(Privacy.Primary));
 
-              context.read<TaskfilterBloc>().add(filterTask([]));
+              context.read<TaskfilterBloc>().add(const filterTask([]));
               //context.read<FormzBloc>().add(ImageInputChanged(imageInput:XFile("")));
 
             },
@@ -215,8 +215,8 @@ border: Border.all(color: textColorBlack,width: 2),
                           decoration:
                           BoxDecoration(color: BackWidgetColor,
                               borderRadius: BorderRadius.circular(15)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -242,7 +242,7 @@ border: Border.all(color: textColorBlack,width: 2),
 
 Widget choosWidget()=>        const Center(
   child: Padding(
-    padding: const EdgeInsets.symmetric(vertical: 28.0),
+    padding: EdgeInsets.symmetric(vertical: 28.0),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -372,7 +372,7 @@ Widget bottomMembersSheet(BuildContext context, MediaQueryData mediaQuery,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child:
-              members!=null&& members.isNotEmpty?membersImage(context, mediaQuery, members):
+              members.isNotEmpty?membersImage(context, mediaQuery, members):
               Text("${"Select".tr(context)}  ${"Members".tr(context)}",style: PoppinsRegular(18, ThirdColor),),
             ),
           )),
@@ -414,7 +414,7 @@ Widget membersImage(BuildContext context, MediaQueryData mediaQuery,
         Container(
           height: 50,
           width: 50,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: PrimaryColor,
             shape: BoxShape.circle,                      ),
           // Customize the container as needed
@@ -459,7 +459,7 @@ Widget bottomEventSheet(BuildContext context, MediaQueryData mediaQuery,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child:
-              event!=null&& event.name.isNotEmpty&& event.name!='Choose the Event'?imageEventWidget(event,mediaQuery):
+              event.name.isNotEmpty&& event.name!='Choose the Event'?imageEventWidget(event,mediaQuery):
               Text("Select an event".tr(context),style: PoppinsRegular(18, ThirdColor),),
             ),
           )),
@@ -489,10 +489,11 @@ Widget StatusWidget(mediaQuery) => Padding(
 
 
       onTap: (){
-        if(state.isPaid)
-        context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent(false));
-        else
-        context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent(true));
+        if(state.isPaid) {
+          context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent(false));
+        } else {
+          context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent(true));
+        }
 
       }, child: Container(
     width: mediaQuery.size.width * .3,

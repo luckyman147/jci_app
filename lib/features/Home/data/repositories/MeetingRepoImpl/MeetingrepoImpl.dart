@@ -17,7 +17,7 @@ import '../../datasources/Meetings/MeetingLocaldatasources.dart';
 import '../../datasources/Meetings/Meeting_remote_datasources.dart';
 import '../../model/meetingModel/MeetingModel.dart';
 
-typedef Future<Unit> meetingAction();
+typedef meetingAction = Future<Unit> Function();
 class MeetingRepoImpl implements MeetingRepo {
   final MeetingRemoteDataSource meetingRemoteDataSource;
   final MeetingLocalDataSource meetingLocalDataSource;
@@ -42,7 +42,7 @@ id: meeting.id,
       categorie: meeting.categorie,
       IsPaid: meeting.IsPaid,
       price: meeting.price,
-      Participants: [],
+      Participants: const [],
       CoverImages: meeting.CoverImages, Director: meeting.Director, agenda: meeting.agenda, IsPart: false,
 
 
@@ -50,7 +50,7 @@ id: meeting.id,
     if (await networkInfo.isConnected) {
       try {
         await meetingRemoteDataSource.createMeeting(eventMode);
-        return Right(unit);
+        return const Right(unit);
       } on WrongCredentialsException {
         return Left(WrongCredentialsFailure());
       }
@@ -184,7 +184,7 @@ id: meeting.id,
     if (await networkInfo.isConnected) {
       try {
         await meeting;
-        return Right(unit);
+        return const Right(unit);
       }
 
       on EmptyDataException {
@@ -208,11 +208,11 @@ id: meeting.id,
     final eventPermission=await  MeetingStore.getmeetPermissions();
     final userPermissions=await Store.getPermissions();
     if(eventPermission .isEmpty || userPermissions.isEmpty){
-      return Right(false);
+      return const Right(false);
     }
     else{
 
-      return hasCommonElement(eventPermission, userPermissions)?Right(true):Right(false);
+      return hasCommonElement(eventPermission, userPermissions)?const Right(true):const Right(false);
     }
   }
 
@@ -282,7 +282,7 @@ id: meeting.id,
       try {
         final remoteExcel = await meetingRemoteDataSource.downloadExcel(activityId);
         log(remoteExcel.toString());
-        meetingLocalDataSource.saveExcelFile(remoteExcel,activityId+".xlsx");
+        meetingLocalDataSource.saveExcelFile(remoteExcel,"$activityId.xlsx");
         return Right(remoteExcel);
       } on ServerException {
         return Left(ServerFailure());

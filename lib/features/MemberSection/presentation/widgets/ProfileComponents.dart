@@ -4,14 +4,12 @@ import 'dart:io';
 
 
 import 'package:circle_progress_bar/circle_progress_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Compoenents.dart';
@@ -26,16 +24,11 @@ import 'package:jci_app/features/Teams/presentation/widgets/EventSelection.dart'
 import 'package:jci_app/features/Teams/presentation/widgets/TeamWidget.dart';
 
 import '../../../../core/app_theme.dart';
-import '../../../../core/config/services/verification.dart';
 import '../../../../core/strings/app_strings.dart';
-import '../../../../core/util/DialogWidget.dart';
-import '../../../../core/widgets/loading_widget.dart';
 import '../../../Home/domain/entities/Activity.dart';
-import '../../../Home/domain/entities/Event.dart';
 import '../../../Teams/data/models/TeamModel.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../../Teams/presentation/widgets/DetailTeamComponents.dart';
-import '../../../Teams/presentation/widgets/DetailTeamWidget.dart';
 import '../../../auth/data/models/Member/AuthModel.dart';
 import '../../../auth/domain/entities/Member.dart';
 import '../../domain/usecases/MemberUseCases.dart';
@@ -96,7 +89,7 @@ static     var boxDecoration = BoxDecoration(
   return   Padding(
     padding: paddingSemetricVerticalHorizontal(),
     child: AnimatedContainer(
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       width: isExpanded ? width:width,
       height: isExpanded ? height : 70,
       decoration:boxDecoration,
@@ -120,7 +113,7 @@ static     var boxDecoration = BoxDecoration(
                 )
               ],
             ),
-            isExpanded ? Expanded(child: SingleChildScrollView(child: body)) : SizedBox(),
+            isExpanded ? Expanded(child: SingleChildScrollView(child: body)) : const SizedBox(),
 
           ],
         ),
@@ -130,6 +123,7 @@ static     var boxDecoration = BoxDecoration(
   }
 
   static   Widget CircleProfile(Member member,BuildContext context){
+    log(member.Images.toString());
 
     return member.Images.isNotEmpty ?
     SizedBox(
@@ -139,19 +133,21 @@ static     var boxDecoration = BoxDecoration(
         foregroundColor: PrimaryColor,
         backgroundColor: textColorWhite,
         value: FunctionMember.calculateObjectifs(member.objectifs)/member.objectifs.length,
-        child: phot(member.Images[0]['url'],context,80),
+        child: 
+       member.Images[0].runtimeType!=String?
+        phot(member.Images[0]['url'],context,80):Image.asset(vip),
       ),
     ):
     NoPHoto(80,FunctionMember.calculateObjectifs(member.objectifs)/member.objectifs.length);
   }
 
-  static Container phot(String member,BuildContext context,double height) {
+  static SizedBox phot(String member,BuildContext context,double height) {
     final imageBytes = base64Decode(member);
     final image = Image.memory(imageBytes,fit: BoxFit.contain);
     final screenSize = MediaQuery.of(context).size;
     final avatarSize = (screenSize.width / 3).round();
 
-    return Container(
+    return SizedBox(
       width: height,
       height: height,
 
@@ -191,7 +187,7 @@ static     var boxDecoration = BoxDecoration(
       child: Container(
 
 
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             shape: BoxShape.circle,
 image: DecorationImage(
   image: AssetImage(vip)),
@@ -253,10 +249,11 @@ left: 0,
               children: [
              Padding(
                padding: paddingSemetricHorizontal(),
-               child: buildFutureBuilder(ShowAction(context, member,      (){
-                 context.go('/modifyUser?user=${jsonEncode(MemberModel.fromEntity(member).toJson())}');},"Edit Profile".tr(context)),
+               child:
+               MemberImpl.Isowner( ShowAction(context, member,      (){
 
-                   true, "", (po)=>FunctionMember. isOwner(member.id)),
+
+                 context.go('/modifyUser?user=${jsonEncode(MemberModel.fromEntity(member).toJson())}');},"Edit Profile".tr(context)),true)
              )
                 ,ShowAction(context, member,      (){          FunctionMember.Showinfo(context, member);},"Contact".tr(context)),
               ],
@@ -280,10 +277,10 @@ builder: (context, state) {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(state.role.toUpperCase(),style: PoppinsSemiBold(17, SecondaryColor,TextDecoration.none ),),
-          buildFutureBuilder(IconButton(onPressed: (){
-            BottomMemberSheet.ShowAdminChangeSheet(context,  member);
+        MemberImpl.iSSuperNoowner(IconButton(onPressed: (){
+          BottomMemberSheet.ShowAdminChangeSheet(context,  member);
 
-          }, icon: Icon(Icons.edit)), true, member.id, (p0) => FunctionMember.isSuperAdminANdNoOwner(member))
+        }, icon: const Icon(Icons.edit)), true)
         ],
       ),
 
@@ -300,11 +297,11 @@ static ElevatedButton ShowAction(BuildContext context, Member member,Function() 
                   onPress();
                 },
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(textColorWhite),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  backgroundColor: WidgetStateProperty.all(textColorWhite),
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
-                          side: BorderSide(color: textColor))),
+                          side:const  BorderSide(color: textColor))),
                 ),
                 child: Text(text,style: PoppinsRegular(17, textColorBlack, ),),
               );
@@ -323,16 +320,16 @@ static Row descriptionName(Member member, MemberManagementState state, BuildCont
             textAlign: TextAlign.center,
             style: PoppinsSemiBold(18 , textColorBlack, TextDecoration.none),)),
 
-      state.isUpdated?Icon(Icons.verified,color: PrimaryColor,):buildFutureBuilder(IconButton(
+      state.isUpdated?const Icon(Icons.verified,color: PrimaryColor,):buildFutureBuilder(IconButton(
 
           style: ButtonStyle(
 
-            overlayColor: MaterialStateProperty.all(PrimaryColor.withOpacity(0.1)),
-            surfaceTintColor: MaterialStateProperty.all(Colors.white),      ),
+            overlayColor: WidgetStateProperty.all(PrimaryColor.withOpacity(0.1)),
+            surfaceTintColor: WidgetStateProperty.all(Colors.white),      ),
           onPressed: (){
             context.read<MemberManagementBloc>().add(validateMember( memberid: member.id));
 
-          }, icon: Center(child: Icon(Icons.check_circle_outline,size: 25,))), true, member.id, (p0) => FunctionMember.isAdminAndSuperAdmin())
+          }, icon: const Center(child: Icon(Icons.check_circle_outline,size: 25,))), true, member.id, (p0) => FunctionMember.isAdminAndSuperAdmin())
     ]
     );
 }
@@ -398,7 +395,7 @@ static Widget AchivedmentWidget(bool isFinished,String text ) {
               ],
             ),
           ),
-          SizedBox(height: 10,),
+       const    SizedBox(height: 10,),
           buildFutureBuilder(Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -406,7 +403,7 @@ static Widget AchivedmentWidget(bool isFinished,String text ) {
 
                 onPressed: () {
                   BottomMemberSheet.showBottomSheet(context, member,  pointsFocusNode);
-                }, icon: Icon(Icons.edit,size: 20,),),
+                }, icon: const Icon(Icons.edit,size: 20,),),
 
             ],
 
@@ -426,7 +423,7 @@ static Widget AchivedmentWidget(bool isFinished,String text ) {
 
 
                       Text(' NO.${member.rank}  ',style: PoppinBold(MediaQuery.of(context).devicePixelRatio*6, PrimaryColor,TextDecoration.none ),),
-                      IconButton(onPressed:  (){}, icon: Icon(Icons.stars_rounded, color: PrimaryColor,)),
+                      IconButton(onPressed:  (){}, icon: const Icon(Icons.stars_rounded, color: PrimaryColor,)),
                     ],
                   ),
                 ],
@@ -449,7 +446,7 @@ static Widget AchivedmentWidget(bool isFinished,String text ) {
 
         }
         else{
-          return SizedBox();
+          return const SizedBox();
         }
       }, future: isOwner(id),
     );
@@ -501,7 +498,7 @@ static Widget AchivedmentWidget(bool isFinished,String text ) {
           },
           separatorBuilder: (context, index) {
             return SizedBox(width: mediaQuery.size.width/2,
-              child: Divider(color: textColor,height: 12,),);
+              child: const Divider(color: textColor,height: 12,),);
           },
           itemCount: member.teams.length,
         ),
@@ -512,12 +509,12 @@ static Widget AchivedmentWidget(bool isFinished,String text ) {
   static Column AddTeamsWidget(BuildContext context) {
     return Column(
         children: [
-          IconButton.outlined(icon:Icon(Icons.add,size: 30,), onPressed: () {
+          IconButton.outlined(icon:const Icon(Icons.add,size: 30,), onPressed: () {
             context.read<PageIndexBloc>().add(SetIndexEvent(index: 2));
             context.go('/home');
-            context.read<GetTeamsBloc>().add(GetTeams(isPrivate: false));
+            context.read<GetTeamsBloc>().add(const GetTeams(isPrivate: false));
           },),
-          SizedBox(height: 10,),
+          const SizedBox(height: 10,),
           Text('Join Your first Team ',style: PoppinsRegular(17, textColorBlack),),
         ],);
   }
@@ -529,20 +526,20 @@ static Widget ActivitiesComponent(List<dynamic> activities,MediaQueryData mediaQ
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            constraints: BoxConstraints(
+            constraints: const BoxConstraints(
               maxHeight: 50,
 
             ),
             child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Container(
-                    constraints: BoxConstraints(
+                    constraints: const BoxConstraints(
                       minHeight: 50,
 
                     ),
-                    child: MyActivityButtons())),
+                    child: const MyActivityButtons())),
           ),
-          SizedBox(height: 10,),
+          const SizedBox(height: 10,),
           BlocBuiulderActivities(mediaQuery, activities),
         ],
       ),
@@ -564,7 +561,7 @@ maxWidth:  mediaQuery.size.width*0.6              // Adjust the height constrain
                   activities[0]['Meetings'], mediaQuery);
             }
             else{
-              return MessageDisplayWidget(message: "no Meetings found ");
+              return const MessageDisplayWidget(message: "no Meetings found ");
             }
 
           }
@@ -575,14 +572,14 @@ maxWidth:  mediaQuery.size.width*0.6              // Adjust the height constrain
                       activities[0]['Trainings'], mediaQuery);
                 }
                 else{
-                  return MessageDisplayWidget(message: "no Trainings found ");
+                  return const MessageDisplayWidget(message: "no Trainings found ");
                 }
               }
               else {
                 if (activities[0]['Events'].isNotEmpty){
                 return listViewActivities(activities[0]['Events'], mediaQuery);}
                 else{
-                  return MessageDisplayWidget(message: "no Events found ");
+                  return const MessageDisplayWidget(message: "no Events found ");
                 }
             }
 
@@ -598,7 +595,7 @@ static ListView listViewActivities(List<dynamic> activities, MediaQueryData medi
             return Row(
               children: [
                 imageEventWidget(Activity.fromImages(activities[index] ), mediaQuery),
-                Column(
+                const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                   //  Text(activities[index]['name'],style: PoppinsRegular(17, textColorBlack),),
@@ -610,7 +607,7 @@ static ListView listViewActivities(List<dynamic> activities, MediaQueryData medi
             );
 
           },
-              separatorBuilder:(context,index) =>SizedBox(height: 10,), itemCount: activities.length);
+              separatorBuilder:(context,index) =>const SizedBox(height: 10,), itemCount: activities.length);
 }
 
 
@@ -650,12 +647,12 @@ static  Stack imagezChanged(String member,MediaQueryData mediaQuery,BuildContext
       bottom: 10,
 
       right: 0,
-      child: Container(
+      child: SizedBox(
         height: 30,
         width: 30,
         child: IconButton(
-          style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(PrimaryColor)),
-          icon: Center(child: Icon(Icons.camera_enhance,color: textColorWhite,size: 15,)), onPressed: () async {
+          style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color>(PrimaryColor)),
+          icon: const Center(child: Icon(Icons.camera_enhance,color: textColorWhite,size: 15,)), onPressed: () async {
   final XFile? picked =
   await picker.pickImage(source: ImageSource.gallery);
   if (picked != null) {
@@ -674,7 +671,7 @@ static  Stack imagezChanged(String member,MediaQueryData mediaQuery,BuildContext
 
 
   static Padding SaveChangesButton(Function() onPressed
-      ) {
+   ,BuildContext ctx   ) {
     return Padding(
       padding: paddingSemetricHorizontal(h: 20),
       child: Row(
@@ -688,7 +685,7 @@ static  Stack imagezChanged(String member,MediaQueryData mediaQuery,BuildContext
                 ),
               ),
               onPressed: onPressed,
-               child: Text("Save Changes",style: PoppinsSemiBold(20, textColorWhite, TextDecoration.none
+               child: Text("Save".tr(ctx),style: PoppinsSemiBold(20, textColorWhite, TextDecoration.none
           ),)),
         ],
       ),
@@ -703,7 +700,7 @@ static  Stack imagezChanged(String member,MediaQueryData mediaQuery,BuildContext
         children: [
           Text(
             name,
-            style: TextStyle(fontSize: 18, color: Colors.black),
+            style: const TextStyle(fontSize: 18, color: Colors.black),
           ),
           TextFormField(
             keyboardType: TextInputType.number,
@@ -773,7 +770,7 @@ keyboardType: TextInputType.emailAddress,
                    hintText: "${"Search".tr(context)} ${"Member".tr(context)}",
 
                     hintStyle: PoppinsRegular( 15, textColor),
-                    suffixIcon: Icon(Icons.search),
+                    suffixIcon: const Icon(Icons.search),
                    prefixIcon: IconButton(onPressed: () {
 
                      showModalBottomSheet(context: context, builder: (context){
@@ -786,7 +783,7 @@ keyboardType: TextInputType.emailAddress,
                              crossAxisAlignment: CrossAxisAlignment.start,
                              children: [
                                Text("${"Sort".tr(context)} ${"By".tr(context)}:",style: PoppinsRegular( 20, textColorBlack),),
-                               SizedBox(height: 10,),
+                               const SizedBox(height: 10,),
                               BuildSortMember(context,"Membership".tr(context),()=>null,true),
                               BuildSortMember(context,"Points",()=>null,false),
                               BuildSortMember(context,"Role",()=>null,false),
@@ -796,7 +793,7 @@ keyboardType: TextInputType.emailAddress,
                        );
                      });
 
-                   }, icon: Icon(Icons.filter_alt),),
+                   }, icon: const Icon(Icons.filter_alt),),
 
                    border:border(PrimaryColor),
                   focusedBorder: border(PrimaryColor),
@@ -804,12 +801,12 @@ keyboardType: TextInputType.emailAddress,
                 )
 
             )),
-    SizedBox(height: 10,),
+    const SizedBox(height: 10,),
         SizedBox(
             height: 10,
             width: mediaQuery.size.width * 0.8,
 
-        child: Divider()),
+        child: const Divider()),
  MemberImpl.       MembersAdminWidget(mediaQuery),
       ],
     );
@@ -821,7 +818,7 @@ keyboardType: TextInputType.emailAddress,
                             child: ListTile(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                side: BorderSide(color: PrimaryColor)
+                                side: const BorderSide(color: PrimaryColor)
                               ),
                              style: ListTileStyle.drawer,
 
@@ -870,7 +867,7 @@ keyboardType: TextInputType.emailAddress,
           },
         );
       },
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount:2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
@@ -882,7 +879,14 @@ keyboardType: TextInputType.emailAddress,
   static Widget BuildDescriptionWidget(Member member, MemberManagementState ste, BuildContext context) {
     return Padding(
         padding: paddingSemetricVerticalHorizontal(),
-    child: SingleChildScrollView(child: Text(member.description,style: PoppinsRegular(18, textColor, ),)));
+    child: SingleChildScrollView(child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Align(
+            alignment: Alignment.topLeft,
+            child: Text(member.description,style: PoppinsRegular(18, textColorBlack, ),)),
+      ],
+    )));
   }
 }
 

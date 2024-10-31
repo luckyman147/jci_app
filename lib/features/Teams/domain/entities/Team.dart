@@ -1,8 +1,5 @@
-import 'package:jci_app/features/Home/data/model/events/EventModel.dart';
 import 'package:jci_app/features/Teams/data/models/TaskModel.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
-import '../../../Home/domain/entities/Event.dart';
 import 'Task.dart';
 
 class Team{

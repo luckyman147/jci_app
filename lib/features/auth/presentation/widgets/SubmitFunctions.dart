@@ -9,7 +9,6 @@ import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
 import '../../../../core/util/snackbar_message.dart';
-import '../../../../core/widgets/loading_widget.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
@@ -23,11 +22,11 @@ import '../bloc/login/login_bloc.dart';
 import '../pages/pinPage.dart';
 
 class SubmitFunctions{
-  static void SignUp(SignUpState state, GlobalKey<FormState> _key, BuildContext context, void Function() _resetform,bool isGoogle) async {
-    if (_key.currentState!.validate()) {
+  static void SignUp(SignUpState state, GlobalKey<FormState> key, BuildContext context, void Function() resetform,bool isGoogle) async {
+    if (key.currentState!.validate()) {
       final language=await context.read<localeCubit>().cachedLanguageCode();
       final member =
-      Member.SignUp(state.email.value, state.password.value, state.firstname.value, state.lastname.value, language??'fr' );
+      Member.SignUp(state.email.value, state.password.value, state.firstname.value, state.lastname.value, language??'fr',"New Member" );
 
 if (!isGoogle) {
 
@@ -57,7 +56,7 @@ else{
 
       context.read<LoginBloc>().add(LoginSubmitted(state.email.value, state.password.value));
       resetform();
-      context.read<LoginBloc>().add(ResetFormLogin());
+      context.read<LoginBloc>().add(const ResetFormLogin());
 
     }
   }
@@ -70,24 +69,25 @@ static   void Listener(ResetPasswordState state, BuildContext context,String? em
           message: state.message, context: context);
       //context.go('/reset/${widget.email}');
     }
+
     else if (state.status == ResetPasswordStatus.verified) {
-      context.go('/reset/${email}');
+      context.go('/reset/$email');
     }
   }
 
   static   void Resendemail(BuildContext context,String? email,VerifyEvent verifyEvent) {
     context.go('/login');
   }
- static void SUbmitPin(ToggleBooleanState state, BuildContext context,VerifyEvent verifyEvent,TextEditingController _controller1, GlobalKey<FormState> formKey, Member? member) {
+ static void SUbmitPin(ToggleBooleanState state, BuildContext context,VerifyEvent verifyEvent,TextEditingController controller1, GlobalKey<FormState> formKey, Member? member) {
    if (state.isCompleted){
     if (formKey.currentState!.validate()) {
       // Do something with the entered numbers
 
       if(verifyEvent==VerifyEvent.ResetPasswordEvent){
-        context.read<ResetBloc>().add(CheckOtpEvent(otp: _controller1.text));
-        ;}
+        context.read<ResetBloc>().add(CheckOtpEvent(otp: controller1.text));
+}
       else{
-        final sign=SignField(member: member, otp: _controller1.text);
+        final sign=SignField(member: member, otp: controller1.text);
         context.read<SignUpBloc>().add(SignUpSubmitted(signField:sign));
       }}
   }}
@@ -103,23 +103,8 @@ static   void Listener(ResetPasswordState state, BuildContext context,String? em
     }
   }
   static   void LoginListener(LoginState state, BuildContext context) {
-    if (state is LoadingLogin) {
-      showDialog(context: context, builder:(context)=>AlertDialog(
-          content: SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: 170,
-                ),
-                child: Column(
-                  children: [
-                    LoadingWidget(),
-                    const SizedBox(height: 10),
 
-                  ],
-                ),
-              ))));
 
-    }
     if (state is MessageLogin) {
 
       SnackBarMessage.showSuccessSnackBar(
@@ -130,22 +115,17 @@ static   void Listener(ResetPasswordState state, BuildContext context,String? em
 
       context.read<PageIndexBloc>().add(SetIndexEvent(index:0));
 
-      context.read<MembersBloc>().add(GetUserProfileEvent(true));
-      context.read<AcivityFBloc>().add(GetActivitiesOfMonthEvent(act:activity.Events));
+      context.read<MembersBloc>().add(const GetUserProfileEvent(true));
+      context.read<AcivityFBloc>().add(const GetActivitiesOfMonthEvent(act:activity.Events));
     }
     else if (state is RegisterGoogle) {
 
       final name=state.user.displayName!.split(" ");
-      context.read<SignUpBloc>().add(SignUpEmailnameChanged(state.user.email!));
+  //    context.read<SignUpBloc>().add(SignUpEmailnameChanged(state.user.email!));
       context.read<SignUpBloc>().add(FirstNameChanged(name[0]));
       context.read<SignUpBloc>().add(LastNameChanged(name[1]));
-      context.go('/signup/${state.user.email}/${state.user.displayName}');       }
-    else if (state is ErrorLogin) {
+      context.go('/home');       }
 
-
-      SnackBarMessage.showErrorSnackBar(
-          message: state.message, context: context);
-    }
   }
 
 }

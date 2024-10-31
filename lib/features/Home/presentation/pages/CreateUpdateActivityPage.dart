@@ -1,53 +1,32 @@
 
 
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
-import 'package:image_picker/image_picker.dart';
 
 
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/core/config/services/EventStore.dart';
-import 'package:jci_app/core/config/services/MeetingStore.dart';
-import 'package:jci_app/core/config/services/TrainingStore.dart';
-import 'package:jci_app/core/widgets/loading_widget.dart';
 
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
-import 'package:jci_app/features/Home/presentation/bloc/textfield/textfield_bloc.dart';
 
 
 
 import 'package:jci_app/features/Home/presentation/widgets/AddActivityWidgets.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Compoenents.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 
 
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
 
 
-import '../../../../core/config/services/MemberStore.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
-import '../../domain/entities/Activity.dart';
-import '../../domain/entities/Event.dart';
 
 
-import '../../domain/entities/Meeting.dart';
-import '../../domain/entities/training.dart';
-import '../../domain/usercases/ActivityUseCases.dart';
 import '../bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
-import '../bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
-import '../bloc/IsVisible/bloc/visible_bloc.dart';
-import '../bloc/PageIndex/page_index_bloc.dart';
 import '../widgets/AddUpdateFunctions.dart';
 import '../widgets/Formz.dart';
-import '../widgets/Functions.dart';
-import '../widgets/MemberSelection.dart';
 
 
 
@@ -87,7 +66,7 @@ class _CreateUpdateActivityPageState extends State<CreateUpdateActivityPage> {
 
 
   );
-  context.read<MembersBloc>().add(GetAllMembersEvent(false));
+  context.read<MembersBloc>().add(const GetAllMembersEvent(false));
     // TODO: implement initState
     super.initState();
   }
@@ -145,13 +124,13 @@ class _CreateUpdateActivityPageState extends State<CreateUpdateActivityPage> {
                           horizontal: 18.0, vertical: 8),
                       child: SizedBox(
                           width: mediaQuery.size.width,
-                          child: BeginTimeWidget()
+                          child: const BeginTimeWidget()
 
                       )),
                   AddWidgetComponents.    AddEndDateButton(mediaQuery,"Show End date".tr(context)),
                      EndDateWidget(LabelText: 'End Date'.tr(context), SheetTitle: "Date and Hour of End".tr(context), HintTextDate: 'End Date'.tr(context), HintTextTime: 'End Time'.tr(context),
                   ),
-                  AddWidgetComponents.    showDetails(mediaQuery, vis.selectedActivity, state.registrationTimeInput.value??DateTime.now().add(Duration(days: 1)),context,_price,_LocationController),
+                  AddWidgetComponents.    showDetails(mediaQuery, vis.selectedActivity, state.registrationTimeInput.value??DateTime.now().add(const Duration(days: 1)),context,_price,_LocationController),
                   TextfieldNormal(context,"Points", "Points here".tr(context), _Points, (p0) => null),
 
                   TextfieldDescription(context,

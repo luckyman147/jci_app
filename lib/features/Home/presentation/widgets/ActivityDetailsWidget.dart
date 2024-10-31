@@ -1,6 +1,5 @@
 
 
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
@@ -8,7 +7,6 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/widgets/ActivityImplWidgets.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Functions.dart';
-import 'package:jci_app/features/Home/presentation/widgets/NotesWidget.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../domain/entities/Activity.dart';
@@ -75,16 +73,25 @@ child: SizedBox(
     },
 
 
-    child: DottedBorder(
-      borderType: BorderType.RRect,
-      radius: Radius.circular(7),
-      padding: EdgeInsets.all(6),
-      color: textColorBlack,
-        dashPattern: [12,16,13,16],
+    child: Container(
+     decoration: BoxDecoration(
+       color: textColorWhite,
+       border: Border.all(color: textColorBlack,),
+       borderRadius: BorderRadius.circular(10),
+     ),
         child: Center(
-          child: Text(" ${"View".tr(context)} Notes",style: PoppinsSemiBold(mediaQuery.devicePixelRatio*5, textColorBlack, TextDecoration.none),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: paddingSemetricHorizontal(),
+                child: const Icon(Icons.mode_comment_outlined, color: textColorBlack,),
+              ),
+              Text(" ${"View".tr(context)} Notes",style: PoppinsSemiBold(mediaQuery.devicePixelRatio*6, textColorBlack, TextDecoration.none),
 
-                ),
+                    ),
+            ],
+          ),
         )
 
                     //Align(

@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jci_app/core/widgets/loading_widget.dart';
-import 'package:jci_app/features/Home/presentation/widgets/ErrorDisplayMessage.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/presidents_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/ShimmerEffects.dart';
 

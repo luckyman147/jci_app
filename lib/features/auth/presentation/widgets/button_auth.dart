@@ -1,29 +1,23 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:formz/formz.dart';
-import 'package:jci_app/core/app_theme.dart';
 
-
-import '../bloc/SignUp/sign_up_bloc.dart';
-
+import '../../AuthWidget..global.dart';
 class authButton extends StatelessWidget {
-  const authButton({Key? key, required this.onPressed, required this.text, required this.string})
+  const authButton({Key? key, required this.onPressed, required this.text, required this.icon, required this.isLoading})
       : super(key: key);
 
   final VoidCallback onPressed;
   final String text;
-  final String string ;
+  final IconData icon ;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     return Padding(
-      padding:  paddingSemetricVertical(v: mediaQuery.size.height/70),
+      padding:  paddingSemetricVertical(v: 5),
       child: Container(
         height: mediaQuery.size.height / 15,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: textColorBlack
                 ,
@@ -41,9 +35,22 @@ class authButton extends StatelessWidget {
             children: [
           Padding(
             padding: paddingSemetricHorizontal(h: mediaQuery.size.width/20)
-,            child:   SvgPicture.string(string),
+,            child:  FaIcon(
+            icon,
+            color: ColorsApp.PrimaryColor,
+            size: mediaQuery.size.width/15,
           ),
-              Text(text,style: PoppinsRegular(mediaQuery.size.width/30, textColorBlack),),
+          ),
+              isLoading ? Center(
+                child: Padding(
+                  padding: paddingSemetricHorizontal(h: mediaQuery.size.width/20),
+                  child: CircularProgressIndicator(
+                    color: ColorsApp.PrimaryColor,
+                  ),
+                ),
+              ) :
+
+              Text(text,style: PoppinsRegular(mediaQuery.devicePixelRatio*4, textColorBlack),),
             ],
           ),
         ),

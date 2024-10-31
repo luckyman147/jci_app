@@ -7,9 +7,7 @@ import '../../../../core/app_theme.dart';
 import '../../../MemberSection/presentation/widgets/ProfileComponents.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../Domain/entities/President.dart';
-import '../bloc/Board/YearsBloc/years_bloc.dart';
 import '../bloc/presidents_bloc.dart';
-import 'Fubnctions.dart';
 
 class PresidentsComponents{
   static Widget AlertAddYearPresidents(List<String> yearsList) {
@@ -54,7 +52,7 @@ class PresidentsComponents{
             ),
             child: Center(
               child: Text(
-                '${yearsList[index]}',
+                yearsList[index],
                 style: PoppinsRegular(16, state.cloneYear==yearsList[index]?textColorWhite:textColorBlack, ),
               ),
             ),
@@ -76,7 +74,7 @@ class PresidentsComponents{
         ),
       ), ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(PrimaryColor),
+          backgroundColor: WidgetStateProperty.all<Color>(PrimaryColor),
         ),
         onPressed: () {
           context.read<ActionJciCubit>().changeYear(state.cloneYear);
