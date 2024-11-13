@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:formz/formz.dart';
 import 'package:jci_app/core/strings/messages.dart';
 
@@ -15,7 +16,9 @@ import '../../../data/models/formz/cPassword.dart';
 import '../../../data/models/formz/firstname.dart';
 import '../../../data/models/formz/lastname.dart';
 import '../../../data/models/formz/password.dart';
-import '../../../domain/entities/Member.dart';
+import '../../../../../core/Member.dart';
+import '../../../domain/dtos/SignInDtos.dart';
+import '../../../domain/usecases/UserAccountUsesCases.dart';
 import '../../../domain/usecases/authusecase.dart';
 
 
@@ -29,7 +32,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
 required  this.sendVerificationEmailUseCase,
     required this.signUpUseCase,
-    required this.RegisterGoogleUseCase,
+
 
   })  :
         super( SignUpState.initial()) {
@@ -41,34 +44,30 @@ required  this.sendVerificationEmailUseCase,
     on<SendVerificationEmailEventOrRegister>(_sendVerificationCode);
 
 on <ResetForm>(_reset_form);
+on <HandleErrorEvent>(_HandleError);
+
 
     on<SignUpPasswordChanged>(_onPasswordChanged);
-    on<SignUpSubmitted>(_onSubmitted);
+    on<RegisterWithEmailSubmitted>(_onSubmitted);
   }
 
   final SendVerifyCodeUseCases sendVerificationEmailUseCase;
 
-final SignUpUseCase signUpUseCase;
-final GoogleRegisterUseCase RegisterGoogleUseCase;
+final RegisterWithEmailUseCase signUpUseCase;
 
 
+void _HandleError(HandleErrorEvent event, Emitter<SignUpState> emit) {
+  emit (state.copyWith(signUpStatus: SignUpStatus.Initial));
+}
 
   void _sendVerificationCode(SendVerificationEmailEventOrRegister event , Emitter<SignUpState> emit) async {
 
     try {
-      if (!event.isGoogle){
+emit (state.copyWith(signUpStatus: SignUpStatus.Loading));
       final result = await sendVerificationEmailUseCase( event.email);
       emit(_eitherSentOrFailure(result, 'Verification Email Sent Successfully'));
-      emit(state.copyWith(signUpStatus: SignUpStatus.Initial));}
-      else{
+      emit(state.copyWith(signUpStatus: SignUpStatus.Initial));
 
-        final failureOrDoneMessage = await RegisterGoogleUseCase(
-            event.member!);
-
-        emit(_eitherRegisterGoogle(
-            failureOrDoneMessage, SIGNUP_SUCCESS_MESS));
-
-      }
     } catch (e) {
       emit(state.copyWith(message: e.toString(),signUpStatus: SignUpStatus.ErrorSignUp),);
     }
@@ -158,6 +157,8 @@ void _reset_form(
       Emitter<SignUpState> emit,
       ) {
     final cpassword = ConfirmPassword.dirty(event.confirmPassword);
+    debugPrint('ccpass is ${state.confirmPassword.isValid}.');
+
     emit(
       state.copyWith(
         confirmPassword: cpassword,
@@ -169,7 +170,7 @@ void _reset_form(
 
 
   Future<void> _onSubmitted(
-      SignUpSubmitted event,
+      RegisterWithEmailSubmitted event,
       Emitter<SignUpState> emit,
       ) async {
 
@@ -177,6 +178,7 @@ void _reset_form(
 
           emit(state.copyWith(
         signUpStatus: SignUpStatus.Loading
+            ,isLoading: true
           ));
 
             final failureOrDoneMessage = await signUpUseCase(
@@ -184,6 +186,10 @@ void _reset_form(
 
             emit(_eitherDoneMessageOrErrorState(
                 failureOrDoneMessage, SIGNUP_SUCCESS_MESS));
+            emit(state.copyWith(
+              signUpStatus: SignUpStatus.Initial
+              ,isLoading: false
+            ));
 
 
 

@@ -13,7 +13,7 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../../core/strings/app_strings.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 
 class MemberGridView extends StatefulWidget {
   final List<Member> members;
@@ -98,11 +98,11 @@ class _MemberGridViewState extends State<MemberGridView> {
           onLongPress: () {
             context.read<MembersBloc>().add(
                 GetMemberByIdEvent(
-                    MemberInfoParams(id: member.id, status: true)));
+                    MemberInfoParams(id: member.id??"", status: true)));
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MemberSectionPage(id: member.id,),
+                builder: (context) => MemberSectionPage(id: member.id??""),
               ),
             );
           },

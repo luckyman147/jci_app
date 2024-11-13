@@ -13,7 +13,7 @@ import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visi
 import 'package:jci_app/features/Teams/presentation/bloc/Timeline/timeline_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/CheckList.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
+import 'package:jci_app/core/Member.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 

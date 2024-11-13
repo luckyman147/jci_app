@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
+import 'package:jci_app/core/Member.dart';
 
 import '../../../../core/config/services/MemberStore.dart';
 import '../../../Teams/domain/entities/Team.dart';
@@ -50,7 +50,7 @@ static Future<List<Member>> getMembers(){
       }
       else {
         final memberUpdate = Member(
-          id: member.id,
+          id: member.id!,
           firstName: firstName.text,
           lastName: lastName.text,
           phone: phone.text,
@@ -62,9 +62,9 @@ static Future<List<Member>> getMembers(){
           points: member.points,
           PreviousPoints: member.PreviousPoints,
           IsSelected: member.IsSelected,
-          role: 'New Member                                                                 ',
+          role: member.role,
           is_validated: member.is_validated,
-          password: 'password', objectifs: const [], language: member.language, rank: 0, description:description.text, board: member.board ,
+          password: member.password, objectifs: const [], language: member.language, rank: 0, description:description.text, board: member.board, isEmailVerified: member.isEmailVerified ,
         );
         context.read<MembersBloc>().add(
             UpdateMemberProfileEvent(memberUpdate));
@@ -91,7 +91,7 @@ static Future<bool> isSuper()async{
 
 static Future<bool> isSuperAdminANdNoOwner(Member other)async {
   final member = await MemberStore.getModel();
-  return member!.role == 'superadmin' && member.id!=other.id ;
+  return member!.role == 'superadmin' && member.id!!=other.id ;
 }
 static Future<bool> isSuperAdmin( Member other)async{
 
@@ -104,7 +104,7 @@ static Future<bool> isReAdmin(Member other)async {
   static bool isChef(Team team, int index) => Member.toMember(team.Members[index]).id!= Member.toMember(team.TeamLeader[0]).id;
 static Future<bool> isChefAndSuperAdmin(Team team,)async {
   final member = await MemberStore.getModel();
-  return Member.toMember(team.TeamLeader[0]).id==member!.id || member.role=='superadmin'|| member.role=='admin';
+  return Member.toMember(team.TeamLeader[0]).id==member!.id! || member.role=='superadmin'|| member.role=='admin';
 }
  static  bool checkIfIdExists(List<Member> list, String idToCheck) {
   if (list.isEmpty) {
@@ -117,25 +117,25 @@ log("result $result");
 static Future<bool > ischefAndExisted(Team team)async{
   final  member=await MemberStore.getModel();
 
-  return checkIfIdExists(team.Members.map((e) => Member.toMember(e)).toList(), member!.id)&& await isChefAndSuperAdmin(team);
+  return checkIfIdExists(team.Members.map((e) => Member.toMember(e)).toList(), member!.id!)&& await isChefAndSuperAdmin(team);
 }
 
 
 static Future<bool> isAssignedOrLoyal(Team team, List<dynamic> assignT)async {
   final  member=await MemberStore.getModel();
-  return checkIfIdExists(assignT.map((e) => Member.toMember(e)).toList(), member!.id) || await isChefAndSuperAdmin(team);
+  return checkIfIdExists(assignT.map((e) => Member.toMember(e)).toList(), member!.id??"") || await isChefAndSuperAdmin(team);
 }
 
   static Future<bool> IsNotExistedAndPublic(Team team) async {
     final  member=await MemberStore.getModel();
-    final result=!checkIfIdExists(team.Members.map((e) => Member.toMember(e)).toList(), member!.id);log('message$result');
+    final result=!checkIfIdExists(team.Members.map((e) => Member.toMember(e)).toList(), member!.id!);log('message$result');
 
     return TeamFunction.IsPublic(team) &&result ;
   }
   static Future<bool> isOwner(String id)async {
     final member =await MemberStore.getModel();
 
-    return member!.id == id;
+    return member!.id! == id;
   }
 static Future<bool> isMember(Member merber)async {
 

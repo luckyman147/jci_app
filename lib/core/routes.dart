@@ -21,7 +21,8 @@ import 'package:jci_app/features/changelanguages/presentation/pages/screen.dart'
 import '../features/MemberSection/presentation/pages/SettingsPage.dart';
 import '../features/Teams/domain/entities/Team.dart';
 import '../features/Teams/presentation/screens/CreateTeamScreen.dart';
-import '../features/auth/data/models/Member/AuthModel.dart';
+import '../features/auth/presentation/pages/InfoPage.dart';
+import 'MemberModel.dart';
 import '../features/auth/presentation/pages/SignUPPage.dart';
 import '../features/intro/presentation/pages/Introduction.dart';
 import '../features/intro/presentation/pages/Splash_screen.dart';
@@ -44,7 +45,16 @@ return const ForgetPasswordPage();
 },
 
 
-),GoRoute(
+),
+    GoRoute(path: '/passwordInfo/:email',
+      builder: (BuildContext context, GoRouterState state){
+        final userJson = state.pathParameters['email'];
+
+        return PasswordResetSentPage(  email: userJson??"",);
+
+      },
+    ),
+    GoRoute(
 path: '/Settings',
 builder: (BuildContext context, GoRouterState state) {
   final userJson = state.uri.queryParameters['user'];

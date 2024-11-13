@@ -1,8 +1,8 @@
 import 'dart:developer';
 
-import 'package:jci_app/features/auth/data/models/Member/AuthModel.dart';
+import 'package:jci_app/core/MemberModel.dart';
 
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 import '../../Domain/entities/Post.dart';
 
 class PostModel extends Post{

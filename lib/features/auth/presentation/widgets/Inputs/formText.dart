@@ -9,11 +9,12 @@ import '../../../../../core/app_theme.dart';
 
 class FormText extends StatelessWidget {
  final String? errorText;
+ final String hintText;
   final TextEditingController controller ;
 
   final Function(String) Onchanged  ;
   final String inputkey;
-  const FormText({Key? key, required this.inputkey, required this.Onchanged,  required this.errorText, required this.controller}) : super(key: key);
+  const FormText({Key? key, required this.inputkey, required this.Onchanged,  required this.errorText, required this.controller, required this.hintText}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +26,15 @@ class FormText extends StatelessWidget {
             }
             return null;
           },
+
           keyboardType: TextInputType.emailAddress,
           controller: controller,
 textInputAction: TextInputAction.next,
-          style: PoppinsRegular(16, textColorBlack,),
+          style: PoppinsRegular(14, textColorBlack,),
           key:Key(inputkey),
           //const Key('SignUpForm_EmailInput_textField'),
           onChanged: (value) => Onchanged(value),
-          decoration:decorationTextField(errorText)
+          decoration:decorationTextField(errorText,hintText,context)
         );
 
   }
@@ -56,7 +58,9 @@ final TextEditingController controller ;
           style: PoppinsRegular(16, textColorBlack,),
       textInputAction: TextInputAction.done,
 controller: controller,
-enableSuggestions: false,
+
+
+
  validator: (value) {
   if (value!.isEmpty) {
     return 'Password Empty'.tr (context);
@@ -72,12 +76,13 @@ enableSuggestions: false,
             Onchanged(password);},
           obscureText: state.value,
           decoration: InputDecoration(
-
+hintText:  "${"Enter".tr(context)} ${"Password".tr(context) .toLowerCase()}",
+            hintStyle: PoppinsLight(17, ColorsApp.ThirdColor),
             enabledBorder: border(textColorBlack) ,
             focusedBorder: border(PrimaryColor),
             focusedErrorBorder: border(Colors.red),
             errorBorder: border(Colors.red),
-            errorStyle: ErrorStyle(18, Colors.red),
+            errorStyle: ErrorStyle(14, Colors.red),
             suffixIcon: IconButton(  onPressed: () {
                 context.read<ToggleBooleanBloc>().add(ToggleBoolean());
             },
@@ -128,12 +133,13 @@ validator:
             Onchanged(password);},
           obscureText: state.value,
           decoration: InputDecoration(
-
+              hintText:  "${"Enter".tr(context)} ${"Confirm Password".tr(context).toLowerCase()}",
+              hintStyle: PoppinsLight(17, ColorsApp.ThirdColor),
             enabledBorder: border(textColorBlack) ,
             focusedBorder: border(PrimaryColor),
             focusedErrorBorder: border(Colors.red),
             errorBorder: border(Colors.red),
-            errorStyle: ErrorStyle(18, Colors.red),
+            errorStyle: ErrorStyle(14, Colors.red),
             suffixIcon: IconButton(  onPressed: () {
                 context.read<ToggleBooleanBloc>().add(ToggleBoolean());
             },

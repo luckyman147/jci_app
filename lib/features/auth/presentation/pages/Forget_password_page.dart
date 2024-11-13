@@ -4,8 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:jci_app/features/auth/presentation/bloc/bool/INPUTS/inputs_cubit.dart';
 import 'package:jci_app/features/auth/presentation/pages/pinPage.dart';
 import 'package:jci_app/features/auth/presentation/widgets/Form.dart';
+import 'package:jci_app/features/auth/presentation/widgets/Inputs/InputsWithLabels.dart';
 
 import '../../../../core/app_theme.dart';
 
@@ -37,7 +39,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
             key: _key,
             child: Column(
               children: [
-                Backbutton(mediaquery, context, '/login'),
+                Backbutton( text: '/login', ),
                 BuldForgetHeader(mediaquery: mediaquery),
                 BuildEmailForgetPassword(mediaquery),
                 const SizedBox(height: 30,),
@@ -53,14 +55,15 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   Padding BuildEmailForgetPassword(MediaQueryData mediaquery) {
     return Padding(
                 padding: EdgeInsets.symmetric(horizontal: mediaquery.size.width/10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Align(
-                        alignment:    Alignment.topLeft,
-                        child: Label(text: "Email", size: 22)),
-                    EmailInput(controller: _emailController, onTap: (String ) {  }, errorText: '', inputkey: 'zzzz',),
-                  ],
+                child: BlocBuilder<ResetBloc, ResetPasswordState>(
+                  builder: (context, state) {
+                    return EmailWithText(emailController: _emailController, onTap: (email ) {
+                  context.read<ResetBloc>().add(EmailnameChanged(email));
+                }, errorText: state.email.displayError!=null?
+                        "Invalid Email":null, inputState: InputsState()
+
+                      ,);
+                  },
                 ),
               );
   }

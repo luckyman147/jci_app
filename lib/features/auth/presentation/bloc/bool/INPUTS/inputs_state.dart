@@ -1,6 +1,6 @@
 part of 'inputs_cubit.dart';
 enum Inputs{
-  Google,Email,Phone
+  Google,Email
 
 }
  class InputsState extends Equatable {     final Inputs inputsValue;

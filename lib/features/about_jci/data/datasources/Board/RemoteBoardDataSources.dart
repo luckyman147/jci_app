@@ -30,7 +30,7 @@ class RemoteBoardDataSourcesImpl implements RemoteBoardDataSources {
 
   RemoteBoardDataSourcesImpl({required this.client});
   UnitFunction(Map<String,dynamic> body,String url,int responseSuccess) async {
-    final tokens= await Store.GetTokens();
+    final tokens= await Store().GetTokens();
 
 
     return client.post(
@@ -62,7 +62,7 @@ class RemoteBoardDataSourcesImpl implements RemoteBoardDataSources {
 
 Future<Unit>     deleteFunction(http.Client client, String url) async {
     try {
-      final tokens= await Store.GetTokens();
+      final tokens= await Store().GetTokens();
 
       final response = await client.delete(
         Uri.parse(url),

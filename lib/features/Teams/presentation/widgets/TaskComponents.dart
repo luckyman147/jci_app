@@ -7,7 +7,7 @@ import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.
 
 import '../../../../core/app_theme.dart';
 import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 import '../../domain/entities/Team.dart';
 import '../../domain/usecases/TaskUseCase.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';

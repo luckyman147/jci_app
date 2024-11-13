@@ -3,7 +3,9 @@ plugins {
     id "kotlin-android"
     id "com.android.application"
 id "dev.flutter.flutter-gradle-plugin"
-    id "com.google.gms.google-services" version "4.4.2" apply false
+    id "com.google.gms.google-services"
+    id 'com.google.firebase.firebase-perf'
+
 }
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.5.1')// Use the latest BOM version
@@ -14,6 +16,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth' // Check for the latest version
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.firebase:firebase-messaging'
+    implementation("com.google.firebase:firebase-appcheck-debug")
 }
 
 def localProperties = new Properties()
@@ -61,8 +64,8 @@ android {
         applicationId "com.example.jci_app"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 23
-        targetSdkVersion flutter.targetSdkVersion
+        minSdkVersion 31
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
 

@@ -13,6 +13,11 @@ class ChangeIscompleted extends ToggleBooleanEvent {
   final bool isCompleted;
   const ChangeIscompleted({required this.isCompleted});
 }
+class resetTimer extends ToggleBooleanEvent {}
+class ChangeIsImage1 extends ToggleBooleanEvent {
+
+  const ChangeIsImage1();
+}
 class ChangeIsEnabled extends ToggleBooleanEvent {
   final bool isEnabled;
   const ChangeIsEnabled({required this.isEnabled});

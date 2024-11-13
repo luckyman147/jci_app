@@ -10,7 +10,7 @@ import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileCompo
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/PresWidgets.dart';
 
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 
 class BottomMemberSheet {
 
@@ -67,18 +67,18 @@ builder: (context, state) {
                         side: const BorderSide(color: textColor, width: 2)),
                    title: SingleChildScrollView(
                        scrollDirection: Axis.horizontal,
-                       child: ChangePoints(mediaQuery, state,  pointsFocusNode,context,member.id)),
+                       child: ChangePoints(mediaQuery, state,  pointsFocusNode,context,member.id!)),
 
                   ),
                 ),Row(
                   children: [
                     CotisationField(mediaQuery, state,"1${"st".tr(context)} ${"Cotisation".tr(context)}",0,(valu){
-                      FunctionMember.UpdateCotisationAction(member.id, 0, valu!,context);
+                      FunctionMember.UpdateCotisationAction(member.id!, 0, valu!,context);
 
                     },context),
                     state.cotisation.length>1?
                     CotisationField(mediaQuery, state,"2${"nd".tr(context)} ${"Cotisation".tr(context)}",1,(valu){
-                      FunctionMember.UpdateCotisationAction(member.id, 1, valu!,context);
+                      FunctionMember.UpdateCotisationAction(member.id!!, 1, valu!,context);
 
                     },context):IconButton.outlined(onPressed: (){
                       context.read<MemberManagementBloc>().add(const AddCotisation());
@@ -97,7 +97,7 @@ builder: (context, state) {
                         width: 2,
                         color:textColor
                       )), Icons.card_membership_rounded, "Membership Report", () =>
-                                  context.read<MemberManagementBloc>().add(SendMembershipReportEvent(id:member.id)),
+                                  context.read<MemberManagementBloc>().add(SendMembershipReportEvent(id:member.id!)),
                       ),
                     ),
                     SizedBox(
@@ -108,7 +108,7 @@ builder: (context, state) {
 
                       ),borderRadius: BorderRadius.circular(15
                       )), Icons.report, "Inactivity Report", () =>
-                                  context.read<MemberManagementBloc>().add(SendInactivityReportEvent(id:member.id)),
+                                  context.read<MemberManagementBloc>().add(SendInactivityReportEvent(id:member.id!)),
                       ),
                     ),
                   ],
@@ -219,14 +219,14 @@ builder: (context, state) {
       child: Column(
         children: <Widget>[
           ProfileComponents.buildFutureBuilder(
-              ListTileChangement(context, member,"${"Change To".tr(context)} Admin ",(){FunctionMember.ChangeRole(member.id, MemberType. admin, context); })
-              ,false, member.id, (p0) => FunctionMember.isReAdmin(member)),
+              ListTileChangement(context, member,"${"Change To".tr(context)} Admin ",(){FunctionMember.ChangeRole(member.id!, MemberType. admin, context); })
+              ,false, member.id!, (p0) => FunctionMember.isReAdmin(member)),
           ProfileComponents.buildFutureBuilder(
-              ListTileChangement(context, member,"${"Change To".tr(context)} ${"Member".tr(context)} ",(){ FunctionMember.ChangeRole(member.id, MemberType. member, context);})
-              ,false, member.id, (p0) => FunctionMember.isMember(member)),
+              ListTileChangement(context, member,"${"Change To".tr(context)} ${"Member".tr(context)} ",(){ FunctionMember.ChangeRole(member.id!, MemberType. member, context);})
+              ,false, member.id!, (p0) => FunctionMember.isMember(member)),
           ProfileComponents.buildFutureBuilder(
-              ListTileChangement(context, member,"${"Change To".tr(context)} Super Admin ",(){ FunctionMember.ChangeRole(member.id, MemberType. superAdmin, context);})
-              ,false, member.id, (p0) => FunctionMember.isSuperAdmin(member)),
+              ListTileChangement(context, member,"${"Change To".tr(context)} Super Admin ",(){ FunctionMember.ChangeRole(member.id!, MemberType. superAdmin, context);})
+              ,false, member.id!, (p0) => FunctionMember.isSuperAdmin(member)),
           ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
@@ -235,7 +235,7 @@ builder: (context, state) {
                     ),
          ),
               onPressed: (){
-                context.read<MemberManagementBloc>().add(deleteMemberEvent(id: member.id));
+                context.read<MemberManagementBloc>().add(deleteMemberEvent(id: member.id!));
               }, child: Text("${"Delete".tr(context)} ${"Member".tr(context)}", style: PoppinsSemiBold(16, Colors.white, TextDecoration.none)))
 
         ]

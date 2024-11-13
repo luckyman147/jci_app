@@ -1,8 +1,10 @@
 
-import 'package:flutter/material.dart';
-import 'package:jci_app/core/app_theme.dart';
 
 
+
+
+
+import '../../AuthWidgetGlobal.dart';
 
 class  TextWidget extends StatelessWidget {
   String text;
@@ -42,28 +44,52 @@ class  LinkedText extends StatelessWidget {
     return Text(text,style:PoppinsSemiBold(size, ColorsApp.PrimaryColor,TextDecoration.underline) ,);
   }
 }
-Widget header(String text,MediaQueryData mediaquery){
-  return Align(
-      alignment:    Alignment.topLeft,
-      child: Label(text: text, size: mediaquery.size.width/22.5));
+
+
+class HeaderLabel extends StatelessWidget {
+  const HeaderLabel({
+    super.key, required this.text,
+  });
+  final String text ;
+
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaquery = MediaQuery.of(context);
+
+    return Align(
+        alignment:    Alignment.topLeft,
+        child: Label(text: text, size: mediaquery.size.width/22.5));
+  }
 }
-Widget divider(MediaQueryData mediaquery) {
-  return       Padding(
-    padding:  paddingSemetricVertical(v: mediaquery.size.height *.01),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        line(mediaquery.size.width/3),
 
 
-        Padding(
-          padding: paddingSemetricHorizontal(),
-          child: Text("Or",style: PoppinsNorml(mediaquery.size.width/24,ColorsApp. ThirdColor),),
-        ),
-        line(mediaquery.size.width/3)
-        //   Divider(),
 
-      ],
-    ),
-  );
+class divider extends StatelessWidget {
+  const divider({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaquery = MediaQuery.of(context);
+    return Padding(
+      padding:  paddingSemetricVertical(v: mediaquery.size.height *.01),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          line(mediaquery.size.width/3),
+
+
+          Padding(
+            padding: paddingSemetricHorizontal(),
+            child: Text("Or",style: PoppinsNorml(mediaquery.size.width/24,ColorsApp. ThirdColor),),
+          ),
+          line(mediaquery.size.width/3)
+          //   Divider(),
+
+        ],
+      ),
+    );
+  }
 }

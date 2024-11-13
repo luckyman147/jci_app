@@ -4,7 +4,7 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../Home/presentation/widgets/MemberSelection.dart';
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 import '../bloc/Members/members_bloc.dart';
 import 'MemberImpl.dart';
 

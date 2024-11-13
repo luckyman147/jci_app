@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/config/services/MemberStore.dart';
-import '../../../auth/data/models/Member/AuthModel.dart';
+import '../../../../core/MemberModel.dart';
 
 abstract class MemberLocalDatasoources{
   Future<MemberModel?> getUserProfile();

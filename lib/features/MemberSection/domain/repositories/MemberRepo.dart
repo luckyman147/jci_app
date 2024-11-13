@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/core/error/Failure.dart';
 
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 enum MemberType { admin, member,superAdmin }
 abstract class MemberRepo {
   Future<Either<Failure,Member>> getMemberByid(String id,bool status );

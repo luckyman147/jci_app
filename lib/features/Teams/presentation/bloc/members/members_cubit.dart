@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../../auth/domain/entities/Member.dart';
+import '../../../../../core/Member.dart';
 
 part 'members_state.dart';
 

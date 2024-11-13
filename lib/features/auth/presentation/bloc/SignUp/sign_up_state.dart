@@ -15,6 +15,7 @@ class SignUpState extends Equatable {
     this.password = const Password.pure(),
     this.signUpStatus= SignUpStatus.Initial
 ,this.message=""
+  ,this.isLoading=false
   });
 final SignUpStatus signUpStatus;
   final FormzSubmissionStatus status;
@@ -22,6 +23,7 @@ final String message;
   final Firstname firstname;
   final Lastname lastname;
   final bool isValid;
+  final bool  isLoading ;
 
 
   final Email email;
@@ -30,6 +32,7 @@ final String message;
 
 
   SignUpState copyWith({
+    bool?isLoading,
 
     SignUpStatus?signUpStatus,
     FormzSubmissionStatus? status,
@@ -44,6 +47,7 @@ String?message,
 
   }) {
     return SignUpState(
+      isLoading: isLoading??this.isLoading,
       signUpStatus: signUpStatus??this.signUpStatus,
       status: status ?? this.status,
       email: email ?? this.email,
@@ -58,6 +62,7 @@ confirmPassword: confirmPassword??this.confirmPassword
   }
   factory SignUpState.initial() {
     return const  SignUpState(
+      isLoading: false,
       status: FormzSubmissionStatus.initial,
       email: Email.pure(),
       password: Password.pure(),
@@ -70,7 +75,7 @@ confirmPassword: confirmPassword??this.confirmPassword
 
   @override
   List<Object> get props =>
-      [status, email,message, password, firstname, lastname, confirmPassword,signUpStatus];
+      [status, email,message, password, firstname, lastname, confirmPassword,signUpStatus,isLoading];
 
 
 }

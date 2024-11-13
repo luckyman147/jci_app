@@ -1,5 +1,5 @@
 import 'package:formz/formz.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
+import 'package:jci_app/core/Member.dart';
 
 enum MemberNameValidationError { empty }
 

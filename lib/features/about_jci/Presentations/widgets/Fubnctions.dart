@@ -16,7 +16,7 @@ import 'package:jci_app/features/about_jci/Presentations/widgets/PresidentsImpl.
 import '../../../../core/util/snackbar_message.dart';
 
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 import '../../Domain/entities/President.dart';
 import '../bloc/presidents_bloc.dart';
 

@@ -1,7 +1,7 @@
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
+import 'package:jci_app/core/Member.dart';
 
 
 part 'action_jci_state.dart';

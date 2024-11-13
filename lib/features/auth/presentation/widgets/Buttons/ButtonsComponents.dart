@@ -7,9 +7,9 @@
 import 'package:jci_app/features/auth/presentation/bloc/bool/INPUTS/inputs_cubit.dart';
 
 import '../../../../../core/app_theme.dart';
-import '../../../AuthWidget..global.dart';
+import '../../../AuthWidgetGlobal.dart';
 import '../../bloc/login/login_bloc.dart';
-import '../button_auth.dart';
+import 'button_auth.dart';
 
 class GoogleButton extends StatelessWidget {
   final LoginState state;
@@ -27,7 +27,7 @@ class GoogleButton extends StatelessWidget {
           authButton(onPressed: (){
             context.read<LoginBloc>().add(const SignInWithGoogleEvent());
 
-          }, text: 'Login With Google'.tr(context), icon: FontAwesomeIcons.google,isLoading: state is LoadingLogin,),
+          }, text: 'Login With Google'.tr(context), icon: FontAwesomeIcons.google,isLoading: state is LoadingLogin, isoogl: true,),
 
           // authButton(onPressed: (){}, text: 'Login With Facebook'.tr(context), string: facebook),
         ],
@@ -37,9 +37,9 @@ class GoogleButton extends StatelessWidget {
   }
 }
 class LoginWithEmailButton extends StatelessWidget {
-
+final InputsState state;
   const LoginWithEmailButton({
-key,
+key, required this.state,
   });
 
   @override
@@ -51,10 +51,14 @@ key,
         children: [
           authButton(onPressed: (){
 
+            context.read<LoginBloc>().add(HandleUserEmail());
+if (state.inputsValue==Inputs.Google) {
+  context.read<InputsCubit>().ActivateEmail();
+} else {
+  context.read<InputsCubit>().resetInputs();
+}
 
-            context.read<InputsCubit>().ActivateEmail();
-
-          }, text: "Login With Email".tr(context), icon: Icons.email,isLoading: false,),
+          }, text: "Login With Email".tr(context), icon: Icons.email,isLoading: false, isoogl: false,),
 
           // authButton(onPressed: (){}, text: 'Login With Facebook'.tr(context), string: facebook),
         ],
@@ -78,9 +82,9 @@ class LoginWithPhoneButton extends StatelessWidget {
         children: [
           authButton(onPressed: (){
             //  context.read<LoginBloc>().add(const SignInWithGoogleEvent());
-            context.read<InputsCubit>().ActivatePhone();
 
-          }, text: "Login With Phone".tr(context), icon: Icons.phone,isLoading: false,),
+
+          }, text: "Login With Phone".tr(context), icon: Icons.phone,isLoading: false, isoogl: false,),
 
           // authButton(onPressed: (){}, text: 'Login With Facebook'.tr(context), string: facebook),
         ],

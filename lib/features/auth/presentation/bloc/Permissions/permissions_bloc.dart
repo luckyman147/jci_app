@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:jci_app/core/usescases/usecase.dart';
 
 import '../../../../../core/error/Failure.dart';
+import '../../../domain/usecases/UserStatusUsesCases.dart';
 import '../../../domain/usecases/authusecase.dart';
 
 part 'permissions_event.dart';

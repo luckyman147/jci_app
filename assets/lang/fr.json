@@ -1,5 +1,8 @@
 {
-
+  "Password Reset Email Sent": "Email de réinitialisation du mot de passe envoyé",
+  "A password reset email has been sent to ": "Un email de réinitialisation du mot de passe a été envoyé à ",
+  "Please check your inbox and follow the instructions.": "Veuillez vérifier votre boîte de réception et suivre les instructions.",
+  "Return": "Retourner",
   "Get Started": "Commencer",
   "Explore": "Explorer",
   "Create Account": "Créer un compte",
@@ -20,6 +23,7 @@
   "View": "Voir",
   "Sort": "Trier",
   "My Bio": "Ma bio",
+
 
   "Enter  Phone Number": "Entrez le numéro de téléphone",
 

@@ -7,7 +7,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
-import '../../../../auth/domain/entities/Member.dart';
+import '../../../../../core/Member.dart';
 import '../../../domain/usecases/MemberUseCases.dart';
 
 

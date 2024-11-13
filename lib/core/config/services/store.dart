@@ -3,39 +3,51 @@ import 'package:secure_shared_preferences/secure_shared_pref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Store{
-  const Store._();
-  static const String _RefreshTokenKey="refreshToken";
-  static const String _AccessTokenKey="accessToken";
-  static const _PermissionsKey="permissions";
-static const String _FirstEntryKey="firstEntry";
-static const String _isLogged="isLoggedIn";
-static const String Otp="Otp";
-static const String status="status";
+  const Store();
+final String _RefreshTokenKey="refreshToken";
+  final String _AccessTokenKey="accessToken";
+final _PermissionsKey="permissions";
+ final String _FirstEntryKey="firstEntry";
+ final String _isLogged="isLoggedIn";
+final String Otp="Otp";
+ final String status="status";
+ final String _email="EmAiL";
 
-  static Future<void> setTokens(String RefreshToke,String AccessToken)async{
+   Future<void> setTokens(String RefreshToke,String AccessToken)async{
     final pref =await SecureSharedPref.getInstance();
     await pref.putString(_RefreshTokenKey, RefreshToke);
     await pref.putString(_AccessTokenKey, AccessToken);
 
+  }  Future<void> SetEmail(String email)async{
+    final pref =await SecureSharedPref.getInstance();
+    await pref.putString(_email, email);
+
+
+  } Future<String?> getPreviousEmail( )async{
+    final pref =await SecureSharedPref.getInstance();
+  return    pref.getString(_email);
+
+
   }
-  static Future<void> setStatus(bool isLogged)async{
+
+   Future<void> setStatus(bool isLogged)async{
     final pref =await SharedPreferences.getInstance();
     await pref.setBool(status, isLogged);
   }
 
-  static Future<bool> getStatus()async{
+   Future<bool> getStatus()async{
     final pref =await SharedPreferences.getInstance();
     return pref.getBool(status)??false;
   }
-  static Future<void> setPermissions(List<String> permissions)async{
+   Future<void> setPermissions(List<String> permissions)async{
     final pref =await SecureSharedPref.getInstance();
     await pref.putStringList(_PermissionsKey, permissions);
   }
-  static Future<List<String>> getPermissions()async{
+   Future<List<String>> getPermissions()async{
     final pref =await SecureSharedPref.getInstance();
   return pref.getStringList(_PermissionsKey );
   }
-  static Future<List<String?>> GetTokens()async{
+   Future<List<String?>> GetTokens()async{
     final pref =await SecureSharedPref.getInstance();
     final refresh=await pref.getString(_RefreshTokenKey);
 
@@ -43,48 +55,48 @@ static const String status="status";
     print([access,refresh]);
     return [refresh,access];
   }
-static Future<void> setOtp(String otp)async {
+ Future<void> setOtp(String otp)async {
   final pref = await SecureSharedPref.getInstance();
   await pref.putString(Otp, otp);
 }
-static Future<String?> getOtp()async {
+ Future<String?> getOtp()async {
   final pref = await SecureSharedPref.getInstance();
   return pref.getString(Otp);}
- static Future<void> clear() async{
+  Future<void> clear() async{
    final pref =await SecureSharedPref.getInstance();
 await pref.putString(_RefreshTokenKey, "");
 await pref.putString(_AccessTokenKey, "");
 await pref.putStringList(_PermissionsKey, []);
 
  }
- static Future<String?> getLocaleLanguage ()async {
+  Future<String?> getLocaleLanguage ()async {
    final pref =await SharedPreferences.getInstance();
    return  pref.getString('LOCALE');
 
 
 
- } static Future<void> setLocaleLanguage (String locale)async {
+ }  Future<void> setLocaleLanguage (String locale)async {
    final pref =await SharedPreferences.getInstance();
    pref.setString('LOCALE',locale);
 
 
 
  }
- static Future<void> setFirstEntry()async{
+  Future<void> setFirstEntry()async{
    final pref =await SharedPreferences.getInstance();
    pref.setBool(_FirstEntryKey,true);
 
  }
-  static Future<bool> isFirstEntry()async{
+   Future<bool> isFirstEntry()async{
     final pref =await SharedPreferences.getInstance();
     return pref.getBool(_FirstEntryKey)??false;
   }
-  static Future<void> setLoggedIn(bool isLogged)async{
+   Future<void> setLoggedIn(bool isLogged)async{
     final pref =await SharedPreferences.getInstance();
     pref.setBool(_isLogged,isLogged);
 
   }
-  static Future<bool> isLoggedIn()async{
+   Future<bool> isLoggedIn()async{
     final pref =await SharedPreferences.getInstance();
     return pref.getBool(_isLogged)??false;
   }

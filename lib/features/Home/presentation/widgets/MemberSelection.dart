@@ -11,7 +11,7 @@ import '../../../../core/widgets/loading_widget.dart';
 import '../../../MemberSection/domain/usecases/MemberUseCases.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../MemberSection/presentation/pages/memberProfilPage.dart';
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 //import '../../../auth/presentation/bloc/Members/members_bloc.dart';
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import 'ErrorDisplayMessage.dart';
@@ -270,14 +270,14 @@ Widget MembersDetails(List<Member> members,mediaQuery)=>ListView.separated(
         Navigator.of(context).push(
             MaterialPageRoute(
               builder: (BuildContext context) {
-                return  MemberSectionPage(id:members[index].id);
+                return  MemberSectionPage(id:members[index].id!);
               },
             ),);
 
 
 
 
-          context.read<MembersBloc>().add(GetMemberByIdEvent( MemberInfoParams(id: members[index].id,status: true)));
+          context.read<MembersBloc>().add(GetMemberByIdEvent( MemberInfoParams(id: members[index].id!,status: true)));
         },
 
         child: MemberContainer(mediaQuery, members[index]));

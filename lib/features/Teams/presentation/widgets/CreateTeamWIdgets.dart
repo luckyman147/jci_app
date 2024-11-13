@@ -22,7 +22,7 @@ import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 
 
 
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 import '../../domain/entities/Team.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/TaskFilter/taskfilter_bloc.dart';

@@ -17,19 +17,37 @@ dependencies:
   flutter_localization:
   path_to_regexp:
   freezed:
+  pinput:
+
+  flutter_screenutil:
   image_picker: ^1.0.7
-  jwt_decoder:
+
   url_launcher:
   flutter_countdown_timer:
   dotted_border:
   bloc_concurrency: ^0.2.0
   stream_transform: ^2.0.0
   font_awesome_flutter:
+  firebase_data_connect:
+  firebase_messaging:
+
+  firebase_storage:
+  firebase_database:
+  crypto:
+
+  firebase_performance:
+  firebase_remote_config:
+  firebase_in_app_messaging:
+
+  firebase_dynamic_links:
+
+
+
 
     # Bloc for state management
   flutter_bloc: ^8.1.2
   connectivity_plus:
-  logger:
+  logger: ^1.1.0
   cloud_firestore:
   # Functional programming things
   dartz: ^0.10.1
@@ -77,14 +95,15 @@ dependencies:
   flutter_time_picker_spinner: ^2.0.0
   table_calendar: ^3.0.9
   flutter_animate: ^4.5.0
+  firebase_app_check: ^0.3.1+4
 dev_dependencies:
+  bloc_test:
   flutter_test:
 
 
 
     sdk: flutter
-  dart_code_metrics: ^5.1.0
-  analyzer:
+  analyzer: ^5.13.0
   auto_route_generator:
   build_runner:
   flutter_lints: ^2.0.0
@@ -122,10 +141,14 @@ flutter:
     - assets/images/jciTunisie.jpg
     - assets/images/Person_Vip.png
     - assets/images/task.jpg
+    - assets/images/team.png
+    - assets/images/Mail.png
+    - assets/images/MailSenti.png
 
     - assets/images/blankjci.jpeg
     - assets/images/classement.jpg
     - assets/images/cap.png
+    - assets/images/Hello.png
     - assets/json/
     - assets/lang/en.json
     - assets/lang/fr.json

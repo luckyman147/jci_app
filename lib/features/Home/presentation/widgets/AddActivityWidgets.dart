@@ -19,7 +19,7 @@ import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.
 
 import '../../../../core/app_theme.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 import '../bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../bloc/Activity/activity_cubit.dart';

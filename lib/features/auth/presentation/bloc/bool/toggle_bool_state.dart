@@ -4,14 +4,16 @@ class ToggleBooleanState extends Equatable {
   final bool value;
   final bool isCompleted;
   final bool isEnbled;
+  final bool IsImage1;
 
-  const ToggleBooleanState({ this.value=true, this.isCompleted = false,this.isEnbled=true});
 
-  ToggleBooleanState copyWith({bool? value,bool?isCompleted,bool? isEnabled}) => ToggleBooleanState(value: value ?? this.value, isCompleted: isCompleted ?? this.isCompleted,isEnbled: isEnabled??isEnbled);
+  const ToggleBooleanState({ this.value=true, this.isCompleted = false,this.isEnbled=true,this.IsImage1=false});
+
+  ToggleBooleanState copyWith({bool? value,bool?isCompleted,bool? isEnabled , bool?IsImage1}) => ToggleBooleanState(value: value ?? this.value, isCompleted: isCompleted ?? this.isCompleted,isEnbled: isEnabled??isEnbled,IsImage1: IsImage1??this.IsImage1);
 
   @override
   // TODO: implement props
-  List<Object?> get props => [value,isCompleted,isEnbled];
+  List<Object?> get props => [value,isCompleted,isEnbled ,IsImage1];
 }
 
 // reset state

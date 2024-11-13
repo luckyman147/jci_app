@@ -2,6 +2,7 @@
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/notesBloc/notes_bloc.dart';
 
 
 part 'toggle_bool_event.dart';
@@ -15,6 +16,13 @@ class ToggleBooleanBloc extends Bloc<ToggleBooleanEvent, ToggleBooleanState> {
     on<ResetBoolean>(reset);
     on<ChangeIscompleted>(ChangeBoolean);
     on<ChangeIsEnabled>(ChangeisEnbled);
+    on<ChangeIsImage1>(ChangeImage1);
+  }
+  void ChangeImage1(
+      ChangeIsImage1 event,
+      Emitter<ToggleBooleanState> emit,
+      ) {
+    emit(state.copyWith(IsImage1: !state.IsImage1));
   }
 void ChangeisEnbled(
       ChangeIsEnabled event,

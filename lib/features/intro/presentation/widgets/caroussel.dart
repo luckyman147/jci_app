@@ -3,6 +3,7 @@
 import 'package:carousel_slider/carousel_slider.dart' as c;
 import 'package:jci_app/features/intro/presentation/widgets/CarouselSliderWidget.dart';
 
+import '../../../../core/strings/Images.string.dart';
 import '../widgets.global.dart';
 
 
@@ -68,7 +69,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
 }
 
 Future<List<dynamic>> _loadJsonData(BuildContext context) async {
-  String jsonString = await DefaultAssetBundle.of(context).loadString('assets/json/description.json');
+  String jsonString = await DefaultAssetBundle.of(context).loadString(images.cartousel);
   List<dynamic> jsonData = json.decode(jsonString);
   return jsonData;
 }

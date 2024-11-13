@@ -5,8 +5,11 @@ import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:formz/formz.dart';
 import 'package:jci_app/core/config/services/store.dart';
+import 'package:jci_app/features/auth/data/models/formz/PhoneNumber.dart';
+import 'package:jci_app/features/auth/domain/dtos/LoginWithEmailDto.dart';
 
 
 
@@ -16,6 +19,7 @@ import '../../../../../core/strings/failures.dart';
 import '../../../../../core/usescases/usecase.dart';
 import '../../../data/models/formz/Email.dart';
 import '../../../data/models/formz/password.dart';
+import '../../../domain/usecases/UserStatusUsesCases.dart';
 import '../../../domain/usecases/authusecase.dart';
 
 
@@ -23,22 +27,44 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc({required this.loginUseCase,required this.googleSignUseCase})
+  LoginBloc(this.loginWithEmailUseCase, this.getPreviousEmailUseCase, {required this.googleSignUseCase})
       : super(const LoginState()) {
     on<LoginEmailnameChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
-    on<LoginSubmitted>(_onSubmitted);
-
+    on<LoginPhoneChanged>(_onPhoneChanged);
+    on<LoginWithEmailSubmitted>(_onLoginWithEmailSubmitted);
+    on<HandleUserEmail>(handleUserEmail);
+    on<HandleUserEvent>(_handleuserEvent);
     on<ResetFormLogin>(_reset_form);
     on<SignInWithGoogleEvent>(_onGoogleSign);
   }
 final GoogleSignUseCase googleSignUseCase;
-  final LoginUseCase loginUseCase;
+  final GetPreviousEmailUseCase getPreviousEmailUseCase;
+  final LoginWithEmailUseCase loginWithEmailUseCase;
+  void handleUserEmail (
+    HandleUserEmail event,
+    Emitter<LoginState> emit,
+
+
+      )async{
+final result=await getPreviousEmailUseCase(NoParams());
+
+result.fold(
+        (l) => emit(ErrorLogin(message: mapFailureToMessage(l))),
+        (r) => emit(GetUserEmailState(emai: r))
+);
+  }
+  void _handleuserEvent(
+    LoginEvent event,
+    Emitter<LoginState> emit,
+  ) {
+    emit(LoginState.initial());
+  }
   void _reset_form(
     ResetFormLogin event,
     Emitter<LoginState> emit,
   ) {
-    emit(LoginState.initial());
+    emit(LoadingLoginWithEmail());
   }
 void _onGoogleSign(
     SignInWithGoogleEvent event,
@@ -47,9 +73,9 @@ void _onGoogleSign(
     try {
       emit(LoadingLogin());
     final result = await googleSignUseCase.call(NoParams());
-final status=await Store.getStatus();
+
     emit(_eithSignOrNTR(
-        result, 'Login Successful',status));
+        result, 'Login Successful',true));
 
     }
         catch (e) {
@@ -82,27 +108,42 @@ final status=await Store.getStatus();
       ),
     );
   }
+  void _onPhoneChanged(
+    LoginPhoneChanged event,
+    Emitter<LoginState> emit,
+  ) {
+    final phone = PhoneNumber.dirty(event.phone);
+    emit(
+      state.copyWith(
+        phone: phone,
+        isValid: Formz.validate([state.password, state.email, phone]),
+      ),
+    );
+  }
 
-  Future<void> _onSubmitted(
-    LoginSubmitted event,
+
+  Future<void> _onLoginWithEmailSubmitted(
+      LoginWithEmailSubmitted event,
     Emitter<LoginState> emit,
   ) async {
 
 
       try {
-        emit(LoadingLogin());
+ emit(LoadingLoginWithEmail());
         final failureOrDoneMessage =
-            await loginUseCase.LoginCredentials(event.email, event.password);
+            await loginWithEmailUseCase(event.loginWithEmailDtos);
 
 
-
+debugPrint(failureOrDoneMessage.toString());
         emit(_eitherDoneMessageOrErrorState(
             failureOrDoneMessage, 'Login Successful'));
 
 
+
         emit(state.copyWith(status: FormzSubmissionStatus.success));
       } catch (e) {
-        emit(ErrorLogin(message: "Something went wrong ${e.toString()}"));
+        log(e.toString());
+        emit(ErrorLogin(message: "${e.toString()}"));
       }
   }
 
@@ -112,23 +153,22 @@ LoginState _eitherDoneMessageOrErrorState(
     Either<Failure, Unit> either, String message) {
   return either.fold(
     (failure) => ErrorLogin(
-      message: mapFailureToMessage(failure),
+      message: failure.toString(),
     ),
     (_) => MessageLogin(message: message),
   );
 }
 
-  LoginState _eithSignOrNTR(Either<Failure, User?> result, String s, bool status) {
+  LoginState _eithSignOrNTR(Either<Failure, Unit> result, String s, bool status) {
     return result.fold(
       (failure) => ErrorLogin(
         message: mapFailureToMessage(failure),
       ),
       (user) {
-        if (user == null || status ) {
-          return const MessageLogin(message: "Login Successful");
-        }
-        else{
-        return  RegisterGoogle(user: user );}
+
+          return  MessageLogin(message: "Login Successful");
+
+
       }
 
 

@@ -21,7 +21,7 @@ import '../../../Home/presentation/widgets/SearchWidget.dart';
 import '../../../MemberSection/domain/usecases/MemberUseCases.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../MemberSection/presentation/pages/memberProfilPage.dart';
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 import '../../domain/entities/Team.dart';
 
 class MemberTeamSelection{
@@ -313,14 +313,14 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (BuildContext context) {
-                    return  MemberSectionPage(id:members[index].id);
+                    return  MemberSectionPage(id:members[index].id!);
                   },
                 ),);
 
 
 
 
-              context.read<MembersBloc>().add(GetMemberByIdEvent( MemberInfoParams(id: members[index].id,status: true)));
+              context.read<MembersBloc>().add(GetMemberByIdEvent( MemberInfoParams(id: members[index].id!,status: true)));
 
             },
             child: MembersTeamContainer(

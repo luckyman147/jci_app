@@ -11,7 +11,7 @@ import '../../../../core/config/services/store.dart';
 import '../../../../core/config/services/uploadImage.dart';
 import '../../../../core/config/services/verification.dart';
 import '../../../../core/error/Exception.dart';
-import '../../../auth/data/models/Member/AuthModel.dart';
+import '../../../../core/MemberModel.dart';
 
 import'package:http/http.dart' as http;
 abstract class MemberRemote {
@@ -207,7 +207,7 @@ class MemberRemoteImpl implements MemberRemote {
 
   @override
   Future<Unit> UpdateMember(MemberModel memberModel)async  {
-    final tokens= await Store.GetTokens();
+    final tokens= await Store().GetTokens();
     final body =memberModel.toJson();
 
 
@@ -224,7 +224,7 @@ class MemberRemoteImpl implements MemberRemote {
 
 
 
-        final uploadResponse=await UpdateImage(memberModel.id, memberModel.Images[0],"$getUserProfileUrl/");
+        final uploadResponse=await UpdateImage(memberModel.id!, memberModel.Images[0],"$getUserProfileUrl/");
         if (uploadResponse.statusCode==200){
           // upload from response
           uploadResponse.stream.transform(utf8.decoder).listen((value) {

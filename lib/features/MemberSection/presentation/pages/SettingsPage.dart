@@ -7,7 +7,7 @@ import 'package:jci_app/features/MemberSection/presentation/widgets/SettingsComp
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import '../../../../core/util/snackbar_message.dart';
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 import '../../../auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
 import '../bloc/Members/members_bloc.dart';

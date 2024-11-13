@@ -29,8 +29,8 @@ import '../../../Home/domain/entities/Activity.dart';
 import '../../../Teams/data/models/TeamModel.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../../Teams/presentation/widgets/DetailTeamComponents.dart';
-import '../../../auth/data/models/Member/AuthModel.dart';
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/MemberModel.dart';
+import '../../../../core/Member.dart';
 import '../../domain/usecases/MemberUseCases.dart';
 import '../pages/memberProfilPage.dart';
 import 'BottomShettMember.dart';
@@ -327,9 +327,9 @@ static Row descriptionName(Member member, MemberManagementState state, BuildCont
             overlayColor: WidgetStateProperty.all(PrimaryColor.withOpacity(0.1)),
             surfaceTintColor: WidgetStateProperty.all(Colors.white),      ),
           onPressed: (){
-            context.read<MemberManagementBloc>().add(validateMember( memberid: member.id));
+            context.read<MemberManagementBloc>().add(validateMember( memberid: member.id!));
 
-          }, icon: const Center(child: Icon(Icons.check_circle_outline,size: 25,))), true, member.id, (p0) => FunctionMember.isAdminAndSuperAdmin())
+          }, icon: const Center(child: Icon(Icons.check_circle_outline,size: 25,))), true, member.id!, (p0) => FunctionMember.isAdminAndSuperAdmin())
     ]
     );
 }
@@ -407,7 +407,7 @@ static Widget AchivedmentWidget(bool isFinished,String text ) {
 
             ],
 
-          ), true, member.id, (p0) => FunctionMember.isAdminAndSuperAdmin()),
+          ), true, member.id!, (p0) => FunctionMember.isAdminAndSuperAdmin()),
           buildFutureBuilder(SizedBox(
 
             child: Padding(
@@ -430,7 +430,7 @@ static Widget AchivedmentWidget(bool isFinished,String text ) {
 
               ),
             ),
-          ), false, member.id, (p0) => FunctionMember.isAdminAndSuperAdmin()),
+          ), false, member.id!, (p0) => FunctionMember.isAdminAndSuperAdmin()),
         ],
       ),
     );
@@ -464,7 +464,7 @@ static Widget AchivedmentWidget(bool isFinished,String text ) {
         ),
         child:
         member.teams.isEmpty?  buildFutureBuilder(AddTeamsWidget(context)
-        , true, member.id, (p0) => FunctionMember.isOwner(member.id))   :
+        , true, member.id!, (p0) => FunctionMember.isOwner(member.id!))   :
 
         ListView.separated(
           itemBuilder: (context, index) {
@@ -692,7 +692,7 @@ static  Stack imagezChanged(String member,MediaQueryData mediaQuery,BuildContext
     );
   }
  static Widget TextfieldNum(String name, String hintText,
-      TextEditingController controller, Function(String) onChanged) {
+      TextEditingController controller, Function(String) onChanged,BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
       child: Column(
@@ -723,7 +723,7 @@ static  Stack imagezChanged(String member,MediaQueryData mediaQuery,BuildContext
               FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // Only digits allowed
               LengthLimitingTextInputFormatter(8), // Limit to 8 characters
             ],
-            decoration: decorationTextField(null)
+            decoration: decorationTextField(null,"Pin",context),
           ),
         ],
       ),
@@ -852,12 +852,12 @@ keyboardType: TextInputType.emailAddress,
                 } else {
                   context.read<ChangeSboolsCubit>().ChangePages("/home", "/memberSection/${members[index].id}");
                 }
-                context.read<MembersBloc>().add(GetMemberByIdEvent(MemberInfoParams(id: members[index].id,status: true)));
+                context.read<MembersBloc>().add(GetMemberByIdEvent(MemberInfoParams(id: members[index].id!,status: true)));
 
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return MemberSectionPage(id: members[index].id);
+                      return MemberSectionPage(id: members[index].id!);
                     },
                   ),
                 );

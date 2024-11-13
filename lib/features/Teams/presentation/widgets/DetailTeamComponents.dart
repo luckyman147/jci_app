@@ -12,6 +12,7 @@ import 'package:jci_app/features/MemberSection/presentation/widgets/functionMemb
 import 'package:jci_app/features/Teams/domain/usecases/TeamUseCases.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
+import 'package:jci_app/core/Member.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
@@ -20,7 +21,8 @@ import '../../../Home/presentation/widgets/Functions.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 
-import '../../../auth/domain/entities/Member.dart';
+
+
 import '../../domain/entities/Team.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/GetTeam/get_teams_bloc.dart';
@@ -237,7 +239,7 @@ class DeatailsTeamComponent{
 
                               children: [
                                 MemberTeamSelection.  imageWidget(Member.toMember(team.Members[team.Members.length-index-1])),
-                                ProfileComponents.buildFutureBuilder(const Icon(Icons.person_sharp,),  true, Member.toMember(team.Members[team.Members.length-index-1]).id, (p0) => FunctionMember.isOwner(Member.toMember(team.Members[team.Members.length-index-1]).id))
+                                ProfileComponents.buildFutureBuilder(const Icon(Icons.person_sharp,),  true, Member.toMember(team.Members[team.Members.length-index-1]).id!, (p0) => FunctionMember.isOwner(Member.toMember(team.Members[team.Members.length-index-1]).id??""))
                               ],
                             ),
                           ),
@@ -464,7 +466,7 @@ class DeatailsTeamComponent{
 
             if (!mounted) return;
             context.go('/CreateTeam?team=${jsonEncode(team.toJson())}&&image=$image');
-            context.read<MembersTeamCubit>().initMembers( team.Members.map((e) => Member.toMember(e)).toList());
+            context.read<MembersTeamCubit>().initMembers( team.Members.map((e) => Member.toMember(e)).cast<Member>().toList());
 
             context.read<TaskVisibleBloc>().add(ChangeImageEvent(
                 image!=null?

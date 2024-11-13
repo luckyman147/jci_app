@@ -9,6 +9,8 @@ import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
 import '../../../../../core/usescases/usecase.dart';
 
+import '../../../domain/usecases/UserAccountUsesCases.dart';
+import '../../../domain/usecases/UserStatusUsesCases.dart';
 import '../../../domain/usecases/authusecase.dart';
 
 part 'auth_event.dart';
@@ -17,9 +19,10 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RefreshTokenUseCase refreshTokenUseCase;
   final SignOutUseCase signoutUseCase;
+  final IsLoggedInUseCase ifLoggedInUseCase;
 
 
-  AuthBloc({required this.refreshTokenUseCase,required this.signoutUseCase,
+  AuthBloc(this.ifLoggedInUseCase, {required this.refreshTokenUseCase,required this.signoutUseCase,
 
 
 
@@ -31,10 +34,19 @@ _onRefreshToken,
     );
 
     on<SignoutEvent>(_onSignoutEvent);
+    on<IsLoggedInEvent>(check);
 
   }
 
+void check(
+    IsLoggedInEvent event,
+    Emitter<AuthState> emit,
+    )async{
+  final result = await ifLoggedInUseCase.call(NoParams());
+  emit(_eitherLoggewdInOrFailure(
+      result));
 
+}
 
 
   Future <void> _onSignoutEvent(
@@ -42,8 +54,8 @@ _onRefreshToken,
       Emitter<AuthState> emit,
       ) async {
 
-final statu=await Store.getStatus();
-      final result = await signoutUseCase.call(statu);
+
+      final result = await signoutUseCase.call(false);
       emit(_eitherDoneMessageOrErrorState(
           result, 'Signout Successfully'));
 
@@ -65,23 +77,21 @@ final statu=await Store.getStatus();
 
       final result = await refreshTokenUseCase.call(NoParams());
       emit(_eitherDoneRefreshedOrErrorState(
-          result, 'Token Refreshed Successfully'));
+          result,"Token Refreshed Successfully"));
 
-    
+
   }
 
   AuthState _eitherDoneMessageOrErrorState(
-      Either<Failure, bool> either, String message) {
+      Either<Failure, Unit> either, String message) {
     return either.fold(
           (failure) => AuthFailureState(
         message: mapFailureToMessage(failure),
       ),
           (vakue) {
-            if (vakue){
-         return   AuthSuccessState();
+            return AuthSuccessState();
           }
-          return const AuthFailureState(message: 'Signout Failed');
-          }
+
     );
   }  AuthState _eitherDoneRefreshedOrErrorState(
       Either<Failure, Unit> either, String message) {
@@ -90,6 +100,17 @@ final statu=await Store.getStatus();
         message: mapFailureToMessage(failure),
       ),
           (_) => AuthSuccessState(),
+    );
+  }
+
+  AuthState _eitherLoggewdInOrFailure(Either<Failure, bool> result) {
+    return result.fold(
+          (failure) => AuthFailureState(
+        message: mapFailureToMessage(failure),
+      ),
+          (value) {
+            return LoggedInState();
+          },
     );
   }
 

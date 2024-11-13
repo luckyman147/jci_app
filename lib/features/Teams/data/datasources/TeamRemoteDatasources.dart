@@ -35,11 +35,12 @@ Future<Unit> updateMembers(String teamid, String memberid, String Status);
 
 class TeamRemoteDataSourceImpl implements TeamRemoteDataSource{
   final http.Client client;
+  final store=Store();
 
   TeamRemoteDataSourceImpl({required this.client});
   @override
   Future<TeamModel> createTeam(TeamModel Team)async  {
-final tokens= await Store.GetTokens();
+final tokens= await store.GetTokens();
   final body =Team.toJson();
   debugPrint(body.toString()  );
 
@@ -107,7 +108,7 @@ final tokens= await Store.GetTokens();
 
   @override
   Future<List<TeamModel>> getAllTeams(String page,String limit,bool isPrivate)async  {
- final tokens=await Store.GetTokens();
+ final tokens=await store.GetTokens();
     final response = await client.get(
 
       Uri.parse("${TeamUrl}All?start=$page&limit=$limit&isPrivate=$isPrivate"),
@@ -204,7 +205,7 @@ final tokens= await Store.GetTokens();
 
   @override
   Future<List<TeamModel>> getTeamByName(String name) async{
-    final tokens=await Store.GetTokens();
+    final tokens=await store.GetTokens();
     final response =  client.get(
       Uri.parse( '${TeamUrl}get?name=$name'),
 
@@ -236,7 +237,7 @@ final tokens= await Store.GetTokens();
 
   @override
   Future<Unit> updateMembers(String teamid, String memberid, String Status) async {
-    final tokens=await Store.GetTokens();
+    final tokens=await store.GetTokens();
     final response =  client.put(
       Uri.parse( Urls.TeamMember(teamid)),
 body: json.encode({"Member":memberid,"Status":Status}),
@@ -262,7 +263,7 @@ body: json.encode({"Member":memberid,"Status":Status}),
 
   @override
   Future<Unit> inviteMember(String id, String memberid) async{
-     final tokens=await Store.GetTokens();
+     final tokens=await store.GetTokens();
       return client.post(
         Uri.parse( Urls.InviteMemberUrl(id, memberid)),
         headers: {"Content-Type": "application/json",
@@ -283,7 +284,7 @@ body: json.encode({"Member":memberid,"Status":Status}),
 
   @override
   Future<Unit> joinTeam(String id) async {
-    final tokens=await Store.GetTokens();
+    final tokens=await store.GetTokens();
     return client.post(
       Uri.parse( Urls.JoinTeam(id)),
       headers: {"Content-Type": "application/json",

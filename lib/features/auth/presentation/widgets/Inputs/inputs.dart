@@ -26,14 +26,7 @@ class PasswordInput  extends StatelessWidget {
       errortext: errorText, controller: controller, validator: (String )
       {
         validator(String);
-      /*
-        if(String.isEmpty) {
-          return 'Empty';
-        }
-        if(String.length < 6) {
-          return 'Too Short';
-        }
-        return null;*/
+
       },
     );
   }
@@ -41,19 +34,20 @@ class PasswordInput  extends StatelessWidget {
 class confirmpassword extends StatelessWidget {
   final TextEditingController controller;
   final TextEditingController PasswordContro;
+  final Function(String) onTap;
+  final String? errorText;
 
 
-  const confirmpassword({super.key, required this.controller, required this.PasswordContro});
+  const confirmpassword({super.key, required this.controller, required this.PasswordContro, required this.onTap, this.errorText});
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SignUpBloc, SignUpState>(
       builder: (context, state) {
         return FormTextConPassword(inputkey: 'SignUpForm_confirmPasswordInput_textField',
           Onchanged: (confirmPassword) {
-            context.read<SignUpBloc>().add(ConfirmPasswordChanged(confirmPassword));
-
+            onTap(confirmPassword);
           } ,
-          errortext: null,
+          errortext: errorText,
 
 
           controller: controller, validator: PasswordContro.text,
@@ -86,34 +80,7 @@ class firstname extends StatelessWidget {
 
           errorText:  state.firstname.displayError != null ?
           "Invalid first name"
-              : null, controller:controller ,
-
-        );
-      },);
-
-  }
-}class PhoneField extends StatelessWidget {
-
-  final String inputkey;
-  final TextEditingController controller;
-  const PhoneField({super.key, required this.controller, required this.inputkey,});
-
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SignUpBloc, SignUpState>(
-      buildWhen: (previous, current) => previous.firstname != current.firstname,
-      builder: (context, state) {
-
-        return FormText( inputkey: inputkey,
-
-          Onchanged:(firstname){
-            print(firstname);
-            context.read<SignUpBloc>().add(FirstNameChanged(firstname));},
-
-          errorText:  state.firstname.displayError != null ?
-          "Invalid first name"
-              : null, controller:controller ,
+              : null, controller:controller, hintText: 'First Name' ,
 
         );
       },);
@@ -136,25 +103,26 @@ class lastname extends StatelessWidget {
               (lastname){context.read<SignUpBloc>().add(LastNameChanged(lastname));},
           errorText: state.lastname.displayError != null ?
           "Invalid last name"
-              : null, controller: controller, );
+              : null, controller: controller, hintText: 'Last Name', );
 
       },  );
   }
 }
-
-class EmailInput extends StatelessWidget {
+// ! email inputs and phone input
+class InputComponent extends StatelessWidget {
   final TextEditingController controller;
 
   final Function(String) onTap;
   final String? errorText;
   final String inputkey;
+  final String hintText;
 
-  const EmailInput({
+  const InputComponent({
     required this.controller,
 
     required this.onTap,
     required this.errorText,
-    required this.inputkey,
+    required this.inputkey, required this.hintText,
   });
 
   @override
@@ -163,7 +131,7 @@ class EmailInput extends StatelessWidget {
       inputkey: inputkey,
       Onchanged: (email) => onTap(email),
       errorText: errorText,
-      controller: controller,
+      controller: controller, hintText: hintText,
     );
   }
 

@@ -17,7 +17,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/Teams/domain/entities/Checklist.dart';
 import 'package:jci_app/features/Teams/domain/entities/Task.dart';
 import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
+import 'package:jci_app/core/Member.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/config/services/TeamStore.dart';
@@ -49,11 +49,11 @@ class TeamFunction{
   static void NavigateTOMemberSection(BuildContext context, Member member) {
     context.read<MembersBloc>().add(
         GetMemberByIdEvent(
-            MemberInfoParams(id: member.id, status: true)));
+            MemberInfoParams(id: member.id!, status: true)));
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MemberSectionPage(id: member.id,),
+        builder: (context) => MemberSectionPage(id: member.id!,),
       ),
     );
   }
@@ -101,7 +101,7 @@ class TeamFunction{
     if (objects.isEmpty  ) {
       return [];
     }
-    return objects.map((obj) => obj.id ).toList();
+    return objects.map((obj) => obj.id !).toList();
   }
   static  void changeInitTeams(BuildContext context,Privacy privacy,bool isPrivate) {
 
@@ -281,15 +281,15 @@ class TeamFunction{
   }
   static Future<void> ToMembersSection(Team team, BuildContext context, Member member, ChangeSboolsState state,bool mounted) async {
 
-    if (await FunctionMember.isChefAndSuperAdmin(team) && !await FunctionMember.isOwner(member.id)) {
+    if (await FunctionMember.isChefAndSuperAdmin(team) && !await FunctionMember.isOwner(member.id!)) {
       if (!mounted) return;
       context.read<MembersBloc>().add(
-          GetMemberByIdEvent(MemberInfoParams(id: member.id,
+          GetMemberByIdEvent(MemberInfoParams(id: member.id!,
               status: true)));
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (BuildContext context) {
-            return MemberSectionPage(id: member.id);
+            return MemberSectionPage(id: member.id!);
           },
         ),
       );

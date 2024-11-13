@@ -37,19 +37,19 @@ final class ResetPassForm extends ResetEvent {
   List<Object> get props => [];
 }
 final class ResetSubmitted extends ResetEvent {
-final Member member;
+final ResetpasswordDtos member;
   const ResetSubmitted({required this.member});
 
   @override
   List<Object> get props => [member];
 }
 final class CheckOtpEvent extends ResetEvent {
-  final String otp;
+  final String checkOTPDtos;
 
-  const CheckOtpEvent({required this.otp});
+  const CheckOtpEvent({required this.checkOTPDtos});
 
   @override
-  List<Object> get props => [otp];
+  List<Object> get props => [checkOTPDtos];
 }
 final class sendResetPasswordEmailEvent extends ResetEvent {
   final String email;
@@ -58,4 +58,12 @@ final class sendResetPasswordEmailEvent extends ResetEvent {
 
   @override
   List<Object> get props => [email];
+}
+final class ResetErrorEvent extends ResetEvent {
+
+
+  const ResetErrorEvent();
+
+  @override
+  List<Object> get props => [];
 }

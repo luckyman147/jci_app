@@ -194,7 +194,7 @@ return await _getMessage(trainingRemoteDataSource.deleteTraining(id));
   @override
   Future<Either<Failure, bool>> CheckPermissions() async {
     final eventPermission=await TrainingStore.getTrainPer();
-    final userPermissions=await Store.getPermissions();
+    final userPermissions=await Store( ).getPermissions();
     if(eventPermission .isEmpty || userPermissions.isEmpty){
       return const Right(false);
     }

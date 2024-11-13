@@ -1,36 +1,35 @@
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/bool/INPUTS/inputs_cubit.dart';
+import 'package:jci_app/features/auth/presentation/widgets/Inputs/InputsWithLabels.dart';
 
-import '../../../AuthWidget..global.dart';
+import '../../../AuthWidgetGlobal.dart';
 import '../../bloc/login/login_bloc.dart';
 
-class LoginButton extends StatelessWidget {
+class SubmitButton extends StatelessWidget {
   final GlobalKey<FormState> keyConr;
+final bool isInprogress;
+final Function() onTap;
+final String text;
+final InputsState state;
 
 
-  const LoginButton({
+  const SubmitButton({
     Key? key,
-    required this.keyConr,
+    required this.keyConr, required this.isInprogress, required this.onTap, required this.text, required this.state,
 
   }) : super(key: key);
 
-  void resetForm() {
-    keyConr.currentState?.reset();
-  }
+
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<InputsCubit, InputsState>(
-      builder: (context, sta) {
-        return Visibility(
-          visible: sta.inputsValue!=Inputs.Google,
-          child: BlocBuilder<LoginBloc, LoginState>(
+    return  Visibility(
+          visible: state.inputsValue==Inputs.Email,
+          child:
 
-            builder: (context, state) {
-              return state.status.isInProgress
-                  ? const CircularProgressIndicator()
-                  : Padding(
-                    padding:paddingSemetricHorizontal(h: 22),
+                   Padding(
+                    padding:paddingSemetricVerticalHorizontal(h: 22),
                     child: Container(
                                     width: double.infinity,
                                     height: 66,
@@ -42,24 +41,32 @@ class LoginButton extends StatelessWidget {
                                     ),
                                     child: InkWell(
                     onTap: () {
-                      SubmitFunctions.Login(context, state, keyConr, () {
-                        resetForm();
-                      });
+                      if (keyConr.currentState!.validate()) {
+                        onTap();
+                      }
+
                     },
                     child: Center(
-                      child: Text(
-                        'Login'.tr(context),
+                      child:
+                      isInprogress?const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ):
+                      Text(
+                        text.tr(context),
                         style: PoppinsSemiBold(18, ColorsApp.textColorWhite,
                             TextDecoration.none),
                       ),
                     ),
                                     ),
                                   ),
-                  );
-            },
-          ),
+                  ),
+
+
+        ).animate(
+          effects: [
+           FadeEffect(duration: 500.milliseconds),
+          ],
         );
-      },
-    );
+
   }
 }

@@ -3,15 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
+import 'package:jci_app/core/Member.dart';
+import 'package:jci_app/features/auth/domain/entities/AuthUser.dart';
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
+import 'package:jci_app/features/auth/presentation/bloc/bool/INPUTS/inputs_cubit.dart';
+import 'package:jci_app/features/auth/presentation/widgets/Buttons/SubmitButton.dart';
 
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/config/services/store.dart';
 import '../../../../core/util/snackbar_message.dart';
 import '../../../changelanguages/presentation/bloc/locale_cubit.dart';
+import '../../domain/dtos/ResetpasswordDtos.dart';
 import '../bloc/bool/toggle_bool_bloc.dart';
+import '../widgets/Functions/Listeners.dart';
+import '../widgets/Inputs/InputsWithLabels.dart';
 import '../widgets/Inputs/ResetPaswordInput.dart';
 import '../widgets/Inputs/inputs.dart';
 import '../widgets/Text.dart';
@@ -47,23 +53,8 @@ final Passwordcontroller=TextEditingController();
 
     return Scaffold(
       body: BlocConsumer<ResetBloc, ResetPasswordState>(
-  listener: (context, state)async{
-    if(state.status== ResetPasswordStatus.error){
-
-      SnackBarMessage.showErrorSnackBar(
-          message: state.message, context: context);
-    }
-else if(state.status== ResetPasswordStatus. Updated){
-      SnackBarMessage.showSuccessSnackBar(
-          message: state.message, context: context);
-      final islooged = await Store.isLoggedIn();
-      if (!mounted) return;
-      if (islooged) {
-        context.go('/home');
-      } else {
-      context.go('/login');}
-    }
-    // TODO: implement listener
+  listener: (context,state){
+    ListenerRestFunction.Listener(state, context,widget.email);
   },
   builder: (context, state) {
     return Form(
@@ -76,34 +67,35 @@ else if(state.status== ResetPasswordStatus. Updated){
               padding: EdgeInsets.only(bottom:mediaquery.size.height*.05, right: mediaquery.size.width *0.01 ),
               child: SizedBox(
                   width: mediaquery.size.width/1.32,
-
                   child: TextWidget(text: "Reset Password".tr(context).toUpperCase(), size: 43)),
             ),
             Padding(
 
               padding: const EdgeInsets.symmetric(horizontal: 50),
-              child: Column(
+              child: BlocBuilder<InputsCubit, InputsState>(
+  builder: (context, sta) {
+    return Column(
                         children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: Label(text: 'New Password'.tr(context), size: 20,),
-              ),
-              PasswordInputText(controller: Passwordcontroller),
-                        const SizedBox(height: 20,),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Label(text: 'Confirm Password'.tr(context), size: 20,),
-              ),
-              confirmpasswordText(controller: ConPasswordcontroller, PasswordContro: Passwordcontroller,),
-                    Padding(
-                      padding:  EdgeInsets.only(top: mediaquery.size.height *0.04),
-                      child: _ResetButton(_key,widget.email),
-                    )
+            PassWordWithText(passwordController: Passwordcontroller, inputState: sta, onTap:(text){
+              context.read<ResetBloc>().add(PasswordChanged(text));
+            },
+                errorText: state.password.displayError !=null?"Weak Password":null, labelText: "New Password"),
+                          ComfirmPasswordWithText(controller: ConPasswordcontroller, PasswordContro: Passwordcontroller, onTap: (String ) {
+                            context.read<ResetBloc>().add(ConfirPasswordChanged(String));
+                            
+                          }, labelText: 'Confirm Password',errorText: state.confirmPassword.displayError!=null?"Not Compatible":null,),
+                   SubmitButton(keyConr: _key, isInprogress: state.status ==ResetPasswordStatus.loading, onTap: () {
+final member=ResetpasswordDtos(email: widget.email, password: Passwordcontroller.text);
+                     context.read<ResetBloc>().add(ResetSubmitted( member: member));
+                     
+                   }, text: 'Login', state: sta,)
 
                         ],
 
 
-                      ),
+                      );
+  },
+),
             )
 
           ],),
@@ -113,38 +105,6 @@ else if(state.status== ResetPasswordStatus. Updated){
 ),
     );
   }
-  Widget _ResetButton (GlobalKey<FormState> key,String email   ){
-
-    return BlocBuilder<ResetBloc, ResetPasswordState>(
-      builder: (context, state) {
-        return
-
-          Container(
-            width: double.infinity,
-            height: 66,
-            decoration: decoration,
-            child: InkWell(
-
-              onTap:
-                  ()async {
-                if (_key.currentState!.validate()){
-
-final language=await context.read<localeCubit>().cachedLanguageCode();
-                  final  Member member=Member(email: email, password: state.password.value, id: '', role: '', is_validated: false, cotisation: const [], Images: const [],teams: const [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: const [], points: 0, objectifs: const [],language: language??'fr', rank: 0, description: '', board: "", PreviousPoints: 0);
-
-                  context.read<ResetBloc>().add(ResetSubmitted( member: member));
-
-                  //context.read<ResetBloc>().add(ResetPassForm());
-
-                }
-
-              },
-
-              child:  Center(child: Text('Submit'.tr(context),style: PoppinsSemiBold(24, textColorWhite, TextDecoration.none) ,)),
-            ),
-          );
-      },
-    );}
 
 
 }

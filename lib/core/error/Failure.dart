@@ -54,3 +54,16 @@ class AlreadyParticipatedFailure extends Failure {
 class WrongVerificationCodeFailure extends Failure {
 
 }
+class WrongVerificationFailure extends Failure {
+}
+
+class AlreadyParticipateFailure extends Failure {
+}
+
+class AlreadyRegisterFailure extends Failure {
+}
+
+class AlreadyLoginFailure extends Failure {
+}
+class NotVerifiedFailure extends Failure {
+}

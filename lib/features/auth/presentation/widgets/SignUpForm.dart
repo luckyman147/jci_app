@@ -10,13 +10,16 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 
 import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
-import 'package:jci_app/features/auth/presentation/widgets/SubmitFunctions.dart';
+import 'package:jci_app/features/auth/presentation/bloc/bool/INPUTS/inputs_cubit.dart';
+import 'package:jci_app/features/auth/presentation/widgets/Buttons/SubmitButton.dart';
+import 'package:jci_app/features/auth/presentation/widgets/Functions/SubmitFunctions.dart';
 
 import 'package:jci_app/features/auth/presentation/widgets/Text.dart';
 
 import '../../../../core/widgets/backbutton.dart';
 
 
+import 'Inputs/InputsWithLabels.dart';
 import 'Inputs/inputs.dart';
 
 
@@ -68,7 +71,7 @@ void _resetform(){
       mainAxisAlignment: MainAxisAlignment.center,
 
       children: [
-      Backbutton(mediaquery, context, '/login'),
+      Backbutton(text:  '/login'),
         Align(
           alignment: Alignment.center,
           child: Padding(
@@ -83,88 +86,46 @@ void _resetform(){
 
         Form(
           key: _key,
-          child: Column(
-            children: [
-              Padding(
-                padding: paddingSemetricVerticalHorizontal(h: 25,v: 10),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      header("First Name".tr(context),mediaquery),
-                      firstname(controller: _firstnameController, ),
-
-                    ]),
-              ),
-               Padding(padding: paddingSemetricAll()),
-              Padding(
-                padding: paddingSemetricHorizontal(h: 25),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    header("Last Name".tr(context),mediaquery),
-                    lastname(controller: _lastnameController,),
-                  ],
-                ),
-              ),
-              const Padding(padding: EdgeInsets.all(8)),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    header("Email".tr(context),mediaquery),
-                   BlocBuilder<SignUpBloc, SignUpState >(
+          child: BlocBuilder<InputsCubit, InputsState>(
+  builder: (context, sta) {
+    return BlocBuilder<SignUpBloc , SignUpState>(
   builder: (context, state) {
-    return EmailInput(controller: _emailController, onTap: (String ) { 
-                      context.read<SignUpBloc>().add(SignUpEmailnameChanged(String));
-                    }, inputkey: 'signEmail', errorText: state.email.displayError != null ? "Invalid Email" : null,
-                   );
-  },
-),
-                  ],
-                ),
-              ),
-              Padding(padding: paddingSemetricAll()),
-              Padding(
-                padding:paddingSemetricHorizontal(h: 25),
-                child: Column(
-                  children: [
-                    header("Password".tr(context),mediaquery),
-                    PasswordInput(controller: _passwordController, onTap: (String ) {  
-                      context.read<SignUpBloc>().add(SignUpPasswordChanged(String));
-                    }, inputkey: 'signPassword', validator: (String ) {
-                      if(String.isEmpty) {
-                        return 'Empty';
-                      }
-                      if(String.length < 6) {
-                        return 'Too Short';
-                      }
-                      return null;
-                    },),
+    return Column(
+            children: [
+            FirstNameWithLabel(firstnameController: _firstnameController),
 
-                  ],
-                ),
-              ), Padding(padding: paddingSemetricAll()),
-              Padding(
-                padding: paddingSemetricHorizontal(h: 25),
-                child: Column(
-                  children: [
-                    header("Confirm Password".tr(context),mediaquery),
-                    confirmpassword(controller: _confirmPasswordController,PasswordContro: _passwordController,)
+              LastNameWithLabel(lastnameController: _lastnameController),
 
-                  ],
-                ),
-              ),
 
-              Padding(
-                padding:  EdgeInsets.only(top:mediaquery.size.height/22,right: 25.0,left: 25,bottom: 12),
-                child: _SignUpButton(
-                ),
+              EmailWithText(emailController: _emailController, inputState: sta, onTap: (String ) {
+                context.read<SignUpBloc>().add(SignUpEmailnameChanged(String));
+              }, errorText: state.email.displayError != null ? "Invalid Email" : null
+
+               ),
+
+
+              PassWordWithText( passwordController: _passwordController, inputState: sta, onTap: (String ) {
+                context.read<SignUpBloc>().add(SignUpPasswordChanged(String));
+              }, errorText:
+                state.password.displayError != null ? "Invalid Password" : null, labelText: 'Password'
+                ,), Padding(padding: paddingSemetricAll()),
+
+
+              ComfirmPasswordWithText( PasswordContro: _passwordController, onTap: (String ) {
+context.read<SignUpBloc>().add(ConfirmPasswordChanged(String));
+              }, errorText: state.confirmPassword.displayError != null ? "Invalid Password" : null, controller: _confirmPasswordController, labelText: 'Confirm Password',),
+
+              SubmitButton(keyConr: _key, isInprogress: state.signUpStatus == SignUpStatus.Loading, onTap: () {
+                SubmitFunctions.SignUp(state, _key, context, _resetform);}
+                  ,text: 'SignUp', state: sta ,
               ),
 
             ],
-          ),
+          );
+  },
+);
+  },
+),
         ),
 
         Row(
@@ -179,6 +140,7 @@ void _resetform(){
               splashColor: Colors.transparent,
               onTap: (){
                 context.go('/login');
+                context.read<InputsCubit>().resetInputs();
               },
               child: LinkedText(text: "Sign In".tr(context), size:  mediaquery.size.width/30.5,
               ),
@@ -188,35 +150,4 @@ void _resetform(){
       ],
     );
   }
-Widget _SignUpButton (  ){
-
-  return 
-BlocBuilder<SignUpBloc, SignUpState>(
-    builder: (context, state) {
-      return
-        state.status.isInProgress
-            ? const CircularProgressIndicator():
-        Container(
-              width: double.infinity,
-              height: 66,
-              decoration: decoration,
-              child: InkWell(
-
-                onTap:
-                    () {
-
-if (widget.gmail != null && widget.name != null&& widget.gmail !="null"&& widget.name != "null") {
-        SubmitFunctions.SignUp(state, _key, context, _resetform,true);}
-else{
-  SubmitFunctions.SignUp(state, _key, context, _resetform,false);
-}
-                  },
-
-                child:  Center(child: Text('SignUp'.tr(context),style: PoppinsSemiBold(24, textColorWhite, TextDecoration.none) ,)),
-              ),
-            );
-    },
- 
-);}
-
 }

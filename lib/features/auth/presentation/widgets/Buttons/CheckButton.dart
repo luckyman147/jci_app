@@ -1,5 +1,5 @@
 
-import '../../../AuthWidget..global.dart';
+import '../../../AuthWidgetGlobal.dart';
 import '../../bloc/ResetPassword/reset_bloc.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../pages/pinPage.dart';
@@ -29,12 +29,7 @@ class Checkbutton extends StatelessWidget {
                    if (keyConr.currentState!.validate()) {
                      context.read<ResetBloc>().add(
                          sendResetPasswordEmailEvent(email: state.email.value));
-                     Navigator.of(context).push(MaterialPageRoute(
-                         builder: (context) =>
-                             Pincode(
-                               verifyEvent: VerifyEvent.ResetPasswordEvent,
-                               member: null,
-                               email: state.email.value,)));
+context.go("/passwordInfo/${state.email.value}");
                    }
                  },
 

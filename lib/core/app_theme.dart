@@ -32,7 +32,7 @@ TextStyle PoppinBold(double size,Color color,TextDecoration decoration) => Googl
 TextStyle ErrorStyle(double size,Color color) => GoogleFonts.poppins(fontWeight: FontWeight.w600,fontSize: size,color: color);
 OutlineInputBorder border(Color color)=> OutlineInputBorder(
   borderRadius: BorderRadius.circular(10.0),
-  borderSide: BorderSide(color: color,width: 3 ),
+  borderSide: BorderSide(color: color,width: 2 ),
 );
 final   taskdex=BoxDecoration(
   color: Colors.white,
@@ -57,12 +57,15 @@ EdgeInsetsGeometry paddingSemetricVerticalHorizontal ({double h=8,double v=8})=>
 
 
 
-InputDecoration decorationTextField(String? errorText)=> InputDecoration(
+InputDecoration decorationTextField(String? errorText,String hintText,BuildContext context)=> InputDecoration(
+
+    hintText:  "${"Enter".tr(context)} ${hintText.tr(context).toLowerCase()}",
+    hintStyle: PoppinsRegular(17, ColorsApp.ThirdColor),
     enabledBorder: border(textColorBlack) ,
     focusedBorder: border(PrimaryColor),
     errorBorder: border(Colors.red),
     focusedErrorBorder: border(Colors.red),
-    errorStyle: ErrorStyle(18, Colors.red),
+    errorStyle: ErrorStyle(14, Colors.red),
     errorText:errorText
 
 );
@@ -168,6 +171,15 @@ canvasColor: backgroundColored,
 
   ),
 );
+
+
+final gradient=  LinearGradient(
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    colors: [ColorsApp.PrimaryColor,PrimaryColor,Color(0xffF2F2F2),Color(0xffF2F2F2),Color(0xffF2F2F2),Color(0xffF2F2F2)],
+    stops: const [0.1,0.3,0.5,0.7,0.9,1]
+
+  );
 
 InputDecoration inputDecoration (mediaQuery,bool isempty,BuildContext context )=> InputDecoration(
   errorText:isempty ?"Empty Field":null,

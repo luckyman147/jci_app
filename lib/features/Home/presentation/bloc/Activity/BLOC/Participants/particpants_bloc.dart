@@ -142,7 +142,7 @@ void _AddParticipent(
 
     final result = await participateActivityUseCases(event.act);
     final member=await MemberStore.getModel();
-    emit(_eitherDoneMessageOrErrorState(result,  event.index,member!.id,event.act.id!));
+    emit(_eitherDoneMessageOrErrorState(result,  event.index,member!.id??"",event.act.id!));
 
 }
 void confirmGuest(ConfirmGuestEvent event,
@@ -160,7 +160,7 @@ void _RemoveParticipent(
   final result = await leaveActivityUseCases(event.act);
   final member=await MemberStore.getModel();
 
-  emit( _eitherRemoveParticipantMessageOrErrorState (result,  event.index,member!.id,event.act.id!));
+  emit( _eitherRemoveParticipantMessageOrErrorState (result,  event.index,member!.id??"",event.act.id!));
 
 }
 void init(initstateList event, Emitter<ParticpantsState> emit) {

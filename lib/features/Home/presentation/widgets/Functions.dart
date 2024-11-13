@@ -30,7 +30,7 @@ import '../../../../core/config/services/TeamStore.dart';
 import '../../../MemberSection/presentation/widgets/functionMember.dart';
 import '../../../Teams/domain/entities/Team.dart';
 import '../../../Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 
 import '../../domain/entities/Activity.dart';
 import '../../domain/entities/Guest.dart';

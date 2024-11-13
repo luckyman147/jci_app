@@ -6,11 +6,11 @@ import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/features/MemberSection/data/datasources/MemberLocalDataSources.dart';
 import 'package:jci_app/features/MemberSection/data/datasources/MemberRemoteDataSources.dart';
 
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
+import 'package:jci_app/core/Member.dart';
 
 import '../../../../core/error/Exception.dart';
 import '../../../../core/network/network_info.dart';
-import '../../../auth/data/models/Member/AuthModel.dart';
+import '../../../../core/MemberModel.dart';
 import '../../domain/repositories/MemberRepo.dart';
 
 class MemberRepoImpl extends MemberRepo {

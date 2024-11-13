@@ -62,9 +62,9 @@ List<SingleChildWidget> providersList = [
   BlocProvider(create: (_)=> di.sl<ActionJciCubit>()),
   BlocProvider(create: (_)=> di.sl<YearsBloc>()),
   BlocProvider(
-      create: (_) => di.sl<AuthBloc>()..add(const RefreshTokenEvent())),
+      create: (_) => di.sl<AuthBloc>()..add(const IsLoggedInEvent())),
   BlocProvider(create: (_) => di.sl<SignUpBloc>()),
-  BlocProvider(create: (_) => di.sl<LoginBloc>()),
+  BlocProvider(create: (_) => di.sl<LoginBloc>()..add(HandleUserEmail())),
   BlocProvider(create: (_) => di.sl<ParticpantsBloc>()),
   BlocProvider(create: (_) => di.sl<BoordBloc>()),
   BlocProvider(create: (_) => di.sl<NotesBloc>()),
@@ -73,6 +73,7 @@ List<SingleChildWidget> providersList = [
 
   BlocProvider(create: (_) => localeCubit()..getSavedLanguage()),
   BlocProvider(create: (_) => CalendarCubit()),
+
   BlocProvider(create: (_) => ActivityCubit()),
   BlocProvider(create: (_) => InputsCubit()..resetInputs()),
 

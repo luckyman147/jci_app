@@ -14,7 +14,7 @@ import 'package:stream_transform/stream_transform.dart';
 
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
-import '../../../../auth/domain/entities/Member.dart';
+import '../../../../../core/Member.dart';
 import '../../../domain/entities/Team.dart';
 
 import '../../widgets/funct.dart';

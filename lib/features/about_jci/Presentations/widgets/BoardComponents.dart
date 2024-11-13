@@ -347,11 +347,11 @@ else{
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
-            mainAxisAlignment:post.assignTo[0].id.isNotEmpty? MainAxisAlignment.spaceAround:MainAxisAlignment.center,
+            mainAxisAlignment:post.assignTo[0].id!.isNotEmpty? MainAxisAlignment.spaceAround:MainAxisAlignment.center,
             children:[
 
           Visibility(
-            visible: post.assignTo[0].id.isNotEmpty,
+            visible: post.assignTo[0].id!.isNotEmpty,
 
             child: buildCircularIconButton(Icons.close, () {
           final Pos=PostField(year: "", role: post.role, assignTo: post.assignTo[0].id, id: post.id);

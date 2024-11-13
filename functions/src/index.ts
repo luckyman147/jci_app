@@ -4,6 +4,11 @@ import * as z from "zod";
 import {generate} from "@genkit-ai/ai";
 import {configureGenkit} from "@genkit-ai/core";
 import {firebase} from "@genkit-ai/firebase";
+import {vertexAI} from "@genkit-ai/vertexai";
+
+// Import models from the Vertex AI plugin. The Vertex AI API provides access to
+// several generative models. Here, we import Gemini 1.5 Flash.
+import {gemini15Flash} from "@genkit-ai/vertexai";
 
 // From the Firebase plugin, import the functions needed to deploy flows using
 // Cloud Functions.
@@ -15,6 +20,10 @@ configureGenkit({
     // Load the Firebase plugin, which provides integrations with several
     // Firebase services.
     firebase(),
+    // Load the Vertex AI plugin. You can optionally specify your project ID
+    // by passing in a config object; if you don't, the Vertex AI plugin uses
+    // the value from the GCLOUD_PROJECT environment variable.
+    vertexAI({ location: 'us-central1' }),
   ],
   // Log debug output to tbe console.
   logLevel: "debug",
@@ -48,7 +57,7 @@ export const menuSuggestionFlow = onFlow(
     const prompt =
       `Suggest an item for the menu of a ${subject} themed restaurant`;
     const llmResponse = await generate({
-      model: '' /* TODO: Set a model. */,
+      model: gemini15Flash,
       prompt: prompt,
       config: {
         temperature: 1,

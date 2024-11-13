@@ -13,14 +13,7 @@ class InputsCubit extends Cubit<InputsState> {
     ));
   }
 
-    void ActivatePhone(){
-    emit(state.copyWith(
-  inputsValue:
-        Inputs.Phone
 
-    ));
-
-  }
   void resetInputs(){
     emit(state.copyWith(
       inputsValue: Inputs.Google

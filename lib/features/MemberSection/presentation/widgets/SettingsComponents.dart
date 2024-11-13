@@ -20,8 +20,9 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../../core/strings/app_strings.dart';
 
-import '../../../auth/data/models/Member/AuthModel.dart';
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/MemberModel.dart';
+import '../../../../core/Member.dart';
+import '../../../auth/domain/dtos/ResetpasswordDtos.dart';
 import '../../../auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
 
@@ -295,8 +296,7 @@ static isMode(SettingsBools state) {
                ProfileComponents.SaveChangesButton(()async{
                  if (key.currentState!.validate()) {
                    final language=await context.read<localeCubit>().cachedLanguageCode();
-                   final  Member member=Member(email: newMember.email , password: cPassword.text, id: '', role: '', is_validated: false, cotisation: const [], Images: const [],teams: const [], firstName: '', lastName: '', phone: '', IsSelected: false, Activities: const [], points: 0, objectifs: const [],language: language??'fr', rank: 0, description: '', board: "", PreviousPoints: 0);
-
+              final member=ResetpasswordDtos(email: newMember.email, password: controller.text,);
                    context.read<ResetBloc>().add(ResetSubmitted( member: member));
                  cPassword.clear();
                   controller.clear();

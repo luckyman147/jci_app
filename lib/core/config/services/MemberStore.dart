@@ -6,7 +6,7 @@ import 'package:dartz/dartz.dart';
 import 'package:secure_shared_preferences/secure_shared_pref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../features/auth/data/models/Member/AuthModel.dart';
+import '../../MemberModel.dart';
 
 
 

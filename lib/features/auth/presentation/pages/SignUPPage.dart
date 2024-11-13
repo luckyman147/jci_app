@@ -13,6 +13,7 @@ import '../../../../core/widgets/loading_widget.dart';
 
 
 import '../bloc/bool/toggle_bool_bloc.dart';
+import '../widgets/Functions/Listeners.dart';
 
 
 class SignUpPage extends StatefulWidget {
@@ -42,7 +43,7 @@ class _SignUpPageState extends State<SignUpPage> {
         padding: const EdgeInsets.all(12),
         child: BlocConsumer<SignUpBloc, SignUpState>(
           listener: (context, state) {
-            listenerBloc(state, context);
+            ListenerSignUpFunctionsBlocs.      listenerBloc(state, context);
 
           },
           builder: (context, state) {
@@ -60,28 +61,5 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  void listenerBloc(SignUpState state, BuildContext context) {
-           switch (state.signUpStatus) {
-      case SignUpStatus.Loading:
-      // Handle loading state if necessary
-        break;
 
-      case SignUpStatus.EmailSuccessState:
-        SnackBarMessage.showSuccessSnackBar(message: state.message, context: context);
-        break;
-
-      case SignUpStatus.RegisterGoogle:
-        SnackBarMessage.showSuccessSnackBar(message: state.message, context: context);
-        context.go('/login');
-        break;
-
-      case SignUpStatus.ErrorSignUp:
-        SnackBarMessage.showErrorSnackBar(message: state.message, context: context);
-        break;
-
-      default:
-      // Handle any other cases if necessary
-        break;
-    }
-  }
 }

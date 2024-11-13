@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:jci_app/core/config/env/providersList.dart';
 import 'package:jci_app/core/routes.dart';
@@ -46,45 +47,51 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: providersList,
-      child: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, state) {
-          return BlocBuilder<localeCubit, LocaleState>(
-            buildWhen: (previous, current) => previous != current,
-            builder: (context, state) {
-              if (state is ChangeLocalState) {
-                return MaterialApp.router(
-                  theme: themeData,
-                  routerConfig: router(_navigatorKey, widget.text),
-                  debugShowCheckedModeBanner: false,
-                  title: 'JCI App',
-                  supportedLocales: const [
-                    Locale('en', 'US'),
-                    Locale('fr', 'FR'),
-                  ],
-                  localizationsDelegates: [
-                    AppLocalizations.delegate,
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate
-                  ],
-                  localeResolutionCallback: (locale, supportedLocales) {
-                    for (var supported in supportedLocales) {
-                      if (locale != null &&
-                          locale.languageCode == supported.languageCode) {
-                        return locale;
+    return ScreenUtilInit(
+
+      designSize: const Size(375, 812),
+      splitScreenMode: true,
+      minTextAdapt: true,
+      child: MultiBlocProvider(
+        providers: providersList,
+        child: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            return BlocBuilder<localeCubit, LocaleState>(
+              buildWhen: (previous, current) => previous != current,
+              builder: (context, state) {
+                if (state is ChangeLocalState) {
+                  return MaterialApp.router(
+                    theme: themeData,
+                    routerConfig: router(_navigatorKey, widget.text),
+                    debugShowCheckedModeBanner: false,
+                    title: 'JCI App',
+                    supportedLocales: const [
+                      Locale('en', 'US'),
+                      Locale('fr', 'FR'),
+                    ],
+                    localizationsDelegates: [
+                      AppLocalizations.delegate,
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                      GlobalCupertinoLocalizations.delegate
+                    ],
+                    localeResolutionCallback: (locale, supportedLocales) {
+                      for (var supported in supportedLocales) {
+                        if (locale != null &&
+                            locale.languageCode == supported.languageCode) {
+                          return locale;
+                        }
                       }
-                    }
-                    return supportedLocales.first;
-                  },
-                  locale: state.locale,
-                );
-              }
-              return const SizedBox();
-            },
-          );
-        },
+                      return supportedLocales.first;
+                    },
+                    locale: state.locale,
+                  );
+                }
+                return const SizedBox();
+              },
+            );
+          },
+        ),
       ),
     );
   }

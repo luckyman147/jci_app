@@ -21,7 +21,7 @@ import '../../../../core/strings/app_strings.dart';
 import '../../../../core/util/snackbar_message.dart';
 import '../../../MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import '../../../Teams/presentation/widgets/DetailTeamComponents.dart';
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 import '../../data/model/TrainingModel/TrainingModel.dart';
 import '../../data/model/meetingModel/MeetingModel.dart';
 import '../bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';

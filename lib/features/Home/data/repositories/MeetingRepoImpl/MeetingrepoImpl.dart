@@ -206,7 +206,7 @@ id: meeting.id,
   @override
   Future<Either<Failure, bool>> CheckPermissions() async {
     final eventPermission=await  MeetingStore.getmeetPermissions();
-    final userPermissions=await Store.getPermissions();
+    final userPermissions=await Store().getPermissions();
     if(eventPermission .isEmpty || userPermissions.isEmpty){
       return const Right(false);
     }

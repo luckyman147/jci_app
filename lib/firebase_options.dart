@@ -46,6 +46,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '651392688142',
     projectId: 'jci-app-e8e4c',
     authDomain: 'jci-app-e8e4c.firebaseapp.com',
+    databaseURL: 'https://jci-app-e8e4c-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'jci-app-e8e4c.appspot.com',
     measurementId: 'G-B0BEX0S829',
   );
@@ -55,6 +56,7 @@ class DefaultFirebaseOptions {
     appId: '1:651392688142:android:951e992ea8e6d93ee25c5f',
     messagingSenderId: '651392688142',
     projectId: 'jci-app-e8e4c',
+    databaseURL: 'https://jci-app-e8e4c-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'jci-app-e8e4c.appspot.com',
   );
 
@@ -63,6 +65,7 @@ class DefaultFirebaseOptions {
     appId: '1:651392688142:ios:9a15d10b88444ed1e25c5f',
     messagingSenderId: '651392688142',
     projectId: 'jci-app-e8e4c',
+    databaseURL: 'https://jci-app-e8e4c-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'jci-app-e8e4c.appspot.com',
     androidClientId: '651392688142-5nor7q3rv99v1527o0prduon3snmuhco.apps.googleusercontent.com',
     iosClientId: '651392688142-ql2kqf0dlcbscoaaj05vvvjkea5g0foi.apps.googleusercontent.com',
@@ -74,6 +77,7 @@ class DefaultFirebaseOptions {
     appId: '1:651392688142:ios:9a15d10b88444ed1e25c5f',
     messagingSenderId: '651392688142',
     projectId: 'jci-app-e8e4c',
+    databaseURL: 'https://jci-app-e8e4c-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'jci-app-e8e4c.appspot.com',
     androidClientId: '651392688142-5nor7q3rv99v1527o0prduon3snmuhco.apps.googleusercontent.com',
     iosClientId: '651392688142-ql2kqf0dlcbscoaaj05vvvjkea5g0foi.apps.googleusercontent.com',
@@ -86,6 +90,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '651392688142',
     projectId: 'jci-app-e8e4c',
     authDomain: 'jci-app-e8e4c.firebaseapp.com',
+    databaseURL: 'https://jci-app-e8e4c-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'jci-app-e8e4c.appspot.com',
     measurementId: 'G-NWTQX1XMY3',
   );

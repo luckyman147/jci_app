@@ -120,6 +120,6 @@ if (perm.status==PermStatus.Other)
 
   Future<void> isowner(BuildContext context) async {
       final member =await MemberStore.getModel();
-    context.read<MemberPermissionBloc>().add(checkIsowner(member!.id));
+    context.read<MemberPermissionBloc>().add(checkIsowner(member!.id!));
   }
 }

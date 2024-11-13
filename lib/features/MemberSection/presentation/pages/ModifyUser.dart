@@ -8,7 +8,7 @@ import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
+import 'package:jci_app/core/Member.dart';
 
 import '../../../../core/util/snackbar_message.dart';
 import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
@@ -103,7 +103,7 @@ if (state.userStatus == UserStatus.Loading) {
               TextfieldNormal(context,"First Name".tr(context), "Enter First Name".tr(context),firstNameController,(poo){}),
               TextfieldNormal(context,"Last Name".tr(context), "Enter Last Name". tr(context),lastNameController,(poo){}),
               TextfieldDescription(context, "My Bio".tr(context), "Enter A Bio".tr(context), descriptionController, (p0) => null),
-              ProfileComponents.TextfieldNum("Phone Number".tr(context), "Enter  Phone Number".tr(context),NumberController,(poo){}),
+              ProfileComponents.TextfieldNum("Phone Number".tr(context), "Enter  Phone Number".tr(context),NumberController,(poo){},context),
               ProfileComponents.SaveChangesButton(()async{  FunctionMember.saveMember(  widget.member,firstNameController,lastNameController,NumberController,
                   state.image,context,_formKey,descriptionController);},context),
           ]),

@@ -48,15 +48,20 @@ final class LastNameChanged extends SignUpEvent {
 }
 
 
-final class SignUpSubmitted extends SignUpEvent{
-final SignField signField;
+final class RegisterWithEmailSubmitted extends SignUpEvent{
+final SignInDtos signField;
 
-  const SignUpSubmitted({required this.signField});
+  const RegisterWithEmailSubmitted({required this.signField});
   @override
   List<Object> get props => [signField,];
 }
 class ResetForm extends SignUpEvent {
   const ResetForm();
+}
+class HandleErrorEvent extends SignUpEvent {
+HandleErrorEvent();
+  @override
+  List<Object> get props => [];
 }
 
 class SendVerificationEmailEventOrRegister extends SignUpEvent{

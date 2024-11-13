@@ -6,7 +6,7 @@ import 'package:jci_app/features/Teams/domain/repository/TaskRepo.dart';
 
 import '../../../../core/error/Failure.dart';
 import '../../../../core/usescases/usecase.dart';
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 import '../entities/Checklist.dart';
 
 class GetTasksOfTeamUseCase extends UseCase<List<Tasks>, String> {

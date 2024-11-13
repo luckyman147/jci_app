@@ -8,6 +8,10 @@ import 'package:jci_app/core/config/services/verification.dart';
 
 import 'package:jci_app/core/widgets/loading_widget.dart';
 
+import '../../../../core/strings/Images.string.dart';
+import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
+import '../../../auth/presentation/pages/pinPage.dart';
+
 @RoutePage(
 
 )
@@ -29,10 +33,12 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _navigateAfterDelay() async {
-    await Future.delayed(const Duration(seconds: 3));
-    if (mounted) {
-      check(context,mounted);
-    }
+
+
+
+
+  check(context,mounted);
+
   }
 
   @override
@@ -48,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
                 children: [
                   Expanded(child: Center(
-                      child: Image.asset("assets/images/jci.png",
+                      child: Image.asset(images.jci,
                           width: 250, height: 250, fit: BoxFit.contain))),
 
                   const LoadingWidget()

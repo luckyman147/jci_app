@@ -11,13 +11,27 @@ import 'bloc_observer.dart';
 
 import 'firebase_options.dart';
 import 'injection_container.dart' as di;
-
+import 'package:firebase_app_check/firebase_app_check.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
+
   );
+  await FirebaseAppCheck.instance.activate(
+    // You can also use a `ReCaptchaEnterpriseProvider` provider instance as an
+    // argument for `webProvider`
+
+
+    androidProvider: AndroidProvider.debug,
+
+
+  );
+  // Get the App Check token
+
+
+
   final pref= await SharedPreferences.getInstance();
   final secure=await SecureSharedPref.getInstance();
 

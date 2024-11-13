@@ -8,10 +8,11 @@ import 'package:mockito/mockito.dart';
 
 
 import 'network_info_test.mocks.dart';
-
+class MockNetworkInfo extends Mock implements NetworkInfo {}
 @GenerateMocks([
   InternetConnectionChecker
 ])
+
 void main() {
   late MockInternetConnectionChecker mockInternetConnectionChecker;
   late NetworkInfoImpl networkInfoImpl;

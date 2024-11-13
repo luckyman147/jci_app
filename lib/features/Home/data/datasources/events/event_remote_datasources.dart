@@ -159,7 +159,7 @@ if (event.CoverImages[0]!="assets/images/jci.png"){
 
   @override
   Future<List<EventModel>> getEventsOfTheMonth() async{
-    String memberId = "111";
+    String? memberId = "111";
     final member = await MemberStore.getModel();
     if (member != null) {
       memberId = member.id;

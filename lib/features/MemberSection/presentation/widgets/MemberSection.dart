@@ -10,11 +10,11 @@ import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sb
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/MemberImpl.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
+import 'package:jci_app/core/Member.dart';
 
 import '../../../Home/presentation/widgets/Functions.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import '../../../auth/data/models/Member/AuthModel.dart';
+import '../../../../core/MemberModel.dart';
 import '../bloc/Members/members_bloc.dart';
 import '../bloc/memberPermissions/member_permission_bloc.dart';
 
@@ -31,7 +31,7 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
   FocusNode pointsFocusNode = FocusNode();
   @override
   void initState() {
-    context.read<MemberPermissionBloc>().add(checkIsowner(widget.member.id));
+    context.read<MemberPermissionBloc>().add(checkIsowner(widget.member.id!));
     context.read<MemberPermissionBloc>().add(const checkIsSuper());
     context.read<MemberPermissionBloc>().add(const checkIsAdmin());
 

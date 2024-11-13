@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/features/Home/domain/entities/Formz/Event.dart';
 import 'package:jci_app/features/Home/domain/entities/Formz/Membername.dart';
 
-import '../../../../../../auth/domain/entities/Member.dart';
+import '../../../../../../../core/Member.dart';
 import '../../../../../domain/entities/Event.dart';
 import '../../../../../domain/entities/Formz/A ctivityName.dart';
 import '../../../../../domain/entities/Formz/Date.dart';

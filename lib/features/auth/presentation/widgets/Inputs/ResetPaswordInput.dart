@@ -1,4 +1,4 @@
-import '../../../AuthWidget..global.dart';
+import '../../../AuthWidgetGlobal.dart';
 import '../../bloc/ResetPassword/reset_bloc.dart';
 import 'formText.dart';
 

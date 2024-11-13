@@ -20,22 +20,24 @@ void check(BuildContext context,bool mounted)async {
 
 
   final authState = authBloc.state;
-  final language = await Store.getLocaleLanguage();
-  final token = await Store.GetTokens();
-  final islooged = await Store.isLoggedIn();
-  if (!mounted) return;   if (language == null) {
+  final language = await Store().getLocaleLanguage();
+  final isfirstEntry = await Store().isFirstEntry();
+
+  if (!mounted) return;
+    if (language == null) {
 
     context.go('/screen');}
- else  if (authState is AuthLogoutState || authState is AuthFailureState &&!islooged) {
+    else if (authState is LoggedInState) {
+      context.go('/home');
+    }
 
-    context.go('/login');
-  }
- else if (islooged) {
-    context.go('/home');
-  }
+    else if (isfirstEntry){
+      context.go('/Intro');
+    }
+
   else  {
 
-    context.go('/Intro');
+    context.go('/login');
   }
 }
 Future<List<bool>> areMembersInParticipants(List<Activity> activities) async {
@@ -44,7 +46,7 @@ Future<List<bool>> areMembersInParticipants(List<Activity> activities) async {
   return activities.map((activity) => activity.Participants.contains(memberId)).toList();
 }
 Future<List<String?>> getTokens() async {
-  final tokens=await Store.GetTokens();
+  final tokens=await Store().GetTokens();
   if (tokens[1] == null  || tokens[1].toString().isEmpty) {
     print('famech token');
     throw EmptyCacheException();

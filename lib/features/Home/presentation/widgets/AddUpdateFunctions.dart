@@ -13,7 +13,7 @@ import '../../../../core/config/services/TrainingStore.dart';
 import '../../../../core/util/snackbar_message.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 import '../../data/model/events/EventModel.dart';
 import '../../data/model/meetingModel/MeetingModel.dart';
 import '../../domain/entities/Activity.dart';
