@@ -5,7 +5,7 @@ enum Inputs{
 }
  class InputsState extends Equatable {     final Inputs inputsValue;
 
-  InputsState({ this.inputsValue=Inputs.Google});
+  const InputsState({ this.inputsValue=Inputs.Google});
 InputsState copyWith({
   Inputs? inputsValue,
 }) {

@@ -1,34 +1,40 @@
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+
 import 'package:jci_app/core/Abstractions/Entity.dart';
 
-class Member extends Entity<String> {
-  final String email;
-  final String firstName;
-  final String lastName;
+import '../features/MemberSection/domain/entity/Objectif.dart';
+import 'PrimitiveUser/User.dart';
+
+class Member extends User {
+
   final String phone;
   final String description;
   final dynamic board;
-  final String password;
+
   final bool is_validated;
   final List<bool> cotisation;
-  final List<dynamic> Images;
+
   final List<dynamic> Activities;
   final List<dynamic> teams;
   final bool IsSelected;
   final String language;
   final int points;
   final int PreviousPoints;
-  final List<dynamic> objectifs;
-  final int rank;
-  final String role;
-  final bool isEmailVerified ;
 
+  final int rank;
+final bool isEmailVerified;
+final List<UserObjectif> userObjectifs;
+
+final String roleName;
 
 
   factory Member.fromImages(Map<String, dynamic> data) {
     log('hey');
     return Member(
+      roleName: data['roleName']??"",
+      userObjectifs: data['userObjectifs']??[],
       PreviousPoints: data['PreviousPoints'] ?? 0,
       language: data['language'] ?? 'fr',
       points: data['points'] ?? 0,
@@ -37,7 +43,7 @@ class Member extends Entity<String> {
       firstName: data['firstName'] ?? '',
       lastName: data['lastName'] ?? '',
       phone: data['phone'] ?? '',
-      password: data['password'] ?? '',
+
       is_validated: data['is_validated'] ?? false,
       cotisation: data['cotisation'] ?? [],
       Images: data['Images'] as List<dynamic>,
@@ -45,43 +51,51 @@ class Member extends Entity<String> {
       teams: data['teams'] ?? [],
       IsSelected: data['IsSelected'] ?? false,
       role: data['role'] ?? '',
-      objectifs: const [],
+
       rank: data['rank'] ?? -1,
       description: data['description'] ?? '',
       board: data['boardRole'] ?? '', isEmailVerified: true,
     );
   }
 
+  Member({required this.phone, required this.description, required this.board, required this.is_validated, required this.cotisation, required this.Activities, required this.teams, required this.IsSelected, required this.language, required this.points, required this.PreviousPoints,
+    required this.rank, required this.isEmailVerified,
+  required super.email,  required super.id, required super.role, required super.Images, required super.firstName, required super.lastName,
+required this.userObjectifs, this.roleName=""
+  });
+
   static Member get memberTest =>  Member(
       language: "fr",
       IsSelected: false,
       id: "id",
+      roleName: "",
 
-      role: "role",
+      role: null,
       is_validated: false,
-      cotisation: [false],
-      Images: [],
+      cotisation: const [false],
+      Images: const [],
       firstName: "",
       lastName: "lastName",
       phone: "phone",
       email: "email",
-      password: "password",
-      Activities: [],
-      teams: [],
+
+      Activities: const [],
+      teams: const [],
       points: 0,
-      objectifs: [],
+
       rank: 0,
       description: '',
       board: '',
-      PreviousPoints: 0, isEmailVerified: true);
+      PreviousPoints: 0, isEmailVerified: true, userObjectifs: []);
 
   static Member toMember(Map<String, dynamic> json) {
     return Member(
+      roleName: json["roleName"]??"",
       description: json['description'] ?? '',
       PreviousPoints: json['PreviousPoints'] ?? 0,
       board: json['boardRole'] ?? '',
       language: json['language'] ?? 'fr',
-      objectifs: json['objectifs'] ?? [],
+      userObjectifs: json['userObjectifs'] ?? [],
       points: json['points'] ?? 0,
       id: json['_id'] == null ? json['id'] as String : json['_id'] as String,
       firstName: json['firstName'] as String,
@@ -92,7 +106,7 @@ class Member extends Entity<String> {
       email: json['email'] ?? '',
       lastName: json['lastName'] ?? '',
       phone: json['phone'] ?? '',
-      password: json['password'] ?? '',
+
       is_validated: json['is_validated'] ?? false,
       cotisation: json['cotisation'] ?? [],
       role: json['role'] ?? '',
@@ -100,42 +114,18 @@ class Member extends Entity<String> {
     );
   }
 
-   Member({
-     required this .isEmailVerified,
-    required this.objectifs,
-    required this.PreviousPoints,
-    required this.points,
-    required this.teams,
-    required this.description,
-    required this.board,
-    required this.language,
-    required this.Activities,
-    required this.IsSelected,
-    required String id, // Use inherited id property from Entity<String>
-    required this.role,
-    required this.is_validated,
-    required this.cotisation,
-    required this.Images,
-    required this.firstName,
-    required this.lastName,
-    required this.phone,
-    required this.email,
-    required this.password,
-    required this.rank,
-  }) : super() {
-    this.id = id; // Setting id through inherited property
-  }
 
   @override
   List<Object?> get props => [
     email,
-    password,
+
     teams,
     points,
     id, // inherited id
     role,
     is_validated,
     cotisation,
+    roleName,
     Images,
     firstName,
     lastName,
@@ -146,7 +136,7 @@ class Member extends Entity<String> {
     description,
     board,
     language,
-    objectifs,
+    userObjectifs,
     PreviousPoints,
   ];
 

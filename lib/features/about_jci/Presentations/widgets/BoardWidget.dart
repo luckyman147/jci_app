@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
+import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/member/functionMember.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/BoardBloc/boord_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/dialogs.dart';
 
+import '../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
 import '../../../../core/app_theme.dart';
 import '../../../../core/strings/app_strings.dart';
-import '../../../MemberSection/presentation/widgets/ProfileComponents.dart';
+import '../../../MemberSection/presentation/components/AboutMemberComponent.dart';
+import '../../../MemberSection/presentation/components/ProfileComponents.dart';
 import '../../Domain/entities/Post.dart';
 
 class BoardYearPostsWidget extends StatefulWidget {
@@ -87,10 +90,10 @@ TextEditingController controller = TextEditingController();
                     itemBuilder: (context, postIndex) {
                       if (postIndex == postList.length) {
                         // This is the last item, return the button
-                     return   ProfileComponents.buildFutureBuilder(
+                     return   AsyncComponents.buildFutureBuilder(
                          BuiklAddBoardRole(context,priority,state.year)
 
-                         , true, "id", (p0) => FunctionMember.isSuper());
+                         , PermissionType.canUpdate,"");
                       } else {
                         if (postList.isEmpty) {
                           return Container();
@@ -209,7 +212,7 @@ TextEditingController controller = TextEditingController();
         border: Border.all(color: textColor, width: 4.0),
 
       ),
-      child: ProfileComponents.phot(post.assignTo[0].Images[0]["url"], context,110),
+      child: AboutMemberComponent.phot(post.assignTo[0].Images[0]["url"], context,110),
     );
   }
 }

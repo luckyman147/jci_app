@@ -11,14 +11,14 @@ void main() {
       final bloc = IndexBloc(initialIndex);
 
       // Act
-      bloc.add(SetIndexEvent( index: 5));
+      bloc.add(const SetIndexEvent( index: 5));
 
       // Assert
       expectLater(
         bloc.stream,
         emitsInOrder([
-          IndexInitial(initialIndex), // initial state
-          IndexLoaded(5),             // after SetIndexEvent
+          const IndexInitial(initialIndex), // initial state
+          const IndexLoaded(5),             // after SetIndexEvent
         ]),
       );
     });
@@ -35,7 +35,7 @@ void main() {
       expectLater(
         bloc.stream,
         emitsInOrder([
-          IndexInitial(initialIndex), // initial state
+          const IndexInitial(initialIndex), // initial state
           const IndexInitial(0),      // after resetIndex event
         ]),
       );

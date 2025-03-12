@@ -1,10 +1,7 @@
-import 'package:flutter_countdown_timer/countdown_controller.dart';
-import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../AuthWidgetGlobal.dart';
-import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/bool/toggle_bool_bloc.dart';
 
 class TimerWidget extends StatelessWidget {

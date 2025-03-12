@@ -7,16 +7,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
+import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/member/functionMember.dart';
 import 'package:jci_app/features/Teams/domain/usecases/TeamUseCases.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 import 'package:jci_app/core/Member.dart';
 
 import '../../../../core/app_theme.dart';
+import '../../../Home/domain/enums/ActionImage.dart';
 import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
-import '../../../Home/presentation/widgets/Functions.dart';
+import '../../../Home/presentation/widgets/Functions/Functions.dart';
 
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
@@ -134,10 +136,10 @@ class DeatailsTeamComponent{
                 child: membersTeamImage(
                     context, mediaQuery, team.Members.length, team.Members,30,40),
               ),
-              ProfileComponents.buildFutureBuilder(elevatedButtonBuildAction("Join",(){
-                context. read<GetTeamsBloc>().add(JoinTeam(Teamid: team.id));
-              }), true, "", (p0) => FunctionMember.IsNotExistedAndPublic(team)),
-              ProfileComponents.buildFutureBuilder(InviteBuitton(context,team), true, "", (p0) => FunctionMember.ischefAndExisted(team))
+       //       AsyncComponents.buildFutureBuilder(elevatedButtonBuildAction("Join",(){
+         //       context. read<GetTeamsBloc>().add(JoinTeam(Teamid: team.id));
+            //  }), true, "", (p0) => FunctionMember.IsNotExistedAndPublic(team)),
+     //       AsyncComponents.buildFutureBuilder(InviteBuitton(context,team), true, "", (p0) => FunctionMember.ischefAndExisted(team))
             ],
           ),
         );
@@ -239,13 +241,13 @@ class DeatailsTeamComponent{
 
                               children: [
                                 MemberTeamSelection.  imageWidget(Member.toMember(team.Members[team.Members.length-index-1])),
-                                ProfileComponents.buildFutureBuilder(const Icon(Icons.person_sharp,),  true, Member.toMember(team.Members[team.Members.length-index-1]).id!, (p0) => FunctionMember.isOwner(Member.toMember(team.Members[team.Members.length-index-1]).id??""))
+                        //        AsyncComponents.buildFutureBuilder(const Icon(Icons.person_sharp,),  true, Member.toMember(team.Members[team.Members.length-index-1]).id!, (p0) => FunctionMember.isOwner(Member.toMember(team.Members[team.Members.length-index-1]).id??""))
                               ],
                             ),
                           ),
                         ),
-                        FunctionMember.isChef(team, team.Members.length-index-1)?
-                        ProfileComponents.buildFutureBuilder(KickButton(context, team, index), true, "", (p0) => FunctionMember.isChefAndSuperAdmin(team)):
+                  //      FunctionMember.isChef(team, team.Members.length-index-1)?
+                     //   AsyncComponents.buildFutureBuilder(KickButton(context, team, index), true, "", (p0) => FunctionMember.isChefAndSuperAdmin(team)):
                         const Icon(Icons.stars_sharp,color: PrimaryColor,),
                       ],
                     ),
@@ -417,10 +419,10 @@ class DeatailsTeamComponent{
                                   ),
 
                                 ),
-                                ProfileComponents.buildFutureBuilder(IconButton(icon:const Icon(Icons.more_vert, color: textColorBlack,), onPressed: () {
-                                  eleteUpdateTeamSHeet(context, mediaQuery,team,mounted);
-                                },
-                                ), true, "member", (p0) => FunctionMember.isChefAndSuperAdmin(team))   ,
+                           //     AsyncComponents.buildFutureBuilder(IconButton(icon:const Icon(Icons.more_vert, color: textColorBlack,), onPressed: () {
+                             //     eleteUpdateTeamSHeet(context, mediaQuery,team,mounted);
+                               // },
+                                //), true, "member", (p0) => FunctionMember.isChefAndSuperAdmin(team))   ,
                               ]
                           ),
                         ),
@@ -461,7 +463,7 @@ class DeatailsTeamComponent{
 
 
           TeamComponent.actionTeamRow(context,mediaQuery, TeamAction.Upload, Icons.edit, "Update".tr(context), () async{
-            context.read<TaskVisibleBloc>().add(ChangeImageEvent(team.CoverImage));
+            context.read<TaskVisibleBloc>().add(ChangeImageEvent(team.CoverImage,ActionImage.ADD));
             final  image=  await  ActivityAction.convertBase64ToXFile(team.CoverImage);
 
             if (!mounted) return;
@@ -470,7 +472,7 @@ class DeatailsTeamComponent{
 
             context.read<TaskVisibleBloc>().add(ChangeImageEvent(
                 image!=null?
-                image.path:"assets/images/jci.png"));
+                image.path:"assets/images/jci.png",ActionImage.ADD));
 
           })
 

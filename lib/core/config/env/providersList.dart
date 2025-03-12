@@ -2,15 +2,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 //import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ACtivityOfweek/activity_ofweek_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/PV/pv_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/guests/guests_bloc.dart';
 
-import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/notesBloc/notes_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/DescriptionBoolean/description_bool_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Poll/poll_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/calendar/calendar_cubit.dart';
+import 'package:jci_app/features/Home/presentation/bloc/category/category_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberPermissions/member_permission_bloc.dart';
@@ -38,15 +41,20 @@ import 'package:jci_app/features/intro/presentation/bloc/bools/bools_bloc.dart';
 import 'package:jci_app/features/intro/presentation/bloc/index/index_bloc.dart';
 import 'package:jci_app/features/intro/presentation/bloc/internet/internet_bloc.dart';
 
+import '../../../features/Home/presentation/bloc/Activity/BLOC/ActivityComment/activity_comment_bloc.dart';
 import '../../../features/Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
 import '../../../features/Home/presentation/bloc/textfield/textfield_bloc.dart';
 import '../../../features/MemberSection/presentation/bloc/Members/members_bloc.dart';
+import '../../../features/MemberSection/presentation/bloc/objectifs/ObjectifForm/objectif_form_cubit.dart';
+import '../../../features/MemberSection/presentation/bloc/objectifs/objectif_bloc.dart';
 import '../../../features/Teams/presentation/bloc/NumPages/num_pages_bloc.dart';
 import '../../../features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import '../../../injection_container.dart' as di;
 
 // ignore: depend_on_referenced_packages
 import 'package:provider/single_child_widget.dart';
+
+import '../../BuildingBlocks-Permissions/Permissions/Presentation/PermissionsBLoc/permissions_bloc.dart';
 
 List<SingleChildWidget> providersList = [
   BlocProvider(
@@ -61,18 +69,25 @@ List<SingleChildWidget> providersList = [
   BlocProvider(create: (_)=> di.sl<ChangeSboolsCubit>()),
   BlocProvider(create: (_)=> di.sl<ActionJciCubit>()),
   BlocProvider(create: (_)=> di.sl<YearsBloc>()),
+  BlocProvider(create: (_)=> di.sl<GuestsBloc>()),
+  BlocProvider(create: (_)=> di.sl<PollBloc>()),
+  BlocProvider(create: (_)=> di.sl<ActivityCommentBloc>()),
+  BlocProvider(create: (_)=> di.sl<PvBloc>()),
+  BlocProvider(create: (_)=> di.sl<ObjectifBloc>()),
+  BlocProvider(create: (_)=> di.sl<PermissionsBloc>()),
   BlocProvider(
       create: (_) => di.sl<AuthBloc>()..add(const IsLoggedInEvent())),
   BlocProvider(create: (_) => di.sl<SignUpBloc>()),
-  BlocProvider(create: (_) => di.sl<LoginBloc>()..add(HandleUserEmail())),
+  BlocProvider(create: (_) => di.sl<LoginBloc>()..add(const HandleUserEmail())),
   BlocProvider(create: (_) => di.sl<ParticpantsBloc>()),
+  BlocProvider(create: (_) => di.sl<CategoryBloc>()),
   BlocProvider(create: (_) => di.sl<BoordBloc>()),
-  BlocProvider(create: (_) => di.sl<NotesBloc>()),
-  BlocProvider(create: (_) => di.sl<PermissionsBloc>()),
+  BlocProvider(create: (_) => di.sl<PermissionsMemberBloc>()),
 
 
   BlocProvider(create: (_) => localeCubit()..getSavedLanguage()),
   BlocProvider(create: (_) => CalendarCubit()),
+  BlocProvider(create: (_) => ObjectifFormCubit()),
 
   BlocProvider(create: (_) => ActivityCubit()),
   BlocProvider(create: (_) => InputsCubit()..resetInputs()),
@@ -96,8 +111,8 @@ List<SingleChildWidget> providersList = [
   BlocProvider(create: (_) => di.sl<PresidentsBloc>()),
   BlocProvider(create: (_) => ToggleBooleanBloc()),
   BlocProvider(create: (_) => DescriptionBoolBloc()),
-  BlocProvider(create: (_) => ChangeStringBloc("Events")),
-  BlocProvider(create: (_) => PageIndexBloc(0)),
+  BlocProvider(create: (_) => ChangeStringBloc()),
+  BlocProvider(create: (_) => PageIndexBloc()),
   BlocProvider(create: (_) => BoolBloc()..add(resetEvent())),
   BlocProvider(create: (_) => IndexBloc(0)),
 ];

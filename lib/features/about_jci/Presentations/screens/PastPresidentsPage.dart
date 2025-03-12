@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
+import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/member/functionMember.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/TaskComponents.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/presidents_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/dialogs.dart';
 
+import '../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
 import '../widgets/PresidentsImpl.dart';
 
 class PresidentsPage extends StatefulWidget {
@@ -52,10 +54,10 @@ class _PresidentsPageState extends State<PresidentsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Last Presidents'.tr(context),style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),),
-            ProfileComponents.buildFutureBuilder(buildAddButton(() {
+            AsyncComponents.buildFutureBuilder(buildAddButton(() {
 
 Dialogs.ShoUpdateAddPresident(context, null, PresidentsAction.Add);
-            }), true, "", (p0) => FunctionMember.isSuper())
+            }), PermissionType.canUpdate,"")
           ],
         ),
       ),

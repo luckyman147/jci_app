@@ -8,7 +8,7 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/strings/app_strings.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/pages/ActivityPage.dart';
-import 'package:jci_app/features/Home/presentation/widgets/HomeWidget.dart';
+import 'package:jci_app/features/Home/presentation/widgets/Home/HomeWidget.dart';
 import 'package:jci_app/features/MemberSection/presentation/pages/memberProfilPage.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/screens/AllTeamsScreen.dart';
@@ -31,10 +31,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage > {
 @override
   void initState() {
-  isowner(context);
-  context.read<MemberPermissionBloc>().add(const checkIsSuper());
-  context.read<MemberPermissionBloc>().add(const checkIsAdmin());
-  context.read<PermissionsBloc>().add( CheckPermissionsEvent());
+  //isowner(context);
+ // context.read<MemberPermissionBloc>().add(const checkIsSuper());
+  //context.read<MemberPermissionBloc>().add(const checkIsAdmin());
+ // context.read<PermissionsBloc>().add( CheckPermissionsEvent());
   // TODO: implement initState
     super.initState();
   }
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage > {
   @override
   Widget build(BuildContext context) {
 
-    return BlocBuilder<PermissionsBloc, PermissionsState>(
+    return BlocBuilder<PermissionsMemberBloc, PermissionsState>(
   builder: (context, Perm) {
     return BlocBuilder<ActivityCubit, ActivityState>(
   builder: (context, ste) {
@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage > {
   }
 
   BottomNavigationBar buildBottomNavigationBar(PageIndexState state, BuildContext context,PermissionsState perm) {
-    return BottomNavigationBar( type: BottomNavigationBarType.fixed,
+    return BottomNavigationBar( type: BottomNavigationBarType.shifting,
                 showSelectedLabels: true,
                 showUnselectedLabels: true,
               landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
@@ -97,7 +97,8 @@ class _HomePageState extends State<HomePage > {
 
 
 
-                    context.read<MembersBloc>().add(const GetUserProfileEvent(false));
+                    context.read<MembersBloc>().add(const GetUserProfileEvent(true));
+
 
 
                   }
@@ -105,16 +106,24 @@ class _HomePageState extends State<HomePage > {
                 items:  [
                   const BottomNavigationBarItem(
 
-                      icon: Icon(Icons.home,size: 31,), label: "Home"),
+                      icon: Icon(Icons.home,size: 26,), label: "Home"),
                   BottomNavigationBarItem(
-                      icon: SvgPicture.string(EventIcon ,color:state.index==1?PrimaryColor:ThirdColor,), label: "Activities".tr(context)),
-if (perm.status==PermStatus.Other)
+                      icon: SvgPicture.string(EventIcon ,color:state.index==1?PrimaryColor:ThirdColor,
+                      height: 22,
+                        width: 22,
+
+                      ), label: "Activities".tr(context)),
+//if (perm.status==PermStatus.Other)
                   BottomNavigationBarItem(
-                      icon: SvgPicture.string(TeamsIcon,color: state.index==2?PrimaryColor:ThirdColor ,), label: "Teams".tr(context)),
-                  if (perm.status==PermStatus.Other)
+                      icon: SvgPicture.string(TeamsIcon,color: state.index==2?PrimaryColor:ThirdColor ,
+                        height: 23,
+                        width: 23,
+
+                      ), label: "Teams".tr(context)),
+                 // if (perm.status==PermStatus.Other)
 
                   BottomNavigationBarItem(
-                      icon: const Icon(Icons.person,size: 31,), label: "Profile".tr(context)),
+                      icon: const Icon(Icons.person,size: 26,), label: "Profile".tr(context)),
                 ]);
   }
 

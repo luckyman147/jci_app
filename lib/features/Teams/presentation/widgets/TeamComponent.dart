@@ -7,15 +7,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
+import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/member/functionMember.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/TeamImpl.dart';
 
 import '../../../../core/app_theme.dart';
 import '../../../../core/strings/app_strings.dart';
+import '../../../Home/domain/enums/Privacy.dart';
 import '../../../Home/presentation/bloc/Activity/activity_cubit.dart';
 import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
-import '../../../Home/presentation/widgets/Compoenents.dart';
+import '../../../Home/presentation/widgets/components/Compoenents.dart';
+import '../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
 import '../../../auth/presentation/bloc/bool/toggle_bool_bloc.dart';
 import '../../domain/entities/Team.dart';
 
@@ -192,11 +194,11 @@ static  Row SecondRowPart(TaskVisibleState state, BuildContext context) {
 
 
 
-        !state.willSearch?
+  //      !state.willSearch?
 
-      ProfileComponents.buildFutureBuilder( AddTeamButton(context), true, "", (p0) => FunctionMember.isAdminAndSuperAdmin())
+    //    AsyncComponents .buildFutureBuilder( AddTeamButton(context), true, "", (p0) => FunctionMember.isAdminAndSuperAdmin())
 
-:Container(),
+//:Container(),
 
       ],
     );

@@ -1,30 +1,49 @@
 part of 'permissions_bloc.dart';
 
-// permission_state.dart
-abstract class PermissionsState {}
+enum TypePermissionsStatus { Initial, Loading, Loaded, Error,  }
+
+
+class PermissionsState extends Equatable {
+  final List<FeaturePermissions> permissions;
+  final String errorMessage;
+  final bool isLoading;
+  final TypePermissionsStatus type;
+
+  const PermissionsState({
+    this.type = TypePermissionsStatus.Initial,
+    this.permissions = const [],
+    this.errorMessage = '',
+    this.isLoading = false,
+  });
+
+  // CopyWith Method
+  PermissionsState copyWith({
+    List<FeaturePermissions>? permissions,
+    String? errorMessage,
+    bool? isLoading,
+    TypePermissionsStatus? type,
+  }) {
+    return PermissionsState(
+      permissions: permissions ?? this.permissions,
+      errorMessage: errorMessage ?? this.errorMessage,
+      isLoading: isLoading ?? this.isLoading,
+      type: type ?? this.type,
+    );
+  }
+
+  @override
+  List<Object?> get props => [permissions, errorMessage, isLoading, type];
+}
+
 
 class PermissionsLoadingState extends PermissionsState {}
 
 class PermissionsLoadedState extends PermissionsState {
-  final Map<String, Map<String, bool>> permissions;
+  final List<FeaturePermissions> permissions;
 
   PermissionsLoadedState({required this.permissions});
 }
 
-class PermissionErrorState extends PermissionsState {
-  final String errorMessage;
 
-  PermissionErrorState({required this.errorMessage});
-}
 
-class PermissionCheckedState extends PermissionsState {
-  final String featureId;
-  final String permissionType;
-  final bool hasPermission;
 
-  PermissionCheckedState({
-    required this.featureId,
-    required this.permissionType,
-    required this.hasPermission,
-  });
-}

@@ -11,7 +11,8 @@ import 'package:jci_app/features/about_jci/Presentations/widgets/BoardComponents
 import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/dialogs.dart';
 
-import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
+import '../../../Home/domain/enums/ActionImage.dart';
+import '../../../Home/presentation/widgets/Activity/AddActivityWidgets.dart';
 
 class AddUpdatePage extends StatefulWidget {
   final President? president;
@@ -70,7 +71,7 @@ final ScrollController controller = ScrollController();
               Row(
                 children: [
                   BackButton(color: Colors.black,onPressed: (){
-                    context.read<TaskVisibleBloc>().add(const ChangeImageEvent(""));
+                    context.read<TaskVisibleBloc>().add(const ChangeImageEvent("",ActionImage.DELETE));
                     context.read<ActionJciCubit>().changeYear("");
 
                     Navigator.pop(context);

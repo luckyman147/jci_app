@@ -2,11 +2,13 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
+import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/member/functionMember.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
 
-import '../../../MemberSection/presentation/widgets/ProfileComponents.dart';
+import '../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
+import '../../../MemberSection/presentation/components/ProfileComponents.dart';
 import '../bloc/Board/BoardBloc/boord_bloc.dart';
 import 'dialogs.dart';
 
@@ -36,7 +38,7 @@ class _YearsButtonsState extends State<YearsButtons> {
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
-            ProfileComponents.buildFutureBuilder(buildaddButtBoard(context), true, "", (p0) => FunctionMember.isSuper()),
+            AsyncComponents.buildFutureBuilder(buildaddButtBoard(context), PermissionType.canUpdate,""),
             SizedBox(
               height: 50,
               width: double.maxFinite,

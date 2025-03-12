@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jci_app/core/app_theme.dart';
 
 import 'package:jci_app/features/auth/presentation/bloc/bool/toggle_bool_bloc.dart';
-import 'package:jci_app/features/auth/presentation/widgets/Functions/SubmitFunctions.dart';
 import 'package:jci_app/features/intro/presentation/bloc/internet/internet_bloc.dart';
 
 

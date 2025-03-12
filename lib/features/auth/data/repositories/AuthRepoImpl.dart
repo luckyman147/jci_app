@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jci_app/core/Handlers/Handler.dart';
 import 'package:jci_app/core/error/Exception.dart';
 

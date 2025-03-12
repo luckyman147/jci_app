@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../../../core/PrimitiveUser/User.dart';
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
 import '../../../../../core/Member.dart';
@@ -134,7 +135,7 @@ if (event.isUpdated){
   }
 
   MembersState _eitherDoneLoadedState(
-      Either<Failure, List<Member>> either, String message) {
+      Either<Failure, List<User>> either, String message) {
     return either.fold(
           (failure) =>
 

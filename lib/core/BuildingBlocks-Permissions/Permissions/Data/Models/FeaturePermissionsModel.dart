@@ -5,7 +5,7 @@ class FeaturePermissionsModel extends FeaturePermissions {
 
   FeaturePermissionsModel( {required super.featureId, required super.permissions });
   // Factory constructor to create from a Map<String, bool>
-  factory FeaturePermissionsModel.fromMap(String featureId, Map<String, bool> permissionsMap) {
+  factory FeaturePermissionsModel.fromMap(String featureId, Map<String, dynamic> permissionsMap) {
     return FeaturePermissionsModel(
       featureId: featureId,
       permissions: permissionsMap.entries.map((entry) => PermissionsModel.fromMapEntry(entry)).toList(),
@@ -19,12 +19,14 @@ class FeaturePermissionsModel extends FeaturePermissions {
     );
   }
   // Convert the FeaturePermissions instance back to a Map<String, bool>
- 
-  Map<String, Map<String,bool>> toMap() {
+
+  Map<String, dynamic> toMap() {
     return {
-      featureId: permissions.map((permission) => PermissionsModel.fromEnity(permission).toMap()).fold({}, (previousValue, element) => previousValue..addAll(element)),
+      "featureId": featureId,
+      "permissions": {
+        for (var permission in permissions)
+          permission.type.name: permission.isGranted,
+      },
     };
   }
-
-
 }

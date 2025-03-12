@@ -12,9 +12,9 @@ import '../../../../core/app_theme.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../Home/domain/entities/Activity.dart';
 import '../../../Home/domain/entities/Event.dart';
+import '../../../Home/domain/enums/ActivityEnum.dart';
+import '../../../Home/domain/enums/SearchType.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
-import '../../../Home/presentation/widgets/ErrorDisplayMessage.dart';
-import '../../../Home/presentation/widgets/SearchWidget.dart';
 
 Widget EventsTeamContainer(mediaQuery,Event item)=>BlocBuilder<FormzBloc, FormzState>(
 
@@ -113,29 +113,29 @@ Widget EventsWidget(MediaQueryData mediaQuery,String name)=>
 
 BlocConsumer<AcivityFBloc, AcivityFState>(
   builder: (context, state) {
-    if (state is ActivityLoadingState) {
-      return const LoadingWidget();
-    } else if (state is ActivityLoadedState) {
-      return RefreshIndicator(
-          onRefresh: () {
 
-            return
+    switch (state.activityfetchState) {
+      case ActivityFetchState.Error:
+      case ActivityFetchState.Empty:
+        return const SizedBox();
+      case ActivityFetchState.ActivityLoaded:
+        return RefreshIndicator(
+            onRefresh: () {
 
-              RefreshEvents(context,SearchType.All,"");
-          },
-          child:
+              return
+
+                RefreshEvents(context,SearchType.All,"");
+            },
+            child:
 
 
-          EventsDetails( state.activitys as List<Event>,mediaQuery)
+            EventsDetails( state.activitiesSearch as List<Event>,mediaQuery)
 
-      );
-
+        );
+      default:
+        return const LoadingWidget();
     }
 
-    else if (state is ErrorActivityState) {
-      return MessageDisplayWidget(message: state.message);
-    }
-    return const LoadingWidget();
   }, listener: (BuildContext context, AcivityFState state) {
 
 });

@@ -1,13 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
 
 import 'package:jci_app/features/auth/presentation/widgets/SignUpForm.dart';
 
-import '../../../../core/util/snackbar_message.dart';
 import '../../../../core/widgets/loading_widget.dart';
 
 

@@ -35,7 +35,7 @@ Future<Unit> updateMembers(String teamid, String memberid, String Status);
 
 class TeamRemoteDataSourceImpl implements TeamRemoteDataSource{
   final http.Client client;
-  final store=Store();
+  final store=const Store();
 
   TeamRemoteDataSourceImpl({required this.client});
   @override
@@ -56,24 +56,6 @@ final tokens= await store.GetTokens();
     if (response.statusCode == 200) {
       final Map<String, dynamic> decodedJson = json.decode(response.body) ;
 
-      if (Team.CoverImage!="assets/images/jci.png"){
-      final uploadResponse=await uploadImages(decodedJson['id'], Team.CoverImage,TeamUrl,"CoverImage");
-    if (uploadResponse.statusCode==200){
-      final bodyStream = uploadResponse.stream;
-      final bodyBytes = await bodyStream.toBytes();
-      final bodyString = utf8.decode(bodyBytes);
-      return  TeamModel.fromJson(jsonDecode(bodyString));
-      }
-      else if (uploadResponse.statusCode==400){
-        debugPrint(uploadResponse.reasonPhrase.toString());
-        deleteTeam(decodedJson["_id"]);
-        throw EmptyDataException();
-
-      }else {
-        throw ServerException();
-      }
-
-    }
 
       return  TeamModel.fromJson(decodedJson);
     }

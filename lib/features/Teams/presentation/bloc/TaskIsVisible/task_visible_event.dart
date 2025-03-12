@@ -11,6 +11,8 @@ class ToggleTaskVisible extends TaskVisibleEvent {
       Object> get props => [WillVisible];
 }
 
+
+
 class resetTaskVisible extends TaskVisibleEvent {
   @override
   List<Object> get props => [];
@@ -53,10 +55,18 @@ class ChangeTextFieldsDescription extends TaskVisibleEvent {
 }
 class ChangeImageEvent extends TaskVisibleEvent {
   final String image;
-  const ChangeImageEvent(this.image);
+  final ActionImage action;
+  const ChangeImageEvent(this.image, this.action);
   @override
-  List<Object> get props => [image];
+  List<Object> get props => [image,action];
 }
+class InitImagesEvent extends TaskVisibleEvent {
+  final List<String> images;
+  const InitImagesEvent(this.images);
+  @override
+  List<Object> get props => [images];
+}
+
 class ChangeWillSearchEvent extends TaskVisibleEvent {
   final bool willSearch;
   const ChangeWillSearchEvent(this.willSearch);
@@ -74,4 +84,11 @@ class ChangeIsUpdatedEvent extends TaskVisibleEvent {
   const ChangeIsUpdatedEvent(this.isUpdated);
   @override
   List<Object> get props => [isUpdated];
+}
+
+class ChangeStatusEvent extends TaskVisibleEvent {
+  final Status status;
+  const ChangeStatusEvent(this.status);
+  @override
+  List<Object> get props => [status];
 }

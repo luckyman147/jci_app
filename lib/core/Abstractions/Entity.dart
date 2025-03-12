@@ -1,10 +1,17 @@
-import 'IEntity.dart';
+import 'package:flutter/foundation.dart';
 
+import 'IEntity.dart';
+@immutable
 abstract class Entity<T> implements IEntity<T> {
+  @override
   T? id;
+  @override
   DateTime? createdAt;
+  @override
   String? createdBy;
+  @override
   DateTime? lastModified;
+  @override
   String? lastModifiedBy;
 
   Entity({

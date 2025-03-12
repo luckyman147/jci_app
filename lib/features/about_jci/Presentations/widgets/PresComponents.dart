@@ -4,7 +4,8 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 
 import '../../../../core/app_theme.dart';
-import '../../../MemberSection/presentation/widgets/ProfileComponents.dart';
+import '../../../MemberSection/presentation/components/AboutMemberComponent.dart';
+import '../../../MemberSection/presentation/components/ProfileComponents.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../Domain/entities/President.dart';
 import '../bloc/presidents_bloc.dart';
@@ -98,7 +99,7 @@ class PresidentsComponents{
           height: 200,
           child: Center(
               child:
-              ProfileComponents.imagezChanged(state.image,MediaQuery.of(context),context))
+              AboutMemberComponent.imagezChanged(state.images[0],MediaQuery.of(context),context))
       ),
 
       actions: <Widget>[
@@ -112,7 +113,7 @@ class PresidentsComponents{
           child: Text('Cancel'.tr(context),style: PoppinsRegular(16, textColor,),),
         ),  TextButton(
           onPressed: () {
-            final President newPresident = President(name: president.name, CoverImage: state.image, year: president.year, id: president.id);
+            final President newPresident = President(name: president.name, CoverImage: state.images[0], year: president.year, id: president.id);
             context.read<PresidentsBloc>().add(UpdateImagePresident(newPresident));
             // Perform action when the second button is pressed
             Navigator.of(context).pop(); // Close the dialog

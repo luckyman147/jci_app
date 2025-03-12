@@ -23,15 +23,15 @@ class SnackBarMessage {
   ,IconData icon,
    Color color) {
     return SnackBar(
-      duration: Duration(seconds: 10),
-    padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0)
+      duration: const Duration(seconds: 10),
+    padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0)
     //make it floating
        ,   behavior: SnackBarBehavior.floating,
 
     animation: CurvedAnimation(
   parent: AnimationController(
   vsync: Scaffold.of(context),
-  duration: Duration(seconds: 1),
+  duration: const Duration(seconds: 1),
       ),
      curve: Curves.easeIn,
      ),
@@ -64,13 +64,13 @@ class SnackBarMessage {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
 
-  }, icon: Icon(Icons.close,color: ColorsApp.textColorBlack,)),
+  }, icon: const Icon(Icons.close,color: ColorsApp.textColorBlack,)),
       ],
     ),
     backgroundColor: ColorsApp.textColorWhite,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
-      side: BorderSide(
+      side: const BorderSide(
         color: ColorsApp.textColor,
         width: 2,
       ),

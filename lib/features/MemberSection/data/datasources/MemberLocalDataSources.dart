@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:jci_app/core/PrimitiveUser/UserModel.dart';
 
 import '../../../../core/config/services/MemberStore.dart';
 import '../../../../core/MemberModel.dart';
@@ -12,12 +13,12 @@ abstract class MemberLocalDatasoources{
   Future<List<MemberModel>> GetmMemberByName(
       String name
       );
-  Future<List<MemberModel>> GetMembers();
+  Future<List<UserModel>> GetMembers();
   Future<List<MemberModel>> GetMembersWithRanks();
   Future<MemberModel?> GetMemberWithRanks();
 
 
-  Future<Unit> CacheMembers(List<MemberModel> members);
+  Future<Unit> CacheMembers(List<UserModel> members);
   Future<Unit> CacheMemberwithRanks(List<MemberModel> members);
   Future<Unit> CacheMembewithRanks(MemberModel members);
 
@@ -27,7 +28,7 @@ abstract class MemberLocalDatasoources{
 }
 class MemberLocalDatasoourcesImpl implements MemberLocalDatasoources {
   @override
-  Future<List<MemberModel>> GetMembers()async  {
+  Future<List<UserModel>> GetMembers()async  {
  final members = MemberStore.getCachedMembers();
     return Future.value(members);
   }
@@ -48,7 +49,7 @@ final member=await MemberStore.getModel();
   }
 
   @override
-  Future<Unit> CacheMembers(List<MemberModel> members)async {
+  Future<Unit> CacheMembers(List<UserModel> members)async {
     await MemberStore.cacheMembers(members);
     return Future.value(unit);
   }

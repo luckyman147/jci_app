@@ -1,11 +1,7 @@
 
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:jci_app/features/auth/data/models/formz/lastname.dart';
 
 import '../../../AuthWidgetGlobal.dart';
 import '../../bloc/bool/INPUTS/inputs_cubit.dart';
-import '../../bloc/login/login_bloc.dart';
-import '../Components/ForgetPasswordComponent.dart';
 import 'inputs.dart';
 
 class PassWordWithText extends StatelessWidget {
@@ -96,9 +92,10 @@ class EmailWithText extends StatelessWidget {
   final InputsState inputState;
   final Function(String) onTap;
   final String? errorText;
+  final bool isEmail;
   const EmailWithText({
     super.key,
-
+this.isEmail = false,
     required TextEditingController emailController, required this.inputState, required this.onTap, this.errorText,
   }) : _emailController = emailController;
 
@@ -109,7 +106,7 @@ class EmailWithText extends StatelessWidget {
   Widget build(BuildContext context) {
     final mediaquery = MediaQuery.of(context);
     return Visibility(
-      visible: inputState.inputsValue == Inputs.Email,
+      visible: inputState.inputsValue == Inputs.Email||isEmail,
       child: Padding(
         padding: paddingSemetricVerticalHorizontal(h: 25),
         child: Column(

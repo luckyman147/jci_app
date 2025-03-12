@@ -1,8 +1,5 @@
 
 import '../../../AuthWidgetGlobal.dart';
-import '../../bloc/ResetPassword/reset_bloc.dart';
-import '../../bloc/auth/auth_bloc.dart';
-import '../../pages/pinPage.dart';
 
 class Checkbutton extends StatelessWidget {
   final GlobalKey<FormState> keyConr ;

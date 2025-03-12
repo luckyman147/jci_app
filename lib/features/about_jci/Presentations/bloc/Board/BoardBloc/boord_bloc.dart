@@ -6,7 +6,7 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:jci_app/core/strings/failures.dart';
 
-import '../../../../../MemberSection/presentation/widgets/functionMember.dart';
+import '../../../../../MemberSection/presentation/widgets/member/functionMember.dart';
 import '../../../../Domain/entities/BoardYear.dart';
 import '../../../../Domain/useCases/BoardUseCases.dart';
 import 'package:jci_app/core/error/Failure.dart';

@@ -1,8 +1,6 @@
 import '../../../AuthWidgetGlobal.dart';
 import '../../../domain/entities/AuthUser.dart';
-import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/bool/toggle_bool_bloc.dart';
-import '../Functions/SubmitFunctions.dart';
 
 class PinButton extends StatelessWidget {
   final MediaQueryData mediaQuery;

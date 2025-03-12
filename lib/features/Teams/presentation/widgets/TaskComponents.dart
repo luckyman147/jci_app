@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/features/Home/presentation/widgets/components/DateWidget.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
+import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/app_theme.dart';
-import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
+import '../../../Home/domain/enums/Privacy.dart';
 import '../../../../core/Member.dart';
 import '../../domain/entities/Team.dart';
 import '../../domain/usecases/TaskUseCase.dart';
@@ -161,11 +163,11 @@ Widget BottomShetTaskBody(
             TextDecoration.none,
           ),
         ),
-        chooseDate(
-          Startdate,
-          mediaQuery,
-          "MMM,dd,yyyy",
-              ()async{
+        ChooseDateWidget(
+todayDate:           Startdate,
+
+         format:  "MMM,dd,yyyy",
+        onTap:   ()async{
             await TeamFunction. DatePickerFun(
                 context,Startdate,(value) {
 
@@ -176,13 +178,13 @@ Widget BottomShetTaskBody(
             );
 
           },
-          hintStartTextDate,state
+      text:     hintStartTextDate,locale: state
         ),
-        chooseDate(
-          Deadlinedate,
-          mediaQuery,
-          "MMM,dd,yyyy",
-              ()async{
+        ChooseDateWidget(
+        todayDate:   Deadlinedate,
+
+         format:  "MMM,dd,yyyy",
+              onTap: ()async{
             await TeamFunction.DatePickerFun(
                 context,Startdate,(value) {
               context.read<TimelineBloc>().add(onEndDateDateChanged(enddate: value));
@@ -192,7 +194,7 @@ Widget BottomShetTaskBody(
             );}
 
           ,
-          hintEndTextDate,state
+        text:   hintEndTextDate,locale: state
         ),
 
 
@@ -233,7 +235,7 @@ Widget BottomShetTaskBody(
 );
 
 void AssignBottomSheetBuilder(BuildContext context, MediaQueryData mediaQuery,
-    Function(Member) onRemoveTap, Function(Member) onAddTap,Team team,
+    Function(User) onRemoveTap, Function(User) onAddTap,Team team,
     int index,
     ) {
 

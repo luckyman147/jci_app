@@ -29,6 +29,7 @@ final AuthRepo _loginRepo;
 LoginWithEmailUseCase(this._loginRepo);
 
 
+  @override
   Future<Either<Failure, Unit>> call(LoginWithEmailDtos login ) async {
     return await _loginRepo.logInWithEmail(login);
   }
@@ -39,6 +40,7 @@ final AuthRepo _loginRepo;
 LoginWithPhoneUseCase(this._loginRepo);
 
 
+  @override
   Future<Either<Failure, Unit>> call(LoginWithPhoneDtos login ) async {
     return await _loginRepo.logInWithPhone(login);
   }

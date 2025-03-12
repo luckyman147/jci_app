@@ -6,7 +6,7 @@ enum TypeResult {Initial ,Loading,success,failed,Removed}
   final List<bool> cotisation;
   final double points;
 final double clone;
-final String role;
+final DocumentReference? role;
   final String ErrorMessage;
   final TypeResult typeResult;
   final List<dynamic> objectifs;
@@ -14,7 +14,7 @@ final String role;
 
   const MemberManagementState({ this.isUpdated=false,
     this.clone=0.0,
-    this.role='',
+    this.role,
     this.objectifs=const [],
 
 
@@ -22,7 +22,7 @@ final String role;
   MemberManagementState copyWith({bool? isUpdated, List<bool>? cotisation, double? points, String? ErrorMessage,
     List<dynamic>? objectifs,
 
-    TypeResult? typeResult, double? clone, String? role}) {
+    TypeResult? typeResult, double? clone, DocumentReference? role}) {
     return MemberManagementState(
       objectifs: objectifs ?? this.objectifs,
       role: role ?? this.role,

@@ -1,5 +1,4 @@
 import '../../../AuthWidgetGlobal.dart';
-import '../../bloc/ResetPassword/reset_bloc.dart';
 import 'formText.dart';
 
 class PasswordInputText extends StatelessWidget {

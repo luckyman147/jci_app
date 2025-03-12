@@ -1,10 +1,6 @@
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/bool/INPUTS/inputs_cubit.dart';
-import 'package:jci_app/features/auth/presentation/widgets/Inputs/InputsWithLabels.dart';
 
 import '../../../AuthWidgetGlobal.dart';
-import '../../bloc/login/login_bloc.dart';
 
 class SubmitButton extends StatelessWidget {
   final GlobalKey<FormState> keyConr;

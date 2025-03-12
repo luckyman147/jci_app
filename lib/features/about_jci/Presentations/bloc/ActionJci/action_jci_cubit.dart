@@ -1,7 +1,8 @@
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:jci_app/core/Member.dart';
+
+import '../../../../../core/PrimitiveUser/User.dart';
 
 
 part 'action_jci_state.dart';
@@ -17,7 +18,7 @@ class ActionJciCubit extends Cubit<ActionJciState> {
   void changeCloneYear(String cloneYear){
     emit(state.copyWith(cloneYear: cloneYear));
   }
-  void changeMember(Member member){
+  void changeMember(User member){
     Map<String, dynamic> updatedNewMember = Map.from(state.member);
 
     // Update the value associated with the specific key

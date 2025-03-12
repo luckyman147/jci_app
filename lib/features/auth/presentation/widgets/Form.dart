@@ -33,7 +33,7 @@ class _LoginFormState extends State<LoginForm> {
 
 @override
   void initState() {
-  context.read<LoginBloc>().add(HandleUserEmail());
+  context.read<LoginBloc>().add(const HandleUserEmail());
 
   
     // TODO: implement initState

@@ -7,7 +7,7 @@ class initMemberEvent extends MemberManagementEvent{
   final bool isUpdated;
   final List<bool> cotisation;
   final double points;
-  final String role;
+  final DocumentReference role;
   final List<dynamic> objectifs;
   const initMemberEvent({required this.isUpdated,required this.cotisation,required this.points,required this.role,required this.objectifs});
   @override

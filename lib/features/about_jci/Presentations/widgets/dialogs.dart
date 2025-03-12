@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../MemberSection/presentation/widgets/functionMember.dart';
+import '../../../MemberSection/presentation/widgets/member/functionMember.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../Domain/entities/Post.dart';
 import '../../Domain/entities/President.dart';

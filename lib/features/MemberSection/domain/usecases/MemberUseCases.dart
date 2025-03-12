@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:jci_app/core/PrimitiveUser/User.dart';
 import 'package:jci_app/features/MemberSection/domain/repositories/MemberRepo.dart';
 
 import '../../../../core/error/Failure.dart';
@@ -54,13 +55,13 @@ class ChangeRoleParams{
 
 
 
-class GetAllMembersUseCase extends UseCase<List<Member>, bool>{
+class GetAllMembersUseCase extends UseCase<List<User>, bool>{
   final MemberRepo authRepository;
 
   GetAllMembersUseCase({required this.authRepository});
 
   @override
-  Future<Either<Failure, List<Member>>> call(param) async {
+  Future<Either<Failure, List<User>>> call(param) async {
     return await authRepository.GetMembers(param);
   }
 

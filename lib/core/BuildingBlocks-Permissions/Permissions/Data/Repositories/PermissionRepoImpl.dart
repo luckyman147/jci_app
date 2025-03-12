@@ -12,12 +12,14 @@ import 'package:jci_app/core/Handlers/Handler.dart';
 import 'package:jci_app/core/error/Exception.dart';
 import 'package:jci_app/core/error/Failure.dart';
 
+import '../../../../../features/auth/AuthWidgetGlobal.dart';
+
 class PemissionsRepoImpl implements PermissionsRepository     {
   final RemoteDataSources remoteDataSources;
   final LocalDataSources localDataSources;
   final Handler<Unit> unitHandler;
   final Handler<bool> boolHandler;
-  final Handler<FeaturePermissions> featurePermissionsHandler;
+  final Handler<List<FeaturePermissions>> featurePermissionsHandler;
 
   PemissionsRepoImpl({required this.remoteDataSources, required this.localDataSources, required this.unitHandler, required this.boolHandler, required this.featurePermissionsHandler});
   @override
@@ -67,17 +69,15 @@ class PemissionsRepoImpl implements PermissionsRepository     {
     );
   }
 
+
+
   @override
-  Future<Either<Failure, FeaturePermissions>> loadPermissionsOfMaster(List<String> featureIds) async{
-    final local=await localDataSources.loadLocalPermissionsOfMaster(featureIds);
+  Future<Either<Failure, List<FeaturePermissions>>> loadPermissionsOfUser(LoadPermissionsOfUser loadPermissionsOfUser) async{
+    final local=await remoteDataSources.loadPermissionsOfUser(loadPermissionsOfUser);
 
     return await featurePermissionsHandler.handle(onCall: ()async {
-      if(local!=null)
-      {
-        return local;
-      }
+      return local;
 
-      return remoteDataSources.loadPermissionsOfMaster(featureIds);
     }, onError: (error) {
       if (error is Exception) {
         return error.get_failure;
@@ -87,40 +87,8 @@ class PemissionsRepoImpl implements PermissionsRepository     {
     ,
       onFailConnection:
       ()async{
-        if (local!=null) {
-          return local;
-        }
-       throw OfflineException();
-      }
-    );
-
-
-  }
-
-  @override
-  Future<Either<Failure, FeaturePermissions>> loadPermissionsOfUser(LoadPermissionsOfUser loadPermissionsOfUser) async{
-    final local=await localDataSources.loadLocalPermissionsOfUser(loadPermissionsOfUser);
-
-    return await featurePermissionsHandler.handle(onCall: ()async {
-      if(local!=null)
-      {
         return local;
-      }
-
-      return remoteDataSources.loadPermissionsOfUser(loadPermissionsOfUser);
-    }, onError: (error) {
-      if (error is Exception) {
-        return error.get_failure;
-      }
-      throw error;
-    }
-    ,
-      onFailConnection:
-      ()async{
-        if (local!=null) {
-          return local;
-        }
-        throw OfflineException();
+              throw OfflineException();
       }
     );
   }
@@ -139,6 +107,53 @@ class PemissionsRepoImpl implements PermissionsRepository     {
       }
       throw error;
       });
+
+  }
+
+  @override
+  Future<Either<Failure, List<FeaturePermissions>>> loadPermissionsOfMaster(List<String> featureIds)async {
+   final local =await localDataSources.loadLocalPermissionsOfMaster(featureIds);
+   Logger().w(local.length);
+   Logger().w(featureIds);
+    return await featurePermissionsHandler.handle(onCall: ()async {
+      ///if local storage is =not empty
+      ///Check if they have missing features id to eensure all inputs ids existed
+if (local .isNotEmpty) {
+  List<String> missingFeatures = featureIds
+      .where((id) => !local.any((perm) => perm.featureId == id))
+      .toList();
+  Logger().w(missingFeatures);
+
+if (missingFeatures.isNotEmpty){
+
+   final e= await  remoteDataSources.AddMisingFeature(missingFeatures, local);
+   Logger().w(e);
+   return e;
+
+
+}
+else {
+  return local;
+}
+
+}
+      final remote=await  remoteDataSources.loadPermissionsOfMaster(featureIds);
+      await localDataSources.SaveFeaturesOfMaster(remote);
+      return remote;
+
+    }, onError: (error) {
+      if (error is Exception) {
+        return error.get_failure;
+      }
+      throw error;
+    }
+        ,
+        onFailConnection:
+            ()async{
+          return local;
+
+        }
+    );
 
   }
 }

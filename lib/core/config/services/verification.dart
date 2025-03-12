@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:jci_app/core/config/services/store.dart';
 import 'package:jci_app/core/config/services/uploadImage.dart';
 import 'package:http/http.dart' as http;
 import '../../../features/Home/domain/entities/Activity.dart';
+import '../../../features/auth/AuthWidgetGlobal.dart';
 import '../../../features/auth/presentation/bloc/auth/auth_bloc.dart';
 import '../../error/Exception.dart';
 
@@ -18,10 +20,12 @@ import '../../error/Exception.dart';
 void check(BuildContext context,bool mounted)async {
   final authBloc = BlocProvider.of<AuthBloc>(context);
 
-
+authBloc.
+  add(const IsLoggedInEvent());
+await Future.delayed(const Duration(seconds: 2));
   final authState = authBloc.state;
-  final language = await Store().getLocaleLanguage();
-  final isfirstEntry = await Store().isFirstEntry();
+  final language = await const Store().getLocaleLanguage();
+  final isfirstEntry = await const Store().isFirstEntry();
 
   if (!mounted) return;
     if (language == null) {
@@ -46,9 +50,9 @@ Future<List<bool>> areMembersInParticipants(List<Activity> activities) async {
   return activities.map((activity) => activity.Participants.contains(memberId)).toList();
 }
 Future<List<String?>> getTokens() async {
-  final tokens=await Store().GetTokens();
+  final tokens=await const Store().GetTokens();
   if (tokens[1] == null  || tokens[1].toString().isEmpty) {
-    print('famech token');
+
     throw EmptyCacheException();
 
   }
@@ -77,49 +81,15 @@ bool hasCommonElement(List<dynamic> list1, List<dynamic> list2) {
   return false;
 }
 
-Future<Unit> EditFunction(Activity event, Map<String, dynamic> body,String url ,String urlImage,http.Client client ) async {
-  final token = await getTokens();
-
-  return client.patch(
-    Uri.parse(url),
-    headers: {"Content-Type": "application/json",
-      "Authorization":'Bearer ${token[1]}'
-
-    },
-
-    body: json.encode(body),
-  ).then((response) async {
-    log(response.statusCode.toString());
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> decodedJson = json.decode(response.body) ;
-
-      if (event.CoverImages[0]!="assets/images/jci.png"){
-      final updateResponse=await UpdateImage(decodedJson['_id'], event.CoverImages.first,urlImage);
-      if (updateResponse.statusCode==200){
-        return Future.value(unit);
-      }
-      else if (updateResponse.statusCode==400){
-
-        throw EmptyDataException();
-
-      }else {
-        throw ServerException();
-      }
-
-
-    }
-    return Future.value (unit);
-    }
-
-    else if (response.statusCode == 400) {
-      throw WrongCredentialsException();
-    }
-    else if (response.statusCode==401){
-      throw UnauthorizedException();
-    }
-    else {
-      throw ServerException();
-    }
-
-  });
+Exception handleErrors(FirebaseException e) {
+  if (e.code == 'permission-denied') {
+    Logger().e("User does not have permission to create documents in this collection.");
+    return  UnauthorizedException();
+  } else if (e.code == 'unavailable') {
+    Logger().e("The server is unavailable. Please try again later.");
+    return NotVerifiedException();
+  } else {
+    Logger().e("An error occurred while adding the meeting: $e");
+    return ExpiredException();
+  }
 }

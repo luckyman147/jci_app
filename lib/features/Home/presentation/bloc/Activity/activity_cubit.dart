@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:jci_app/features/Home/domain/enums/Privacy.dart';
 
 
 part 'activity_state.dart';
@@ -22,5 +23,8 @@ void search(bool isSearching) {
   }
   void selectSearchActivity(activity activity) {
     emit(state.copyWith(selectedSearchActivity: activity,stateChange: StateChange.Changed));
+  }
+  void changeUserStatus(UserChoice userStatus) {
+    emit(state.copyWith(userChoice: userStatus));
   }
 }

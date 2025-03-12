@@ -9,3 +9,4 @@ export 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sb
 export 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
 export 'package:jci_app/features/MemberSection/presentation/bloc/memberPermissions/member_permission_bloc.dart';
 export 'package:get_it/get_it.dart';
+export 'package:flutter/material.dart';

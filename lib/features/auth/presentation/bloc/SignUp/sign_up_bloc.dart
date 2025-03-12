@@ -4,7 +4,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:formz/formz.dart';
 import 'package:jci_app/core/strings/messages.dart';
 
@@ -110,7 +109,7 @@ void _reset_form(
       Emitter<SignUpState> emit,
       ) {
     final firstname = Firstname.dirty(event.firstName);
-    print("firstname is $firstname");
+
 
     emit(
       state.copyWith(
@@ -127,7 +126,7 @@ void _reset_form(
       ) {
 
     final lastname = Lastname.dirty(event.lastName);
-     print("lastname is $lastname");
+
     emit(
       state.copyWith(
         lastname: lastname,
@@ -144,7 +143,7 @@ void _reset_form(
       ) {
 
     final password = Password.dirty(event.password);
-    print('pass is ${state.password.isValid}.');
+
 
     emit(
       state.copyWith(
@@ -157,7 +156,7 @@ void _reset_form(
       Emitter<SignUpState> emit,
       ) {
     final cpassword = ConfirmPassword.dirty(event.confirmPassword);
-    debugPrint('ccpass is ${state.confirmPassword.isValid}.');
+
 
     emit(
       state.copyWith(

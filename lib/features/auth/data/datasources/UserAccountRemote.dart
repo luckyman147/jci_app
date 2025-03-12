@@ -110,11 +110,11 @@ else{
 
   Future<void> _checkDeliveryStatus(DocumentReference request) async {
     // Wait for a few seconds before checking the delivery status
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
 
     final value = await request.get();
     final data = value.data() ;
-    logger.i('Email delivery status: ${data}');
+    logger.i('Email delivery status: $data');
 
 
   }

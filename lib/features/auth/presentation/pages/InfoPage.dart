@@ -29,7 +29,7 @@ class _PasswordResetSentPageState extends State<PasswordResetSentPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Timer.periodic(Duration(seconds: 7), (timer) {
+    Timer.periodic(const Duration(seconds: 7), (timer) {
     context.read<ToggleBooleanBloc>().add(const ChangeIsImage1( ));
     });
   }
@@ -72,7 +72,7 @@ class _PasswordResetSentPageState extends State<PasswordResetSentPage> {
               );
             },
             ),
-                SizedBox(height: 20
+                const SizedBox(height: 20
 ),
                 Padding(
                   padding: paddingSemetricVerticalHorizontal(),
@@ -85,7 +85,7 @@ class _PasswordResetSentPageState extends State<PasswordResetSentPage> {
                           text: widget.email,
                           style: PoppinBold(24, PrimaryColor, TextDecoration.underline),
                         ),
-                        TextSpan(text: '.'),
+                        const TextSpan(text: '.'),
                       ],
                     ),
                   ),
@@ -104,7 +104,7 @@ class _PasswordResetSentPageState extends State<PasswordResetSentPage> {
                     FadeEffect(duration: 500.milliseconds),
                   ],
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Padding(
                   padding: paddingSemetricVerticalHorizontal(h: .2.sp),
                   child: Container(

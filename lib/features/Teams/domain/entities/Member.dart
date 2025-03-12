@@ -5,6 +5,7 @@ import 'package:jci_app/core/Abstractions/Entity.dart';
 
 
 class Member extends Entity<String> {
+  @override
   final String id;
 
   final String email;
@@ -90,7 +91,7 @@ class Member extends Entity<String> {
       language: "fr",
 
       IsSelected: false, id: "id", role: "role", is_validated: false,
-      cotisation:[false] , Images: [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password", Activities: [], teams: [], points: 0, objectifs: [], rank: 0, description: '', board: '', PreviousPoints: 0);
+      cotisation:const [false] , Images: const [] ,firstName: "", lastName: "lastName", phone: "phone", email: "email", password: "password", Activities: const [], teams: const [], points: 0, objectifs: const [], rank: 0, description: '', board: '', PreviousPoints: 0);
 
   static Member toMember(Map<String, dynamic> json) {
     return Member(

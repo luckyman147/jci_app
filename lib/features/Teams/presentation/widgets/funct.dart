@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:go_router/go_router.dart';
-import 'package:jci_app/features/Home/presentation/widgets/Functions.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
 import 'package:mime/mime.dart';
 import 'package:flutter/services.dart';
@@ -18,17 +17,19 @@ import 'package:jci_app/features/Teams/domain/entities/Checklist.dart';
 import 'package:jci_app/features/Teams/domain/entities/Task.dart';
 import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 import 'package:jci_app/core/Member.dart';
-import 'package:permission_handler/permission_handler.dart';
 
+
+import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/config/services/TeamStore.dart';
 
 import '../../../../core/util/snackbar_message.dart';
 
+import '../../../Home/domain/enums/Privacy.dart';
 import '../../../MemberSection/domain/usecases/MemberUseCases.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import '../../../MemberSection/presentation/pages/memberProfilPage.dart';
-import '../../../MemberSection/presentation/widgets/functionMember.dart';
+import '../../../MemberSection/presentation/widgets/member/functionMember.dart';
 import '../../domain/entities/Team.dart';
 import '../../domain/usecases/TaskUseCase.dart';
 import '../../domain/usecases/TeamUseCases.dart';
@@ -46,7 +47,7 @@ class TeamFunction{
     return team.status;
   }
 
-  static void NavigateTOMemberSection(BuildContext context, Member member) {
+  static void NavigateTOMemberSection(BuildContext context, User member) {
     context.read<MembersBloc>().add(
         GetMemberByIdEvent(
             MemberInfoParams(id: member.id!, status: true)));
@@ -57,7 +58,7 @@ class TeamFunction{
       ),
     );
   }
-  static void InviteKickMember(bool isAssign, Team team, Member member, BuildContext context) {
+  static void InviteKickMember(bool isAssign, Team team, User member, BuildContext context) {
     if (!isAssign) {
       final teamfi = TeamInput(
           team.id,
@@ -81,7 +82,7 @@ class TeamFunction{
       Navigator.pop(context);
     }
   }
-  static void ChangeMemerFunction(bool isExisted, BuildContext context, Member item,Function(Member) onRemoveTap, Function(Member  ) onAddTap) {
+  static void ChangeMemerFunction(bool isExisted, BuildContext context, User item,Function(User) onRemoveTap, Function(User  ) onAddTap) {
     if (isExisted) {
       context.read<MembersTeamCubit>().RemoveMember( item);
 
@@ -94,10 +95,10 @@ class TeamFunction{
   }
 
 
-  static bool doesObjectExistInList(List<Member> list, Member targetObject) {
+  static bool doesObjectExistInList(List<User> list, User targetObject) {
     return list.any((element) => element.id == targetObject.id)||list.contains(targetObject);
   }
-  static List<String> getIds(List<Member> objects) {
+  static List<String> getIds(List<User> objects) {
     if (objects.isEmpty  ) {
       return [];
     }
@@ -180,7 +181,7 @@ class TeamFunction{
   static  Map<String, dynamic> toMapChecklist(CheckList object) {
     return {'id': object.id, 'isCompleted': object.isCompleted, 'name': object.name,};
   }
-  static Map<String, dynamic> toMapMember(Member object) {
+  static Map<String, dynamic> toMapMember(User object) {
     return {'id': object.id, 'firstName': object.firstName, 'Images': object.Images,};
   }
   static List<Map<String, dynamic>> convertIdKey(List<dynamic> inputList) {
@@ -377,58 +378,8 @@ OpenFile.open(file.path,);
     }
   }}
 class FileStorage {
-  static Future<String> getExternalDocumentPath() async {
-    // To check whether permission is given for this app or not.
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      // If not we will ask for permission first
-      await Permission.storage.request();
-    }
-    Directory directory = Directory("");
-    if (Platform.isAndroid) {
-      // Redirects it to download folder in android
-      directory = Directory("/storage/emulated/0/Download");
-    } else {
-      directory = await getApplicationDocumentsDirectory();
-    }
-
-    final exPath = directory.path;
-    print("Saved Path: $exPath");
-    await Directory(exPath).create(recursive: true);
-    return exPath;
-  }
-
-  static Future<String> get _localPath async {
-    // final directory = await getApplicationDocumentsDirectory();
-    // return directory.path;
-    // To get the external path from device of download folder
-    final String directory = await getExternalDocumentPath();
-    return directory;
-  }
-
-  static Future<bool> writeCounter(String base64,String name) async {
-    try {
-      final path = await _localPath;
-      // Create a file for the path of
-      // device and file name with extension
-      final result= await ActivityAction.convertBase64ToXFile(base64);
-      File file= File('$path/$name');
 
 
-
-
-      // Write the data in the file you have created
-      file.writeAsString(base64Encode(await result!.readAsBytes()));
-      log( file.toString());
-      return true;
-    } on Exception catch (e) {
-      throw Exception('Failed to write file: $e');
-
-      //
-    }
-
-
-  }
   static pickFile(mounted,BuildContext context,String id)async{
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 

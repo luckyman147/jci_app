@@ -1,63 +1,58 @@
+
 part of 'acivity_f_bloc.dart';
 
-abstract class AcivityFState extends Equatable {
-  const AcivityFState();
-}
+class AcivityFState extends Equatable {
+  final bool isLoading;
+  final List<Activity>activities;
+  final List<Activity>activitiesSearch;
 
+  final Activity? activityById;
+
+  final String? errorMessage;
+  final ActivityFetchState activityfetchState;
+
+  const AcivityFState({
+    this.activityfetchState = ActivityFetchState.Initial,
+    this.isLoading = false,
+    this.activities=const [],
+    this.activitiesSearch=const   [],
+    this.activityById,
+
+    this.errorMessage,
+  });
+
+  // Create a copyWith method to update state fields
+  AcivityFState copyWith({
+    ActivityFetchState? activityfetchState,
+    bool? isLoading,
+    List<Activity>? activities,
+    List<Activity>? activitiesSearch,
+    Activity? activityById,
+    List<Category>? categories,
+    String? errorMessage,
+
+  }) {
+    return AcivityFState(
+      activityfetchState: activityfetchState ?? this.activityfetchState,
+      isLoading: isLoading ?? this.isLoading,
+      activities: activities ?? this.activities,
+      activityById: activityById ?? this.activityById,
+      activitiesSearch: activitiesSearch ?? this.activitiesSearch,
+
+      errorMessage: errorMessage ?? this.errorMessage,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+    isLoading,
+    activities,
+    activityById,
+    activitiesSearch,
+    errorMessage,
+    activityfetchState,
+  ];
+}
 class AcivityFInitial extends AcivityFState {
-  @override
-  List<Object> get props => [];
-}
-class ActivityLoadingState extends AcivityFState {
-  @override
-  // TODO: implement props
-  List<Object?> get props => [];
-}
-class ActivityLoadedState extends AcivityFState  {
-  final List<Activity> activitys;
-  const ActivityLoadedState({required this.activitys});
-  @override
-  List<Object> get props => [activitys];
-}class ActivityLoadedMonthState extends AcivityFState  {
-  final List<Activity> activitys;
-  const ActivityLoadedMonthState({required this.activitys});
-  @override
-  List<Object> get props => [activitys];
-}
-class ACtivityByIdLoadedState extends AcivityFState  {
-  final Activity activity;
-  const ACtivityByIdLoadedState({required this.activity});
-  @override
-  List<Object> get props => [activity];
-}
-class ErrorActivityState extends AcivityFState {
-  final String message;
-  const ErrorActivityState({required this.message});
-  @override
-  List<Object> get props => [message];
-}
-
-
-class SearchLoading extends AcivityFState {
-  @override
-  // TODO: implement props
-  List<Object?> get props => [];
-}
-
-class SearchLoaded extends AcivityFState {
-  final List<Category> categories;
-
-  const SearchLoaded(this.categories);
-
-  @override
-  List<Object> get props => [categories];
-}
-
-class SearchError extends AcivityFState {
-  final String message;
-
-  const SearchError(this.message);
-
-  @override
-  List<Object> get props => [message];
+  const AcivityFInitial();
 }

@@ -46,7 +46,7 @@ class authButton extends StatelessWidget {
             isLoading ? Center(
               child: Padding(
                 padding: paddingSemetricHorizontal(h: mediaQuery.size.width/20),
-                child: CircularProgressIndicator(
+                child: const CircularProgressIndicator(
                   color: ColorsApp.textColorWhite,
                 ),
               ),

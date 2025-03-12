@@ -1,5 +1,8 @@
 
-  const BaseUrl = "http://192.168.1.9"
+  import '../../../features/Home/data/model/CommentModel.dart';
+import '../../../features/Home/domain/entities/Note.dart';
+
+const BaseUrl = "http://192.168.1.9"
       ":8080";
   const SuperAdminUrl = "$BaseUrl/Super";
   const BoardUrl = "$BaseUrl/Board";
@@ -55,6 +58,20 @@ const getEventsUrl = "$BaseUrl/Event/";
 
 
 class Urls{
+
+
+  static const mainurl="https://us-central1-jci-app-e8e4c.cloudfunctions.net";
+
+
+ static String ReplyUrl(ReplyComment ReplyActivityComment, String? user) {
+   final images = ReplyActivityComment.user.Images.isNotEmpty?ReplyActivityComment.user.Images[0]:null;
+    return '${Urls.mainurl}/onReplyCreated?originalCommentId=${ReplyActivityComment.Commentid}&actId=${ReplyActivityComment.activityId}&content=${ReplyActivityComment.content}&'
+        'FirstName=${ReplyActivityComment.user.firstName}&LastName=${ReplyActivityComment.user.firstName}&commenterId=$user&replyId=${ReplyActivityComment.Replyid}&image=$images';
+  }
+  static String OnCommentCreatedUrl(ActivityCommentModel comment, String? user, images) => '${Urls.mainurl}/onCommentCreated?commentId=${comment.Commentid}&activityId=${comment.activityId}&content=${comment.content}&FirstName=${comment.user.firstName}&LastName=${comment.user.firstName}&memberId=$user&image=$images';  @override
+
+
+
   static String AddCommentUrl(String id)=>"$TeamUrl/$id/Comment";
 
   static String guestUrl="$BaseUrl/Activity/guests/";

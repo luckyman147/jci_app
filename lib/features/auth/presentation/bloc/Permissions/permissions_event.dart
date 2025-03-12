@@ -5,7 +5,7 @@ abstract class PermissionsEvent extends Equatable {
 }
 class CheckPermissionsEvent extends PermissionsEvent {
 
-  CheckPermissionsEvent(
+  const CheckPermissionsEvent(
 
       );
   @override

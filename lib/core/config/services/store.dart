@@ -1,4 +1,5 @@
 
+import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 import 'package:secure_shared_preferences/secure_shared_pref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,7 +13,38 @@ final _PermissionsKey="permissions";
 final String Otp="Otp";
  final String status="status";
  final String _email="EmAiL";
+ final String _roleKey="role";
+ final String UserId="UserId";
 
+Future<void> setUserId(String id)async{
+  final pref =await SecureSharedPref.getInstance();
+  await pref.putString(UserId, id);
+}
+Future<String?> getUserId()async{
+  final pref =await SecureSharedPref.getInstance();
+  return pref.getString(UserId);
+}
+
+Future<void> setRole(DocumentReference role)async{
+  final pref =await SecureSharedPref.getInstance();
+  await pref.putString(_roleKey, role.path);
+}
+Future<DocumentReference?> getRole()async{
+  final pref =await SecureSharedPref.getInstance();
+  final path=await pref.getString(_roleKey);
+  if(path==null){
+    return null;
+  }
+  return FirebaseFirestore.instance.doc(path);
+}
+   Future<void> setRoleName(String role)async{
+    final pref =await SecureSharedPref.getInstance();
+    await pref.putString(_roleKey, role);
+  }
+   Future<String?> getRoleName()async{
+    final pref =await SecureSharedPref.getInstance();
+    return pref.getString(_roleKey);
+}
    Future<void> setTokens(String RefreshToke,String AccessToken)async{
     final pref =await SecureSharedPref.getInstance();
     await pref.putString(_RefreshTokenKey, RefreshToke);
@@ -52,7 +84,7 @@ final String Otp="Otp";
     final refresh=await pref.getString(_RefreshTokenKey);
 
     final access=await pref.getString(_AccessTokenKey);
-    print([access,refresh]);
+
     return [refresh,access];
   }
  Future<void> setOtp(String otp)async {

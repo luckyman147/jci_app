@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
+import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/member/functionMember.dart';
 import 'package:jci_app/features/Teams/domain/usecases/TaskUseCase.dart';
 
+import '../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
 import '../../../../core/util/snackbar_message.dart';
 import '../../domain/entities/Team.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
@@ -39,21 +41,19 @@ class CheckListWidget extends StatelessWidget {
                   ),
                   child: Row(
                     children: <Widget>[
-                      ProfileComponents.buildFutureBuilder(
+                      AsyncComponents.buildFutureBuilder(
                         buildCheckbox(index, context),
-                        true,
-                        id,
-                            (p0) => FunctionMember.isAssignedOrLoyal(team, tasks['AssignTo']),
-                      ),
+
+                    PermissionType.canUpdate,""),
+
                       Expanded(
                         child: buildTextField(index, id, context),
                       ),
-                      ProfileComponents.buildFutureBuilder(
+                      AsyncComponents.buildFutureBuilder(
                         buildIconButton(context, index),
-                        true,
-                        id,
-                            (p0) => FunctionMember.isAssignedOrLoyal(team, tasks['AssignTo']),
-                      ),
+
+                          PermissionType.canUpdate,""),
+
                     ],
                   ),
                 )

@@ -8,6 +8,7 @@ import 'package:jci_app/features/MemberSection/data/datasources/MemberRemoteData
 
 import 'package:jci_app/core/Member.dart';
 
+import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/error/Exception.dart';
 import '../../../../core/network/network_info.dart';
 import '../../../../core/MemberModel.dart';
@@ -149,7 +150,7 @@ class MemberRepoImpl extends MemberRepo {
     }
   }
   @override
-  Future<Either<Failure, List<Member>>> GetMembers(bool isUpdated) async {
+  Future<Either<Failure, List<User>>> GetMembers(bool isUpdated) async {
     if (await networkInfo.isConnected) {
       try {
         final members = await membersLocalDataSource.GetMembers();

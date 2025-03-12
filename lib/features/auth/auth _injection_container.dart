@@ -1,12 +1,14 @@
 
+import 'package:firebase_storage/firebase_storage.dart';
 import  'package:http/http.dart' as http;
 
 import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final sl = GetIt.instance;
 
 Future <void > initAuth()async{
-  sl.registerFactory(() => ResetBloc(sl(),sl(),sl()));  sl.registerFactory(() => PermissionsBloc(sl()));
+  sl.registerFactory(() => ResetBloc(sl(),sl(),sl()));  sl.registerFactory(() => PermissionsMemberBloc(sl()));
 
 sl.registerFactory(() => AuthBloc(sl()  ,
      refreshTokenUseCase: sl(), signoutUseCase: sl(),
@@ -63,17 +65,27 @@ sl.registerLazySingleton<UserAccountRepo>(() => UserAccountRepoIml(handler: sl()
 
   sl.registerLazySingleton(() => http.Client());
   sl.registerLazySingleton(() => GoogleSignIn(
+    scopes: [
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+      'https://www.googleapis.com/auth/calendar',
+      'https://www.googleapis.com/auth/calendar.events',
+      'https://www.googleapis.com/auth/calendar.readonly',
+      'https://www.googleapis.com/auth/calendar.events.readonly',
+    ],
 
   ));
   sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
   sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
+  sl.registerLazySingleton<FirebaseStorage>(() => FirebaseStorage.instance);
 
 
 
   // Register other dependencies
   sl.registerLazySingleton(() => InternetConnectionChecker());
-  sl.registerLazySingleton(() => Logger());
-  sl.registerLazySingleton(() => Store());
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);  sl.registerLazySingleton(() => Logger());
+  sl.registerLazySingleton(() => const Store());
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
 
   // Register SignUpRemoteDataSource with http.Client as a parameter

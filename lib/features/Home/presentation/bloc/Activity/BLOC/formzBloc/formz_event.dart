@@ -19,6 +19,15 @@ class LeaderNameChanged extends FormzEvent {
   List<Object> get props => [profName];
 }
 
+class ThrowError extends FormzEvent {
+  final String error;
+
+  const ThrowError({required this.error});
+
+  @override
+  List<Object> get props => [error];
+}
+
 class ActivityNameChanged extends FormzEvent {
   final String activityName;
 
@@ -83,15 +92,7 @@ class jokerChanged extends FormzEvent{
   List<Object?> get props => [joketimer];
 
 }
-class CategoryChanged extends FormzEvent {
-  final Category category;
 
-  const CategoryChanged({required this.category});
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [category];
-}
 
 class DescriptionChanged extends FormzEvent {
   final String description;
@@ -125,7 +126,7 @@ class ImageInputChanged extends FormzEvent {
   List<Object> get props => [imageInput];
 }
 class MemberFormzChanged extends FormzEvent {
-  final Member memberFormz;
+  final User memberFormz;
 
   const MemberFormzChanged({required this.memberFormz});
 
@@ -142,17 +143,41 @@ class EventChanged extends FormzEvent {
   ];
 }
 class MembersTeamChanged extends FormzEvent {
-  final Member memberTeam;
+  final User memberTeam;
 
   const MembersTeamChanged({required this.memberTeam});
 
   @override
   List<Object> get props => [memberTeam];
 }
+class PaticipantsChanged extends FormzEvent {
+  final User particpantOfActivity;
+  final ActionImage actionType;
+
+  const PaticipantsChanged({required this.particpantOfActivity, required this.actionType});
+
+  @override
+  List<Object> get props => [particpantOfActivity, actionType];
+}
+class InitParticpantsOfActivity extends FormzEvent {
+  final List<User> participants;
+
+  const InitParticpantsOfActivity({required this.participants});
+
+  @override
+  List<Object> get props => [participants];
+}
 class InitMembers extends FormzEvent {
   final List<Member> members;
 
   const InitMembers({required this.members});
+
+  @override
+  List<Object> get props => [members];
+}class InitParticipants extends FormzEvent {
+  final List<User> members;
+
+  const InitParticipants({required this.members});
 
   @override
   List<Object> get props => [members];

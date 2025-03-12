@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 mixin ColorsApp {
-static Color PrimaryColor = Color.fromRGBO(0, 150, 215, 1);
+static Color PrimaryColor = const Color.fromRGBO(0, 150, 215, 1);
   static const Color SecondaryColor = Color.fromRGBO(248, 189, 0, 1);
   static const Color backgroundColored = Color.fromRGBO(255, 252, 255, 1);
   static const Color dotscolor = Color.fromRGBO(210, 210, 210, 1);
@@ -73,10 +73,10 @@ InputDecoration decorationTextField(String? errorText,String hintText,BuildConte
 
 final memberdeco= BoxDecoration(
 
-    borderRadius: BorderRadius.circular(16.0),
+    borderRadius: BorderRadius.circular(10.0),
     border: Border.all(
       color: ThirdColor,
-      width: 3,
+      width: 2,
     ));
 final ActivityDecoration=  BoxDecoration(
 
@@ -107,11 +107,11 @@ ButtonStyle styleFrom(bool isActive) {
 
     shadowColor: SecondaryColor.withOpacity(.3),
     splashFactory: InkRipple.splashFactory,
-    surfaceTintColor: isActive?PrimaryColor:BackWidgetColor,
+    surfaceTintColor: isActive?PrimaryColor:ThirdColor,
     side: const BorderSide(color: BackWidgetColor, width: 2),
     fixedSize: const Size(120, 40),
     elevation: 0,
-    backgroundColor: isActive?PrimaryColor:textColorWhite,
+    backgroundColor: isActive?PrimaryColor:ThirdColor,
 
     shape: RoundedRectangleBorder(
 
@@ -176,7 +176,7 @@ canvasColor: backgroundColored,
 final gradient=  LinearGradient(
     begin: Alignment.topRight,
     end: Alignment.bottomLeft,
-    colors: [ColorsApp.PrimaryColor,PrimaryColor,Color(0xffF2F2F2),Color(0xffF2F2F2),Color(0xffF2F2F2),Color(0xffF2F2F2)],
+    colors: [ColorsApp.PrimaryColor,PrimaryColor,const Color(0xffF2F2F2),const Color(0xffF2F2F2),const Color(0xffF2F2F2),const Color(0xffF2F2F2)],
     stops: const [0.1,0.3,0.5,0.7,0.9,1]
 
   );

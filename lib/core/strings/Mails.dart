@@ -92,4 +92,45 @@ class mails{
       </div>
   </body>
   """;
+  static String welcomeGuestInFrench(String name, String eventName, DateTime time, String lieu) => """
+<div style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+    <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+        <div style="background-color: #0047ab; color: white; padding: 40px 30px; text-align: center;">
+            <h1 style="font-size: 32px; margin: 0; font-weight: bold;">JCI Hammam Sousse</h1>
+            <p style="font-size: 18px; margin: 10px 0;">Nous sommes ravis de vous accueillir</p>
+        </div>
+
+        <div style="padding: 40px; color: #333333;">
+            <h2 style="font-size: 26px; font-weight: bold; color: #0047ab; margin-bottom: 20px;">Bienvenue à $eventName</h2>
+            <p style="font-size: 16px; line-height: 1.6; color: #555555;">Bonjour <strong>$name</strong>,</p>
+            <p style="font-size: 16px; line-height: 1.6; color: #555555;">Nous sommes heureux de vous inviter à notre événement organisé par <strong>JCI Hammam Sousse</strong>. C'est une occasion idéale pour se connecter, apprendre et échanger avec d'autres membres de notre communauté dynamique.</p>
+
+            <div style="text-align: center; margin: 30px 0; background-color: #ff6f00; padding: 12px 30px; border-radius: 5px; display: inline-block; font-weight: bold;">
+                <a href="https://jcihammamsousse.org/" style="font-size: 18px; color: white; text-decoration: none;">Rejoignez-nous dès maintenant</a>
+            </div>
+            
+            <p style="font-size: 16px; line-height: 1.6; color: #555555; text-align: center; margin-top: 40px;">
+                <strong>Date:</strong> ${time.day} ${_getMonthInFrench(time.month)} ${time.year}<br>
+                <strong>Heure:</strong> ${time.hour}:${time.minute.toString().padLeft(2, '0')}<br>
+                <strong>Lieu:</strong> $lieu
+            </p>
+        </div>
+
+        <div style="background-color: #f4f4f4; padding: 20px; text-align: center;">
+            <p style="font-size: 14px; color: #777777; margin: 0;">&copy; 2024 JCI Hammam Sousse. Tous droits réservés.</p>
+        </div>
+    </div>
+</div>
+""";
+
+
+// Helper function to convert month numbers to French month names
+  static String _getMonthInFrench(int month) {
+    const months = [
+      "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+      "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+    ];
+    return months[month - 1];
+  }
+
 }

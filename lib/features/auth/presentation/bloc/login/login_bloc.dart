@@ -134,7 +134,7 @@ void _onGoogleSign(
             await loginWithEmailUseCase(event.loginWithEmailDtos);
 
 
-debugPrint(failureOrDoneMessage.toString());
+
         emit(_eitherDoneMessageOrErrorState(
             failureOrDoneMessage, 'Login Successful'));
 
@@ -143,7 +143,7 @@ debugPrint(failureOrDoneMessage.toString());
         emit(state.copyWith(status: FormzSubmissionStatus.success));
       } catch (e) {
         log(e.toString());
-        emit(ErrorLogin(message: "${e.toString()}"));
+        emit(ErrorLogin(message: e.toString()));
       }
   }
 
@@ -166,7 +166,7 @@ LoginState _eitherDoneMessageOrErrorState(
       ),
       (user) {
 
-          return  MessageLogin(message: "Login Successful");
+          return  const MessageLogin(message: "Login Successful");
 
 
       }

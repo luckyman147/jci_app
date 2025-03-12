@@ -1,9 +1,11 @@
 import 'package:jci_app/features/Home/domain/entities/Activity.dart';
 
 class ActivityModel extends Activity{
-  ActivityModel({required super.name, required super.id, required super.IsPart, required super.description, required super.ActivityBeginDate, required super.ActivityEndDate, required super.ActivityAdress, required super.ActivityPoints, required super.categorie, required super.IsPaid, required super.price, required super.Participants, required super.CoverImages});
+  ActivityModel({required super.name, required super.id, required super.IsPart, required super.description, required super.ActivityBeginDate, required super.ActivityEndDate, required super.ActivityAdress, required super.ActivityPoints, required super.categorieId, required super.IsPaid, required super.price, required super.Participants, required super.CoverImages, required super.IsPublic, required super.isOnline, required super.googleMeetLink});
   factory ActivityModel.fromJson(Map<String, dynamic> json) {
     return ActivityModel(
+      isOnline: json['isOnline']??false,
+      googleMeetLink: json['googleMeetLink']??"",
       name: json['name'],
       id: json['id']??json['_id'],
       IsPart: json['IsPart']??false,
@@ -13,11 +15,12 @@ class ActivityModel extends Activity{
 
       ActivityAdress: json['ActivityAdress']??"",
       ActivityPoints: json['ActivityPoints']??0,
-      categorie: json['categorie']??"",
+      categorieId: json['categorieId']?? (json['categorieId']as List<dynamic>).map((e)=>e.toString()) ??[],
       IsPaid: json['IsPaid']??false,
       price: json['price']??0,
-      Participants: json['Participants']?? json['participants']??[],
+      Participants: json['Participants']?? (json['participants']as List<dynamic>).map((e)=>e.toString()) ??[],
       CoverImages: json['CoverImages'] != null ? (json['CoverImages'] as List<dynamic>).map((e) => e as String).toList() : json['coverImages']!=null?(json['coverImages'] as List<dynamic>).map((e) => e as String).toList():[],
+      IsPublic: json['IsPublic']??false,
 
     );
   }
@@ -31,11 +34,15 @@ class ActivityModel extends Activity{
       'ActivityEndDate': ActivityEndDate,
       'ActivityAdress': ActivityAdress,
       'ActivityPoints': ActivityPoints,
-      'categorie': categorie,
+      'categorieId': categorieId,
       'IsPaid': IsPaid,
+      "IsPublic": IsPublic,
       'price': price,
       'Participants': Participants,
       'CoverImages': CoverImages,
+      'isOnline': isOnline,
+      'googleMeetLink': googleMeetLink,
+
     };
   }
 

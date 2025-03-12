@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/features/Home/presentation/pages/CreateUpdateActivityPage.dart';
 import 'package:jci_app/features/Home/presentation/pages/detailsPage.dart';
-import 'package:jci_app/features/Home/presentation/widgets/SearchWidget.dart';
+import 'package:jci_app/features/Home/presentation/widgets/components/SearchWidget.dart';
 import 'package:jci_app/features/MemberSection/presentation/pages/ModifyUser.dart';
 import 'package:jci_app/features/MemberSection/presentation/pages/memberProfilPage.dart';
 import 'package:jci_app/features/Teams/presentation/screens/DetailsTaskScreen.dart';
@@ -179,8 +179,8 @@ GoRoute(
         final  activity = state.pathParameters['activity']! ;
         final  action = state.pathParameters['action']! ;
         final  partie = state.pathParameters['part']! ;
-        debugPrint('partie $partie');
-        return CreateUpdateActivityPage(id: id, activity: activity, work: action, part: decodeListFromUrlEncodedString(partie),);},
+
+        return CreateUpdateActivityPage(id: id, activity: activity, work: action, particpants: decodeListFromUrlEncodedString(partie),);},
     ),
 
 
@@ -201,9 +201,9 @@ SignUpPage(email: gmail!, name: userJson
   ],
 );List<String> decodeListFromUrlEncodedString(String input) {
   if (input =="[]") {
-    return <String>[];
+    return [];
   }
-  final urlEncodedList = Uri.decodeComponent(input);
-  final list = urlEncodedList.isNotEmpty ? urlEncodedList.split(',') : <String>[];
-  return list;
+  final List<String> parts = input.split(',');
+  return parts;
+
 }

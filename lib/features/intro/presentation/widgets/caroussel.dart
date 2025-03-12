@@ -1,6 +1,5 @@
 
 
-import 'package:carousel_slider/carousel_slider.dart' as c;
 import 'package:jci_app/features/intro/presentation/widgets/CarouselSliderWidget.dart';
 
 import '../../../../core/strings/Images.string.dart';

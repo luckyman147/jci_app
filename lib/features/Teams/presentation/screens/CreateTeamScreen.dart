@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
+import 'package:jci_app/features/Home/presentation/widgets/Fields/ImagePicker.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
@@ -14,6 +15,7 @@ import 'package:jci_app/features/Teams/presentation/widgets/CreateTeamWIdgets.da
 
 import '../../../../core/app_theme.dart';
 import '../../../Home/domain/entities/Event.dart';
+import '../../../Home/domain/enums/ActionImage.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../../../Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
 
@@ -41,7 +43,7 @@ if (!widget.team .isEmpty) {
     }
 
 else{
-  context.read<TaskVisibleBloc>().add(const ChangeImageEvent("assets/images/jci.png",));
+  context.read<TaskVisibleBloc>().add(const ChangeImageEvent("assets/images/jci.png",ActionImage.ADD));
   context.read<MembersBloc>().add(const GetAllMembersEvent(false));
   context.read<AcivityFBloc>().add(const GetAllActivitiesEvent(act: activity.Events));
   context.read<FormzBloc>().add(EventChanged( eventChanged: Event.EventTest));
@@ -73,7 +75,7 @@ else{
                   child: Column(
                     children: [
                      ActionsWidgets( mediaQuery,formKey,teamNameController,teamDescriptionController,widget.team ),
-                      imageTeamPicker(mediaQuery),
+                      const ImageActivityPicker(),
                       TextTeamfieldNormal('Team Name'.tr(context),"${"Team Name".tr(context)} ${"here".tr(context)}",teamNameController,(value){}),
                   Events(mediaQuery),
                   Members(mediaQuery),

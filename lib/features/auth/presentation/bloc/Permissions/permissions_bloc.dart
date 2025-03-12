@@ -6,13 +6,12 @@ import 'package:jci_app/core/usescases/usecase.dart';
 
 import '../../../../../core/error/Failure.dart';
 import '../../../domain/usecases/UserStatusUsesCases.dart';
-import '../../../domain/usecases/authusecase.dart';
 
 part 'permissions_event.dart';
 part 'permissions_state.dart';
 
-class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
-  PermissionsBloc(this.isNewMemberUseCase) : super(PermissionsInitial()) {
+class PermissionsMemberBloc extends Bloc<PermissionsEvent, PermissionsState> {
+  PermissionsMemberBloc(this.isNewMemberUseCase) : super(PermissionsInitial()) {
     on<PermissionsEvent>((event, emit) {
       // TODO: implement event handler
     });

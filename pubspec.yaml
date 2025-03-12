@@ -15,10 +15,16 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_localization:
+
+
   path_to_regexp:
   freezed:
+  timeago:
   pinput:
-
+  flutter_dotenv:
+  googleapis:
+  webview_flutter:
+  googleapis_auth:
   flutter_screenutil:
   image_picker: ^1.0.7
 
@@ -34,7 +40,7 @@ dependencies:
   firebase_storage:
   firebase_database:
   crypto:
-
+  cloud_functions:
   firebase_performance:
   firebase_remote_config:
   firebase_in_app_messaging:
@@ -78,24 +84,29 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   mockito:
+  comment_tree:
   secure_shared_preferences: ^0.0.4
   google_fonts: ^4.0.4
   go_router: ^13.1.0
   carousel_slider:
   smooth_page_indicator: ^1.1.0
-
+  flutter_local_notifications:
 
   json_annotation: ^4.8.1
   jwt_decode:
   google_nav_bar: ^5.0.6
   shimmer: ^3.0.0
-  permission_handler:
 
+  cached_network_image:
 
   flutter_time_picker_spinner: ^2.0.0
   table_calendar: ^3.0.9
   flutter_animate: ^4.5.0
   firebase_app_check: ^0.3.1+4
+  flutter_chat_reactions: ^0.1.0
+  flutter_slidable: ^3.1.1
+  emoji_picker_flutter: ^3.1.0
+  auto_size_text: ^3.0.0
 dev_dependencies:
   bloc_test:
   flutter_test:
@@ -104,7 +115,7 @@ dev_dependencies:
 
     sdk: flutter
   analyzer: ^5.13.0
-  auto_route_generator:
+
   build_runner:
   flutter_lints: ^2.0.0
   flutter_launcher_icons: "^0.13.1"
@@ -144,7 +155,7 @@ flutter:
     - assets/images/team.png
     - assets/images/Mail.png
     - assets/images/MailSenti.png
-
+    - .env
     - assets/images/blankjci.jpeg
     - assets/images/classement.jpg
     - assets/images/cap.png

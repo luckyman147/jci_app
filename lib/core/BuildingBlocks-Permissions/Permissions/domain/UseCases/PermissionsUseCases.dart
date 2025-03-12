@@ -6,32 +6,31 @@ import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/core/usescases/usecase.dart';
 
 import '../Dtos/CheckPermissionDtos.dart';
-import '../Dtos/CreateRoleDtos.dart';
 import '../Dtos/LoadPermission.dart';
 import '../Dtos/TempoPermissions.dart';
 import '../Entities/FeaturePermissions.dart';
 import '../Entities/UserPermissions.dart';
 import '../repo/PermissionsRepositories.dart';
 
-class LoadUserPermissionsUseCase extends UseCase<FeaturePermissions,LoadPermissionsOfUser>{
+class LoadUserPermissionsUseCase extends UseCase<List< FeaturePermissions>,LoadPermissionsOfUser>{
   final PermissionsRepository permissionsRepository;
 
   LoadUserPermissionsUseCase(this.permissionsRepository);
 
   @override
-  Future<Either<Failure, FeaturePermissions>> call(LoadPermissionsOfUser params) {
+  Future<Either<Failure,List< FeaturePermissions>>> call(LoadPermissionsOfUser params) {
     return permissionsRepository.loadPermissionsOfUser(params);
   }
 }
 
 // Use Case 2: Load Permissions for the Master User
-class LoadMasterPermissionsUseCase extends UseCase<FeaturePermissions,List<String>>{
+class LoadMasterPermissionsUseCase extends UseCase<List< FeaturePermissions>,List<String>>{
   final PermissionsRepository permissionsRepository;
 
   LoadMasterPermissionsUseCase(this.permissionsRepository);
 
   @override
-  Future<Either<Failure, FeaturePermissions>> call(List<String> params) {
+  Future<Either<Failure, List< FeaturePermissions>>> call(List<String> params) {
     return permissionsRepository.loadPermissionsOfMaster(params);
   }
 

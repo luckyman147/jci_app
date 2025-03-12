@@ -11,12 +11,13 @@ import 'package:intl/intl.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/strings/app_strings.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
+import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/member/functionMember.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
+import '../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
 import '../../domain/entities/Team.dart';
 import '../../domain/usecases/TaskUseCase.dart';
 import '../bloc/TaskFilter/taskfilter_bloc.dart';
@@ -363,10 +364,8 @@ class _buildCheckBoxState extends State<buildCheckBox> {
         builder: (context, ste) {
           return BlocBuilder<GetTaskBloc, GetTaskState>(
               builder: (context, state) {
-
-
-                return
-                  ste.WillDeleted?Padding(
+                return SizedBox();
+                /*     ste.WillDeleted?Padding(
                     padding:paddingSemetricHorizontal(),
                     child: InkWell(
                         onTap: (){
@@ -375,11 +374,11 @@ class _buildCheckBoxState extends State<buildCheckBox> {
                         },
 
                         child: const Icon(Icons.cancel,color:SecondaryColor)),
-                  ):
-                  ProfileComponents.buildFutureBuilder(buildCheckbox(context, state), true, '', (p0) => FunctionMember.isAssignedOrLoyal(widget.team, widget.task['AssignTo']))  ; }
+                 ):
+            //      AsyncComponents.buildFutureBuilder(buildCheckbox(context, state), true, '', (p0) => FunctionMember.isAssignedOrLoyal(widget.team, widget.task['AssignTo']))  ; }
 
-
-          );
+                */
+              } );
         },
       );
   }

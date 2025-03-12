@@ -23,7 +23,7 @@ class localeCubit extends Cubit<LocaleState> {
     await LanguageCacheHelper().getCachedLanguageCode();
 
     emit(ChangeLocalState(Locale(cachedLanguageCode)));
- //   emit (state.copyWith(languageCode: cachedLanguageCode,locale: Locale(cachedLanguageCode)));
+ //  emit (state.copyWith(languageCode: cachedLanguageCode,locale: Locale(cachedLanguageCode)));
   }
    Future<String?> cachedLanguageCode() async=> await LanguageCacheHelper().getCachedLanguageCode();
 

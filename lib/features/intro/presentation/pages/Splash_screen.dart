@@ -1,6 +1,6 @@
 
 
-import 'package:auto_route/auto_route.dart';
+
 import 'package:flutter/material.dart';
 
 import 'package:jci_app/core/app_theme.dart';
@@ -9,12 +9,8 @@ import 'package:jci_app/core/config/services/verification.dart';
 import 'package:jci_app/core/widgets/loading_widget.dart';
 
 import '../../../../core/strings/Images.string.dart';
-import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
-import '../../../auth/presentation/pages/pinPage.dart';
 
-@RoutePage(
 
-)
 class SplashScreen extends StatefulWidget {
 
   const SplashScreen({super.key,
@@ -55,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 children: [
                   Expanded(child: Center(
                       child: Image.asset(images.jci,
-                          width: 250, height: 250, fit: BoxFit.contain))),
+                          width: 250, height: 250, fit: BoxFit.contain,gaplessPlayback: true,))),
 
                   const LoadingWidget()
                 ],

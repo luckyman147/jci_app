@@ -81,7 +81,7 @@ class NumberInput extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center, // Center the PIN fields
         keyboardType: TextInputType.number,
         animationCurve: Curves.easeIn, // Customize animation behavior (optional)
-        animationDuration: Duration(milliseconds: 200), // Customize animation duration (optional)
+        animationDuration: const Duration(milliseconds: 200), // Customize animation duration (optional)
        enabled: isEnabled,
         // Additional customization options available!
       )

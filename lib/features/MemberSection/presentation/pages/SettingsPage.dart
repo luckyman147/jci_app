@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/SettingsComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/components/SettingsComponents.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import '../../../../core/util/snackbar_message.dart';
@@ -46,10 +46,11 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         title:
         BackButton(
           onPressed: () {
-            GoRouter.of(context).go('/home');
+            Navigator.pop(context);
             context.read<MembersBloc>().add(const GetUserProfileEvent(true));
           },
 

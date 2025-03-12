@@ -1,7 +1,9 @@
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:jci_app/features/Home/domain/enums/ActionImage.dart';
 
+import '../../../../Home/domain/enums/Privacy.dart';
 import '../../../domain/entities/Task.dart';
 
 part 'task_visible_event.dart';
@@ -11,6 +13,9 @@ class TaskVisibleBloc extends Bloc<TaskVisibleEvent, TaskVisibleState> {
   TaskVisibleBloc() : super(const TaskVisibleInitial()) {
     on<TaskVisibleEvent>((event, emit) {
     });
+    on<ChangeStatusEvent>((event, emit) {
+      emit(state.copyWith(status: event.status));
+    });
     on<ToggleTaskVisible>(_onToggleTaskVisible);
     on<DeletedTaskedEvent>(ondeleted);
     on<ChangeSectionEvent>(_ChangeSectionEvent);
@@ -19,7 +24,9 @@ class TaskVisibleBloc extends Bloc<TaskVisibleEvent, TaskVisibleState> {
     on<ChangeImageEvent>(_ChangeImageEvent);
     on<ChangeWillSearchEvent>(_changeWillSearch);
     on<changePrivacyEvent>(_changePrivacy);
-
+on<InitImagesEvent>((event, emit) {
+      emit(state.copyWith(images: event.images));
+    });
     on<ChangeIsUpdatedEvent>(_ChangeIsUpdatedEvent);
 
 
@@ -36,7 +43,21 @@ class TaskVisibleBloc extends Bloc<TaskVisibleEvent, TaskVisibleState> {
   }
   void
   _ChangeImageEvent(ChangeImageEvent event, Emitter<TaskVisibleState> emit) {
-    emit(state.copyWith(image: event.image, status: Status.Changed));
+    if (event.action == ActionImage.ADD) {
+      emit(state.copyWith(images: [...state.images, event.image],
+      status: Status.Changed
+      ));
+    } else if (event.action == ActionImage.DELETE && event.image.isNotEmpty) {
+      emit(state.copyWith(images: state.images.where((e) => e != event.image).toList()
+      ,
+      status: state.images.isNotEmpty?  Status.Changed:Status.Empty
+      ),
+
+      );
+    }
+    else{
+      emit(state.copyWith(images: []));
+    }
   }
   void _onToggleTaskVisible(ToggleTaskVisible event, Emitter<TaskVisibleState> emit) {
 

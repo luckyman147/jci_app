@@ -12,12 +12,13 @@ import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.
 import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 
+import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/app_theme.dart';
 import '../../../../core/strings/app_strings.dart';
 import '../../../../core/widgets/loading_widget.dart';
 
-import '../../../Home/presentation/widgets/ErrorDisplayMessage.dart';
-import '../../../Home/presentation/widgets/SearchWidget.dart';
+import '../../../Home/domain/enums/SearchType.dart';
+import '../../../Home/presentation/widgets/components/ErrorDisplayMessage.dart';
 import '../../../MemberSection/domain/usecases/MemberUseCases.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../MemberSection/presentation/pages/memberProfilPage.dart';
@@ -26,9 +27,9 @@ import '../../domain/entities/Team.dart';
 
 class MemberTeamSelection{
 
- static  Widget MembersTeamContainer(mediaQuery, Member item,bool isExisted,
-      Function(Member) onRemoveTap, Function(Member) onAddTap,
-      BuildContext context, List<Member> ff) =>
+ static  Widget MembersTeamContainer(mediaQuery, User item,bool isExisted,
+      Function(User) onRemoveTap, Function(User) onAddTap,
+      BuildContext context, List<User> ff) =>
      
        BlocBuilder<GetTaskBloc, GetTaskState>(
             builder: (context, state) {
@@ -48,9 +49,9 @@ class MemberTeamSelection{
     
 
 
- static  Widget SelectionButton(mediaQuery, List<Member> ff, Member item, bool isExisted,
-      BuildContext context, Function(Member) onRemoveTap,
-      Function(Member) onAddTap) {
+ static  Widget SelectionButton(mediaQuery, List<User> ff, User item, bool isExisted,
+      BuildContext context, Function(User) onRemoveTap,
+      Function(User) onAddTap) {
     return BlocBuilder<MembersTeamCubit, MembersTeamState>(
       builder: (context, state) {
         return BlocBuilder<GetTaskBloc, GetTaskState>(
@@ -87,8 +88,8 @@ class MemberTeamSelection{
 
 
   SizedBox SelectionAssignButton(mediaQuery, List<Member> ff, Member item,
-      BuildContext context, Function(Member) onRemoveTap,
-      Function(Member) onAddTap) {
+      BuildContext context, Function(User) onRemoveTap,
+      Function(User) onAddTap) {
     return SizedBox(
       width: mediaQuery.size.width / 3,
       child: ElevatedButton(
@@ -138,7 +139,7 @@ class MemberTeamSelection{
       );
 
  static Widget MembersAssignToBottomSheet(mediaQuery
-      , Function(Member) onRemoveTap, Function(Member) onAddTap,
+      , Function(User) onRemoveTap, Function(User) onAddTap,
       List<Member> members,
       List<Member> ff,BuildContext context) =>
       SizedBox(
@@ -179,8 +180,8 @@ class MemberTeamSelection{
     ;
   }
 
- static  Padding AssignToPiece(mediaQuery, Function(Member) onRemoveTap,
-      Function(Member) onAddTap, List<Member> members, List<Member> ff) {
+ static  Padding AssignToPiece(mediaQuery, Function(User) onRemoveTap,
+      Function(User) onAddTap, List<User> members, List<User> ff) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: SingleChildScrollView(
@@ -298,8 +299,8 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
   }
 
 
- static Widget MembersDetails(List<Member> members, mediaQuery,
-      Function(Member) onRemoveTap, Function(Member) onAddTap, List<Member> ff) =>
+ static Widget MembersDetails(List<User> members, mediaQuery,
+      Function(User) onRemoveTap, Function(User) onAddTap, List<User> ff) =>
       ListView.separated(
 
         scrollDirection: Axis.vertical,
@@ -334,7 +335,7 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
       );
 
 
- static  Widget imageWidget(Member item) {
+ static  Widget imageWidget(User item) {
     return Row(
         children: [
           photo(item.Images, 50, 100),
@@ -387,7 +388,7 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
         ),
       );
   }
- static Widget BuildInviteComp( List<Member> members, List<Member> filteredMembers,Team team ) {
+ static Widget BuildInviteComp( List<User> members, List<User> filteredMembers,Team team ) {
    return Padding(
      padding: paddingSemetricVertical(),
      child: GridView.builder(
@@ -408,7 +409,7 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
      ),
    );
  }
- static Widget buildMemberGrid(Member member,bool isAssign,Team team) {
+ static Widget buildMemberGrid(User member,bool isAssign,Team team) {
    return BlocBuilder<MembersTeamCubit, MembersTeamState>(
      builder: (context, state) {
        return InkWell(

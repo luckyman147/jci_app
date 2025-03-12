@@ -75,7 +75,7 @@ class firstname extends StatelessWidget {
         return FormText( inputkey: 'SignUpFormfirstNameInput_textField',
 
           Onchanged:(firstname){
-            print(firstname);
+
             context.read<SignUpBloc>().add(FirstNameChanged(firstname));},
 
           errorText:  state.firstname.displayError != null ?
@@ -117,7 +117,7 @@ class InputComponent extends StatelessWidget {
   final String inputkey;
   final String hintText;
 
-  const InputComponent({
+  const InputComponent({super.key, 
     required this.controller,
 
     required this.onTap,

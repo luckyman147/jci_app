@@ -1,7 +1,6 @@
 import 'package:jci_app/features/Home/data/model/GuestModel.dart';
-import 'package:jci_app/features/Home/domain/entities/ActivityGuest.dart';
 
-import '../../domain/entities/Guest.dart';
+import '../../domain/entities/guest/ActivityGuest.dart';
 
 class ActivityguestModel extends ActivityGuest{
   const ActivityguestModel({required guest, required status})
@@ -10,7 +9,7 @@ class ActivityguestModel extends ActivityGuest{
   factory ActivityguestModel.fromJson(Map<String, dynamic> json) {
     return ActivityguestModel(
       //list of guests
-      guest: json['guest']!=null? GuestModel.fromJson(json['guest'] as Map<String, dynamic>) as Guest:Guest(id: "id", name: "name", email: "email", phone: "phone", isConfirmed: true),
+      guest: GuestModel.fromJson(json['guest'] as Map<String, dynamic>) ,
       status: json['status'],
     );}
    Map<String, dynamic> toMap() {

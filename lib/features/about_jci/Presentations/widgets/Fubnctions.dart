@@ -13,6 +13,7 @@ import 'package:jci_app/features/about_jci/Presentations/widgets/PresidentsImpl.
 
 
 
+import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/util/snackbar_message.dart';
 
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
@@ -147,10 +148,10 @@ static   void update( TaskVisibleState state, BuildContext context, TextEditingC
   if (action == PresidentsAction.Add) {
 
 
-    final President president = President(name: name.text, year: ste.year, CoverImage: state.image, id: '');
+    final President president = President(name: name.text, year: ste.year, CoverImage: state.images[0], id: '');
     context.read<PresidentsBloc>().add(CreatePresident(president));
   } else if (action == PresidentsAction.Update) {
-    final President president = President(name: name.text, year: ste.year, CoverImage: state.image, id: presidents!.id);
+    final President president = President(name: name.text, year: ste.year, CoverImage: state.images[0], id: presidents!.id);
 
     context.read<PresidentsBloc>().add(UpdatePresident(president));
   }}
@@ -191,7 +192,7 @@ static ListenerBoard(BuildContext context, YearsState state, BoordState ste){
   }
 
 }
-static bool isExist(Member member,Map<String, dynamic> map){
+static bool isExist(User member,Map<String, dynamic> map){
     if (map['member'] == null || map['member'] is! Member) {
       return false;
     }

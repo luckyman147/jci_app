@@ -2,10 +2,13 @@ import 'dart:convert';
 import 'dart:developer';
 
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
+import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 
+import '../../../../core/PrimitiveUser/UserModel.dart';
 import '../../../../core/config/env/urls.dart';
 import '../../../../core/config/services/store.dart';
 import '../../../../core/config/services/uploadImage.dart';
@@ -20,7 +23,7 @@ abstract class MemberRemote {
       String name
       );
 
-  Future<List<MemberModel>> GetMembers();
+  Future<List<UserModel>> GetMembers();
   Future<List<MemberModel>> getMembersWithRanks();
   Future<Unit> deleteAccount();
   Future<MemberModel> getMemberByid(String id);
@@ -46,156 +49,111 @@ Future<Unit> validateCotisation(String memberid,int type, bool cotisation);
 
 }
 class MemberRemoteImpl implements MemberRemote {
-  final http.Client client;
-
-  MemberRemoteImpl({required this.client});
+ final FirebaseFirestore fire;
+ final http.Client client;
+  MemberRemoteImpl(this.client, {required this.fire});
 
   @override
   Future<MemberModel> getUserProfile() async {
-
-    final tokens=await getTokens();
-
-
-    // replace with your API endpoint
-    final  AccessToken =  tokens[1]; // replace with your actual access token
-
     try {
-      final Response = await client.get(
-        Uri.parse(getUserProfileUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $AccessToken',
-        },
+      final userId=await Store().getUserId();
+      // Reference to the Firestore collection
+      final collectionRef = fire.collection('users');
 
-      );
-      print(" ya get ${Response.statusCode}");
-      if (Response.statusCode == 200) {
-        final Map<String, dynamic> response = jsonDecode(Response.body);
-        print("response $response");
-        final  MemberModel member=MemberModel.fromJson(response);
-        await  MemberStore.saveModel(member);
+      // Fetch the specific document by ID
+      final docSnapshot = await collectionRef.doc(userId).get();
 
-
-
-
-        return Future.value(member);
-      }
-
-
-      else {
-        // Request failed
-        print('Request failed with status: ${Response.statusCode}');
-        print('Response body: ${Response.body}');
-        throw ServerException();
+      // Check if the document exists
+      if (docSnapshot.exists) {
+        final roleReference = docSnapshot['role'] as DocumentReference?;
+        Map<String, dynamic>? roleData;
+        if (roleReference != null) {
+          final roleSnapshot = await roleReference.get();
+          if (roleSnapshot.exists) {
+            roleData = roleSnapshot.data() as Map<String, dynamic>?;
+          }
+        }
+        // Convert the document to a UserModel
+        return MemberModel.fromJson(docSnapshot.data()!, ).fromrole(roleData!["roleName"]) ;
+      } else {
+        // Throw an exception if the user is not found
+        throw Exception('User not found');
       }
     } catch (e) {
-      // Exception occurred during the request
-      print('Exception during request: $e');
-      throw ServerException();
+      // Log and throw custom exceptions for error handling
+      Logger().e('Exception during Firestore fetch: $e');
+      throw ServerException(); // Replace with your custom exception
     }
-
-
   }
 
 
   @override
   Future<List<MemberModel>> GetmMemberByName(String name)async  {
 
-    final tokens=await getTokens();
     try {
 
-      final Response = await client.get(
-        Uri.parse("$getMember/name/$name"),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${tokens[1]}',
-        },
-
-      );
-      print(" ya get ${Response.statusCode}");
-      if (Response.statusCode == 200) {
-        final decodedJson = json.decode(Response.body) as List<dynamic>;
-        final membermodels = decodedJson.map<MemberModel>((jsonMember) => MemberModel.fromJson(jsonMember)).toList();
-        return membermodels;
 
 
+      // Reference to the Firestore collection
+      final collectionRef = FirebaseFirestore.instance.collection('users');
 
 
+      // Convert the name to lowercase for case-insensitive search
+      final lowerCaseName = name.toLowerCase();
+
+      // Query for `firstName` starting with the input
+      final firstNameSnapshot = await collectionRef
+          .where("firstName", isGreaterThanOrEqualTo: lowerCaseName)
+          .where("firstName", isLessThan: '$lowerCaseName\uf8ff')
+          .get();
+
+      // Query for `lastName` starting with the input
+      final lastNameSnapshot = await collectionRef
+          .where("lastName", isGreaterThanOrEqualTo: lowerCaseName)
+          .where("lastName", isLessThan: '$lowerCaseName\uf8ff')
+          .get();
+
+      // Combine results from both queries
+      final combinedDocs = {...firstNameSnapshot.docs, ...lastNameSnapshot.docs};
+
+      // Map the documents to `MemberModel`
+      final memberModels = combinedDocs
+          .map((doc) => MemberModel.fromJson(doc.data()))
+          .toList();
 
 
-
-
-      }
-      else  if (Response.statusCode==401){
-        throw UnauthorizedException();
-      }
-      else {
-        // Request failed
-        print('Request failed with status: ${Response.statusCode}');
-        print('Response body: ${Response.body}');
-        throw ServerException();
-      }
-
-
-
-
+      return memberModels;
     } catch (e) {
-      // Exception occurred during the request
-      print('Exception during request: $e');
-      throw ServerException();
+      // Log and throw custom exceptions for error handling
+      Logger().e('Exception during Firestore fetch: $e');
+      throw ServerException(); // Replace with your custom exception
     }
   }
 
   @override
-  Future<List<MemberModel>> GetMembers() async {
-
-    final tokens=await getTokens();
-
-    // replace with your API endpoint
-    final  AccessToken =  tokens[1];
-
+  Future<List<UserModel>> GetMembers() async {
     try {
-      final Response = await client.get(
-        Uri.parse(getallMembers),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $AccessToken',
-        },
+      // Get the current user ID (replace this with your logic to get the model's ID)
 
-      );
 
-      if (Response.statusCode == 200) {
-        final model=await MemberStore.getModel();
-        final decodedJson = json.decode(Response.body) as List<dynamic>;
-        final membermodels = decodedJson.map<MemberModel>((jsonMember) => MemberModel.fromJson(jsonMember)).toList();
-        membermodels.removeWhere((element) => element.id==model!.id);
-        return membermodels;
+      // Reference to the Firestore collection
+      final collectionRef = FirebaseFirestore.instance.collection('users');
+
+      // Fetch the documents
+      final querySnapshot = await collectionRef.get();
+
+      // Convert the documents to a list of `MemberModel`
+      final memberModels = querySnapshot.docs
+          .map<UserModel>((doc) => UserModel.fromJson(doc.data(),false))
+          .toList();
 
 
 
-
-
-
-
-
-      }
-      else  if (Response.statusCode==401){
-        throw UnauthorizedException();
-      }
-      else {
-        // Request failed
-        print('Request failed with status: ${Response.statusCode}');
-        print('Response body: ${Response.body}');
-        throw ServerException();
-      }
-
-
-
-
+      return memberModels;
     } catch (e) {
-      // Exception occurred during the request
-      print('Exception during request: $e');
-      throw ServerException();
+      // Log and throw custom exceptions for error handling
+      Logger().e('Exception during Firestore fetch: $e');
+      throw ServerException(); // Replace with your custom exception
     }
   }
 
@@ -207,7 +165,7 @@ class MemberRemoteImpl implements MemberRemote {
 
   @override
   Future<Unit> UpdateMember(MemberModel memberModel)async  {
-    final tokens= await Store().GetTokens();
+    final tokens= await const Store().GetTokens();
     final body =memberModel.toJson();
 
 
@@ -228,7 +186,7 @@ class MemberRemoteImpl implements MemberRemote {
         if (uploadResponse.statusCode==200){
           // upload from response
           uploadResponse.stream.transform(utf8.decoder).listen((value) {
-            print(value);
+
           });
           final responseBodyBytes = await uploadResponse.stream.toBytes();
 
@@ -243,7 +201,7 @@ class MemberRemoteImpl implements MemberRemote {
           return  Future.value(unit);
         }
         else if (uploadResponse.statusCode==400){
-          debugPrint(uploadResponse.reasonPhrase.toString());
+
 
           throw EmptyDataException();
 
@@ -282,7 +240,7 @@ class MemberRemoteImpl implements MemberRemote {
       },
 
     );
-    print(" ya get ${Response.statusCode}");
+
     if (Response.statusCode == 200) {
       final Map<String, dynamic> response = jsonDecode(Response.body);
 
@@ -297,13 +255,11 @@ class MemberRemoteImpl implements MemberRemote {
 
     else {
       // Request failed
-      print('Request failed with status: ${Response.statusCode}');
-      print('Response body: ${Response.body}');
+
       throw ServerException();
     }
   } catch (e) {
-    // Exception occurred during the request
-    print('Exception during request: $e');
+
     throw ServerException();
   }
   }

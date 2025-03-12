@@ -11,6 +11,7 @@ import 'package:jci_app/features/Teams/presentation/widgets/TeamComponent.dart';
 
 import 'package:jci_app/features/Teams/presentation/widgets/TeamImpl.dart';
 
+import '../../../Home/domain/enums/Privacy.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
 
 

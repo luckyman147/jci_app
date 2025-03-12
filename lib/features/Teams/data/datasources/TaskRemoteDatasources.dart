@@ -70,7 +70,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource{
 
       body: json.encode({"name":name}),
     ).then((response) async {
-      debugPrint(response.statusCode.toString());
+
       if (response.statusCode == 201) {
         final Map<String, dynamic> decodedJson = json.decode(response.body) ;
         final TaskModel taskModel = TaskModel.fromJson(decodedJson);

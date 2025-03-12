@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:jci_app/core/PrimitiveUser/User.dart';
 import 'package:jci_app/core/error/Failure.dart';
 
 import '../../../../core/Member.dart';
@@ -21,7 +22,7 @@ abstract class MemberRepo {
   Future<Either<Failure, List<Member>>> GetMembersRank(bool isUpdated, );
   Future<Either<Failure, Member>> GetMembeWithHighestRank(bool isUpdated, );
 
-  Future<Either<Failure, List<Member>>> GetMembers(bool isUpdated);
+  Future<Either<Failure, List<User>>> GetMembers(bool isUpdated);
 
   Future<Either<Failure,Unit>> updateMember(Member member);
 

@@ -1,5 +1,4 @@
 import 'package:jci_app/features/Teams/domain/entities/Task.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 import 'CheckListModel.dart';
 import 'CommentsModel.dart';

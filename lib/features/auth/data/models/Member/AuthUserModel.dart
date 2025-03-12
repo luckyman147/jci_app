@@ -1,15 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:jci_app/features/auth/domain/entities/AuthUser.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 class AuthUserModel extends AuthUser{
-  AuthUserModel({required super.email, required super.firstName, required super.lastName, required super.Images, required super.role, required super.language, required super.password, required super.isEmailVerified});
+  AuthUserModel({required super.email,
+    required super.id,
+    required super.firstName, required super.lastName, required super.Images, required super.role, required super.language, required super.password, required super.isEmailVerified});
 
 
  // toJson
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'email': email,
       'firstName': firstName,
       'lastName': lastName,
@@ -22,6 +23,7 @@ class AuthUserModel extends AuthUser{
   //from entity
   factory AuthUserModel.fromEntity(AuthUser authUser) {
     return AuthUserModel(
+      id: authUser.id,
       email: authUser.email,
       firstName: authUser.firstName,
       lastName: authUser.lastName,
@@ -34,6 +36,7 @@ class AuthUserModel extends AuthUser{
     //from json
   factory AuthUserModel.fromJson(Map<String, dynamic> json) {
     return AuthUserModel(
+      id: json['id'] as String?,
       email: json['email'] as String,
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
@@ -45,8 +48,9 @@ class AuthUserModel extends AuthUser{
 
   }
   // from google
-  factory AuthUserModel.ofGoogle({required String email, required String displayName, required String language, required String photoUrl,required DocumentReference? role}) {
+  factory AuthUserModel.ofGoogle({required String email, required String displayName, required String language, required String photoUrl,required DocumentReference? role, required String id}) {
     return AuthUserModel(
+      id: id,
       email: email,
       firstName: displayName.split(" ")[0],
       lastName: displayName.split(" ")[1],

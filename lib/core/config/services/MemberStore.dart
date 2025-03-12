@@ -7,6 +7,7 @@ import 'package:secure_shared_preferences/secure_shared_pref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../MemberModel.dart';
+import '../../PrimitiveUser/UserModel.dart';
 
 
 
@@ -18,9 +19,9 @@ static const String _cachedMembersRank = 'CachedMembersWIthRanks';
   static String _memberID(String id)=> 'Member_$id';
   static String memberRank= 'MemberRank';
 
-  static Future<void> cacheMembers(List<MemberModel> Members) async{
+  static Future<void> cacheMembers(List<UserModel> Members) async{
     final pref = await SharedPreferences.getInstance();
-    List MembersModelToJson=Members.map((e) => e.toJson()).toList();
+    List MembersModelToJson=Members.map((e) => e.toJson(true)).toList();
     pref.setString(_CachedMembersKey, jsonEncode(MembersModelToJson));
   }
   static Future<void> cacheMembersWithRanks(List<MemberModel> Members) async{
@@ -53,12 +54,12 @@ static const String _cachedMembersRank = 'CachedMembersWIthRanks';
   }
 
 
-  static Future<List<MemberModel>> getCachedMembers() async{
+  static Future<List<UserModel>> getCachedMembers() async{
     final pref = await SharedPreferences.getInstance();
     final cachedMembers=pref.getString(_CachedMembersKey);
     if(cachedMembers!=null){
       List<dynamic> MembersJson=jsonDecode(cachedMembers);
-      return  MembersJson.map<MemberModel>((e) => MemberModel.fromJson(e)).toList();
+      return  MembersJson.map<UserModel>((e) => UserModel.fromJson(e,true)).toList();
     }
     return [];
   }
@@ -74,6 +75,28 @@ static const String _cachedMembersRank = 'CachedMembersWIthRanks';
 
 
     prefs.putString(_UserInfo, jsonEncode(value));
+  }
+  static Future<void> savePrimitiveModel(UserModel auth) async {
+    final prefs = await SecureSharedPref.getInstance();
+
+    final value = auth.toJson(true);
+
+
+    prefs.putString(_UserInfo, jsonEncode(value));
+  }
+  static Future<UserModel> getPrimitiveModel()async{
+    final prefs = await SecureSharedPref.getInstance();
+
+    final value = await  prefs.getString(_UserInfo);
+
+    if (value == null) {
+      throw Exception('No user found');
+    }
+    if (value.isEmpty) {
+      throw Exception('No user found');
+    }
+
+    return UserModel.fromJson(jsonDecode(value),true);
   }
   static Future<MemberModel?> getModel() async {
     final prefs = await SecureSharedPref.getInstance();

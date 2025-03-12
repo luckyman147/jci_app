@@ -39,7 +39,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
             key: _key,
             child: Column(
               children: [
-                Backbutton( text: '/login', ),
+                const Backbutton( text: '/login', ),
                 BuldForgetHeader(mediaquery: mediaquery),
                 BuildEmailForgetPassword(mediaquery),
                 const SizedBox(height: 30,),
@@ -54,10 +54,10 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
 
   Padding BuildEmailForgetPassword(MediaQueryData mediaquery) {
     return Padding(
-                padding: EdgeInsets.symmetric(horizontal: mediaquery.size.width/10),
+                padding: const EdgeInsets.symmetric(horizontal:20),
                 child: BlocBuilder<ResetBloc, ResetPasswordState>(
                   builder: (context, state) {
-                    return EmailWithText(emailController: _emailController, onTap: (email ) {
+                    return EmailWithText(isEmail: true, emailController: _emailController, onTap: (email ) {
                   context.read<ResetBloc>().add(EmailnameChanged(email));
                 }, errorText: state.email.displayError!=null?
                         "Invalid Email":null, inputState: InputsState()

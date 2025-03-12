@@ -6,17 +6,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/features/MemberSection/domain/usecases/MemberUseCases.dart';
 import 'package:jci_app/features/MemberSection/presentation/pages/memberProfilPage.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/strings/app_strings.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
-import '../../../../core/Member.dart';
+import '../../../MemberSection/presentation/components/AboutMemberComponent.dart';
 
 class MemberGridView extends StatefulWidget {
-  final List<Member> members;
+  final List<User> members;
   final String postId;
 
   const MemberGridView(
@@ -30,7 +31,7 @@ class _MemberGridViewState extends State<MemberGridView> {
   final TextEditingController _searchController = TextEditingController();
 
 
-  List<Member> filteredMembers = [];
+  List<User> filteredMembers = [];
 
   @override
   void initState() {
@@ -80,7 +81,7 @@ class _MemberGridViewState extends State<MemberGridView> {
     );
   }
 
-  Widget buildMemberGrid(Member member) {
+  Widget buildMemberGrid(User member) {
     return BlocBuilder<ActionJciCubit, ActionJciState>(
       builder: (context, state) {
         return InkWell(
@@ -156,8 +157,8 @@ class _MemberGridViewState extends State<MemberGridView> {
                             shape: BoxShape.circle,
                             border: Border.all(color: textColor, width: 2)
                         ),
-                        child: ProfileComponents.SHAPE(base64Decode(
-                            member.Images[0]['url']), 60))),
+                        child: AboutMemberComponent.SHAPE(
+                            member.Images[0], 60))),
 
                     // Badge
 

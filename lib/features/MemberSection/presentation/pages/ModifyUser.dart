@@ -5,13 +5,16 @@ import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/util/DialogWidget.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
+import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/components/TextFieldsComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/components/buttonsComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/member/functionMember.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/core/Member.dart';
 
 import '../../../../core/util/snackbar_message.dart';
-import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
+import '../../../Home/presentation/widgets/Activity/AddActivityWidgets.dart';
+import '../components/AboutMemberComponent.dart';
 
 class ModifyUser extends StatefulWidget {
   final Member member;
@@ -98,14 +101,14 @@ if (state.userStatus == UserStatus.Loading) {
     child: Column(
             children: [
 
-       ProfileComponents.imagezChanged(state.image,med,context)
+              AboutMemberComponent.imagezChanged(state.images[0],med,context)
     ,
               TextfieldNormal(context,"First Name".tr(context), "Enter First Name".tr(context),firstNameController,(poo){}),
               TextfieldNormal(context,"Last Name".tr(context), "Enter Last Name". tr(context),lastNameController,(poo){}),
               TextfieldDescription(context, "My Bio".tr(context), "Enter A Bio".tr(context), descriptionController, (p0) => null),
-              ProfileComponents.TextfieldNum("Phone Number".tr(context), "Enter  Phone Number".tr(context),NumberController,(poo){},context),
-              ProfileComponents.SaveChangesButton(()async{  FunctionMember.saveMember(  widget.member,firstNameController,lastNameController,NumberController,
-                  state.image,context,_formKey,descriptionController);},context),
+              TextFieldComponets.TextfieldNum("Phone Number".tr(context), "Enter  Phone Number".tr(context),NumberController,(poo){},context),
+              ButtonsMemberComponents.SaveChangesButton(()async{  FunctionMember.saveMember(  widget.member,firstNameController,lastNameController,NumberController,
+                  state.images[0],context,_formKey,descriptionController);},context),
           ]),
   ),
 );

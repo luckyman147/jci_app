@@ -106,7 +106,7 @@ class ListenerLoginFunctions{
     else if (state is ErrorLogin) {
       SnackBarMessage.showErrorSnackBar(
           message: state.message, context: context);
-      context.read<LoginBloc>().add( HandleUserEvent());
+      context.read<LoginBloc>().add( const HandleUserEvent());
     }
 
 

@@ -11,6 +11,25 @@ class RefreshActivities extends AcivityFEvent {
   @override
   List<Object> get props => [];
 }
+class AddParticipantEvent extends AcivityFEvent {
+
+  final activityParams act;
+  const AddParticipantEvent( {
+    required this.act,
+    });
+  @override
+  List<Object> get props => [act];
+}
+class RemoveParticipantEvent extends AcivityFEvent {
+  final activityParams act;
+
+
+  const RemoveParticipantEvent(  {
+    required this.act,
+    });
+  @override
+  List<Object> get props => [act];
+}
 class GetAllActivitiesEvent extends AcivityFEvent {
   final activity act;
 

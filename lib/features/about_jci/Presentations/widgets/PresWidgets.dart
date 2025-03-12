@@ -7,7 +7,8 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/presidents_bloc.dart';
 
 import '../../../../core/strings/app_strings.dart';
-import '../../../Home/presentation/widgets/Functions.dart';
+import '../../../Home/domain/enums/ActionImage.dart';
+import '../../../Home/presentation/widgets/Functions/Functions.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../Domain/entities/President.dart';
 import '../bloc/ActionJci/action_jci_cubit.dart';
@@ -154,11 +155,11 @@ static Widget sheetbody(BoxDecoration boxDecoration, President? president, TextE
 if (!mounted) return;
 if (image!=null){
   context.read<TaskVisibleBloc>().add(
-      ChangeImageEvent(image.path));
+      ChangeImageEvent(image.path,ActionImage.ADD));
 }
 else{
   context.read<TaskVisibleBloc>().add(
-      const ChangeImageEvent(vip));
+  const    ChangeImageEvent(vip,ActionImage.ADD));
 
 }
 

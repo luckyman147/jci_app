@@ -1,9 +1,5 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:ffi';
-
-import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:jci_app/core/PrimitiveUser/UserModel.dart';
 import 'package:jci_app/features/auth/data/models/Member/AuthUserModel.dart';
 import 'package:jci_app/features/auth/domain/dtos/LoginWithEmailDto.dart';
 import 'package:jci_app/features/auth/domain/dtos/LoginWithPhoneDto.dart';
@@ -13,13 +9,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/core/config/services/TeamStore.dart';
-import 'package:jci_app/core/MemberModel.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 
 import 'package:jci_app/core/config/services/store.dart';
 import 'package:jci_app/core/error/Exception.dart';
+
+import '../../../../core/config/services/FCMService/FCmServi.dart';
 
 
 
@@ -83,6 +80,7 @@ class AuthRemoteImpl implements AuthRemote {
   @override
   Future<Unit> signInWithGoogle() async {
     try {
+
       await googleSignIn.signOut();
 
       logger.i("Starting Google Sign-In process.");
@@ -140,7 +138,7 @@ class AuthRemoteImpl implements AuthRemote {
   @override
   Future<Unit>   RegisterWithEmail(SignInDtos signin)async {
     try {
-      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+   await auth.createUserWithEmailAndPassword(
         email: signin.member!.email.trim(),
         password: signin.member!.password.trim(),
       );
@@ -211,11 +209,12 @@ class AuthRemoteImpl implements AuthRemote {
     }
     else {
       logger.e("Error during email login: $e");
-    throw e ;
+    rethrow ;
     }
 
 
     }  catch (e) {
+      logger.e("Error during email login: $e");
       throw ServerException();
     }
   }
@@ -233,28 +232,40 @@ class AuthRemoteImpl implements AuthRemote {
     //collect user id from firebase
     final User? user = FirebaseAuth.instance.currentUser;
 
-    await FirebaseFirestore.instance.collection('users').doc(user!.uid).set(
+    final sto=await FirebaseFirestore.instance.collection('users').doc(user!.uid).set(
         body);
+    //update id
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).update(
+        {'id': user.uid});
 
 
 
     return Future.value(unit);
   }
   Future<void> SaveInCache(FirebaseFirestore db, User user) async {
-    final logger = Logger(); // Create a logger instance
+     // Create a logger instance
 
     logger.i('Start saving user to cache'); // Log the beginning of the function
 
     DocumentSnapshot userDoc = await db.collection('users').doc(user.uid).get();
+final userJson=AuthUserModel.fromJson(userDoc.data() as Map<String,dynamic>);
 
 
 
 
-    final idTokenResult = await user.getIdToken();
 await store.SetEmail(user.email!);
-    await store.setTokens("", idTokenResult!);
 
-    await store.setLoggedIn(true);
+    if (userJson.role != null) {
+      await store.setRole(userJson.role!);
+      getFcmToken(FirebaseMessaging.instance);
+     // logger.i('User saved to cache',userJson.role!.path); // Log the end of the function
+      await store.setLoggedIn(true);
+      await store.setUserId(user.uid);
+      await MemberStore.savePrimitiveModel(UserModel.fromEntity(userJson));
+      // Log setting logged in flag
+    }
+    else {
+      throw NotFoundException();}
   // Log setting logged in flag
   }
   Future <void> RegisterInWithGoogle(
@@ -263,17 +274,26 @@ await store.SetEmail(user.email!);
     logger.i("User signed in: ${user?.email}");
     final language = await store.getLocaleLanguage();
 
-    final UserGoogle=AuthUserModel.ofGoogle(email: user!.email!, displayName: user!.displayName!, language: language!, photoUrl: user.photoURL!, role:await getRoleReferenceByName("Member"),);
+    final UserGoogle=AuthUserModel.ofGoogle(email: user!.email!, displayName: user.displayName!, language: language!, photoUrl: user.photoURL!, role:await getRoleReferenceByName("Member"), id: user.uid);
 
 
 
     final body = UserGoogle.toJson();
     //collect user id from firebase
-    logger.i("User sqs in: ${body}");
+    logger.i("User sqs in: $body");
+
+    final userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+// Set the initial document
+    await userRef.set(body);
+
+// Update the document to include the `id` field
+    await userRef.update({'id': userRef.id});
+
+    // update user id in firestore
 
 
-    await FirebaseFirestore.instance.collection('users').doc(user.uid).set(
-        body);
+
 
 
 }

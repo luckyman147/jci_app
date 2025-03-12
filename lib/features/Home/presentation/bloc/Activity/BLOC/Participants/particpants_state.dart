@@ -1,55 +1,68 @@
 part of 'particpants_bloc.dart';
-enum ParticpantsStatus { initial, loading, success,changed, failed,loaded,LoadedGuests,empty,sent,ToMember,loadingExcel }
  class ParticpantsState extends Equatable {
-  final List<Map<String, dynamic>> isParticipantAdded;
-final List<dynamic> particpants ;
-final List<ActivityParticipants> members;
-final List<ActivityParticipants> membersSearch;
+
+final List<ParticipantsParams> AllPaticipants;
+final List<ParticipantsParams> PresentList;
+final List<ParticipantsParams> AbsentList;
+final List<ParticipantsParams> joinedList;
+final List<ParticipantsParams> PartcipantsSearch;
+final List<ParticipantsParams> PArtcipantsSelected;
+final bool isSelectAll;
 final ParticpantsStatus status ;
-final List<ActivityGuest> Activeguests;
-final List<Guest> Allguests;
+
 final String message;
-final List<ActivityGuest> guestsSearch;
-final List<Guest> guestsAllSearch;
 
 
-  const ParticpantsState({required this.isParticipantAdded, this.particpants = const [],
+
+  const ParticpantsState({
+    this.isSelectAll = false,
     this.message = '',
-    this.guestsAllSearch=const [],
+    this.PArtcipantsSelected = const [],
+    this.joinedList = const [],
+    this.status = ParticpantsStatus.initial, this.PartcipantsSearch = const [],
+    this.AllPaticipants = const [], this.PresentList = const [], this.AbsentList = const []
+
+  });
+
+  ParticpantsState copyWith({
+
+    bool? isSelectAll,
 
 
-    this.members = const [], this.status = ParticpantsStatus.initial, this.Activeguests = const [], this.guestsSearch = const [], this.membersSearch = const [], this.Allguests = const []});
 
-  ParticpantsState copyWith({List<Map<String, dynamic>>? isParticipantAdded, List<dynamic>? particpants, List<ActivityParticipants>? members, ParticpantsStatus? status,List<ActivityGuest>? Activeguests,List<ActivityGuest>? guestsSearch,List<ActivityParticipants>? membersSearch,List<Guest>? Allguests, String? message,
+    List<ParticipantsParams>? PArtcipantsSelected,
+    List<ParticipantsParams>? AllPaticipants,
+    List<ParticipantsParams>? PresentList,
+    List<ParticipantsParams>? AbsentList,
+    List<ParticipantsParams>? PartcipantsSearch,
+    List<ParticipantsParams>? joinedList,
 
-    List<Guest>? guestsAllSearch
+    ParticpantsStatus? status,
+    String? message,
 
-  }) {
+    }) {
 
-    return ParticpantsState(
-      message: message ?? this.message,
-      isParticipantAdded: isParticipantAdded ?? this.isParticipantAdded,
-      guestsAllSearch: guestsAllSearch??this.guestsAllSearch,
-
-
-      particpants: particpants ?? this.particpants,
-      membersSearch: membersSearch ?? this.membersSearch,
-      Activeguests: Activeguests ?? this.Activeguests,
-      Allguests: Allguests ?? this.Allguests,
-      guestsSearch: guestsSearch ?? this.guestsSearch,
-      members: members ?? this.members,
-      status: status ?? this.status,
-    );
-  }
+      return ParticpantsState(
+        isSelectAll: isSelectAll ?? this.isSelectAll,
+        PArtcipantsSelected: PArtcipantsSelected ?? this.PArtcipantsSelected,
+        AllPaticipants: AllPaticipants ?? this.AllPaticipants,
+        PresentList: PresentList ?? this.PresentList,
+        AbsentList: AbsentList ?? this.AbsentList,
+        PartcipantsSearch: PartcipantsSearch ?? this.PartcipantsSearch,
+        status: status ?? this.status,
+        message: message ?? this.message,
+        joinedList: joinedList ?? this.joinedList,
+      );
+    }
 
   @override
-  List<Object> get props => [isParticipantAdded, particpants, members, status,Activeguests,guestsSearch,membersSearch,Allguests,message,guestsAllSearch];
+  List<Object> get props => [message,status,AllPaticipants,PresentList,AbsentList,PartcipantsSearch,joinedList,PArtcipantsSelected,isSelectAll];
 }
 
 class ParticpantsInitial extends ParticpantsState {
-  const ParticpantsInitial({required super.isParticipantAdded}) ;
+  const ParticpantsInitial() ;
 
   @override
-  List<Object> get props => [isParticipantAdded];
+  List<Object> get props => [];
 }
 

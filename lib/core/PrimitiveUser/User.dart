@@ -14,6 +14,18 @@ class User extends Entity<String> {
   User({super.id, super.createdAt, super.createdBy, super.lastModified, super.lastModifiedBy, required this.email, required this.firstName, required this.lastName, required this.Images, required this.role});
 
 
+factory User.UserTest(){
+  return User(
+    email: "",
+    firstName: "",
+    lastName: "",
+    Images: const [],
+    role: null,
+  );
+}
+
+
+
 
   @override
   List<Object?> get props => [

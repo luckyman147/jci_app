@@ -59,7 +59,7 @@ class ResetForm extends SignUpEvent {
   const ResetForm();
 }
 class HandleErrorEvent extends SignUpEvent {
-HandleErrorEvent();
+const HandleErrorEvent();
   @override
   List<Object> get props => [];
 }

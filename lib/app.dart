@@ -1,6 +1,8 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:jci_app/core/config/env/providersList.dart';
 import 'package:jci_app/core/routes.dart';
@@ -9,6 +11,7 @@ import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
 import 'core/config/locale/app__localizations.dart';
 
+import 'core/config/services/NotificationService/NotificationService.dart';
 import 'features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import 'core/app_theme.dart';
@@ -31,6 +34,26 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    FirebaseMessaging.instance.requestPermission();
+
+    // Handle foreground messages
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        if (message.data['end_time'] != null) {
+          NotificationService.showCountUpNotification(message);
+        }
+        else {
+          NotificationService.showNotification(message);
+        }
+      }
+    });
+
+    // Handle notifications tapped while the app is in the background
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      if (message.data['route'] != null) {
+        context.go( message.data['route']);
+      }
+    });
     super.initState();
     // TODO: implement initState
     initialIndex = 0;
@@ -64,7 +87,7 @@ class _MyAppState extends State<MyApp> {
                     theme: themeData,
                     routerConfig: router(_navigatorKey, widget.text),
                     debugShowCheckedModeBanner: false,
-                    title: 'JCI App',
+                    title: 'JCI OC',
                     supportedLocales: const [
                       Locale('en', 'US'),
                       Locale('fr', 'FR'),

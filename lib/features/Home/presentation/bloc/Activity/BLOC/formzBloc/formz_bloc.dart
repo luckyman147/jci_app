@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +8,11 @@ import 'package:formz/formz.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/features/Home/domain/entities/Formz/Event.dart';
 import 'package:jci_app/features/Home/domain/entities/Formz/Membername.dart';
+import 'package:jci_app/features/Home/domain/enums/ActionImage.dart';
+import 'package:logger/logger.dart';
 
 import '../../../../../../../core/Member.dart';
+import '../../../../../../../core/PrimitiveUser/User.dart';
 import '../../../../../domain/entities/Event.dart';
 import '../../../../../domain/entities/Formz/A ctivityName.dart';
 import '../../../../../domain/entities/Formz/Date.dart';
@@ -24,6 +29,13 @@ class FormzBloc extends Bloc<FormzEvent, FormzState> {
     on<FormzEvent>((event, emit) {
       // TODO: implement event handler
     });
+    on<ThrowError>((event, emit) {
+      emit(state.copyWith(
+
+        Error: event.error,
+      ));
+      Logger().i("error ${event.error}");
+    });
     on<ActivityNameChanged>(_onActivityNameChanged);
     on<LocationChanged>(_onLocationChanged);
     on<DescriptionChanged>(_onDescriptionChanged);
@@ -33,18 +45,38 @@ class FormzBloc extends Bloc<FormzEvent, FormzState> {
     on<BeginTimeChanged>(_onBeginDateChanged);
     on<EndTimeChanged>(_onEndDateChanged);
     on<RegistraTimeChanged>(_onRegistrationDateChanged);
-    on<CategoryChanged>(_onCategoryChanged);
+
     on<MembernameChanged>(_onMemberChanged);
     on<jokerChanged>(_JokerChanged);
     on<RemoveMember>(_removeMemberFromList);
+    on<PaticipantsChanged>(_onParticipantsChanged);
+
 
     on<MemberFormzChanged>(_onMemberFormChanged);
 on<MembersTeamChanged>(_onMembersTeamChanged);
 on<InitMembers>(_initMembersTeamFormz);
+on<InitParticipants>(_initParticipants);
+
 on<EventChanged>(_onEventChanged);
 
 
     on<jokerTimeChanged>(_JokerTimeChanged);
+  }
+
+
+/// change participants
+  void _onParticipantsChanged(
+      PaticipantsChanged event, Emitter<FormzState> emit) {
+if (event.actionType==ActionImage.ADD ){
+  emit(state.copyWith(
+    PrivateParticipants: [...state.PrivateParticipants,event.particpantOfActivity],
+  ));
+}
+else {
+  emit(state.copyWith(
+    PrivateParticipants: state.PrivateParticipants.where((element) => element.id!=event.particpantOfActivity.id).toList(),
+  ));
+}
   }
   void _onActivityNameChanged(
       ActivityNameChanged event, Emitter<FormzState> emit) {
@@ -103,7 +135,7 @@ on<EventChanged>(_onEventChanged);
           endTimeInput: date,
           isValid: Formz.validate([date, state.endTimeInput])),
     );
-    debugPrint(state.endTimeInput.value.toString());
+
   }
 
   void _JokerChanged(
@@ -163,12 +195,7 @@ on<EventChanged>(_onEventChanged);
   }
 
 
-  void _onCategoryChanged(
-      CategoryChanged event, Emitter<FormzState> emit) {
-    emit(state.copyWith(
-      category: event.category,
-    ));
-  }
+
   void _onMemberFormChanged(
       MemberFormzChanged event, Emitter<FormzState> emit) {
     final member = MemberFormz.dirty(event.memberFormz);
@@ -193,6 +220,7 @@ on<EventChanged>(_onEventChanged);
     emit(state.copyWith(
       membersTeamFormz: members,
     ));
+
   }
 
 
@@ -217,6 +245,12 @@ on<EventChanged>(_onEventChanged);
       membersTeamFormz: members,
       status: FormzSubmissionStatus.success,
 
+    ));
+  }
+
+  FutureOr<void> _initParticipants(InitParticipants event, Emitter<FormzState> emit) {
+    emit(state.copyWith(
+      PrivateParticipants: event.members,
     ));
   }
 }

@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:jci_app/core/config/services/FCMService/FCmServi.dart';
 import 'package:secure_shared_preferences/secure_shared_pref.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,7 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'app.dart';
 import 'bloc_observer.dart';
 
-
+import 'core/config/services/NotificationService/NotificationService.dart';
+import 'features/auth/AuthWidgetGlobal.dart';
 import 'firebase_options.dart';
 import 'injection_container.dart' as di;
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -19,15 +21,23 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
 
   );
+  NotificationService.initialize(); // Initialize notification service
+  await dotenv.load(fileName: ".env");
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  getFcmToken(messaging);
+  messaging.onTokenRefresh.listen((newToken) {
+    storeFcmToken( newToken);  // Store the refreshed token in Firestore
+  });
+
   await FirebaseAppCheck.instance.activate(
-    // You can also use a `ReCaptchaEnterpriseProvider` provider instance as an
-    // argument for `webProvider`
+
 
 
     androidProvider: AndroidProvider.debug,
 
 
   );
+
   // Get the App Check token
 
 
@@ -40,4 +50,5 @@ void main() async {
 
   runApp(const MyApp());
 }
+
 

@@ -4,9 +4,9 @@ import 'package:jci_app/features/Teams/domain/entities/Task.dart';
 import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 import 'package:jci_app/features/Teams/domain/repository/TaskRepo.dart';
 
+import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/error/Failure.dart';
 import '../../../../core/usescases/usecase.dart';
-import '../../../../core/Member.dart';
 import '../entities/Checklist.dart';
 
 class GetTasksOfTeamUseCase extends UseCase<List<Tasks>, String> {
@@ -204,7 +204,7 @@ class inputFields{
   final bool? status;
   final String? teamid;
   final String? name;
-  final Member? member;
+  final User? member;
   final Tasks? task;
   final bool? isCompleted;
   final DateTime? StartDate;

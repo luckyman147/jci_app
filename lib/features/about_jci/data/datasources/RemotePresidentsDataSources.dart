@@ -7,7 +7,6 @@ import 'package:jci_app/features/about_jci/data/models/PresidentModel.dart';
 
 import 'package:http/http.dart' as http;
 import '../../../../core/config/env/urls.dart';
-import '../../../../core/config/services/uploadImage.dart';
 import '../../../../core/error/Exception.dart';
 
 abstract class RemotePresidentsDataSources {
@@ -58,19 +57,7 @@ class RemotePresidentsDataSourcesImpl implements RemotePresidentsDataSources {
   }
 
   Future<PresidentModel> uploadimagefunct(Map<String, dynamic> decodedJson, PresidentModel president, PresidentModel presidents) async {
-         final uploadResponse=await uploadImages(decodedJson['_id'], president.CoverImage,'$SuperAdminUrl/',"CoverImage");
-
-    if (uploadResponse.statusCode==201){
-     return presidents;
-    }
-    else if (uploadResponse.statusCode==400){
-      debugPrint(uploadResponse.reasonPhrase.toString());
-      DeletePresident(decodedJson["_id"]);
-      throw EmptyDataException();
-
-    }else {
-      throw ServerException();
-    }
+       throw ServerException();
   }
 
   @override
@@ -101,19 +88,7 @@ class RemotePresidentsDataSourcesImpl implements RemotePresidentsDataSources {
 
   @override
   Future<PresidentModel> UpdateImagePresident(PresidentModel presidentModel)async {
-    final uploadResponse=await uploadImages(presidentModel.id, presidentModel.CoverImage,"$SuperAdminUrl/","CoverImage");
-    if (uploadResponse.statusCode==201){
-      final decodedJson = json.decode(await uploadResponse.stream.bytesToString());
-      return //display the image// ;
-PresidentModel.fromJson(decodedJson);
-    }
-    else if (uploadResponse.statusCode==400){
-
-      throw EmptyDataException();
-
-    }else {
-      throw ServerException();
-    }
+   throw ServerException();
   }
 
   @override

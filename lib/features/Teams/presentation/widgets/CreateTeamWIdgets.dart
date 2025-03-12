@@ -1,10 +1,8 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/util/snackbar_message.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
@@ -14,15 +12,17 @@ import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.d
 import 'package:jci_app/features/Teams/presentation/widgets/MembersTeamSelection.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 
+import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/app_theme.dart';
 import '../../../Home/domain/entities/Event.dart';
+import '../../../Home/domain/enums/ActionImage.dart';
+import '../../../Home/domain/enums/Privacy.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../../../Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
 import '../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 
 
 
-import '../../../../core/Member.dart';
 import '../../domain/entities/Team.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/TaskFilter/taskfilter_bloc.dart';
@@ -95,7 +95,7 @@ void AddUpdateFunction(GlobalKey<FormState> key, Team team, TextEditingControlle
       final Team team = Team(
           name: TeamName.text,
           description: description.text,
-          CoverImage: form.image,
+          CoverImage: form.images[0],
           event: state.eventFormz.value == null ? "" : state
               .eventFormz.value!.id,
           id: '',
@@ -112,7 +112,7 @@ void AddUpdateFunction(GlobalKey<FormState> key, Team team, TextEditingControlle
       final Team ha = Team(
           name: TeamName.text,
           description: description.text,
-          CoverImage: form.image,
+          CoverImage: form.images[0],
           event: state.eventFormz.value == null ? "" : state
               .eventFormz.value!.id,
           id: team.id,
@@ -135,7 +135,7 @@ Row Header(BuildContext context,String text) {
           BackButton(
             onPressed: () {
               GoRouter.of(context).go('/home');
-              context.read<TaskVisibleBloc>().add(const ChangeImageEvent("assets/images/jci.png",));
+              context.read<TaskVisibleBloc>().add(const ChangeImageEvent("assets/images/jci.png",ActionImage.ADD));
               context.read<GetTaskBloc>().add(resetevent());
               context.read<TaskVisibleBloc>().add(const changePrivacyEvent(Privacy.Primary));
 
@@ -148,98 +148,6 @@ Row Header(BuildContext context,String text) {
         ],
       );
 }
-Widget imageTeamPicker(mediaQuery) {
-  final ImagePicker picker = ImagePicker();
-  return BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
-    builder: (context, state) {
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-
-          InkWell(
-            onTap: () async {
-              final XFile? picked =
-              await picker.pickImage(source: ImageSource.gallery);
-              if (picked != null) {
-                context
-                    .read<TaskVisibleBloc>()
-                    .add(ChangeImageEvent( picked.path));
-              }
-            },
-            child: Stack(
-              children: [
-                Container(
-width: mediaQuery.size.width/1.1
-                  ,
-                  height: 200,
-
-decoration: BoxDecoration(
-borderRadius: BorderRadius.circular(15),
-border: Border.all(color: textColorBlack,width: 2),
-                    color: textColorWhite,
-                  ),
-
-
-                  child:
-                       ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                        child:
-
-                        state.image=="assets/images/jci.png"||state.image.isEmpty?
-                        Image.asset("assets/images/jci.png",height: 100,width: 100,):
-                        Image.file(
-                                            File(state.image ),
-                                            fit: BoxFit.cover,
-                        height: 200,
-                                          ),
-                      )),
-
-                Positioned(
-                    right: 0,
-
-                    child:Padding(
-                      padding:  EdgeInsets.symmetric(vertical: mediaQuery.size.height/15,horizontal: 5),
-                      child: InkWell(
-                        onTap: () async{
-                          final XFile? picked =
-                          await picker.pickImage(source: ImageSource.gallery);
-                          if (picked != null) {
-                            context
-                                .read<TaskVisibleBloc>()
-                                .add(ChangeImageEvent( picked.path));
-                          }
-                        },
-                        child: Container(
-
-                          decoration:
-                          BoxDecoration(color: BackWidgetColor,
-                              borderRadius: BorderRadius.circular(15)),
-                          child: const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-
-                                Icon(
-                                  Icons.edit,
-                                  color: textColorBlack,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ) )
-              ],
-            ),
-          ),
-        ],
-      );
-    },
-  );
-}
-
 Widget choosWidget()=>        const Center(
   child: Padding(
     padding: EdgeInsets.symmetric(vertical: 28.0),
@@ -344,7 +252,7 @@ Widget TextTeamfieldDescription(String name, String HintText,
 
 
 Widget bottomMembersSheet(BuildContext context, MediaQueryData mediaQuery,
-    List<Member> members,assignType assign,Team team
+    List<User> members,assignType assign,Team team
 
 
 
@@ -394,7 +302,7 @@ void MemberBottomSheetBuilder(BuildContext context, MediaQueryData mediaQuery,as
 
 
 Widget membersImage(BuildContext context, MediaQueryData mediaQuery,
-    List<Member> members,)=>Padding(
+    List<User> members,)=>Padding(
   padding: const EdgeInsets.symmetric(horizontal: 8.0),
   child: Row(
 

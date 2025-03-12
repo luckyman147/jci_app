@@ -21,8 +21,9 @@ class UserPermissionsModel extends UserPermissions{
     );
   }
   // Convert UserPermissions instance back to Map<String, Map<String, bool>>
-  Map<String, Map<String, Map<String,bool>>> toMap() {
+  Map<String, dynamic> toMap() {
     return {
+
       for (var feature in featurePermissions) feature.featureId: FeaturePermissionsModel.fromEntity(feature).toMap(),
     };
   }

@@ -1,5 +1,6 @@
 
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:jci_app/core/strings/failures.dart';
@@ -198,13 +199,13 @@ void _deleteMember(deleteMemberEvent event, Emitter<MemberManagementState> emit)
         cotisationList[1] = true;
       }
 
-      return state.copyWith(typeResult: TypeResult.success, ErrorMessage: message,role: "admin",
-          points: state.points+1000,
+      return state.copyWith(typeResult: TypeResult.success, ErrorMessage: message,role: FirebaseFirestore.instance.doc("Admin")
+          ,points: state.points+1000,
           cotisation: cotisationList);}
         else if (type==MemberType.member){
 
 
-          return state.copyWith(typeResult: TypeResult.success, ErrorMessage: message,role: "member",
+          return state.copyWith(typeResult: TypeResult.success, ErrorMessage: message,role: FirebaseFirestore.instance.doc("Member"),
              );
         }
     else{
@@ -215,7 +216,7 @@ void _deleteMember(deleteMemberEvent event, Emitter<MemberManagementState> emit)
             cotisationList[1] = true;
           }
 
-          return state.copyWith(typeResult: TypeResult.success, ErrorMessage: message,role: "superadmin",
+          return state.copyWith(typeResult: TypeResult.success, ErrorMessage: message,role: FirebaseFirestore.instance.doc(""),
               points: state.points+2000,
               cotisation: cotisationList);
       }}

@@ -1,17 +1,5 @@
 part of 'task_visible_bloc.dart';
-enum Section{
-  Details,Attachments,Comments
 
-}
-enum Status{Loaded,Loading,Error,Empty,Initial,Changed}
-enum TextFieldsTitle {
-  Active,Inactive}
-enum TextFieldsDescription {
-  Active,Inactive}
-
-
-enum Privacy{
-  Primary,Private}
  class TaskVisibleState extends Equatable {
    final bool WillAdded;
    final bool WillDeleted;
@@ -19,7 +7,9 @@ enum Privacy{
    final bool isUpdated;
 final Privacy privacy;
 final Section section;
-final String image;
+final List<String> images;
+
+
 final TextFieldsTitle textFieldsTitle;
 final TextFieldsDescription textFieldsDescription;
 final Status status;
@@ -30,7 +20,7 @@ final Status status;
       this.privacy=Privacy.Primary,
      this.isUpdated=false,
 
-     this.image= "assets/images/jci.png",
+     this.images=const  [],
      this.status=Status.Initial,
 
    this.section=Section.Details,
@@ -43,7 +33,7 @@ final Status status;
       Privacy? privacy,
      bool? willSearch,
 
-     String? image,
+     List<String>? images,
      bool? WillDeleted,
     bool? WillAdded,
       bool? isUpdated,
@@ -62,7 +52,7 @@ final Status status;
       willSearch: willSearch ?? this.willSearch,
       textFieldsTitle: textFieldsTitle ?? this.textFieldsTitle,
       textFieldsDescription: textFieldsDescription ?? this.textFieldsDescription,
-      image: image ?? this.image,
+      images: images ?? this.images,
        status: status ?? this.status,
 
 
@@ -74,7 +64,7 @@ final Status status;
    // TODO: implement props
    List<Object?> get props => [WillAdded,WillDeleted,section,
       privacy,
-     textFieldsTitle,textFieldsDescription,image,status,willSearch,isUpdated];
+     textFieldsTitle,textFieldsDescription,images,status,willSearch,isUpdated];
    }
 
 

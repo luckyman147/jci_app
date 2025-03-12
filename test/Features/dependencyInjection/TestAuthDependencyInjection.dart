@@ -234,5 +234,5 @@ void setupAuthTestDependencies() {
   sl.registerLazySingleton(() => MockHttpClient());
   sl.registerLazySingleton(() => Logger());
   sl.registerLazySingleton(() => InternetConnectionChecker());
-  sl.registerLazySingleton(() => Store());
+  sl.registerLazySingleton(() => const Store());
 }

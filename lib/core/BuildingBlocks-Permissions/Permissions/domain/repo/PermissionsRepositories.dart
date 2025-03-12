@@ -15,7 +15,7 @@ abstract class PermissionsRepository {
   /// [featureIds] - A list of feature IDs to retrieve permissions for.
   ///
   /// Returns a map where each feature ID is associated with its specific permissions.
-  Future<Either<Failure,FeaturePermissions>> loadPermissionsOfUser(
+  Future<Either<Failure,List<FeaturePermissions>>> loadPermissionsOfUser(
       LoadPermissionsOfUser loadPermissionsOfUser);
 
   /// Loads permissions of the current master user.
@@ -24,7 +24,7 @@ abstract class PermissionsRepository {
   /// [featureIds] - A list of feature IDs to retrieve permissions for.
   ///
   /// Returns a map where each feature ID is associated with its specific permissions.
-  Future<Either<Failure,FeaturePermissions>>loadPermissionsOfMaster(
+  Future<Either<Failure,List<FeaturePermissions>>>loadPermissionsOfMaster(
        List<String> featureIds);
 
   /// Checks if a specific permission is granted for a feature.

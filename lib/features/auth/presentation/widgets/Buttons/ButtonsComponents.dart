@@ -38,8 +38,8 @@ class GoogleButton extends StatelessWidget {
 }
 class LoginWithEmailButton extends StatelessWidget {
 final InputsState state;
-  const LoginWithEmailButton({
-key, required this.state,
+  const LoginWithEmailButton({super.key, 
+required this.state,
   });
 
   @override
@@ -51,7 +51,7 @@ key, required this.state,
         children: [
           authButton(onPressed: (){
 
-            context.read<LoginBloc>().add(HandleUserEmail());
+            context.read<LoginBloc>().add(const HandleUserEmail());
 if (state.inputsValue==Inputs.Google) {
   context.read<InputsCubit>().ActivateEmail();
 } else {
@@ -69,8 +69,8 @@ if (state.inputsValue==Inputs.Google) {
 }
 class LoginWithPhoneButton extends StatelessWidget {
 
-  const LoginWithPhoneButton({
-    key,
+  const LoginWithPhoneButton({super.key, 
+
   });
 
   @override

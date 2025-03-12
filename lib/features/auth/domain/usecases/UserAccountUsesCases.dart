@@ -1,7 +1,5 @@
 
 
-import 'package:jci_app/core/Member.dart';
-import 'package:jci_app/features/auth/domain/dtos/CheckOtopDtos.dart';
 
 import '../dtos/ResetpasswordDtos.dart';
 import 'USesCasesGlobal.dart';

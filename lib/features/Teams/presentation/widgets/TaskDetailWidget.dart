@@ -5,24 +5,26 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 
-import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/functionMember.dart';
+import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
+import 'package:jci_app/features/MemberSection/presentation/widgets/member/functionMember.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 
 import 'package:jci_app/features/Teams/presentation/bloc/Timeline/timeline_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/CheckList.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
-import 'package:jci_app/core/Member.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 
+import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/app_theme.dart';
 
+import '../../../Home/domain/enums/Privacy.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
-import '../../../Home/presentation/widgets/MemberSelection.dart';
+import '../../../Home/presentation/widgets/Members/component/MemberSelection.dart';
 
 
+import '../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
 import '../../domain/entities/Team.dart';
 
 import '../../domain/usecases/TaskUseCase.dart';
@@ -402,7 +404,7 @@ child: SizedBox(
                           context, mediaQuery,     state.tasks[widget.index]["AssignTo"].length,
                           state.tasks[widget.index]["AssignTo"],30,40),
                     ),
-          ProfileComponents.buildFutureBuilder(AddAssignToWidget(context, mediaQuery, state), true, "", (p0) => FunctionMember.isAssignedOrLoyal(team,task["AssignTo"] ))
+//                    AsyncComponents.buildFutureBuilder(AddAssignToWidget(context, mediaQuery, state), true, "", (p0) => FunctionMember.isAssignedOrLoyal(team,task["AssignTo"] ))
 
                   ],
                 ),
@@ -436,7 +438,7 @@ child: SizedBox(
                       );
   }
 
-  void DerleteAssignTo(GetTaskState state, Member member, BuildContext context) {
+  void DerleteAssignTo(GetTaskState state, User member, BuildContext context) {
                     //delete memberr
     final inputFields input=inputFields(taskid: state.tasks[widget.index]['id'], teamid: widget.team.id, file: null, memberid: member.id, status: false, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: member, fileid: null, );
 
@@ -448,7 +450,7 @@ child: SizedBox(
                       context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
   }
 
-  void AddAssignTo(GetTaskState state, Member member, BuildContext context) {
+  void AddAssignTo(GetTaskState state, User member, BuildContext context) {
       final inputFields input=inputFields(taskid: state.tasks[widget.index]['id'], teamid: widget.team.id, file: null, memberid: member.id, status: true, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: member, fileid: null, );
 
     //add member
@@ -471,7 +473,7 @@ child: SizedBox(
 
                 children: [
                   buildText('Attached Files'.tr(context),mediaQuery),
-                  ProfileComponents.buildFutureBuilder(   Padding(
+              /*    AsyncComponents.buildFutureBuilder(   Padding(
                     padding: paddingSemetricHorizontal(),
                     child: buildAddButton(() async{
                       FileStorage.pickFile(mounted, context, widget.task['id']);
@@ -480,7 +482,7 @@ child: SizedBox(
                     }
                     ),
                   ), true, "", (p0) => FunctionMember.isAssignedOrLoyal(team,task['AssignTo'] ))
-
+*/
 
                 ],
               ),
@@ -541,7 +543,7 @@ child: SizedBox(
   Widget AssignTo(MediaQueryData mediaQuery) =>
       BlocBuilder<FormzBloc, FormzState>(
         builder: (context, state) {
-          debugPrint("state: ${state.memberFormz.value}");
+
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -554,9 +556,9 @@ child: SizedBox(
                   style: PoppinsRegular(18, textColorBlack),
                 ),
               ),
-              bottomMemberSheet(context, mediaQuery,
-                  state.memberFormz.value ?? Member.memberTest, "Select A member",
-                  "Member"),
+              BottomMemberSheetWidget(
+                 member:  state.memberFormz.value ?? User.UserTest(),text:  "Select A member",
+              title:     "Member",),
             ],
           );
         },
