@@ -5,6 +5,10 @@ import 'package:jci_app/features/Home/presentation/widgets/Fields/AddPoll.dart';
 import 'package:jci_app/features/Home/presentation/widgets/activityDetailsWidget/PollWidget.dart';
 import 'package:jci_app/features/Home/presentation/widgets/shimmer/ShimmerPollWidget.dart';
 
+import '../../../../MemberSection/domain/dto/UpdateObjectiveProgressDTO.dart';
+import '../../../../MemberSection/domain/entity/ActionDetails.dart';
+import '../../../../MemberSection/domain/entity/Objectif.dart';
+import '../../../../MemberSection/presentation/bloc/objectifs/ObjectifUserProgress/user_objectif_progress_cubit.dart';
 import '../../../Activity_Global.dart';
 import '../../../domain/enums/PollEnum.dart';
 
@@ -60,19 +64,7 @@ class PollImpl extends StatelessWidget {
       
       
       }, listener: (ctx,state){
-        if(state.pollEnum == PollEnum.Error){
-          SnackBarMessage.showErrorSnackBar(message: "Failed to delete", context: ctx);
-      
-          context.read<PollBloc>().add(ReseTSTate());
-          context.read<PollBloc>().add(FetchPolls(ActivityId: activityId));
-      
-        }
-        if(state.pollEnum == PollEnum.Added || state.pollEnum == PollEnum.Deleted){
-          context.read<PollBloc>().add(ReseTSTate());
-          context.read<PollBloc>().add(FetchPolls(ActivityId: activityId));
-      
-        }
-      
+
       },),
     );
   }

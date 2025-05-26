@@ -11,12 +11,14 @@ const {onDocumentCreated} = require("firebase-functions/v2/firestore");
 const {addParticipantToEvent} = require("./participants");
 const {removeParticipantFromEvent, sendReminderToAllUsers, scheduleReminder} =
 require("./participants");
-const {onObjectiveCreated}=require("./objectifs/objectifs");
+const {addNotificationToUserToBatch}=require("./Notificcations/Notifications");
+const {onObjectiveCreated, updateuser}=require("./objectifs/objectifs");
 const {onCommentCreated, onReplyCreated}= require("./comments");
 const {onRequest} = require("firebase-functions/v2/https");
 exports.addParticipantToEvent = addParticipantToEvent;
 exports.onCommentCreated = onCommentCreated;
 exports.onReplyCreated = onReplyCreated;
+exports.updateuser=updateuser;
 exports.onObjectiveCreated=onObjectiveCreated;
 exports.scheduleReminder = scheduleReminder;
 exports.sendReminderToAllUsers = sendReminderToAllUsers;
@@ -30,6 +32,7 @@ onDocumentCreated("activities/{id}",
         const title = "New Activity Created!";
         const body = `Activity: ${newActivity.name || "Unnamed Activity"} 
     has been added!`;
+
         // Send notification to all users subscribed to the topic 'all_users'
         await admin.messaging().send({
           "topic": "all_users",
@@ -81,17 +84,19 @@ exports.sendNotificationOnNewPV =onRequest(
               .collection("users").doc(participant).get();
           const user = userDoc.data();
           // update notifications list of each user
-          const userNotifications = user.notifications || [];
-          userNotifications.push({
-            title: title,
-            body: body,
-            route: `/activity/${activityId}`,
-          });
-          await userDoc.ref.update({notifications: userNotifications});
+          const userid = user.id;
 
           if (user && user.fcmTokens) {
             tokens.push(user.fcmTokens[user.fcmTokens.length - 1]);
           }
+          addNotificationToUserToBatch(
+              userid,
+              "PV",
+
+              body,
+              title,
+              admin.firestore(), admin.firestore().batch(),
+          );
         }
         if (tokens.length === 0) {
           console.log("No participants to notify.");

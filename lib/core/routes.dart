@@ -6,8 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:jci_app/features/Home/presentation/pages/CreateUpdateActivityPage.dart';
 import 'package:jci_app/features/Home/presentation/pages/detailsPage.dart';
 import 'package:jci_app/features/Home/presentation/widgets/components/SearchWidget.dart';
-import 'package:jci_app/features/MemberSection/presentation/pages/ModifyUser.dart';
-import 'package:jci_app/features/MemberSection/presentation/pages/memberProfilPage.dart';
+import 'package:jci_app/features/MemberSection/presentation/pages/user/ModifyUser.dart';
+import 'package:jci_app/features/MemberSection/presentation/pages/user/memberProfilPage.dart';
 import 'package:jci_app/features/Teams/presentation/screens/DetailsTaskScreen.dart';
 import 'package:jci_app/features/Teams/presentation/screens/TeamDeatailsScreen.dart';
 import 'package:jci_app/features/Home/presentation/pages/Home_page.dart';
@@ -18,7 +18,7 @@ import 'package:jci_app/features/changelanguages/presentation/pages/screen.dart'
 
 
 
-import '../features/MemberSection/presentation/pages/SettingsPage.dart';
+import '../features/MemberSection/presentation/pages/user/SettingsPage.dart';
 import '../features/Teams/domain/entities/Team.dart';
 import '../features/Teams/presentation/screens/CreateTeamScreen.dart';
 import '../features/auth/presentation/pages/InfoPage.dart';
@@ -124,7 +124,7 @@ GoRoute(path: "/activity/:id/:activity/:index",
     final  id = state.pathParameters['id']! ;
     final  activity = state.pathParameters['activity']! ;
     final  index = state.pathParameters['index']! ;
-    return ActivityDetailsPage( Activity: activity, id: id, index: int.parse(index),);
+    return ActivityDetailsPage( activityType: activity, id: id, index: int.parse(index),);
   },
 ),
 

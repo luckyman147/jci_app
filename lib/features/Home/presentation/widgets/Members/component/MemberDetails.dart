@@ -5,7 +5,7 @@ import 'package:jci_app/core/PrimitiveUser/User.dart';
 import '../../../../../MemberSection/domain/usecases/MemberUseCases.dart';
 import '../../../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../../../MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
-import '../../../../../MemberSection/presentation/pages/memberProfilPage.dart';
+import '../../../../../MemberSection/presentation/pages/user/memberProfilPage.dart';
 import 'MemberContainer.dart';
 
 // Your other imports for MemberSectionPage and BLoC events and states

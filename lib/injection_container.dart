@@ -1,8 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/PermissionsDependecyInjection.dart';
+import 'package:jci_app/core/config/services/verification.dart';
 import 'package:jci_app/features/Home/Activity_Global.dart';
 import 'package:jci_app/features/Home/Activity_Injection_container.dart';
-import 'package:jci_app/features/MemberSection/member_injection_container.dart';
+import 'package:jci_app/features/MemberSection/member_di_container.dart';
 import 'package:jci_app/features/Teams/Team_injection_Container.dart';
 import 'package:jci_app/features/about_jci/Jci_injection_Container.dart';
 
@@ -23,11 +24,11 @@ Future<void> init() async {
   initTeams();
 initActivities();
 initJci();
-initMembers();
+await initMembers();
 initAuth();
 initPermissions();
-  sl.registerFactory(() => Handler<Unit>(sl(),networkInfo: sl()));
   sl.registerFactory(() => Handler<dynamic>(sl(),networkInfo: sl()));
+  sl. registerLazySingleton(() => Verification(sl(), store: sl()));
   sl.registerFactory(() => Handler<bool>(sl(),networkInfo: sl()));
   sl.registerFactory(() => Handler<Activity>(sl(),networkInfo: sl()));
   sl.registerFactory(() => Handler<List<Activity>>(sl(),networkInfo: sl()));

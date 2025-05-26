@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import 'IEntity.dart';
-@immutable
+
 abstract class Entity<T> implements IEntity<T> {
   @override
   T? id;

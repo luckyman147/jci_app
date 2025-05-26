@@ -21,7 +21,7 @@ import '../../../Home/domain/enums/SearchType.dart';
 import '../../../Home/presentation/widgets/components/ErrorDisplayMessage.dart';
 import '../../../MemberSection/domain/usecases/MemberUseCases.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
-import '../../../MemberSection/presentation/pages/memberProfilPage.dart';
+import '../../../MemberSection/presentation/pages/user/memberProfilPage.dart';
 import '../../../../core/Member.dart';
 import '../../domain/entities/Team.dart';
 

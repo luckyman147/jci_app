@@ -1,7 +1,9 @@
 const admin = require("firebase-admin");
 const {onRequest} = require("firebase-functions/v2/https");
 const moment = require("moment");
+const {addNotificationToUserToBatch}=require("./Notificcations/Notifications");
 const {onSchedule} = require("firebase-functions/v2/scheduler");
+const batch = admin.firestore().batch();
 /**
  * Helper function to get the event.
  * @param {string} eventId - The ID of the event.
@@ -85,6 +87,13 @@ async function addParticipantToEvent(eventId, memberId) {
 
   await admin.firestore().collection("users")
       .doc(memberId).update({Activities: activities});
+  addNotificationToUserToBatch(
+      memberId, "Activities", `You have Particpated in ${eventData.name}`,
+      "New Participation in activity ",
+
+      admin.firestore(),
+      batch,
+  );
 
   // Send notification to the member
   await sendNotification(MData.fcmTokens, eventData.name);
@@ -130,6 +139,7 @@ exports.addParticipantToEvent = onRequest(
 
       try {
         await addParticipantToEvent(EId, MId);
+
         return res.status(200).json({message: "Participant added "});
       } catch (error) {
         console.error("Error adding participant to event:", error);

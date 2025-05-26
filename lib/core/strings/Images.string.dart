@@ -17,7 +17,7 @@ mixin images{
   static const team="assets/images/team.png";
   static const mail="assets/images/Mail.png";
   static const mailSenti="assets/images/MailSenti.png";
-
+static const No_notification="assets/imagesf/no_notification.png";
   static const cartousel='assets/json/description.json';
 
 }

@@ -6,8 +6,8 @@ list(APPEND FLUTTER_PLUGIN_LIST
   emoji_picker_flutter
   file_selector_linux
   flutter_localization
-  flutter_secure_storage_linux
   open_file_linux
+  simple_animation_progress_bar
   url_launcher_linux
 )
 

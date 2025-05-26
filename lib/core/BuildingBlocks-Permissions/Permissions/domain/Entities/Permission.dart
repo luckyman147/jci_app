@@ -9,7 +9,15 @@ enum PermissionType{
 class Permission {
   final PermissionType type;
   final bool isGranted;
-
+  Permission copyWith({
+    PermissionType? type,
+    bool? isGranted,
+  }) {
+    return Permission(
+      type: type ?? this.type,
+      isGranted: isGranted ?? this.isGranted,
+    );
+  }
   Permission({required this.type, required this.isGranted});}
 
 

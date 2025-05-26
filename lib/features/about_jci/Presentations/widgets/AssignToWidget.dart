@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/features/MemberSection/domain/usecases/MemberUseCases.dart';
-import 'package:jci_app/features/MemberSection/presentation/pages/memberProfilPage.dart';
+import 'package:jci_app/features/MemberSection/presentation/pages/user/memberProfilPage.dart';
 import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';

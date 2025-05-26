@@ -49,7 +49,7 @@ class FirstLineWidget extends StatelessWidget {
           children: [
             BackButton(
               onPressed: () {
-                AddUpdateFunctions.PopFunctions(work, context, id);
+                AddUpdateFunctions.popFunctions(work, context, id);
               },
             ),
             Row(

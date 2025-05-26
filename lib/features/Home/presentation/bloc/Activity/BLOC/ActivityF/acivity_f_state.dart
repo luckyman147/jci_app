@@ -7,7 +7,7 @@ class AcivityFState extends Equatable {
   final List<Activity>activitiesSearch;
 
   final Activity? activityById;
-
+final String? eventid;
   final String? errorMessage;
   final ActivityFetchState activityfetchState;
 
@@ -17,6 +17,7 @@ class AcivityFState extends Equatable {
     this.activities=const [],
     this.activitiesSearch=const   [],
     this.activityById,
+    this.eventid,
 
     this.errorMessage,
   });
@@ -25,6 +26,7 @@ class AcivityFState extends Equatable {
   AcivityFState copyWith({
     ActivityFetchState? activityfetchState,
     bool? isLoading,
+    String?eventid,
     List<Activity>? activities,
     List<Activity>? activitiesSearch,
     Activity? activityById,
@@ -35,6 +37,7 @@ class AcivityFState extends Equatable {
     return AcivityFState(
       activityfetchState: activityfetchState ?? this.activityfetchState,
       isLoading: isLoading ?? this.isLoading,
+      eventid: eventid??this.eventid,
       activities: activities ?? this.activities,
       activityById: activityById ?? this.activityById,
       activitiesSearch: activitiesSearch ?? this.activitiesSearch,
@@ -47,6 +50,7 @@ class AcivityFState extends Equatable {
   List<Object?> get props => [
     isLoading,
     activities,
+    eventid,
     activityById,
     activitiesSearch,
     errorMessage,

@@ -1,110 +1,81 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:googleapis/shared.dart';
+import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/Bloc/permissions/permissions_bloc.dart';
+import 'package:jci_app/core/config/env/Constants.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 
+import '../../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/functions/PermissionFunctions.dart';
 import '../../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
 import '../../../../../core/Member.dart';
 import '../../../../../core/app_theme.dart';
+import '../../../../Home/Activity_Global.dart';
 import '../../bloc/memberBloc/member_management_bloc.dart';
 import '../../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
 import '../member/BottomShettMember.dart';
-import '../member/functionMember.dart';
+import '../../functions/functionMember.dart';
+import 'ChangePoints.dart';
 
 class PointsWidget extends StatelessWidget {
   final Member member;
-  final MemberManagementState state;
+
   final FocusNode pointsFocusNode;
 
   const PointsWidget({
     Key? key,
     required this.member,
-    required this.state,
+
     required this.pointsFocusNode,
   }) : super(key: key);
 
+  static void show(BuildContext context, Member member,
+      MemberManagementState state, FocusNode node) {
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true, // Allow the bottom sheet to take up more space
+      builder: (context) {
+        return PointsWidget(member: member, pointsFocusNode: node);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    final mediaQuery = MediaQuery.of(context);
+    return Container(
       padding: paddingSemetricVerticalHorizontal(),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
+        // Ensure the column takes up minimal space
         children: [
-          const _PointsHeader(),
-          _PointsDetails(state: state),
-          const SizedBox(height: 10),
-          _EditPointsButton(member: member, pointsFocusNode: pointsFocusNode),
-          _RankWidget(member: member),
-        ],
-      ),
-    );
-  }
-}
+          BlocBuilder<MemberManagementBloc, MemberManagementState>(
+            builder: (context, state) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      side: const BorderSide(color: textColor, width: 2)),
+                title:   Center(
+                  child: Text('Update Points', style: PoppinsSemiBold(17.sp
+                      , ColorsApp.textColorBlack, TextDecoration.none),),
+                ),
 
-class _PointsHeader extends StatelessWidget {
-  const _PointsHeader();
+                  subtitle: ChangePoints(
+                   mediaQuery:    mediaQuery, state: state,
+                   id:   member.id!),
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text('Total Points', style: PoppinsRegular(18, textColor)),
-        Text('Cotisation'.tr(context), style: PoppinsRegular(18, textColor)),
-      ],
-    );
-  }
-}
-
-class _PointsDetails extends StatelessWidget {
-  final MemberManagementState state;
-
-  const _PointsDetails({required this.state});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: paddingSemetricHorizontal(h: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding: paddingSemetricHorizontal(h: 20),
-            child: Text(
-              state.points.toInt().toString(),
-              style: PoppinsSemiBold(25, textColorBlack, TextDecoration.none),
-            ),
-          ),
-          Text(
-            "${FunctionMember.CalculateCotisation(state.cotisation)}/${state.cotisation.length}",
-            style: PoppinsSemiBold(25, textColorBlack, TextDecoration.none),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _EditPointsButton extends StatelessWidget {
-  final Member member;
-  final FocusNode pointsFocusNode;
-
-  const _EditPointsButton({required this.member, required this.pointsFocusNode});
-
-  @override
-  Widget build(BuildContext context) {
-    return AsyncComponents.buildFutureBuilder(
-      Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          IconButton.outlined(
-            onPressed: () {
-              BottomMemberSheet.showBottomSheet(context, member, pointsFocusNode);
+                ),
+              );
             },
-            icon: const Icon(Icons.edit, size: 20),
           ),
+          // _RankWidget(member: member), // Uncomment if needed
         ],
       ),
-        PermissionType.canUpdate,""
     );
   }
+
 }
 
 class _RankWidget extends StatelessWidget {
@@ -142,7 +113,8 @@ class _RankWidget extends StatelessWidget {
           ),
         ),
       ),
-        PermissionType.canUpdate,""
+      PermissionType.canUpdate,
+      Constants.MANAGE_POINTS,
     );
   }
 }

@@ -1,14 +1,12 @@
-
-
-
-
 import 'package:go_router/go_router.dart';
+import 'package:jci_app/features/Home/Activity_Global.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
+import 'package:jci_app/features/Home/presentation/widgets/Functions/Listeners.dart';
 import 'package:jci_app/features/Home/presentation/widgets/components/Compoenents.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Home/HomeComp.dart';
-import 'package:jci_app/features/auth/presentation/bloc/Permissions/permissions_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
+import '../../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/Bloc/permissions/permissions_bloc.dart';
 import '../../../../MemberSection/presentation/widgets/member/MemberImpl.dart';
 import '../../../../intro/presentation/widgets.global.dart';
 import '../../bloc/Activity/activity_cubit.dart';
@@ -26,6 +24,7 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> {
   @override
   void initState() {
+context.read<ParticpantsBloc>().add(LoadParticipantIdEvent());
     context.read<AcivityFBloc>().add(
         GetActivitiesOfMonthEvent(act: widget.Activity));
     /*context.read<MembersBloc>().add(
@@ -66,23 +65,18 @@ class _HomeWidgetState extends State<HomeWidget> {
               child: const CalendarButton(
                 color: textColorWhite, IconColor: textColorBlack,),
             ),
-            BlocBuilder<PermissionsMemberBloc, PermissionsState>(
-              builder: (context, state) {
-                if (state.status == PermStatus.NewMember) {
-                  return IconButton(
-                    onPressed: () {
-                      context.read<AuthBloc>().add(const SignoutEvent());
-                      context.go('/login');
-                    },
-                    icon: const Icon(
-                      Icons.logout,
-                      color: Colors.red,
-                    ),
-                  );
-                }
-                return Container();
+            IconButton(
+              onPressed: () {
+                context.read<AuthBloc>().add(const SignoutEvent());
+                context.go('/login');
+                context.read<PermissionsBloc>().add(ResetListEvent());
               },
+              icon: const Icon(
+                Icons.logout,
+                color: Colors.red,
+              ),
             ),
+
 
           ],
         ),
@@ -94,63 +88,67 @@ class _HomeWidgetState extends State<HomeWidget> {
             }
             // TODO: implement listener}
           },
-          child: BlocConsumer<ActivityCubit, ActivityState>(
-            listener: (context, state) {},
-            builder: (context, state) {
-              return
+          child: BlocListener<AcivityFBloc, AcivityFState>(
+            listener: (context, state) {
+          Listeners.    ListentoJoinButton(state, context,widget.Activity.name);
+              // TODO: implement listener
+            },
+            child: BlocConsumer<ActivityCubit, ActivityState>(
+              listener: (context, state) {},
+              builder: (context, state) {
+                return
 
-                SingleChildScrollView(
-                  child: SafeArea(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: mediaQuery.size.height / 38,
-                          horizontal: mediaQuery.size.width / 20),
-                      child: BlocBuilder<AuthBloc, AuthState>(
-                        builder: (context, ste) {
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: paddingSemetricVertical(),
-                                child: const MyActivityButtons(),
-                              ),
-
-
-                              buildBody(
-                                  context, state.selectedActivity,
-                                  mediaQuery),
-
-
-                              BlocBuilder<PermissionsMemberBloc, PermissionsState>(
-                                builder: (context, state) {
-                                  return Padding(
-                                    padding: paddingSemetricHorizontal(h: 16),
-                                    child:
-                                    state.status == PermStatus.NewMember
-                                        ? Container()
-                                        :
-
-                                    HomeComponents.TeamsWidget(
-                                        mediaQuery, context),
-                                  );
-                                },
-                              ),
-                              MemberImpl.MemberWithHighestRanks(mediaQuery)
-                            ],
+                  SingleChildScrollView(
+                    child: SafeArea(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: mediaQuery.size.height / 38,
+                            horizontal: mediaQuery.size.width / 20),
+                        child: BlocBuilder<AuthBloc, AuthState>(
+                          builder: (context, ste) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: paddingSemetricVertical(),
+                                  child: const MyActivityButtons(),
+                                ),
 
 
-                          );
-                        },
+                                buildBody(
+                                    context, state.selectedActivity,
+                                    mediaQuery),
+
+
+                                Padding(
+                                  padding: paddingSemetricHorizontal(h: 16),
+                                  child:
+
+
+                                  HomeComponents.TeamsWidget(
+                                      mediaQuery, context),
+                                )
+
+                                ,
+                            //    MemberImpl.memberWithHighestRanks(mediaQuery)
+                              ],
+
+
+                            );
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                );
-            },
+                  );
+              },
+            ),
           ),
         ),
       ),
     );
   }
+
+
 
 
 }

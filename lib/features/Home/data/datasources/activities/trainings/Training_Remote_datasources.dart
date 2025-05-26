@@ -5,8 +5,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:jci_app/core/config/env/urls.dart';
 
-
-
 import 'package:http/http.dart' as http;
 import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/core/config/services/uploadImage.dart';
@@ -22,8 +20,6 @@ import 'package:jci_app/features/Home/domain/entities/ParticipantDetailsParam.da
 import '../../../../../auth/AuthWidgetGlobal.dart';
 import '../../../../domain/enums/ParticipantWithEvents.dart';
 
-
-
 abstract class TrainingRemoteDataSource {
   Future<List<TrainingModel>> getAllTraining();
   Future<TrainingModel> getTrainingById(String id);
@@ -37,49 +33,48 @@ abstract class TrainingRemoteDataSource {
   Future<Unit> leaveTraining(String id);
   Future<Unit> participateTraining(String id);
 
- Future<Unit> checkAbsence(String activityId, String memberId, String status) ;
+  Future<Unit> checkAbsence(String activityId, String memberId, String status);
 
-  Future<List<ParticipantDetailsParam>> getAllParticipants(String activityId) ;
+  Future<List<ParticipantDetailsParam>> getAllParticipants(String activityId);
 
-  Future<Unit> sendReminder(String activityId) ;
-
-
+  Future<Unit> sendReminder(String activityId);
 }
 
-class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
+class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource {
   final http.Client client;
   final Logger logger;
   final FirebaseFirestore firabaseFireStore;
-  final FirebaseImageUploader firebaseImageUploader ;
-
-  TrainingRemoteDataSourceImpl(this.logger, this.firabaseFireStore, this.firebaseImageUploader, {required this.client});
+  final FirebaseImageUploader firebaseImageUploader;
+  final ActivityRemoteDataSource activityRemoteDataSource;
+  TrainingRemoteDataSourceImpl(this.logger, this.firabaseFireStore,
+      this.firebaseImageUploader, this.activityRemoteDataSource,
+      {required this.client});
   @override
-  Future<TrainingModel> createTraining(TrainingModel Training)async {
+  Future<TrainingModel> createTraining(TrainingModel Training) async {
     final activitiesCollection = firabaseFireStore.collection('activities');
 
     try {
       await FirebaseMessaging.instance.subscribeToTopic("all_users");
       // Log the beginning of the addMeeting process
       logger.i("Starting the process to add a new event.");
-      final images=  await   firebaseImageUploader.uploadImagesToFirebase(Training.CoverImages);
+      final images = await firebaseImageUploader
+          .uploadImagesToFirebase(Training.CoverImages);
       logger.i("Images uploaded successfully");
       // Create the main activity document
-      DocumentReference activityDocRef = await activitiesCollection.add(TrainingModel.SetImages(Training, images) .toJson());
+      DocumentReference activityDocRef = await activitiesCollection
+          .add(TrainingModel.SetImages(Training, images).toJson());
       final documentId = activityDocRef.id;
       logger.i("Activity document created successfully with ID: $documentId");
-
 
       // Update the document with the generated document ID
       await activityDocRef.update({'id': documentId});
       logger.i("Activity document updated with the generated ID.");
 
       // return the document event
-      return TrainingModel.fromJson((await activityDocRef.get()).data() as Map<String, dynamic>);
-
+      return TrainingModel.fromJson(
+          (await activityDocRef.get()).data() as Map<String, dynamic>);
     } on FirebaseException catch (e) {
-
       throw handleErrors(e);
-
     } catch (e) {
       logger.e("An error occurred while adding the meeting: $e");
       throw ServerException();
@@ -88,80 +83,26 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
 
   @override
   Future<Unit> deleteTraining(String id) async {
-
     try {
       await firabaseFireStore.collection('activities').doc(id).delete();
       logger.i("Event deleted successfully with ID: $id");
       return Future.value(unit);
-    }
-    on FirebaseException catch (e) {
+    } on FirebaseException catch (e) {
       logger.e("An error occurred while deleting the event: $e");
       throw handleErrors(e);
-    }
-    catch (e) {
+    } catch (e) {
       logger.e("An error occurred while deleting the event: $e");
       throw ServerException();
     }
   }
 
   @override
-  Future<List<TrainingModel>> getAllTraining()async  {
+  Future<List<TrainingModel>> getAllTraining() async {
     try {
-      QuerySnapshot snapshot = await firabaseFireStore.collection('activities').where('type',isEqualTo: 'Training').
-      orderBy('ActivityEndDate', descending: true).
-
-      get();
-
-      List<TrainingModel> events = snapshot.docs.map((doc) {
-        return TrainingModel.fromJson(doc.data() as Map<String, dynamic>);
-      }).toList();
-
-      return events;
-    }
-    on FirebaseException catch (e) {
-      logger.e("An error occurred while fetching events: $e");
-      return [];
-    }
-    catch (e) {
-      logger.e("Error fetching events: $e");
-      return [];
-    }
-  }
-
-  @override
-  Future<TrainingModel> getTrainingById(String id) async{
-    try{
-    DocumentSnapshot doc = await firabaseFireStore.collection('activities').doc(id).get();
-
-    if (doc.exists) {
-      logger.i("Event retrieved successfully with ID: $id");
-      return TrainingModel.fromJson(doc.data() as Map<String, dynamic>);
-    } else {
-
-      throw NotFoundException();
-    }
-
-  } on FirebaseException catch (e) {
-  logger.e("An error occurred while retrieving the event: $e");
-  throw handleErrors(e);
-  } catch (e) {
-  logger.e("An error occurred while retrieving the event: $e");
-  throw Exception("Server error");
-  }
-  }
-
-  @override
-  Future<List<TrainingModel>> getTrainingOfTheMonth() async{
-    DateTime now = DateTime.now();
-    DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
-    DateTime firstDayOfNextMonth = DateTime(now.year, now.month + 1, 1);
-
-    try {
-      QuerySnapshot snapshot = await firabaseFireStore.collection('activities')
-          .where('ActivityBeginDate', isLessThan: firstDayOfNextMonth) // Starts before next month
-          .where('ActivityEndDate', isGreaterThanOrEqualTo: firstDayOfMonth)
-          .where('type',isEqualTo: 'Training')
-      // Ends after or on the first day of the month
+      QuerySnapshot snapshot = await firabaseFireStore
+          .collection('activities')
+          .where('type', isEqualTo: 'Training')
+          .orderBy('ActivityEndDate', descending: true)
           .get();
 
       List<TrainingModel> events = snapshot.docs.map((doc) {
@@ -169,148 +110,169 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource{
       }).toList();
 
       return events;
-    }
-    on FirebaseException catch (e) {
+    } on FirebaseException catch (e) {
       logger.e("An error occurred while fetching events: $e");
       return [];
-    }
-    catch (e) {
+    } catch (e) {
       logger.e("Error fetching events: $e");
       return [];
     }
-
   }
 
+  @override
+  Future<TrainingModel> getTrainingById(String id) async {
+    try {
+      DocumentSnapshot doc =
+          await firabaseFireStore.collection('activities').doc(id).get();
+
+      if (doc.exists) {
+        logger.i("Event retrieved successfully with ID: $id");
+        return TrainingModel.fromJson(doc.data() as Map<String, dynamic>);
+      } else {
+        throw NotFoundException();
+      }
+    } on FirebaseException catch (e) {
+      logger.e("An error occurred while retrieving the event: $e");
+      throw handleErrors(e);
+    } catch (e) {
+      logger.e("An error occurred while retrieving the event: $e");
+      throw Exception("Server error");
+    }
+  }
 
   @override
-  Future<Unit> leaveTraining(String id) async{
-    return ParticiActionActivity(id,PaticipantWithEventsAction.removeParticipantFromEvent );
+  Future<List<TrainingModel>> getTrainingOfTheMonth() async {
+    DateTime now = DateTime.now();
+    DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
+    DateTime firstDayOfNextMonth = DateTime(now.year, now.month + 1, 1);
 
+    try {
+      QuerySnapshot snapshot = await firabaseFireStore
+          .collection('activities')
+          .where('ActivityBeginDate',
+              isLessThan: firstDayOfNextMonth) // Starts before next month
+          .where('ActivityEndDate', isGreaterThanOrEqualTo: firstDayOfMonth)
+          .where('type', isEqualTo: 'Training')
+          // Ends after or on the first day of the month
+          .get();
 
+      List<TrainingModel> events = snapshot.docs.map((doc) {
+        return TrainingModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+
+      return events;
+    } on FirebaseException catch (e) {
+      logger.e("An error occurred while fetching events: $e");
+      return [];
+    } catch (e) {
+      logger.e("Error fetching events: $e");
+      return [];
+    }
+  }
+
+  @override
+  Future<Unit> leaveTraining(String id) async {
+    return activityRemoteDataSource.ParticiActionActivity(
+        id, PaticipantWithEventsAction.removeParticipantFromEvent);
   }
 
   @override
   Future<Unit> participateTraining(String id) async {
-    return ParticiActionActivity(id,PaticipantWithEventsAction.addParticipantToEvent );
-
+    return activityRemoteDataSource.ParticiActionActivity(
+        id, PaticipantWithEventsAction.addParticipantToEvent);
   }
 
   @override
   Future<Unit> updateTraining(TrainingModel Training) async {
     try {
-      final images=  await   firebaseImageUploader.uploadImagesToFirebase(Training.CoverImages);
+      final images = await firebaseImageUploader
+          .uploadImagesToFirebase(Training.CoverImages);
       logger.i("Images uploaded successfully");
 
-      await firabaseFireStore.collection('activities').doc(Training.id).update(TrainingModel.SetImages(Training, images) .toJson());
+      await firabaseFireStore
+          .collection('activities')
+          .doc(Training.id)
+          .update(TrainingModel.SetImages(Training, images).toJson());
       logger.i("Event updated successfully with ID: ${Training.id}");
       return Future.value(unit);
-    }
-    on FirebaseException catch (e) {
+    } on FirebaseException catch (e) {
       logger.e("An error occurred while updating the event: $e");
       throw handleErrors(e);
-    }
-    catch (e) {
+    } catch (e) {
       logger.e("An error occurred while updating the event: $e");
       throw ServerException();
-    }}
+    }
+  }
+
   @override
-  Future<Unit>  checkAbsence(String activityId, String memberId, String status) async{
-    final token = await getTokens();
+  Future<Unit> checkAbsence(
+      String activityId, String memberId, String status) async {
+    // final token = await getTokens();
 
-    return client.patch(
+    return client
+        .patch(
       Uri.parse(Urls.CheckAbsence),
-      headers: {"Content-Type": "application/json",
-        "Authorization":'Bearer ${token[1]}'
-
+      headers: {
+        "Content-Type": "application/json",
+        //   "Authorization":'Bearer ${token[1]}'
       },
-
-      body: json.encode({
-
-        "activityId": activityId,
-        "memberId": memberId,
-        "status": status
-      }),
-    ).then((response) async {
-
+      body: json.encode(
+          {"activityId": activityId, "memberId": memberId, "status": status}),
+    )
+        .then((response) async {
       if (response.statusCode == 200) {
-
-return Future.value(unit);
-
-
-
-      }
-      else if (response.statusCode == 400) {
+        return Future.value(unit);
+      } else if (response.statusCode == 400) {
         throw WrongCredentialsException();
-      }
-      else if (response.statusCode==401){
+      } else if (response.statusCode == 401) {
         throw UnauthorizedException();
-      }
-      else {
+      } else {
         throw ServerException();
       }
-
     });
   }
 
   @override
- Future<List<ParticipantDetailsParam>> getAllParticipants(String activityId) {
+  Future<List<ParticipantDetailsParam>> getAllParticipants(String activityId) {
+    return client.get(
+      Uri.parse(Urls.getAllParticipants(activityId)),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    ).then((response) async {
+      if (response.statusCode == 200) {
+        final List<dynamic> decodedJson = json.decode(response.body);
 
-      return client.get(
-        Uri.parse(Urls.getAllParticipants(activityId)),
-        headers: {"Content-Type": "application/json",
-
-
-        },
-
-      ).then((response) async {
-        if (response.statusCode == 200) {
-          final List<dynamic> decodedJson = json.decode(response.body);
-
-            final List<ParticipantDetailsParam> members = decodedJson
-                .map<ParticipantDetailsParam>((jsonMemberModel) =>
+        final List<ParticipantDetailsParam> members = decodedJson
+            .map<ParticipantDetailsParam>((jsonMemberModel) =>
                 ParticipantDetailsParam.fromMap(jsonMemberModel))
-                .toList();
-            return members;
-
-        } else if (response.statusCode == 400) {
-          throw EmptyDataException();
-        }else{
-          throw ServerException();
-     }
-      });
-}
+            .toList();
+        return members;
+      } else if (response.statusCode == 400) {
+        throw EmptyDataException();
+      } else {
+        throw ServerException();
+      }
+    });
+  }
 
   @override
   Future<Unit> sendReminder(String activityId) {
-
     return client.post(
       Uri.parse(Urls.SendReminderUrl(activityId)),
-      headers: {"Content-Type": "application/json",
-
-
+      headers: {
+        "Content-Type": "application/json",
       },
-
     ).then((response) async {
-
       if (response.statusCode == 200) {
-
         return Future.value(unit);
-
-      }
-      else if (response.statusCode == 400) {
+      } else if (response.statusCode == 400) {
         throw WrongCredentialsException();
-      }
-      else if (response.statusCode==401){
+      } else if (response.statusCode == 401) {
         throw UnauthorizedException();
-      }
-      else {
+      } else {
         throw ServerException();
-      }});
-
+      }
+    });
   }
-
-
-
-  }
-
-
+}

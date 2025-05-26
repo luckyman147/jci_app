@@ -38,10 +38,8 @@ class SaveButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    return BlocConsumer<AddDeleteUpdateBloc, AddDeleteUpdateState>(
-      listener: (ctx, state) {
-        Listeners.Listener(state, context);
-      },
+    return BlocBuilder<AddDeleteUpdateBloc, AddDeleteUpdateState>(
+
       builder: (context, state) {
         return GestureDetector(
           onTap: () {

@@ -18,15 +18,15 @@ import 'Containerdivider.dart';
 
 class SectionViewer extends StatefulWidget {
   final activity act;
+  final String id;
 
-  const SectionViewer({super.key, required this.act});
+  const SectionViewer({super.key, required this.act, required this.id});
   @override
   _SectionViewerState createState() => _SectionViewerState();
 }
 
 class _SectionViewerState extends State<SectionViewer> {
   late PageController _pageController;
-
 
   @override
   void initState() {
@@ -36,203 +36,224 @@ class _SectionViewerState extends State<SectionViewer> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaquery=MediaQuery.of(context);
+    final mediaquery = MediaQuery.of(context);
     return BlocBuilder<PageIndexBloc, PageIndexState>(
-  builder: (context, state) {
-    return Column(
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeaderTab(0, 'About',mediaquery,Viewsection.About),
+      builder: (context, state) {
+        return Column(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeaderTab(0, 'About', mediaquery, Viewsection.About),
+                _buildAboutSection(mediaquery, state),
+                Visibility(
+                    visible: state.viewsection == Viewsection.About,
+                    child: ActivityDetailsComponent.Description(mediaquery,
+                        context.read<AcivityFBloc>().state.activityById!)),
+              ],
+            ),
+            NoImageCard(ColorsApp.BackWidgetColor, 10),
 
-
-              _buildAboutSection(mediaquery,state),
-            ],
-          ),
-          NoImageCard(ColorsApp.BackWidgetColor,10),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeaderTab(0, 'Description',mediaquery,Viewsection.Description),
-              Visibility(
-                  visible: state.viewsection==Viewsection.Description,
-                  child: ActivityDetailsComponent.Description(mediaquery, context.read<AcivityFBloc>().state.activityById!)),
-
-            ],
-          ),
-          NoImageCard(ColorsApp.BackWidgetColor,10),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              widget.act==activity.Meetings?_buildHeaderTab(1, "Agenda",mediaquery,Viewsection.Agenda):Container(),
-              widget.act==activity.Meetings?_buildAgendaSection(mediaquery,state):Container(),
-              widget.act==activity.Meetings?NoImageCard(ColorsApp.BackWidgetColor,10):Container(),
-
-            ],
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              widget.act==activity.Meetings?_buildHeaderTab(1, "PV",mediaquery,Viewsection.PV):Container(),
-              widget.act==activity.Meetings?
-                  Visibility(
-                      visible: state.viewsection==Viewsection.PV,
-                      child: SizedBox(
-                    width: mediaquery.size.width,
-
-
-                  child:PVImpl( activityId: context.read<AcivityFBloc>().state.activityById!.id),
-
-                  )
-                  
-                  )
-                  
-                  
-                  :Container(),
-              widget.act==activity.Meetings?NoImageCard(ColorsApp.BackWidgetColor,10):Container(),
-
-            ],
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeaderTab(2, "Comments",mediaquery,Viewsection .Comment),
-              Visibility(
-                visible: state.viewsection==Viewsection.Comment,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                      height: 500,
-                      width: mediaquery.size.width,
-
-
-                      child:     CommentsScreen(activityId: context.read<AcivityFBloc>().state.activityById!.id)
-
-                      ),
-                ),
-              )
-            ],
-          ),
-          NoImageCard(ColorsApp.BackWidgetColor,10),
-          // Header with three containers
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeaderTab(2, "Votes",mediaquery,   Viewsection.Poll,   icon: Icons.add,onPressed: (){
+            NoImageCard(ColorsApp.BackWidgetColor, 10),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                widget.act == activity.Meetings
+                    ? _buildHeaderTab(
+                        1, "Agenda", mediaquery, Viewsection.Agenda)
+                    : Container(),
+                widget.act == activity.Meetings
+                    ? _buildAgendaSection(mediaquery, state)
+                    : Container(),
+                widget.act == activity.Meetings
+                    ? NoImageCard(ColorsApp.BackWidgetColor, 10)
+                    : Container(),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                widget.act == activity.Meetings
+                    ? _buildHeaderTab(1, "PV", mediaquery, Viewsection.PV)
+                    : Container(),
+                widget.act == activity.Meetings
+                    ? Visibility(
+                        visible: state.viewsection == Viewsection.PV,
+                        child: SizedBox(
+                          width: mediaquery.size.width,
+                          child: PVImpl(
+                              activityId: context
+                                  .read<AcivityFBloc>()
+                                  .state
+                                  .activityById!
+                                  .id),
+                        ))
+                    : Container(),
+                widget.act == activity.Meetings
+                    ? NoImageCard(ColorsApp.BackWidgetColor, 10)
+                    : Container(),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeaderTab(2, "Comments", mediaquery, Viewsection.Comment),
+                Visibility(
+                  visible: state.viewsection == Viewsection.Comment,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                        height: 500,
+                        width: mediaquery.size.width,
+                        child: CommentsScreen(
+                          activityId: context
+                              .read<AcivityFBloc>()
+                              .state
+                              .activityById!
+                              .id,
+                          id: widget.id,
+                        )),
+                  ),
+                )
+              ],
+            ),
+            NoImageCard(ColorsApp.BackWidgetColor, 10),
+            // Header with three containers
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeaderTab(2, "Votes", mediaquery, Viewsection.Poll,
+                    icon: Icons.add, onPressed: () {
                   context.read<PollBloc>().add(CancelPollEvent());
                   context.read<PollBloc>().add(GetPollsAsTemplates());
 
-                  showDialog(context: context, builder: (ctx)=>AddPollDialog(ActivityId: context.read<AcivityFBloc>().state.activityById!.id ,));
-
-
-              }),   Visibility(
-                  visible: state.viewsection==Viewsection.Poll,
-                  child: SizedBox(child: PollImpl(activityId: context.read<AcivityFBloc>().state.activityById!.id,))),
-            ],
-          ),
-          // PageView for content
-          NoImageCard(ColorsApp.BackWidgetColor,10),
-
-        ],
+                  showDialog(
+                      context: context,
+                      builder: (ctx) => AddPollDialog(
+                            ActivityId: context
+                                .read<AcivityFBloc>()
+                                .state
+                                .activityById!
+                                .id,
+                          ));
+                }),
+                Visibility(
+                    visible: state.viewsection == Viewsection.Poll,
+                    child: SizedBox(
+                        child: PollImpl(
+                      activityId:
+                          context.read<AcivityFBloc>().state.activityById!.id,
+                    ))),
+              ],
+            ),
+            // PageView for content
+            NoImageCard(ColorsApp.BackWidgetColor, 10),
+          ],
+        );
+      },
     );
-  },
-);
   }
-  Widget _buildAgendaSection(MediaQueryData mediaQuery,PageIndexState state) {
-    return    Visibility(
-       visible: state.viewsection==Viewsection.Agenda,
-        child: AgendaWidget(activity:  (context.read<AcivityFBloc>().state.activityById) as MeetingModel,));
+
+  Widget _buildAgendaSection(MediaQueryData mediaQuery, PageIndexState state) {
+    return Visibility(
+        visible: state.viewsection == Viewsection.Agenda,
+        child: AgendaWidget(
+          activity:
+              (context.read<AcivityFBloc>().state.activityById) as MeetingModel,
+        ));
   }
 
   // Build header tabs with bottom border
-  Widget _buildHeaderTab(int index, String text,MediaQueryData med, Viewsection view,{IconData? icon,Function()? onPressed}  ) {
+  Widget _buildHeaderTab(
+      int index, String text, MediaQueryData med, Viewsection view,
+      {IconData? icon, Function()? onPressed}) {
     return BlocBuilder<PageIndexBloc, PageIndexState>(
-  builder: (context, state) {
-    return Padding(
-      padding:  EdgeInsets.all(3.0.sp),
-      child: InkWell(
-        onTap: () {
-          if (state.viewsection!=view) {
-            context.read<PageIndexBloc>().add(ChangeViewSectionEvent(viewsection: view));
-          }
-          else{
-            context.read<PageIndexBloc>().add(ChangeViewSectionEvent(viewsection: Viewsection.Initial));
-          }
-        },
-        child: Container(
-          width:  med.size.width,
-          decoration: const BoxDecoration(
-
-
-            border: Border(
-                bottom: BorderSide(
-                  color:  ColorsApp.BackWidgetColor,
+      builder: (context, state) {
+        return Padding(
+          padding: EdgeInsets.all(3.0.sp),
+          child: InkWell(
+            onTap: () {
+              if (state.viewsection != view) {
+                context
+                    .read<PageIndexBloc>()
+                    .add(ChangeViewSectionEvent(viewsection: view));
+              } else {
+                context.read<PageIndexBloc>().add(
+                    ChangeViewSectionEvent(viewsection: Viewsection.Initial));
+              }
+            },
+            child: Container(
+              width: med.size.width,
+              decoration: const BoxDecoration(
+                border: Border(
+                    bottom: BorderSide(
+                  color: ColorsApp.BackWidgetColor,
                   width: 2,
                 )),
-
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  text,
-                  style:PoppinsSemiBold(15.sp, Colors.black,TextDecoration.none),
-                ),
-                Row(
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    IconButton(onPressed: (){
-                      if (state.viewsection!=view) {
-                        context.read<PageIndexBloc>().add(ChangeViewSectionEvent(viewsection: view));
-                      }
-                      else{
-                        context.read<PageIndexBloc>().add(ChangeViewSectionEvent(viewsection: Viewsection.Initial));
-                      }
-                    }, icon: Icon(state.viewsection==view?Icons.arrow_upward:Icons.arrow_downward_sharp)),
-
-                    icon!=null?IconButton.outlined(icon:Icon(icon), onPressed: () {
-                    onPressed!();
-
-                  }, ):Container()
+                    Text(
+                      text,
+                      style: PoppinsSemiBold(
+                          15.sp, Colors.black, TextDecoration.none),
+                    ),
+                    Row(children: [
+                      IconButton(
+                          onPressed: () {
+                            if (state.viewsection != view) {
+                              context.read<PageIndexBloc>().add(
+                                  ChangeViewSectionEvent(viewsection: view));
+                            } else {
+                              context.read<PageIndexBloc>().add(
+                                  ChangeViewSectionEvent(
+                                      viewsection: Viewsection.Initial));
+                            }
+                          },
+                          icon: Icon(state.viewsection == view
+                              ? Icons.arrow_upward
+                              : Icons.arrow_downward_sharp)),
+                      icon != null
+                          ? IconButton.outlined(
+                              icon: Icon(icon),
+                              onPressed: () {
+                                onPressed!();
+                              },
+                            )
+                          : Container()
                     ]),
-
-              ],
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
-  },
-);
   }
 
   // Build content for each page
-  Widget _buildAboutSection(MediaQueryData mediaQuery,PageIndexState state) {
+  Widget _buildAboutSection(MediaQueryData mediaQuery, PageIndexState state) {
     return Visibility(
-      visible: state.viewsection==Viewsection.About,
+      visible: state.viewsection == Viewsection.About,
       child: BlocBuilder<AcivityFBloc, AcivityFState>(
         builder: (context, state) {
-      return SingleChildScrollView(
-        child: Padding(
-          padding:paddingSemetricVertical(v: 17.h),
-          child: ActivityDetailsComponent.infoCircle(
-            mediaQuery,
-            state.activityById!,
-            context
-
-
-          ),
-        ),
-      );
+          return SingleChildScrollView(
+            child: Padding(
+              padding: paddingSemetricVertical(v: 17.h),
+              child: ActivityDetailsComponent.infoCircle(
+                  mediaQuery, state.activityById!, context),
+            ),
+          );
         },
       ),
     );

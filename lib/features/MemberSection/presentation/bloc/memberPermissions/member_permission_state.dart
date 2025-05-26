@@ -6,10 +6,12 @@ part of 'member_permission_bloc.dart';
   final bool ismember;
   final bool isguest;
   final bool isSuperAdmin;
+  final bool isLoading;
 
 
   const MemberPermissionState({
     this.isowner = false,
+    this.isLoading=false,
     this.isadmin = false,
     this.ismember = false,
     this.isguest = false,
@@ -18,11 +20,13 @@ part of 'member_permission_bloc.dart';
   MemberPermissionState copyWith({
     bool? isowner,
     bool? isadmin,
+    bool?isLoading,
     bool? ismember,
     bool? isguest,
     bool? isSuperAdmin,
   }) {
     return MemberPermissionState(
+      isLoading: isLoading??this.isLoading,
       isowner: isowner ?? this.isowner,
       isadmin: isadmin ?? this.isadmin,
       ismember: ismember ?? this.ismember,
@@ -33,7 +37,9 @@ part of 'member_permission_bloc.dart';
 
   @override
   // TODO: implement props
-  List<Object?> get props => [isowner,isadmin,ismember,isguest,isSuperAdmin];
+  List<Object?> get props => [isowner,isadmin,
+    isLoading,
+    ismember,isguest,isSuperAdmin];
 
 }
 

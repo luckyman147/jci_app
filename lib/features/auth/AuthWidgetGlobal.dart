@@ -18,8 +18,6 @@ export 'package:get_it/get_it.dart';
 export 'package:google_sign_in/google_sign_in.dart';
 
 export 'package:internet_connection_checker/internet_connection_checker.dart';
-export 'package:jci_app/features/auth/data/datasources/UserAccountRemote.dart';
-export 'package:jci_app/features/auth/data/datasources/authRemote.dart';
 export 'package:jci_app/features/auth/data/repositories/UserAccountRepoImpl.dart';
 export 'package:jci_app/features/auth/data/repositories/UserStatusRepoImpl.dart';
 
@@ -38,7 +36,7 @@ export 'package:logger/logger.dart';
 export '../../core/config/services/store.dart';
 export '../../core/network/network_info.dart';
 
-export 'data/datasources/UserStatusRemote.dart';
+
 export 'data/repositories/AuthRepoImpl.dart';
 export 'domain/usecases/UserAccountUsesCases.dart';
 export 'domain/usecases/UserStatusUsesCases.dart';

@@ -2,6 +2,7 @@
 
 import 'package:jci_app/features/Home/presentation/widgets/Activity/AddActivityWidgets.dart';
 
+import '../../../../../core/widgets/CommonTextField.dart';
 import '../../../Activity_Global.dart';
 
 class NameAndLeaders extends StatelessWidget {
@@ -22,10 +23,12 @@ class NameAndLeaders extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
     return Column(
       children: [
-        TextfieldNormal(context,
-            "${vis.selectedActivity.name.tr(context)} ${"Name".tr(context)}" ,"${"Name of".tr(context)} ${vis.selectedActivity.name.tr(context)} ${"here".tr(context)}", _namecontroller,
+        TextfieldNormal(
+            name: "${vis.selectedActivity.name.tr(context)} ${"Name".tr(context)}" ,
+           hintText:  "${"Name of".tr(context)} ${vis.selectedActivity.name.tr(context)} ${"here".tr(context)}",
+            controller:  _namecontroller,
 
-                (value){
+onChanged:                 (value){
               context.read<FormzBloc>().add(ActivityNameChanged(activityName: value));
             }
         ),

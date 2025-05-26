@@ -24,6 +24,8 @@ Widget ShowPartipants(String activityId,List<String> particpants) {
         case ParticpantsStatus.loaded:
         case ParticpantsStatus.changed:
         case ParticpantsStatus.success:
+        case ParticpantsStatus.Present:
+        case ParticpantsStatus.Absent:
 
         case ParticpantsStatus.empty:
           return ParticpantsComponents.ParticipantsWidget(

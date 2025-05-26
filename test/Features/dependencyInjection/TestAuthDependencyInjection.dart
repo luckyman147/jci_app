@@ -6,6 +6,9 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:jci_app/core/config/services/store.dart';
 import 'package:jci_app/core/network/network_info.dart';
 import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
+import 'package:jci_app/features/auth/data/datasources/UserAccountDataSource.dart';
+import 'package:jci_app/features/auth/data/datasources/UserStatusRemoteDataSources.dart';
+import 'package:jci_app/features/auth/data/datasources/authRemote.dart';
 import 'package:jci_app/features/auth/domain/repositories/AuthRepo.dart';
 import 'package:jci_app/features/auth/domain/repositories/UserAccountRepo.dart';
 import 'package:jci_app/features/auth/domain/repositories/UserStatusRepo.dart';
@@ -201,7 +204,7 @@ class MockGoogleSignIn extends Mock implements GoogleSignIn {}
 class MockHttpClient extends Mock implements http.Client {}
 void setupAuthTestDependencies() {
   sl.reset();
-  sl.registerLazySingleton<AuthRemote>(() => AuthRemoteImpl(sl(), sl(), sl(), sl()));
+  sl.registerLazySingleton<AuthRemote>(() => AuthRemoteImpl(sl(), sl(), sl(), sl(),sl(),sl(),sl()));
   sl.registerLazySingleton<UserStatusRemoteDataSource>(() => UserStatusRemoteDataSourceImpl(sl(), sl(), auth: sl()));
   sl.registerLazySingleton<UserAccountDataSource>(() => UserAccountDataSourceImpl(sl(), sl(), sl(), auth: sl()));
   sl.registerLazySingleton<AuthRepo>(() => MockAuthRepository());
@@ -233,6 +236,6 @@ void setupAuthTestDependencies() {
   // Registering http.Client and other dependencies
   sl.registerLazySingleton(() => MockHttpClient());
   sl.registerLazySingleton(() => Logger());
-  sl.registerLazySingleton(() => InternetConnectionChecker());
-  sl.registerLazySingleton(() => const Store());
+  sl.registerLazySingleton(() => InternetConnectionChecker.createInstance);
+
 }

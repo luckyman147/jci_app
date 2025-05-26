@@ -8,6 +8,7 @@ import 'package:jci_app/features/Home/presentation/widgets/Fields/FirstLineWidge
 import 'package:jci_app/features/Home/presentation/widgets/Fields/LocationField.dart';
 import 'package:jci_app/features/Home/presentation/widgets/components/DateWidget.dart';
 
+import '../../../../../core/widgets/CommonTextField.dart';
 import '../../../Activity_Global.dart';
 import '../Fields/LedaersWidget.dart';
 
@@ -126,8 +127,10 @@ class BodyWidget extends StatelessWidget {
                 ],
                 ),
                     TextfieldNormal(
-                        context, "Points", "Points here".tr(context),
-                        pointsController, (p0) => null).animate(
+                      name:  "Points",
+                       hintText:  "Points here".tr(context),
+controller:                         pointsController,
+                           onChanged:  (p0) => null).animate(
                 effects: [
                 const FadeEffect(
                 duration: Duration(milliseconds: 500),
@@ -136,11 +139,11 @@ class BodyWidget extends StatelessWidget {
                 ],
                 ),
                     TextfieldDescription(
-                        context,
-                        "Description",
-                        "Description Here".tr(context),
-                        descriptionController,
-                            (value) {
+
+                    name:     "Description",
+                       hintText:  "Description Here".tr(context),
+controller:                         descriptionController,
+                            onChanged: (value) {
                           context.read<FormzBloc>().add(
                               DescriptionChanged(description: value));
                         }

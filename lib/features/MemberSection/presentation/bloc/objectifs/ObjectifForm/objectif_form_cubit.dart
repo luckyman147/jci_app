@@ -3,6 +3,8 @@ import 'package:equatable/equatable.dart';
 import 'package:jci_app/features/MemberSection/domain/entity/ActionDetails.dart';
 import 'package:jci_app/features/MemberSection/domain/entity/Objectif.dart';
 
+import '../../../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Role.dart';
+
 part 'objectif_form_state.dart';
 
 class ObjectifFormCubit extends Cubit<ObjectifFormState> {
@@ -12,6 +14,34 @@ class ObjectifFormCubit extends Cubit<ObjectifFormState> {
     emit(state.copyWith(groupObjectif: groupObjectif));
 
 
+  }
+  void onPointsChanged(String? points) {
+    // Emit a new state to trigger a rebuild
+    emit(state.copyWith(points:points )); // You can add additional logic here if needed
+  }
+  void onTargetChanged(String? target) {
+    // Emit a new state to trigger a rebuild
+    emit(state.copyWith(target:target )); // You can add additional logic here if needed
+  }
+  void SetObjectifDetails(Objectif objectif){
+    emit(state.copyWith(
+      groupObjectif: objectif.groupObjectif,
+      objectifActionType: objectif.objectifActionType,
+      feature: objectif.feature,
+      cibles: objectif.cible,
+      privacy: objectif.privacy,
+      difficulty: objectif.difficulty,
+
+
+
+    ));
+  }
+
+  void setGroupBy(String groupBy){
+    emit(state.copyWith(groupBy: groupBy));
+  }
+  void setBool(bool isClicked){
+    emit(state.copyWith(isClicked: isClicked));
   }
   void setObjectifActionType(ObjectifActionType objectifActionType){
     emit(state.copyWith(objectifActionType: objectifActionType));

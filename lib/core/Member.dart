@@ -20,9 +20,10 @@ class Member extends User {
   final List<dynamic> teams;
   final bool IsSelected;
   final String language;
-  final int points;
-  final int PreviousPoints;
-
+  final double points;
+  final double PreviousPoints;
+final int notificationCount;
+final int unreadNotificationCount;
   final int rank;
 final bool isEmailVerified;
 final List<UserObjectif> userObjectifs;
@@ -61,7 +62,7 @@ final String roleName;
   Member({required this.phone, required this.description, required this.board, required this.is_validated, required this.cotisation, required this.Activities, required this.teams, required this.IsSelected, required this.language, required this.points, required this.PreviousPoints,
     required this.rank, required this.isEmailVerified,
   required super.email,  required super.id, required super.role, required super.Images, required super.firstName, required super.lastName,
-required this.userObjectifs, this.roleName=""
+required this.userObjectifs, this.roleName="", this.notificationCount=0, this.unreadNotificationCount=0
   });
 
   static Member get memberTest =>  Member(

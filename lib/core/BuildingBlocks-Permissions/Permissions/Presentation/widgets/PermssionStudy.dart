@@ -3,12 +3,14 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Data/Models/FeaturePermissionsModel.dart';
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Data/Models/PermissionsModel.dart';
+import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/functions/PermissionFunctions.dart';
 import 'package:logger/logger.dart';
 
 import '../../domain/Entities/FeaturePermissions.dart';
 import '../../domain/Entities/Permission.dart';
 import '../../domain/repo/IPermissionStrategy.dart';
-import '../PermissionsBLoc/permissions_bloc.dart';
+import '../Bloc/permissions/permissions_bloc.dart';
+
 class TypePermissionStrategy extends StatelessWidget {
   final Widget hasPermissionsWidget;
   final Widget noPermissionsWidget;
@@ -31,23 +33,10 @@ class TypePermissionStrategy extends StatelessWidget {
       selector: (state) {
         if (state.type==TypePermissionsStatus.Loading) return null; // Representing the loading state
         if (state.permissions.isNotEmpty) {
+         // Logger().i("PermissionsBloc: ${state.permissions}");
 
 
-          final existingFeature = state.permissions.firstWhere(
-                (e) => e.featureId == feature,
-            orElse: () => FeaturePermissionsModel(featureId: feature, permissions: []),
-          );
-
-
-
-
-          final permission = existingFeature.permissions.firstWhere(
-                (p) => p.type == type,
-            orElse: () => PermissionsModel(type: type, isGranted: false),
-          );
-
-
-          return permission.isGranted;
+          return PermissionsFunctions.  HasPermission(state,feature,type);
         }
         return false;
       },
@@ -59,6 +48,8 @@ class TypePermissionStrategy extends StatelessWidget {
       },
     );
   }
+
+
 }
 
 

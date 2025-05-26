@@ -1,4 +1,5 @@
 
+import '../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Role.dart';
 import '../../domain/entity/ActionDetails.dart';
 import '../../domain/entity/Objectif.dart';
 
@@ -45,6 +46,7 @@ class ObjectifModel extends Objectif{
     );
   }
 
+
   // Create ObjectifModel from Objectif entity
   factory ObjectifModel.fromEntity(Objectif entity) {
     return ObjectifModel(
@@ -59,7 +61,7 @@ class ObjectifModel extends Objectif{
       target: entity.target,);
   }
 }
-class UserObjectifsModel extends UserObjectif{
+class  UserObjectifsModel extends UserObjectif{
   UserObjectifsModel(super.isCompleted, super.assignedAt, {required super.objectifId,required super.currentProgress});
   Map<String, dynamic> toJson() {
     return {
@@ -68,6 +70,19 @@ class UserObjectifsModel extends UserObjectif{
       'objectifId': objectifId, // Convert Objectif to JSON
       'currentProgress': currentProgress,
     };
+  }
+  //copywioth
+  UserObjectifsModel copyWith({
+    int? progress,
+    bool? completed,
+  }) {
+    return UserObjectifsModel( completed??this.isCompleted,assignedAt,
+
+
+      currentProgress: progress ?? this.currentProgress,
+
+      objectifId: this.objectifId,
+    );
   }
 
   // Create LineObjectif from JSON

@@ -1,15 +1,20 @@
+import '../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Role.dart';
 import 'ActionDetails.dart';
 
 enum ObjectifDifficulty{ Extreme,Hard,Meduim,Basic }
-    enum FeaturesType { events,
-      meetings,
-      trainings,
+    enum FeaturesType { Events,
+      Meetings,
+      Trainings,
       teams,
       Votes,
       Comments,
+      Replys,
+      Emojis,
       Activities,
       Board,
       Culture,
+      Pv,
+      Objectif,
       Members,Guests,
       PastPresident}
 class Objectif {

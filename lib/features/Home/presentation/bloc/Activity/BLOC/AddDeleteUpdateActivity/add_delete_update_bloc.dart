@@ -89,8 +89,7 @@ void checkPermissions(
       )async {
     try {
 
-Logger().i("UpdateActivityEvent",event.params.act);
-Logger().i("UpdateActivityEvent",event.params.act);
+
 
       final failureOrEvents = await updateActivityUseCases(event.params);
       emit(_UpdatedActivityOrFailure(failureOrEvents));

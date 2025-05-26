@@ -6,7 +6,24 @@ import 'package:jci_app/features/MemberSection/domain/entity/Objectif.dart';
 import 'package:jci_app/features/MemberSection/domain/repositories/objectifsRepo.dart';
 
 import '../dto/ObjectifPagination.dart';
+import '../dto/UpdateObjectiveProgressDTO.dart';
 import '../entity/UserObjectifInfos.dart';
+
+/// update Objective progress Uses Case
+/// take [updateUserObjectivesProgress] as input
+/// return [List<UserObjectiveInfos>] as output
+class updateUserObjectivesProgressUsesCase extends UseCase<List<UserObjectifInfos>,UpdateObjectiveProgressDTO>{
+  final ObjectifRepo objectifRepo;
+
+  updateUserObjectivesProgressUsesCase({required this.objectifRepo});
+
+  @override
+  Future<Either<Failure, List<UserObjectifInfos>>> call(UpdateObjectiveProgressDTO params) async{
+return await objectifRepo.updateUserObjectivesProgress(params);
+  }
+
+}
+
 
 class AddObjectifUsesCase extends UseCase<Unit,Objectif>{
   final ObjectifRepo objectifRepo;

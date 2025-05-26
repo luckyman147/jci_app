@@ -1,6 +1,6 @@
 // global_imports.dart
-export 'package:jci_app/features/MemberSection/data/datasources/MemberLocalDataSources.dart';
-export 'package:jci_app/features/MemberSection/data/datasources/MemberRemoteDataSources.dart';
+export 'package:jci_app/features/MemberSection/data/datasources/members/MemberLocalDataSources.dart';
+export 'package:jci_app/features/MemberSection/data/datasources/members/MemberRemoteDataSources.dart';
 export 'package:jci_app/features/MemberSection/data/repositories/MemberRepoImpl.dart';
 export 'package:jci_app/features/MemberSection/domain/repositories/MemberRepo.dart';
 export 'package:jci_app/features/MemberSection/domain/usecases/MemberUseCases.dart';

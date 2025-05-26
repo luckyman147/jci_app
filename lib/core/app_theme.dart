@@ -81,7 +81,7 @@ final memberdeco= BoxDecoration(
 final ActivityDecoration=  BoxDecoration(
 
 borderRadius:  const BorderRadius.only(
-bottomLeft: Radius.circular(43),
+bottomLeft: Radius.circular(23),
 bottomRight: Radius.circular(20),
 topLeft: Radius.circular(15),
 topRight: Radius.circular(15),

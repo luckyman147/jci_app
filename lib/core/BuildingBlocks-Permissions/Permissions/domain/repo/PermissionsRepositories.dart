@@ -5,10 +5,17 @@ import 'package:jci_app/core/error/Failure.dart';
 import '../Dtos/CheckPermissionDtos.dart';
 import '../Dtos/LoadPermission.dart';
 import '../Dtos/TempoPermissions.dart';
+import '../Entities/Feature.dart';
 import '../Entities/FeaturePermissions.dart';
 import '../Entities/UserPermissions.dart';
 
 abstract class PermissionsRepository {
+
+
+  /// Loads All Features.
+
+  /// Returns  a list of features
+  Future<Either<Failure,List<Feature>>> loadAllFeatures();
   /// Loads permissions for a specific user and a list of feature IDs.
   ///
   /// [userId] - The ID of the user to load permissions for.
@@ -41,19 +48,7 @@ abstract class PermissionsRepository {
   /// [featureId] - The ID of the feature to update permissions for.
   /// [newPermissions] - A map of permission types (e.g., "canRead", "canWrite") to boolean values indicating access.
   Future<Either<Failure,Unit>> updatePermissions(UserPermissions userPermissions);
-/// Creates a new role with specific permissions.
-  /// [RoleName ] - The name of the role to create.
-  /// [Features] - List of features
-  ///
 
-  ///Future<void> CreateRole(CreateRoleDtos createRoleDtos);
-  /// Adds temporary permissions for a specific user and feature, with an expiration time.
-  ///
-  /// [userId] - The ID of the user to add temporary permissions for.
-  /// [featureId] - The ID of the feature for which temporary permissions are added.
-  /// [temporaryPermissions] - A map of permission types to boolean values.
-  /// [expiry] - The date and time when the temporary permissions will expire.
-  ///
   /// This method adds or overrides specific permissions for a feature, which are valid until the specified expiry time.
   Future<Either<Failure,Unit>> addTemporaryPermissions(
      TempoPermissions tempoPermissions);

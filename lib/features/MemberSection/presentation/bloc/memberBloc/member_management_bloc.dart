@@ -1,4 +1,3 @@
-
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
@@ -7,6 +6,7 @@ import 'package:jci_app/core/strings/failures.dart';
 import 'package:jci_app/features/MemberSection/domain/repositories/MemberRepo.dart';
 
 import '../../../../../core/error/Failure.dart';
+import '../../../domain/usecases/AdminMembersUsesCase.dart';
 import '../../../domain/usecases/MemberUseCases.dart';
 
 part 'member_management_event.dart';
@@ -16,225 +16,145 @@ class MemberManagementBloc extends Bloc<MemberManagementEvent, MemberManagementS
   final UpdateCotisationUseCase updateCotisationUseCase;
   final UpdatePointsUseCase updatePointsUseCase;
   final validateMemberuseCase validateMemberUseCase;
-  final ChangeRoleUseCase changeRoleUseCase;
-  final SendInactivityReportUseCase sendInactivityReportUseCase;
-  final SendMembershipReportUseCase sendMembershipReportUseCase;
-final ChangeLanguageUseCase changeLanguageUseCase;
-final DeleteMemberUseCase deleteMemberUseCase;
-  MemberManagementBloc(this.updateCotisationUseCase, this.updatePointsUseCase, this.validateMemberUseCase, this.changeRoleUseCase, this.changeLanguageUseCase, this.sendInactivityReportUseCase, this.sendMembershipReportUseCase, this.deleteMemberUseCase) : super(MemberManagementInitial()) {
-    on<MemberManagementEvent>((event, emit) {
-      // TODO: implement event handler
-    });
-    on<initMemberEvent>(initMember);
-    on<UpdateCotisation>(updateCotisation);
-    on<UpdatePoints>(updatePoints);
-    on<validateMember>(_validateMember);
-    on<AddPoints>(_addPoints);
-    on<RemovePoints>(_RemovePoints);
-    on<AddCotisation>(_addCotisatisation);
-    on<ChangeRoleEvent>(_changeRole);
-    on<ChangeLanguageEvent>(_changeLanguage);
-    on<SendInactivityReportEvent>(_sendInactivityReport);
-    on<SendMembershipReportEvent>(_sendMembershipReport);
-    on<deleteMemberEvent>(_deleteMember);
-  }
-  void initMember(initMemberEvent event, Emitter<MemberManagementState> emit) {
-    emit(MemberManagementState(isUpdated: event.isUpdated, cotisation: event.cotisation, points: event.points,
-        role: event.role, clone: event.points,objectifs: event.objectifs));
+  final ChangeLanguageUseCase changeLanguageUseCase;
+  final DeleteMemberUseCase deleteMemberUseCase;
 
+  MemberManagementBloc({
+    required this.updateCotisationUseCase,
+    required this.updatePointsUseCase,
+    required this.validateMemberUseCase,
+    required this.changeLanguageUseCase,
+    required this.deleteMemberUseCase,
+  }) : super(MemberManagementInitial()) {
+    on<initMemberEvent>(_handleInitMember);
+    on<UpdateCotisation>(_handleUpdateCotisation);
+    on<UpdatePoints>(_handleUpdatePoints);
+    on<validateMember>(_handleValidateMember);
+    on<AddPoints>(_handleAddPoints);
+    on<RemovePoints>(_handleRemovePoints);
+    on<AddCotisation>(_handleAddCotisation);
+    on<ChangeLanguageEvent>(_handleChangeLanguage);
+    on<deleteMemberEvent>(_handleDeleteMember);
   }
 
-  void _sendInactivityReport(SendInactivityReportEvent event,Emitter<MemberManagementState> emit) async {
-    final result =await  sendInactivityReportUseCase(event.id);
-    emit(_eitherSendInactivityReportOrFailute(result, 'Inactivity Report Sent Successfully'));
-  }
-  void _sendMembershipReport(SendMembershipReportEvent event,Emitter<MemberManagementState> emit) async {
-    final result =await  sendMembershipReportUseCase(event.id);
-    emit(_eitherSendInactivityReportOrFailute(result, 'Membership Report Sent Successfully'));
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  void _addPoints(AddPoints event,Emitter<MemberManagementState> emit) async {
-   emit(state.copyWith(clone: state.clone+50));
-  }
-  void _RemovePoints(RemovePoints event,Emitter<MemberManagementState> emit) async {
-    if (state.clone -50 >= 0){
-   emit(state.copyWith(clone: state.clone-50));}
-  }
-void _addCotisatisation(AddCotisation event,Emitter<MemberManagementState> emit) async {
-  state.cotisation.add(false);
-    emit(state.copyWith(cotisation:state.cotisation ));
-  }
-  void _changeLanguage(ChangeLanguageEvent event,Emitter<MemberManagementState> emit) async {
-    final result =await  changeLanguageUseCase(event.language);
-    emit(_eitherChangeLanguageOrFailute(result, 'Language Changed Successfully', event.language));
-  }
-
-
-
-
-
-  void _changeRole(ChangeRoleEvent event,Emitter<MemberManagementState> emit) async {
-    try{
-      final result =await  changeRoleUseCase(event.changeRoleParams);
-      emit(_eitherChangeToAdminOrFailute(result, 'User Updated Successfully',  event.changeRoleParams.type,));
-    }
-    catch(e){
-      emit(state.copyWith(typeResult: TypeResult.failed, ErrorMessage: e.toString()));
-    }
-  }
-
-  void updateCotisation(UpdateCotisation event, Emitter<MemberManagementState> emit) async {
-    try{
-      final result =await  updateCotisationUseCase(event.updateCotisationParams);
-   emit(_eitherCotisationOrFailute(result, 'Cotisation Updated Successfully',event.updateCotisationParams.type,event.updateCotisationParams.cotisation, ));
-
-    }
-    catch(e){
-      emit(state.copyWith(typeResult: TypeResult.failed, ErrorMessage: e.toString()));
-    }
-
-
-
-  }
-
-
-  void updatePoints(UpdatePoints event, Emitter<MemberManagementState> emit) async {
-    try{
-      final result =await  updatePointsUseCase(event.updatePointsParams);
-      emit(_eitherUpdateOrFailute(result, 'Points Updated Successfully', ));
-    }
-    catch(e){
-      emit(state.copyWith(typeResult: TypeResult.failed, ErrorMessage: e.toString()));
-    }
-  }
-  void _validateMember(validateMember event, Emitter<MemberManagementState> emit) async {
-    try{
-      final result =await  validateMemberUseCase(event.memberid);
-      emit(_eitherVerifyOrFailute(result, 'Member Validated Successfully', ));
-    }
-    catch(e){
-      emit(state.copyWith(typeResult: TypeResult.failed, ErrorMessage: e.toString()));
-    }
-  }
-
-void _deleteMember(deleteMemberEvent event, Emitter<MemberManagementState> emit) async {
-
-    try{
-      final result =await  deleteMemberUseCase(event.id);
-      emit( _eitherDeleteOrFailute(result, 'Member Deleted Successfully', ));
-    }
-    catch(e){
-      emit(state.copyWith(typeResult: TypeResult.failed, ErrorMessage: e.toString()));
-    }
-
-}
-
-
-
-  MemberManagementState _eitherVerifyOrFailute(
-      Either<Failure, Unit> failureOrSuccess, String message, ) {
-    return failureOrSuccess.fold(
-      (failure) => state.copyWith(typeResult: TypeResult.failed, ErrorMessage: mapFailureToMessage(failure)),
-      (success) {
-
-
-        return state.copyWith(typeResult: TypeResult.success, ErrorMessage: message,isUpdated: true);}
-    );
-  }  MemberManagementState _eitherDeleteOrFailute(
-      Either<Failure, Unit> failureOrSuccess, String message, ) {
-    return failureOrSuccess.fold(
-      (failure) => state.copyWith(typeResult: TypeResult.failed, ErrorMessage: mapFailureToMessage(failure)),
-      (success) {
-
-
-        return state.copyWith(typeResult: TypeResult.Removed, ErrorMessage: message,isUpdated: true);}
-    );
-  }  MemberManagementState _eitherCotisationOrFailute(
-      Either<Failure, Unit> failureOrSuccess, String message, int index,bool cotisation ) {
-    return failureOrSuccess.fold(
-      (failure) => state.copyWith(typeResult: TypeResult.failed, ErrorMessage: mapFailureToMessage(failure)),
-      (success) {
-        final List<bool> cotisationList = List.of(state.cotisation);
-        cotisationList[index] = cotisation;
-
-
-
-
-        return state.copyWith(typeResult: TypeResult.success, ErrorMessage: message,cotisation: cotisationList);}
+  // Generic handler for all state updates
+  Future<void> _handleEitherResult<T>({
+    required Either<Failure, Unit> result,
+    required Function() onSuccess,
+    required Emitter<MemberManagementState> emit,
+    String? successMessage,
+    TypeResult successType = TypeResult.success,
+  }) async {
+    result.fold(
+          (failure) => emit(state.copyWith(
+        typeResult: TypeResult.failed,
+        ErrorMessage: mapFailureToMessage(failure),
+      )),
+          (_) {
+        onSuccess();
+        emit(state.copyWith(
+          typeResult: successType,
+          ErrorMessage: successMessage,
+          isUpdated: true,
+        ));
+      },
     );
   }
-  MemberManagementState _eitherUpdateOrFailute(
-      Either<Failure, Unit> failureOrSuccess, String message ){
-    return failureOrSuccess.fold(
-      (failure) => state.copyWith(typeResult: TypeResult.failed, ErrorMessage: mapFailureToMessage(failure)),
-      (success) {
 
-
-        return state.copyWith(typeResult: TypeResult.success, ErrorMessage: message,points: state.clone);}
-    );
+  void _handleInitMember(initMemberEvent event, Emitter<MemberManagementState> emit) {
+    emit(MemberManagementState(
+      isUpdated: event.isUpdated,
+      cotisation: event.cotisation,
+      points: event.points,
+      role: event.role,
+      clone: event.points,
+      objectifs: event.objectifs,
+    ));
   }
-  MemberManagementState _eitherChangeToAdminOrFailute(
-      Either<Failure, Unit> failureOrSuccess, String message,MemberType type ){
-    return failureOrSuccess.fold(
-      (failure) => state.copyWith(typeResult: TypeResult.failed, ErrorMessage: mapFailureToMessage(failure)),
-      (success)
-    {
-      if (type==MemberType.admin){
-      final List<bool> cotisationList = List.of(state.cotisation);
-      cotisationList[0] = true;
-      if (state.cotisation.length > 1){
-        cotisationList[1] = true;
-      }
 
-      return state.copyWith(typeResult: TypeResult.success, ErrorMessage: message,role: FirebaseFirestore.instance.doc("Admin")
-          ,points: state.points+1000,
-          cotisation: cotisationList);}
-        else if (type==MemberType.member){
+  void _handleAddPoints(AddPoints event, Emitter<MemberManagementState> emit) {
+    emit(state.copyWith(clone: state.clone + 50));
+  }
 
-
-          return state.copyWith(typeResult: TypeResult.success, ErrorMessage: message,role: FirebaseFirestore.instance.doc("Member"),
-             );
-        }
-    else{
-
-          final List<bool> cotisationList = List.of(state.cotisation);
-          cotisationList[0] = true;
-          if (state.cotisation.length > 1){
-            cotisationList[1] = true;
-          }
-
-          return state.copyWith(typeResult: TypeResult.success, ErrorMessage: message,role: FirebaseFirestore.instance.doc(""),
-              points: state.points+2000,
-              cotisation: cotisationList);
-      }}
-
-
-    );
-
+  void _handleRemovePoints(RemovePoints event, Emitter<MemberManagementState> emit) {
+    if (state.clone - 50 >= 0) {
+      emit(state.copyWith(clone: state.clone - 50));
     }
-
-  MemberManagementState _eitherChangeLanguageOrFailute(Either<Failure, Unit> result, String s, String language) {
-    return result.fold(
-            (failure) => state.copyWith(typeResult: TypeResult.failed, ErrorMessage: mapFailureToMessage(failure)),
-            (success) => state.copyWith(typeResult: TypeResult.success, ErrorMessage: s,));
   }
 
-  MemberManagementState _eitherSendInactivityReportOrFailute(Either<Failure, Unit> result, String s) {
-    return result.fold(
-            (failure) => state.copyWith(typeResult: TypeResult.failed, ErrorMessage: mapFailureToMessage(failure)),
-            (success) => state.copyWith(typeResult: TypeResult.success, ErrorMessage: s,));
+  void _handleAddCotisation(AddCotisation event, Emitter<MemberManagementState> emit) {
+    final newCotisation = List<bool>.from(state.cotisation)..add(false);
+    emit(state.copyWith(cotisation: newCotisation));
+  }
+
+  Future<void> _handleChangeLanguage(
+      ChangeLanguageEvent event,
+      Emitter<MemberManagementState> emit,
+      ) async {
+    await _handleEitherResult(
+      result: await changeLanguageUseCase(event.language),
+      onSuccess: () {},
+      emit: emit,
+      successMessage: 'Language Changed Successfully',
+    );
+  }
+
+  Future<void> _handleUpdateCotisation(
+      UpdateCotisation event,
+      Emitter<MemberManagementState> emit,
+      ) async {
+    await _handleEitherResult(
+      result: await updateCotisationUseCase(event.updateCotisationParams),
+      onSuccess: () {
+        final newCotisation = List<bool>.from(state.cotisation);
+        newCotisation[event.updateCotisationParams.type] =
+            event.updateCotisationParams.cotisation;
+        emit(state.copyWith(cotisation: newCotisation));
+      },
+      emit: emit,
+      successMessage: 'Cotisation Updated Successfully',
+    );
+  }
+
+  Future<void> _handleUpdatePoints(
+      UpdatePoints event,
+      Emitter<MemberManagementState> emit,
+      ) async {
+     emit(state.copyWith(points: event.updatePointsParams.points,
+     typeResult: TypeResult.Loading
+     ));
+    await _handleEitherResult(
+      result: await updatePointsUseCase(event.updatePointsParams),
+      onSuccess: () => emit(state.copyWith(points: state.clone)),
+      emit: emit,
+      successMessage: 'Points Updated Successfully',
+    );
+  }
+
+  Future<void> _handleValidateMember(
+      validateMember event,
+      Emitter<MemberManagementState> emit,
+      ) async {
+    await _handleEitherResult(
+      result: await validateMemberUseCase(event.memberid),
+      onSuccess: () {
+        return emit(state.copyWith( typeResult: TypeResult.Updated));
+      },
+      emit: emit,
+      successMessage: 'Member Validated Successfully',
+    );
+  }
+
+  Future<void> _handleDeleteMember(
+      deleteMemberEvent event,
+      Emitter<MemberManagementState> emit,
+      ) async {
+    await _handleEitherResult(
+      result: await deleteMemberUseCase(event.id),
+      onSuccess: () {},
+      emit: emit,
+      successMessage: 'Member Deleted Successfully',
+      successType: TypeResult.Removed,
+    );
   }
 }

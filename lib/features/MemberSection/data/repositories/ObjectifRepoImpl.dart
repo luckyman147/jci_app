@@ -4,6 +4,7 @@ import 'package:jci_app/core/Handlers/Handler.dart';
 import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/features/MemberSection/data/datasources/ObjectidDataSource.dart';
 import 'package:jci_app/features/MemberSection/data/model/ObjectifsModels.dart';
+import 'package:jci_app/features/MemberSection/domain/dto/UpdateObjectiveProgressDTO.dart';
 import 'package:jci_app/features/MemberSection/domain/entity/Objectif.dart';
 import 'package:jci_app/features/MemberSection/domain/entity/UserObjectifInfos.dart';
 import 'package:jci_app/features/MemberSection/domain/repositories/objectifsRepo.dart';
@@ -11,8 +12,9 @@ import 'package:jci_app/features/MemberSection/domain/repositories/objectifsRepo
 class ObjectifRepoImpl implements ObjectifRepo{
   final Handler<Unit> handler;
   final Handler<({List<UserObjectifInfos> userObjectifInfos, DocumentSnapshot? lastDoc})> objectifHandler;
+  final Handler<List<UserObjectifInfos> > userProgressHandler;
 final ObjectifDataSource objectifDataSource;
-  ObjectifRepoImpl(this.objectifDataSource, this.objectifHandler, {required this.handler});
+  ObjectifRepoImpl(this.objectifDataSource, this.objectifHandler, this.userProgressHandler, {required this.handler});
   @override
   Future<Either<Failure, Unit>> AddObjectif(Objectif objectif)async {
 return await handler.handle(onCall: (){
@@ -61,5 +63,19 @@ return await handler.handle(onCall: (){
         throw e;
       }
     });
+  }
+
+  @override
+  Future<Either<Failure, List<UserObjectifInfos>>> updateUserObjectivesProgress(UpdateObjectiveProgressDTO update) async{
+    return await userProgressHandler.handle(onCall:  (){
+      return objectifDataSource.updateUserProgress(update);
+
+
+    }, onError:(e){
+      if (e is Exception){
+        throw e;
+      }
+      throw ServerFailure();
+    } );
   }
 }

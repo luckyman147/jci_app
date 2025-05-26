@@ -20,6 +20,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 class MyApp extends StatefulWidget {
   final String? text;
+
   const MyApp({
     super.key,
     this.text,
@@ -41,8 +42,7 @@ class _MyAppState extends State<MyApp> {
       if (message.notification != null) {
         if (message.data['end_time'] != null) {
           NotificationService.showCountUpNotification(message);
-        }
-        else {
+        } else {
           NotificationService.showNotification(message);
         }
       }
@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
     // Handle notifications tapped while the app is in the background
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       if (message.data['route'] != null) {
-        context.go( message.data['route']);
+        context.go(message.data['route']);
       }
     });
     super.initState();
@@ -71,7 +71,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-
       designSize: const Size(375, 812),
       splitScreenMode: true,
       minTextAdapt: true,
@@ -84,6 +83,7 @@ class _MyAppState extends State<MyApp> {
               builder: (context, state) {
                 if (state is ChangeLocalState) {
                   return MaterialApp.router(
+                    scaffoldMessengerKey: GlobalKey<ScaffoldMessengerState>(),
                     theme: themeData,
                     routerConfig: router(_navigatorKey, widget.text),
                     debugShowCheckedModeBanner: false,

@@ -16,12 +16,13 @@ import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/memb
 import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/components/TextFieldsComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/components/buttonsComponents.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/member/functionMember.dart';
+import 'package:jci_app/features/MemberSection/presentation/functions/functionMember.dart';
 
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import 'package:shimmer/shimmer.dart';
 
+import '../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/Bloc/permissions/permissions_bloc.dart';
 import '../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
 import '../../../../core/strings/app_strings.dart';
 
@@ -187,7 +188,7 @@ static isMode(SettingsBools state) {
         Icons.people,
         isMem(state.settings),
         TextFieldComponets.MembersWidgetOnlyName(
-            MediaQuery.of(context),context),
+            MediaQuery.of(context),context,TextEditingController(),FocusNode()),
         MediaQuery.of(context),
         SettingsBools.Members,Icons.emoji_events,300,()=>    context.read<MembersBloc>().add(const GetAllMembersEvent(true))
     ),PermissionType.canRead,Constants.MANAGE_MEMBERS
@@ -200,6 +201,8 @@ static isMode(SettingsBools state) {
           child: InkWell(
               onTap: () {
                 context.read<AuthBloc>().add(const SignoutEvent());
+                context.read<PermissionsBloc>().add(ResetListEvent());
+
                 context.go("/login");
               },
 
@@ -302,7 +305,7 @@ static isMode(SettingsBools state) {
                  }
 
 
-               },context),
+               },context,200),
             ],),
     );
   },

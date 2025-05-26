@@ -1,5 +1,6 @@
 import 'package:jci_app/features/MemberSection/domain/entity/Objectif.dart';
 
+import '../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Role.dart';
 import '../../domain/entity/ActionDetails.dart';
 
 class ObjectiveTypesForm{
@@ -24,19 +25,21 @@ static final ModificationGroup=ObjectifType(
 
       ActionDetailsType(actionType: ObjectifActionType.Create,
           actionDetails: ActionDetails(runtype: "int",
-              features: [FeaturesType.events,FeaturesType.meetings,FeaturesType.trainings,FeaturesType.teams,FeaturesType.Activities,FeaturesType.Votes,],
+              features: [FeaturesType.Events,FeaturesType.Meetings,FeaturesType.Trainings,FeaturesType.teams,
+                FeaturesType.Activities,FeaturesType.Votes,FeaturesType.Objectif,FeaturesType.Pv],
               privacy: PrivacyType.values.toList(),
               cible: [CibleType.President, CibleType.VPs],
               difficulty: ObjectifDifficulty.values.toList())),
       ActionDetailsType(actionType: ObjectifActionType.Update,
           actionDetails: ActionDetails(runtype: "int",
-              features: [FeaturesType.events,FeaturesType.meetings,FeaturesType.trainings,FeaturesType.teams,FeaturesType.Activities,FeaturesType.Votes,],
+              features: [FeaturesType.Events,FeaturesType.Meetings,FeaturesType.Trainings,FeaturesType.teams,FeaturesType.Activities,FeaturesType.Votes,FeaturesType.Objectif],
               privacy: PrivacyType.values.toList(),
               cible: [CibleType.President, CibleType.VPs],
               difficulty: ObjectifDifficulty.values.toList())),
       ActionDetailsType(actionType: ObjectifActionType.Delete,
           actionDetails: ActionDetails(runtype: "int",
-              features: [FeaturesType.events,FeaturesType.meetings,FeaturesType.trainings,FeaturesType.teams,FeaturesType.Activities,FeaturesType.Votes,],
+              features: [FeaturesType.Events,FeaturesType.Meetings,FeaturesType.Trainings,FeaturesType.teams,
+                FeaturesType.Activities,FeaturesType.Votes,FeaturesType.Objectif,FeaturesType.Pv],
               privacy: PrivacyType.values.toList(),
               cible: [CibleType.President, CibleType.VPs],
               difficulty: ObjectifDifficulty.values.toList())),
@@ -48,13 +51,13 @@ static final InteractionGroup=ObjectifType(
 
       ActionDetailsType(actionType: ObjectifActionType.Attend,
           actionDetails: ActionDetails(runtype: "int",
-              features: [FeaturesType.events,FeaturesType.meetings,FeaturesType.trainings,FeaturesType.teams,FeaturesType.Activities,],
+              features: [FeaturesType.Events,FeaturesType.Meetings,FeaturesType.Trainings,FeaturesType.teams,FeaturesType.Activities,],
               privacy: PrivacyType.values.toList(),
               cible: CibleType.values.toList(),
               difficulty: ObjectifDifficulty.values.toList())),
       ActionDetailsType(actionType: ObjectifActionType.Join,
           actionDetails: ActionDetails(runtype: "int",
-              features: [FeaturesType.events,FeaturesType.meetings,FeaturesType.trainings,FeaturesType.teams,FeaturesType.Activities,],
+              features: [FeaturesType.Events,FeaturesType.Meetings,FeaturesType.Trainings,FeaturesType.teams,FeaturesType.Activities,],
               privacy: PrivacyType.values.toList(),
               cible: CibleType.values.toList(),
               difficulty: ObjectifDifficulty.values.toList())),
@@ -66,7 +69,7 @@ static final DecisionGroup=ObjectifType(
 
       ActionDetailsType(actionType: ObjectifActionType.VoteIn,
           actionDetails: ActionDetails(runtype: "int",
-              features: [FeaturesType.meetings],
+              features: [FeaturesType.Meetings],
               privacy: PrivacyType.values.toList(),
               cible: CibleType.values.toList(),
               difficulty: ObjectifDifficulty.values.toList())),
@@ -84,6 +87,33 @@ static final ContributionGroup=ObjectifType(
               privacy: null,
               cible: CibleType.values.toList(),
               difficulty: ObjectifDifficulty.values.toList())),
+      ActionDetailsType(
+          actionType: ObjectifActionType.ReplyTo,
+          actionDetails: ActionDetails(
+              runtype: "int",
+              features: [FeaturesType.Comments],
+              privacy: null,
+              cible: CibleType.values.toList(),
+              difficulty: ObjectifDifficulty.values.toList())),
+
+            ActionDetailsType(
+          actionType: ObjectifActionType.ReactTo,
+          actionDetails: ActionDetails(
+              runtype: "int",
+              features: [FeaturesType.Comments],
+              privacy: null,
+              cible: CibleType.values.toList(),
+              difficulty: ObjectifDifficulty.values.toList())),
+                ActionDetailsType(
+          actionType: ObjectifActionType.Update,
+          actionDetails: ActionDetails(
+              runtype: "int",
+              features: [FeaturesType.Comments,FeaturesType.Replys,FeaturesType.Emojis],
+              privacy: null,
+              cible: CibleType.values.toList(),
+              difficulty: ObjectifDifficulty.values.toList())),
+
+
     ],
     groupObjectif: GroupObjectif.Contribution);
 static final ExplorationGroup=ObjectifType(
@@ -141,16 +171,17 @@ static List<CibleType> getCiblesByGroup(GroupObjectif group) {
   }
 
 
-static List<FeaturesType> getFeaturesByGroup(GroupObjectif group) {
-  final objectif = groupsObjectifs.firstWhere(
-        (obj) => obj.groupObjectif == group,
+  static List<FeaturesType> getFeaturesByGroup(GroupObjectif group, ObjectifActionType type) {
+    // Find the matching group objectif
+    final objectif = groupsObjectifs.firstWhere(
+          (obj) => obj.groupObjectif == group,
+     // Handle case where no match is found
+    );
 
-  );
-
-  return objectif?.actionType
-      .expand((action) => action.actionDetails.features)
-      .toSet() // Remove duplicates
-      .toList() ??
-      [];
-}
-}
+    // Filter features by the specified action type
+    return objectif.actionType
+        .where((action) => action.actionType == type) // Filter by action type
+        .expand((action) => action.actionDetails.features) // Expand to get features
+        .toSet() // Remove duplicates
+        .toList(); // Convert to list
+  }}

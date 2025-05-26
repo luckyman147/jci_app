@@ -12,23 +12,24 @@ class LocaleCubit extends Cubit<LocaleState> {
 }
 // import 'package:bloc/bloc.dart';
 
-
 // import 'package:meta/meta.dart';
 
-
 class localeCubit extends Cubit<LocaleState> {
-  localeCubit() : super(LocaleInitial());
+  final LanguageCacheHelper languageCacheHelper;
+  localeCubit(this.languageCacheHelper) : super(LocaleInitial());
   Future<void> getSavedLanguage() async {
     final String cachedLanguageCode =
-    await LanguageCacheHelper().getCachedLanguageCode();
+        await languageCacheHelper.getCachedLanguageCode();
 
     emit(ChangeLocalState(Locale(cachedLanguageCode)));
- //  emit (state.copyWith(languageCode: cachedLanguageCode,locale: Locale(cachedLanguageCode)));
+    //  emit (state.copyWith(languageCode: cachedLanguageCode,locale: Locale(cachedLanguageCode)));
   }
-   Future<String?> cachedLanguageCode() async=> await LanguageCacheHelper().getCachedLanguageCode();
+
+  Future<String?> cachedLanguageCode() async =>
+      await languageCacheHelper.getCachedLanguageCode();
 
   Future<void> changeLanguage(String languageCode) async {
-    await LanguageCacheHelper().CacheLanguageCode(languageCode);
+    await languageCacheHelper.CacheLanguageCode(languageCode);
 
     emit(ChangeLocalState(Locale(languageCode)));
   }

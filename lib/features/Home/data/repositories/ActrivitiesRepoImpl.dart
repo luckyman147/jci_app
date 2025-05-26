@@ -194,7 +194,7 @@ await meetingLocalDataSource.cacheMeeting(newMeet);
     return await Unithandler.handleActivity(
         onCallEvents: ()   {
           final event=EventModel.fromEntity(event:activity as Event);
-          Logger().i("updating event",event.id);
+
            eventRemoteDataSource.updateEvent(event);
           return Future.value(unit);},
         onCallMeetings: () {

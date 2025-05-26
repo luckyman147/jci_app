@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/core/strings/failures.dart';
 import 'package:jci_app/features/Home/domain/Dtos/NoteInput.dart';
 import 'package:jci_app/features/Home/domain/enums/ActivityCommentEnum.dart';
@@ -15,11 +16,23 @@ import '../../../../../domain/usercases/ActivityCommentUsesCase.dart';
 part 'activity_comment_event.dart';
 part 'activity_comment_state.dart';
 
-class ActivityCommentBloc extends Bloc<ActivityCommentEvent, ActivityCommentState> {
-  ActivityCommentBloc(this.getCommentsOfActivityUseCase,
-      this.addCommentToActivityUseCase, this.updateCommentToActivityUseCase,
-      this.deleteCommentToActivityUseCase, this.addReplyToCommentUseCase,
-      this.updateReplyToCommentUseCase, this.deleteReplyToCommentUseCase, this.addReactionsToCommentUseCase, this.addReactionsToReplyUseCase, this.updateReactionsToCommentUseCase, this.updateReactionsToReplyUseCase, this.sendCommentNotificationsUseCase)
+class ActivityCommentBloc
+    extends Bloc<ActivityCommentEvent, ActivityCommentState> {
+  ActivityCommentBloc(
+      this.getCommentsOfActivityUseCase,
+      this.addCommentToActivityUseCase,
+      this.updateCommentToActivityUseCase,
+      this.deleteCommentToActivityUseCase,
+      this.addReplyToCommentUseCase,
+      this.updateReplyToCommentUseCase,
+      this.deleteReplyToCommentUseCase,
+      this.addReactionsToCommentUseCase,
+      this.addReactionsToReplyUseCase,
+      this.updateReactionsToCommentUseCase,
+      this.updateReactionsToReplyUseCase,
+      this.sendCommentNotificationsUseCase,
+      this.store,
+      this.memberStore)
       : super(ActivityCommentInitial()) {
     on<ActivityCommentEvent>((event, emit) {
       // TODO: implement event handler
@@ -37,14 +50,14 @@ class ActivityCommentBloc extends Bloc<ActivityCommentEvent, ActivityCommentStat
     on<UpdateReplyComment>(_UpdateReply);
     on<InitComment>(_InitComment);
     on<SendCommentNotification>(_SendCommentNotification);
-    on<ToggleExpandForItemEvent>((event,emit){
+    on<ToggleExpandForItemEvent>((event, emit) {
       emit(state.copyWith(expandedItems: {
         ...state.expandedItems,
         event.index: !state.expandedItems[event.index]!,
       }));
     });
-    on<CheckIsAlreadyReacted>((event,emit)async{
-      final user=await const Store().getUserId();
+    on<CheckIsAlreadyReacted>((event, emit) async {
+      final user = await store.getUserId();
       emit(state.copyWith(isReacted: event.reactions.contains(user)));
     });
   }
@@ -61,86 +74,123 @@ class ActivityCommentBloc extends Bloc<ActivityCommentEvent, ActivityCommentStat
   final UpdateReactionsToCommentUseCase updateReactionsToCommentUseCase;
   final UpdateReactionsToReplyUseCase updateReactionsToReplyUseCase;
   final SendCommentNotificationsUseCase sendCommentNotificationsUseCase;
+  final Store store;
+  final MemberStore memberStore;
 
-
-
-  FutureOr<void> _SendCommentNotification(SendCommentNotification event, Emitter<ActivityCommentState> emit) async{
-    final result=await sendCommentNotificationsUseCase.call(event.comment);
-    emit(_eitherSuccessOrFailure(result, (r) => state.copyWith(activityCommentEnum: ActivityCommentEnum.SEND_NOTIFICATION)));
+  FutureOr<void> _SendCommentNotification(
+      SendCommentNotification event, Emitter<ActivityCommentState> emit) async {
+    final result = await sendCommentNotificationsUseCase.call(event.comment);
+    emit(_eitherSuccessOrFailure(
+        result,
+        (r) => state.copyWith(
+            activityCommentEnum: ActivityCommentEnum.SEND_NOTIFICATION)));
   }
 
-  FutureOr<void> _UpdateReply(UpdateReplyComment event,
-      Emitter<ActivityCommentState> emit) async{
-    emit (state.copyWith(activityCommentEnum: ActivityCommentEnum.LOADING));
+  FutureOr<void> _UpdateReply(
+      UpdateReplyComment event, Emitter<ActivityCommentState> emit) async {
+    emit(state.copyWith(activityCommentEnum: ActivityCommentEnum.LOADING));
     final result = await updateReplyToCommentUseCase.call(event.comment);
-    emit(_eitherSuccessOrFailure(result, (r) => state.copyWith(activityCommentEnum: ActivityCommentEnum.UPDATE_REPLY)));
+    emit(_eitherSuccessOrFailure(
+        result,
+        (r) => state.copyWith(
+            activityCommentEnum: ActivityCommentEnum.UPDATE_REPLY)));
   }
 
-  FutureOr<void> _AddEmoji(AddEmojiComment event,
-      Emitter<ActivityCommentState> emit) async{
-    emit (state.copyWith(activityCommentEnum: ActivityCommentEnum.LOADING));
+  FutureOr<void> _AddEmoji(
+      AddEmojiComment event, Emitter<ActivityCommentState> emit) async {
+    emit(state.copyWith(activityCommentEnum: ActivityCommentEnum.LOADING));
     final result = await addReactionsToCommentUseCase.call(event.comment);
-    emit(_eitherSuccessOrFailure(result, (r) => state.copyWith(activityCommentEnum: ActivityCommentEnum.ADD_EMOJI)));
-
+    emit(_eitherSuccessOrFailure(
+        result,
+        (r) => state.copyWith(
+            activityCommentEnum: ActivityCommentEnum.ADD_EMOJI)));
   }
 
-  FutureOr<void> _UpdateComment(event, Emitter<ActivityCommentState> emit) async{
-    emit (state.copyWith(activityCommentEnum: ActivityCommentEnum.LOADING));
+  FutureOr<void> _UpdateComment(
+      event, Emitter<ActivityCommentState> emit) async {
+    emit(state.copyWith(activityCommentEnum: ActivityCommentEnum.LOADING));
     final result = await updateCommentToActivityUseCase.call(event.comment);
-    emit(_eitherSuccessOrFailure(result, (r) => state.copyWith(activityCommentEnum: ActivityCommentEnum.UPDATE_COMMENT)));
-
+    emit(_eitherSuccessOrFailure(
+        result,
+        (r) => state.copyWith(
+            activityCommentEnum: ActivityCommentEnum.UPDATE_COMMENT)));
   }
 
-  FutureOr<void> _DeleteReply(DeleteReplyComment event,
-      Emitter<ActivityCommentState> emit) async{
-    emit (state.copyWith(activityCommentEnum: ActivityCommentEnum.LOADING));
+  FutureOr<void> _DeleteReply(
+      DeleteReplyComment event, Emitter<ActivityCommentState> emit) async {
+    emit(state.copyWith(activityCommentEnum: ActivityCommentEnum.LOADING));
     final result = await deleteReplyToCommentUseCase.call(event.comment);
-    emit(_eitherSuccessOrFailure(result, (r) => state.copyWith(activityCommentEnum: ActivityCommentEnum.DELETE_REPLY)));
+    emit(_eitherSuccessOrFailure(
+        result,
+        (r) => state.copyWith(
+            activityCommentEnum: ActivityCommentEnum.DELETE_REPLY)));
   }
 
-  FutureOr<void> _DeleteComment(DeleteActivityComment event,
-      Emitter<ActivityCommentState> emit) async{
-
+  FutureOr<void> _DeleteComment(
+      DeleteActivityComment event, Emitter<ActivityCommentState> emit) async {
     final result = await deleteCommentToActivityUseCase.call(event.comment);
-    emit(_eitherSuccessOrFailure(result, (r) => state.copyWith(activityCommentEnum: ActivityCommentEnum.LOADING)));
+    emit(_eitherSuccessOrFailure(
+        result,
+        (r) => state.copyWith(
+            activityCommentEnum: ActivityCommentEnum.DELETE_COMMENT)));
   }
 
-  FutureOr<void> _AddReply(AddReplyComment event,
-      Emitter<ActivityCommentState> emit)async {
+  FutureOr<void> _AddReply(
+      AddReplyComment event, Emitter<ActivityCommentState> emit) async {
+    final user = await memberStore.getPrimitiveModel();
+    ReplyComment comment = event.comment;
+    if (event.comment.user == null) {
+      comment = event.comment.copyWith(
+        user: user,
+      );
+      return;
+    }
 
-    final result = await addReplyToCommentUseCase.call(event.comment);
+    final result = await addReplyToCommentUseCase.call(comment);
 
-    emit(_eitherSuccessOrFailure(result, (r) => state.copyWith(activityCommentEnum: ActivityCommentEnum.ADD_REPLY)));
-
+    emit(_eitherSuccessOrFailure(
+        result,
+        (r) => state.copyWith(
+            activityCommentEnum: ActivityCommentEnum.ADD_REPLY)));
   }
 
-  FutureOr<void> _AddComment(AddActivityComment event,
-      Emitter<ActivityCommentState> emit)async {
-
+  FutureOr<void> _AddComment(
+      AddActivityComment event, Emitter<ActivityCommentState> emit) async {
+    final user = await memberStore.getPrimitiveModel();
+    ActivityComment? comment = event.comment.comment;
+    if (comment != null && comment.user == null) {
+      comment = event.comment.comment!.copyWith(
+        user: user,
+      );
+      return;
+    }
     final result = await addCommentToActivityUseCase.call(event.comment);
-    emit(_eitherSuccessOrFailure(result, (r) => state.copyWith(activityCommentEnum: ActivityCommentEnum.ADD_COMMENT)));
+    emit(_eitherSuccessOrFailure(
+        result,
+        (r) => state.copyWith(
+            activityCommentEnum: ActivityCommentEnum.ADD_COMMENT)));
   }
 
   Future<void> _GetComments(
-      GetActivitysComment event,
-      Emitter<ActivityCommentState> emit,
-      ) async {
+    GetActivitysComment event,
+    Emitter<ActivityCommentState> emit,
+  ) async {
     // Emit loading state
     emit(state.copyWith(activityCommentEnum: ActivityCommentEnum.LOADING));
 
     try {
-      final lastFetchedComment = state.comments.isNotEmpty
-          ? state.comments.last.createdAt
-          : null;
+      final lastFetchedComment =
+          state.comments.isNotEmpty ? state.comments.last.createdAt : null;
       // Listen to the comment stream from the use case
-      await emit.forEach<Either<Failure,List<ActivityComment>>>(
-
+      await emit.forEach<Either<Failure, List<ActivityComment>>>(
         //today
-        getCommentsOfActivityUseCase.call(event.activityId, lastFetchedComment?.toString()),
+        getCommentsOfActivityUseCase.call(
+            event.activityId, lastFetchedComment?.toString()),
         onData: (comments) {
-
           final commentsList = comments.getOrElse(() => []);
-          final ExpanedItems={ for (var comment in commentsList) comment.Commentid : false };
+          final ExpanedItems = {
+            for (var comment in commentsList) comment.Commentid: false
+          };
           return state.copyWith(
             activityCommentEnum: ActivityCommentEnum.GET_COMMENTS,
             comments: commentsList,
@@ -151,7 +201,7 @@ class ActivityCommentBloc extends Bloc<ActivityCommentEvent, ActivityCommentStat
           Logger().e(error);
           return state.copyWith(
             activityCommentEnum: ActivityCommentEnum.ERROR,
-            message:mapFailureToMessage(error as Failure),
+            message: mapFailureToMessage(error as Failure),
           );
         },
       );
@@ -163,42 +213,57 @@ class ActivityCommentBloc extends Bloc<ActivityCommentEvent, ActivityCommentStat
         message: e.toString(),
       ));
     }
+  }
 
-
-  }ActivityCommentState _eitherSuccessOrFailure<T>(
-      Either<Failure, T >result, Function(T) onSuccess ) {
+  ActivityCommentState _eitherSuccessOrFailure<T>(
+      Either<Failure, T> result, Function(T) onSuccess) {
     return result.fold(
-          (l) {
-            Logger().e(l);
-            return state.copyWith(activityCommentEnum: ActivityCommentEnum.ERROR,message: mapFailureToMessage(l));
-          },
-          (r) => onSuccess(r),
+      (l) {
+        Logger().e(l);
+        return state.copyWith(
+            activityCommentEnum: ActivityCommentEnum.ERROR,
+            message: mapFailureToMessage(l));
+      },
+      (r) => onSuccess(r),
     );
   }
 
-  FutureOr<void> _UpdateReactionReply(UpdateReactionReplyComment event, Emitter<ActivityCommentState> emit) async{
-    final result=await updateReactionsToReplyUseCase(event.comment);
-    emit(_eitherSuccessOrFailure(result, (r) => state.copyWith(activityCommentEnum: ActivityCommentEnum.UpdateEmoji,)));
-
-
+  FutureOr<void> _UpdateReactionReply(UpdateReactionReplyComment event,
+      Emitter<ActivityCommentState> emit) async {
+    final result = await updateReactionsToReplyUseCase(event.comment);
+    emit(_eitherSuccessOrFailure(
+        result,
+        (r) => state.copyWith(
+              activityCommentEnum: ActivityCommentEnum.UpdateEmoji,
+            )));
   }
 
-  FutureOr<void> _AddReactionToReply(AddReactionReplyComment event, Emitter<ActivityCommentState> emit) async{
-    final result=await updateReactionsToReplyUseCase(event.comment);
-    emit(_eitherSuccessOrFailure(result, (r) => state.copyWith(activityCommentEnum: ActivityCommentEnum.ADD_EMOJI,)));
+  FutureOr<void> _AddReactionToReply(
+      AddReactionReplyComment event, Emitter<ActivityCommentState> emit) async {
+    final result = await updateReactionsToReplyUseCase(event.comment);
+    emit(_eitherSuccessOrFailure(
+        result,
+        (r) => state.copyWith(
+              activityCommentEnum: ActivityCommentEnum.ADD_EMOJI,
+            )));
   }
 
-  FutureOr<void> _UpdateReaction(UpdateReactionComment event, Emitter<ActivityCommentState> emit)async {
-    final result=await updateReactionsToReplyUseCase(event.comment);
-    emit(_eitherSuccessOrFailure(result, (r) => state.copyWith(activityCommentEnum: ActivityCommentEnum.ADD_EMOJI,)));
+  FutureOr<void> _UpdateReaction(
+      UpdateReactionComment event, Emitter<ActivityCommentState> emit) async {
+    final result = await updateReactionsToReplyUseCase(event.comment);
+    emit(_eitherSuccessOrFailure(
+        result,
+        (r) => state.copyWith(
+              activityCommentEnum: ActivityCommentEnum.ADD_EMOJI,
+            )));
   }
 
-  FutureOr<void> _InitComment(InitComment event, Emitter<ActivityCommentState> emit) {
+  FutureOr<void> _InitComment(
+      InitComment event, Emitter<ActivityCommentState> emit) {
     if (event.isEmpty == true) {
-      emit(state.copyWith(comment: null,isReply: false));
+      emit(state.copyWith(comment: null, isReply: false));
     } else {
-    emit(state.copyWith(comment: event.comment,isReply: true));
+      emit(state.copyWith(comment: event.comment, isReply: true));
     }
   }
 }
-

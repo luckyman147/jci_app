@@ -17,12 +17,14 @@ class AlreadyRegisterException implements Exception {}
 class AlreadyParticipateException implements Exception {}
 class WrongVerificationException implements Exception {}
 class NotVerifiedException implements Exception {}
-
+class AlreadyExistedException implements Exception{}
 
 extension MessgeException on
 Exception {
   Failure  get get_failure {
     switch (runtimeType) {
+      case AlreadyExistedException:
+      return AlreadyExistedFailure();
       case ServerException:
         return ServerFailure();
       case EmptyCacheException:

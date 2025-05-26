@@ -11,7 +11,7 @@ import '../../../../Teams/data/models/TeamModel.dart';
 import '../../../../Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import '../../../../Teams/presentation/widgets/DetailTeamComponents.dart';
 import '../../../../Teams/presentation/widgets/TeamWidget.dart';
-import '../member/functionMember.dart';
+import '../../functions/functionMember.dart';
 
 class TeamsComponent extends StatelessWidget {
   final Member member;

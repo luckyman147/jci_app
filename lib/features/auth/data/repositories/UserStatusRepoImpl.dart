@@ -5,7 +5,8 @@ import 'package:jci_app/core/error/Exception.dart';
 import 'package:jci_app/core/error/Failure.dart';
 
 import '../../domain/repositories/UserStatusRepo.dart';
-import '../datasources/UserStatusRemote.dart';
+
+import '../datasources/UserStatusRemoteDataSources.dart';
 
 class UserStatusRepoImpl implements UserStatusRepo {
   final UserStatusRemoteDataSource userStatusRemoteDataSource;

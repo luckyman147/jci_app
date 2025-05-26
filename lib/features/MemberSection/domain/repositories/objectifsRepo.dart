@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:jci_app/features/MemberSection/domain/entity/Objectif.dart';
 
 import '../../../../core/error/Failure.dart';
+import '../dto/UpdateObjectiveProgressDTO.dart';
 import '../entity/UserObjectifInfos.dart';
 
 abstract class ObjectifRepo{
@@ -15,4 +16,5 @@ abstract class ObjectifRepo{
     required int limit,
   });
 
+  Future<Either<Failure,List<UserObjectifInfos>>> updateUserObjectivesProgress(UpdateObjectiveProgressDTO update);
 }

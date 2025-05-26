@@ -1,27 +1,19 @@
-
-import 'package:flutter_animate/flutter_animate.dart';
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
-
 import 'package:jci_app/core/app_theme.dart';
-
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/core/widgets/loading_widget.dart';
-import 'package:jci_app/features/Home/domain/usercases/ActivityUseCases.dart';
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Activity/ActivityDetailsComponents.dart';
 //import 'package:jci_app/features/auth/presentation/bloc/Members/members_bloc.dart';
 
-import '../../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/PermissionsBLoc/permissions_bloc.dart';
+import '../../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/Bloc/permissions/permissions_bloc.dart';
 import '../../../../../core/config/env/Constants.dart';
 import '../../../../../core/strings/app_strings.dart';
 
@@ -34,7 +26,6 @@ import '../../bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import '../../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../../bloc/Activity/activity_cubit.dart';
 
-
 import '../../bloc/PageIndex/page_index_bloc.dart';
 import '../Activity/ActivityImplWidgets.dart';
 import '../Implementations/ActivtysImplementations.dart';
@@ -42,10 +33,7 @@ import '../buttons/PinnedButton.dart';
 import 'ErrorDisplayMessage.dart';
 import '../Activity/EventListWidget.dart';
 
-
 import '../Functions/Functions.dart';
-
-
 
 class MyDropdownButton extends StatefulWidget {
   const MyDropdownButton({super.key});
@@ -55,115 +43,105 @@ class MyDropdownButton extends StatefulWidget {
 }
 
 class _MyDropdownButtonState extends State<MyDropdownButton> {
-  late String selectedValue="Event".tr(context);
+  late String selectedValue = "Event".tr(context);
   @override
   void initState() {
-
-
     // TODO: implement initState
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ActivityCubit, ActivityState>(
-  builder: (context, ste) {
-    return BlocBuilder<ToggleBooleanBloc, ToggleBooleanState>(
-      builder: (context, state) {
-        return Container(
-            width: 170,
-            height: 65,
-
-            padding: const EdgeInsets.all(12.0),
-            decoration: BoxDecoration(
-
-
-              borderRadius: BorderRadius.circular(16.0),
-
-            ),
-            child: DropdownButtonHideUnderline(
-
-
-              child: DropdownButton2<activity>(
-
-                style: PoppinsSemiBold(21, textColorBlack, TextDecoration.none),
-
-                dropdownStyleData:const  DropdownStyleData(
-                  maxHeight: 200,
-
-                  width: 170,
-                  decoration: BoxDecoration(
-                    color: textColorWhite,
-                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(16),bottomRight: Radius.circular(16)),
-
-
+      builder: (context, ste) {
+        return BlocBuilder<ToggleBooleanBloc, ToggleBooleanState>(
+          builder: (context, state) {
+            return Container(
+                width: 170,
+                height: 65,
+                padding: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton2<activity>(
+                    style: PoppinsSemiBold(
+                        21, textColorBlack, TextDecoration.none),
+                    dropdownStyleData: const DropdownStyleData(
+                      maxHeight: 200,
+                      width: 170,
+                      decoration: BoxDecoration(
+                        color: textColorWhite,
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(16),
+                            bottomRight: Radius.circular(16)),
+                      ),
+                      offset: Offset(-14, 0),
+                      scrollbarTheme: ScrollbarThemeData(
+                        radius: Radius.circular(14),
+                      ),
+                    ),
+                    menuItemStyleData: const MenuItemStyleData(
+                      height: 40,
+                      padding: EdgeInsets.only(left: 14, right: 14),
+                    ),
+                    onMenuStateChange: (bool isMenuOpen) {
+                      context.read<ToggleBooleanBloc>().add(ToggleBoolean());
+                    },
+                    iconStyleData: IconStyleData(
+                        iconSize: 20,
+                        icon: SvgPicture.string(
+                            state.value ? Arrow_UP : Arrow_Down)),
+                    value: ste.selectedActivity,
+                    underline: Container(
+                      height: 20,
+                      color: Colors.transparent,
+                    ),
+                    onChanged: (newValue) {
+                      context.read<ActivityCubit>().selectActivity(newValue!);
+                      context
+                          .read<AcivityFBloc>()
+                          .add(GetAllActivitiesEvent(act: newValue));
+                      context.read<PermissionsBloc>().add(
+                              LoadPermissionOfMasterEvent(featuresId: [
+                            Constants.MANAGE_EVENTS,
+                            Constants.MANAGE_MEETINGS,
+                            Constants.MANAGE_TRAININGS
+                          ]));
+                    },
+                    items: <activity>[
+                      activity.Events,
+                      activity.Meetings,
+                      activity.Trainings
+                    ].map<DropdownMenuItem<activity>>((activity value) {
+                      return DropdownMenuItem<activity>(
+                        alignment: AlignmentDirectional.centerStart,
+                        value: value,
+                        child: Text(
+                          value.name.tr(context),
+                          style: PoppinsSemiBold(
+                              18, textColorBlack, TextDecoration.none),
+                        ),
+                      );
+                    }).toList(),
                   ),
-                  offset: Offset(-14, 0),
-                  scrollbarTheme: ScrollbarThemeData(
-
-                    radius: Radius.circular(14),
-
-                  ),
-                ),
-                menuItemStyleData: const MenuItemStyleData(
-                  height: 40,
-                  padding: EdgeInsets.only(left: 14, right: 14),
-                ),
-                onMenuStateChange: (bool isMenuOpen) {
-
-                  context.read<ToggleBooleanBloc>().add(ToggleBoolean());
-
-                },
-                iconStyleData:  IconStyleData(iconSize: 20,icon:SvgPicture.string(state.value?Arrow_UP:Arrow_Down)),
-
-
-                value:ste.selectedActivity,
-
-
-
-
-                underline: Container(
-                  height: 20,
-                  color: Colors.transparent,
-                ),
-                onChanged: (newValue) {
-
-
-
-
-                  context.read<ActivityCubit>().selectActivity(newValue!);
-                  context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act: newValue));
-                  context.read<PermissionsBloc>().add(LoadPermissionOfMasterEvent(featuresId: [Constants.MANAGE_EVENTS,Constants.MANAGE_MEETINGS,Constants.MANAGE_TRAININGS]));
-
-
-
-                },
-                items: <activity>[activity.Events, activity.Meetings, activity.Trainings ]
-                    .map<DropdownMenuItem<activity>>((activity value) {
-                  return DropdownMenuItem<activity>(
-                    alignment: AlignmentDirectional.centerStart,
-                    value: value,
-                    child: Text(value.name.tr(context),style: PoppinsSemiBold(18, textColorBlack, TextDecoration.none),),
-
-                  );
-                }).toList(),
-
-              ),
-            )
+                ));
+          },
         );
       },
     );
-  },
-);
   }
 }
+
 class SearchButton extends StatelessWidget {
   final Color color;
-  final Color IconColor ;
+  final Color IconColor;
   final Function()? onPressed;
-  const SearchButton({super.key, required this.color, required this.IconColor, this.onPressed});
-
+  const SearchButton(
+      {super.key,
+      required this.color,
+      required this.IconColor,
+      this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -171,23 +149,30 @@ class SearchButton extends StatelessWidget {
       height: 39,
       width: 49,
       child: IconButton(
-
         onPressed: () {
           onPressed!();
           // Navigator.pushNamed(context, Routes.search);
         },
-        icon: Icon(Icons.search,color: IconColor,),
+        icon: Icon(
+          Icons.search,
+          color: IconColor,
+        ),
       ),
     );
   }
-}class AddButton extends StatelessWidget {
+}
+
+class AddButton extends StatelessWidget {
   final Color color;
-  final Color IconColor ;
+  final Color IconColor;
   final IconData icon;
   final Function()? onPressed;
-  const AddButton({super.key, required this.color, required this.IconColor,
-    required this.icon, required this.onPressed});
-
+  const AddButton(
+      {super.key,
+      required this.color,
+      required this.IconColor,
+      required this.icon,
+      required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -195,21 +180,29 @@ class SearchButton extends StatelessWidget {
       height: 49,
       width: 49,
       child: IconButton(
-
         onPressed: () {
-      onPressed!();
+          onPressed!();
           // Navigator.pushNamed(context, Routes.search);
         },
-        icon: Icon(icon,color: IconColor,size: 30,),
+        icon: Icon(
+          icon,
+          color: IconColor,
+          size: 30,
+        ),
       ),
     );
   }
 }
+
 class CalendarButton extends StatefulWidget {
   final Color color;
-  final Color IconColor ;
+  final Color IconColor;
 
-  const CalendarButton({super.key, required this.color, required this.IconColor, });
+  const CalendarButton({
+    super.key,
+    required this.color,
+    required this.IconColor,
+  });
 
   @override
   State<CalendarButton> createState() => _CalendarButtonState();
@@ -221,49 +214,51 @@ class _CalendarButtonState extends State<CalendarButton> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-
       child: IconButton(
-
         onPressed: () {
           showModalBottomSheet(
-            useSafeArea: true,
+              useSafeArea: true,
               showDragHandle: true,
               isScrollControlled: true,
-              context: context, builder: (builder)=>
-          SizedBox(
-            height: MediaQuery.of(context).size.height,
-
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      BackButton(onPressed: (){
-                        Navigator.pop(context);
-                      },),
-              
-                      Text("Calendar".tr(context),style: PoppinsSemiBold(20, textColorBlack, TextDecoration.none),),
-                    ],
-                  ),
-                  Padding(
-                    padding: paddingSemetricVertical(),
-                    child: const MyActivityButtons(),
-                  ),
-                  SingleChildScrollView(child: ShowCalendarWidget()),
-                ],
-              ),
-            ),
-          )
-          );
+              context: context,
+              builder: (builder) => SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              BackButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              Text(
+                                "Calendar".tr(context),
+                                style: PoppinsSemiBold(
+                                    20, textColorBlack, TextDecoration.none),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: paddingSemetricVertical(),
+                            child: const MyActivityButtons(),
+                          ),
+                          SingleChildScrollView(child: ShowCalendarWidget()),
+                        ],
+                      ),
+                    ),
+                  ));
 
           // Navigator.pushNamed(context, Routes.search);
-
-
         },
 
-          // Navigator.pushNamed(context, Routes.search);
+        // Navigator.pushNamed(context, Routes.search);
 
-        icon: Icon(Icons.calendar_month_rounded,color: widget.IconColor,),
+        icon: Icon(
+          Icons.calendar_month_rounded,
+          color: widget.IconColor,
+        ),
       ),
     );
   }
@@ -289,27 +284,19 @@ class MyActivityButtons extends StatelessWidget {
     );
   }
 
-  Widget _buildActivityButton(
-      BuildContext context, activity act, mediaQuery) {
+  Widget _buildActivityButton(BuildContext context, activity act, mediaQuery) {
     return BlocBuilder<ActivityCubit, ActivityState>(
       builder: (context, state) {
         return Padding(
-          padding:paddingSemetricHorizontal(),
+          padding: paddingSemetricHorizontal(),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              side: const BorderSide(
-                  color: textColorBlack,
-
-                  width: 2.0),
-
-              backgroundColor: state.selectedActivity == act
-                  ? PrimaryColor
-                  : Colors.white,
-              foregroundColor: state.selectedActivity == act
-                  ? textColorWhite
-                  : Colors.black,
+              side: const BorderSide(color: textColorBlack, width: 2.0),
+              backgroundColor:
+                  state.selectedActivity == act ? PrimaryColor : Colors.white,
+              foregroundColor:
+                  state.selectedActivity == act ? textColorWhite : Colors.black,
               shape: RoundedRectangleBorder(
-
                 borderRadius: BorderRadius.circular(10.0),
               ),
             ),
@@ -318,7 +305,7 @@ class MyActivityButtons extends StatelessWidget {
               _handleActivityButtonClick(context, act);
             },
             child: Text(
-              act.toString().split('.').last.tr(context)  ,
+              act.toString().split('.').last.tr(context),
               style: PoppinBold(
                   mediaQuery.size.width / 30,
                   state.selectedActivity == act
@@ -332,39 +319,35 @@ class MyActivityButtons extends StatelessWidget {
     );
   }
 
-  void _handleActivityButtonClick(
-      BuildContext context, activity act) {
+  void _handleActivityButtonClick(BuildContext context, activity act) {
     context.read<ActivityCubit>().selectActivity(act);
-    context.read<AcivityFBloc>().add(GetActivitiesOfMonthEvent( act: act));
-   // context.read<ActivityOfweekBloc>().add(GetOfWeekActivitiesEvent(act: act));
+    context.read<AcivityFBloc>().add(GetActivitiesOfMonthEvent(act: act));
+    // context.read<ActivityOfweekBloc>().add(GetOfWeekActivitiesEvent(act: act));
     // Add logic to handle the button press for the specific activity
     // You can dispatch events to other blocs or perform any other actions here.
   }
 }
 
-
-
-Widget buildBody(BuildContext context,activity act,mediaQuery) {
-
-return BlocMonthlyWeeklyActivity(act, mediaQuery);
-}
-Widget buildActivityDetailsBody(BuildContext context,activity act,String id,int index) {
-return ActivityDetails(act,id,index);
+Widget buildBody(BuildContext context, activity act, mediaQuery) {
+  return BlocMonthlyWeeklyActivity(act, mediaQuery);
 }
 
-
-Widget buildAllBody(BuildContext context,activity act) {
-
-return ALLActivities(act);
+Widget buildActivityDetailsBody(
+    BuildContext context, activity act, String id, int index) {
+  return ActivityDetails(act, id, index);
 }
 
+Widget buildAllBody(BuildContext context, activity act) {
+  return ALLActivities(act);
+}
 
-
- InputDecoration PollInput(String title, {bool iconExisted = false, Function()? AddOption, TextEditingController? optionController}) {
+InputDecoration PollInput(String title,
+    {bool iconExisted = false,
+    Function()? AddOption,
+    TextEditingController? optionController}) {
   return InputDecoration(
     border: border(PrimaryColor),
     labelText: title,
-
     errorStyle: PoppinsRegular(13.sp, Colors.red),
     labelStyle: PoppinsRegular(13.sp, ColorsApp.ThirdColor),
     enabledBorder: border(PrimaryColor),
@@ -372,29 +355,33 @@ return ALLActivities(act);
     errorBorder: border(Colors.red),
     focusedErrorBorder: border(Colors.red),
     suffixIcon: iconExisted
-        ?
-    IconButton(
-      icon: const Icon(Icons.check_circle, color: ThirdColor, size: 20,),
-      onPressed: () {
-        AddOption!();
-      },
-    )
+        ? IconButton(
+            icon: const Icon(
+              Icons.check_circle,
+              color: ThirdColor,
+              size: 20,
+            ),
+            onPressed: () {
+              AddOption!();
+            },
+          )
         : null,
-
     prefixIcon: iconExisted
         ? IconButton(
-      icon: const Icon(Icons.cancel, color: ThirdColor, size: 20,),
-      onPressed: () {
-        optionController!.clear();
-      },
-    )
+            icon: const Icon(
+              Icons.cancel,
+              color: ThirdColor,
+              size: 20,
+            ),
+            onPressed: () {
+              optionController!.clear();
+            },
+          )
         : null,
   );
 }
 
-
-
-Widget MySearchBar(BuildContext context,activity Activity) {
+Widget MySearchBar(BuildContext context, activity Activity) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: BlocBuilder<ActivityCubit, ActivityState>(
@@ -406,30 +393,39 @@ Widget MySearchBar(BuildContext context,activity Activity) {
             style: PoppinsNorml(17, textColorBlack),
             onChanged: (value) {
               if (value.isEmpty) {
-                context.read<AcivityFBloc>().add(GetAllActivitiesEvent(act:Activity));
-
+                context
+                    .read<AcivityFBloc>()
+                    .add(GetAllActivitiesEvent(act: Activity));
               }
-              final param=activityParams(act: null, type: state.selectedSearchActivity, Eventid: null, name: value);
+              final param = activityParams(
+                  act: null,
+                  type: state.selectedSearchActivity,
+                  Eventid: null,
+                  name: value);
               context.read<AcivityFBloc>().add(GetActivitiesByName(param));
             },
             controller: TextEditingController()..text = '',
             enabled: true,
             decoration: InputDecoration(
-              hintText: 'Search'.tr(context)  ,
-
+              hintText: 'Search'.tr(context),
               hintStyle: PoppinsRegular(13, textColor),
-              prefixIcon:    IconButton( onPressed: () {
-
-                showModalBottomSheet(context: context, builder: (ctx){
-                  return ChangeactivityDialog(context, state);
-                });
-              }, icon: const Icon(Icons.filter_alt_outlined),),
-              suffixIcon: IconButton( onPressed: () {
-                context.read<ActivityCubit>().search(false);
-
-              }, icon: const Icon(Icons.cancel),),
-
-              border:border(PrimaryColor),
+              prefixIcon: IconButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (ctx) {
+                        return ChangeactivityDialog(context, state);
+                      });
+                },
+                icon: const Icon(Icons.filter_alt_outlined),
+              ),
+              suffixIcon: IconButton(
+                onPressed: () {
+                  context.read<ActivityCubit>().search(false);
+                },
+                icon: const Icon(Icons.cancel),
+              ),
+              border: border(PrimaryColor),
               focusedBorder: border(PrimaryColor),
             ),
           ),
@@ -448,7 +444,7 @@ Widget ChangeactivityDialog(BuildContext context, ActivityState state) {
           padding: const EdgeInsets.all(8.0),
           child: Text(
             'Filter by Activity Type'.tr(context),
-            style: PoppinsSemiBold(17, textColorBlack,TextDecoration.none),
+            style: PoppinsSemiBold(17, textColorBlack, TextDecoration.none),
           ),
         ),
         for (var item in activity.values.reversed)
@@ -461,10 +457,8 @@ Widget ChangeactivityDialog(BuildContext context, ActivityState state) {
               ),
               value: item == state.selectedSearchActivity,
               onChanged: (value) {
-
                 context.read<ActivityCubit>().selectSearchActivity(item);
                 context.pop();
-
               },
               activeColor: PrimaryColor,
               tileColor: Colors.white,
@@ -482,96 +476,107 @@ Widget ChangeactivityDialog(BuildContext context, ActivityState state) {
   );
 }
 
-
-Widget ButtonComponent({required List<Activity> Activities,required index,required double top,required double left,required MediaQueryData mediaQuery,required activity act})=>
+Widget ButtonComponent(
+        {required List<Activity> Activities,
+        required index,
+        required double top,
+        required double left,
+        required MediaQueryData mediaQuery,
+        required activity act}) =>
     BlocBuilder<AcivityFBloc, AcivityFState>(
-  builder: (context, state) {
-    return Positioned(
-        top: top,
-        left: left,
-
-
-        child:
-  Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      ActivityDetailsComponent.FutureJoinButton(state, index, Activities[index], act, mediaQuery, mediaQuery.size.width/2, mediaQuery.devicePixelRatio*5),
-      Pinnedbutton(onTap: (Activity ) {
-
-
-      }, isPinned: true, activity: Activities[index],)
-
-    ],
-  )
-
-    );
-  },
-);
-
-Widget MonthWeekBuild (activity act,AcivityFState state,MediaQueryData mediaQuery)=>
-    BlocBuilder<ParticpantsBloc, ParticpantsState>(
-  builder: (context, ste) {
-
-      if (ActivityAction.filterActivityByCurrentMonth(state.activitiesSearch).isEmpty && state. activitiesSearch.isEmpty){
-        return Align(
-            alignment: AlignmentDirectional.center,
-            heightFactor: 3,
-            child: MessageDisplayWidget(message: "No ${act.name} for this month",));
-      }
-      else if (ActivityAction.filterActivityByCurrentMonth(state.activitiesSearch).isEmpty ){
-        return WidgetMonthActivity(context, act, mediaQuery, state.activitiesSearch,"Previous");}
-
-    else{
-      return   WidgetMonthActivity(context, act, mediaQuery, ActivityAction.filterActivityByCurrentMonth(state.activitiesSearch),"Upcoming");
-    }
-
-
-  },
-);
-
-Column WidgetMonthActivity(BuildContext context, activity act, MediaQueryData mediaQuery, List<Activity> acts,String text) {
-  return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Align(
-            alignment: AlignmentDirectional.topStart,
+      builder: (context, state) {
+        return Positioned(
+            top: top,
+            left: left,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("${text.tr(context)} ${act.name.tr(context)}", style: PoppinsSemiBold(
-                    mediaQuery.devicePixelRatio*6, Colors.black,
-                    TextDecoration.none),),
-                InkWell(
-                  onTap: (){
-                    context.read<PageIndexBloc>().add (SetIndexEvent(index: 1));
+                ActivityDetailsComponent.FutureJoinButton(
+                    state,
+                    index,
+                    Activities[index],
+                    act,
+                    mediaQuery,
+                    mediaQuery.size.width / 2,
+                    mediaQuery.devicePixelRatio * 5,
+                    context),
 
-
-
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: LinkedText(text: "See more".tr(context), size: mediaQuery. devicePixelRatio*4.5),
-                  ),
-                )
               ],
+            ));
+      },
+    );
+
+Widget MonthWeekBuild(
+        activity act, AcivityFState state, MediaQueryData mediaQuery) =>
+    BlocBuilder<ParticpantsBloc, ParticpantsState>(
+      builder: (context, ste) {
+        if (ActivityAction.filterActivityByCurrentMonth(state.activitiesSearch)
+                .isEmpty &&
+            state.activitiesSearch.isEmpty) {
+          return Align(
+              alignment: AlignmentDirectional.center,
+              heightFactor: 3,
+              child: MessageDisplayWidget(
+                message: "No ${act.name} for this month",
+              ));
+        } else if (ActivityAction.filterActivityByCurrentMonth(
+                state.activitiesSearch)
+            .isEmpty) {
+          return WidgetMonthActivity(
+              context, act, mediaQuery, state.activitiesSearch, "Previous");
+        } else {
+          return WidgetMonthActivity(
+              context,
+              act,
+              mediaQuery,
+              ActivityAction.filterActivityByCurrentMonth(
+                  state.activitiesSearch),
+              "Upcoming");
+        }
+      },
+    );
+
+Column WidgetMonthActivity(BuildContext context, activity act,
+    MediaQueryData mediaQuery, List<Activity> acts, String text) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.spaceAround,
+    children: [
+      Align(
+        alignment: AlignmentDirectional.topStart,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "${text.tr(context)} ${act.name.tr(context)}",
+              style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 6,
+                  Colors.black, TextDecoration.none),
             ),
-          ),
-
-          Padding(
-
-            padding:  EdgeInsets.symmetric(vertical: mediaQuery.size.height / 33 , horizontal: 20),
-            child: SizedBox(
-                height: mediaQuery.size.height * 0.4,
-                // adjust the height as needed
-                child:
-
-                ActivityOfMonthListWidget( Activities: acts, act: act,)
-
-
-            ),
-          ),
-
-        ],
-      );
+            InkWell(
+              onTap: () {
+                context.read<PageIndexBloc>().add(SetIndexEvent(index: 1));
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: LinkedText(
+                    text: "See more".tr(context),
+                    size: mediaQuery.devicePixelRatio * 4.5),
+              ),
+            )
+          ],
+        ),
+      ),
+      Padding(
+        padding: EdgeInsets.symmetric(
+            vertical: mediaQuery.size.height / 33, horizontal: 20),
+        child: SizedBox(
+            height: mediaQuery.size.height ,
+            // adjust the height as needed
+            child: ActivityOfMonthListWidget(
+              Activities: acts,
+              act: act,
+            )),
+      ),
+    ],
+  );
 }

@@ -1,8 +1,11 @@
 const {onRequest} = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
-const {getNotificationContent,
-  getReplyNotifi} = require("./Notificcations/Notifications");
-
+const {
+  getNotificationContent,
+  getReplyNotifi,
+  addNotificationToUserToBatch,
+} = require("./Notificcations/Notifications");
+const batch = admin.firestore().batch();
 /**
  * Fetch activity data from Firestore.
  * @param {string} act - The ID of the activity.
@@ -10,8 +13,11 @@ const {getNotificationContent,
  * @throws {Error} - If the activity is not found.
  */
 async function fetchAct(act) {
-  const activityDoc = await admin.firestore().
-      collection("activities").doc(act).get();
+  const activityDoc = await admin
+      .firestore()
+      .collection("activities")
+      .doc(act)
+      .get();
   if (!activityDoc.exists) {
     throw new Error(`Activity ${act} not found`);
   }
@@ -26,8 +32,11 @@ async function fetchAct(act) {
 async function fetchUserTokens(users) {
   const tokens = [];
   for (const userId of users) {
-    const userDoc = await admin.firestore().
-        collection("users").doc(userId).get();
+    const userDoc = await admin
+        .firestore()
+        .collection("users")
+        .doc(userId)
+        .get();
     console.log("userDoc", userDoc);
     if (userDoc.exists) {
       const userData = userDoc.data();
@@ -49,7 +58,6 @@ async function fetchUserTokens(users) {
  * @return {Object} - Object containing the title and body of the notification.
  */
 
-
 /**
  * Remove a member from the participants list in an activity.
  * @param {string} activityId - The ID of the activity.
@@ -58,8 +66,11 @@ async function fetchUserTokens(users) {
  * @throws {Error} - If the activity is not found.
  */
 async function removeMemberFromParticipants(activityId, memberId) {
-  const activityDoc = await admin.firestore().collection("activities")
-      .doc(activityId).get();
+  const activityDoc = await admin
+      .firestore()
+      .collection("activities")
+      .doc(activityId)
+      .get();
   if (!activityDoc.exists) {
     throw new Error(`Activity ${activityId} not found`);
   }
@@ -94,11 +105,23 @@ async function sendNotification(tokens, payload) {
 
 exports.onCommentCreated = onRequest(async (req, res) => {
   try {
-    const {activityId: actId, commentId, content,
-      FirstName, LastName, memberId} = req.query;
+    const {
+      activityId: actId,
+      commentId,
+      content,
+      FirstName,
+      LastName,
+      memberId,
+    } = req.query;
 
-    if (!actId || !commentId || !content ||
-       !FirstName || !LastName || !memberId) {
+    if (
+      !actId ||
+      !commentId ||
+      !content ||
+      !FirstName ||
+      !LastName ||
+      !memberId
+    ) {
       res.status(400).send("Missing required fields.");
       return;
     }
@@ -107,15 +130,27 @@ exports.onCommentCreated = onRequest(async (req, res) => {
     const activityData = await fetchAct(actId);
 
     // Remove memberId from the participants list
-    const updatedUsers = await
-    removeMemberFromParticipants(actId, memberId);
+    const updatedUsers = await removeMemberFromParticipants(actId, memberId);
 
     const tokens = await fetchUserTokens(updatedUsers);
 
     // Get notification content based on user language
-    const notificationContent = getNotificationContent("en", activityData.name,
-        FirstName, LastName, content);
+    const notificationContent = getNotificationContent(
+        "en",
+        activityData.name,
+        FirstName,
+        LastName,
+        content,
+    );
 
+    addNotificationToUserToBatch(
+        memberId,
+        "Comments",
+        notificationContent.body,
+        notificationContent.title,
+        admin.firestore(),
+        batch,
+    );
     // Prepare notification payload
     const payload = {
       notification: {
@@ -123,7 +158,6 @@ exports.onCommentCreated = onRequest(async (req, res) => {
         body: notificationContent.body,
       },
       data: {
-
         activityId: actId,
         commentId: commentId,
       },
@@ -150,11 +184,26 @@ exports.onCommentCreated = onRequest(async (req, res) => {
 
 exports.onReplyCreated = onRequest(async (req, res) => {
   try {
-    const {actId, replyId, content, FirstName, LastName, commenterId,
-      originalCommentId, image} = req.query;
+    const {
+      actId,
+      replyId,
+      content,
+      FirstName,
+      LastName,
+      commenterId,
+      originalCommentId,
+      image,
+    } = req.query;
 
-    if (!actId || !replyId || !content || !FirstName ||
-      !LastName || !commenterId || !originalCommentId) {
+    if (
+      !actId ||
+      !replyId ||
+      !content ||
+      !FirstName ||
+      !LastName ||
+      !commenterId ||
+      !originalCommentId
+    ) {
       res.status(400).send("Missing required fields.");
       return;
     }
@@ -178,9 +227,20 @@ exports.onReplyCreated = onRequest(async (req, res) => {
     // Fetch FCM tokens for the user being replied to
     const tokens = await fetchUserTokens([repliedUserId]);
 
-    const notificationContent = getReplyNotifi("fr",
-        activityData.name, FirstName, LastName, content);
-
+    const notificationContent = getReplyNotifi(
+        "fr",
+        activityData.name,
+        FirstName,
+        LastName,
+        content,
+    );
+    addNotificationToUserToBatch(
+        repliedUserId,
+        "Replies",
+        notificationContent.body,
+        notificationContent.title,
+        admin.firestore(), batch,
+    );
     // Prepare notification payload
     const payload = {
       notification: {
@@ -217,8 +277,9 @@ async function fetchComment(commentId, actId) {
   // / Fetch the comment data from Realtime Database
   console.log(commentId);
   console.log("ddddddd", actId);
-  const commentRef = admin.database().
-      ref(`Comments/${actId}/comments/${commentId}`);
+  const commentRef = admin
+      .database()
+      .ref(`Comments/${actId}/comments/${commentId}`);
   const snapshot = await commentRef.once("value");
 
   if (!snapshot.exists()) {

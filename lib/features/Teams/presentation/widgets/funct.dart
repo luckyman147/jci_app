@@ -18,7 +18,6 @@ import 'package:jci_app/features/Teams/domain/entities/Task.dart';
 import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 import 'package:jci_app/core/Member.dart';
 
-
 import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/config/services/TeamStore.dart';
 
@@ -28,8 +27,8 @@ import '../../../Home/domain/enums/Privacy.dart';
 import '../../../MemberSection/domain/usecases/MemberUseCases.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
-import '../../../MemberSection/presentation/pages/memberProfilPage.dart';
-import '../../../MemberSection/presentation/widgets/member/functionMember.dart';
+import '../../../MemberSection/presentation/pages/user/memberProfilPage.dart';
+import '../../../MemberSection/presentation/functions/functionMember.dart';
 import '../../domain/entities/Team.dart';
 import '../../domain/usecases/TaskUseCase.dart';
 import '../../domain/usecases/TeamUseCases.dart';
@@ -37,109 +36,119 @@ import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/GetTeam/get_teams_bloc.dart';
 import '../bloc/TaskFilter/taskfilter_bloc.dart';
 import '../bloc/TaskIsVisible/task_visible_bloc.dart';
-class TeamFunction{
 
-
-
-
-  static bool IsPublic (Team team ){
+class TeamFunction {
+  static bool IsPublic(Team team) {
     log(team.status.toString());
     return team.status;
   }
 
   static void NavigateTOMemberSection(BuildContext context, User member) {
     context.read<MembersBloc>().add(
-        GetMemberByIdEvent(
-            MemberInfoParams(id: member.id!, status: true)));
+        GetMemberByIdEvent(MemberInfoParams(id: member.id!, status: true)));
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MemberSectionPage(id: member.id!,),
+        builder: (context) => MemberSectionPage(
+          id: member.id!,
+        ),
       ),
     );
   }
-  static void InviteKickMember(bool isAssign, Team team, User member, BuildContext context) {
-    if (!isAssign) {
-      final teamfi = TeamInput(
-          team.id,
-          member.id,
-          null,
-          TeamFunction.toMapMember(member)
 
-      );
+  static void InviteKickMember(
+      bool isAssign, Team team, User member, BuildContext context) {
+    if (!isAssign) {
+      final teamfi =
+          TeamInput(team.id, member.id, null, TeamFunction.toMapMember(member));
       context.read<GetTeamsBloc>().add(InviteMembers(teamfi: teamfi));
       Navigator.pop(context);
-    }
-    else{
+    } else {
       final teamfi = TeamInput(
-          team.id,
-          member.id,
-          "kick",
-          TeamFunction.toMapMember(member)
-
-      );
+          team.id, member.id, "kick", TeamFunction.toMapMember(member));
       context.read<GetTeamsBloc>().add(UpdateTeamMember(fields: teamfi));
       Navigator.pop(context);
     }
   }
-  static void ChangeMemerFunction(bool isExisted, BuildContext context, User item,Function(User) onRemoveTap, Function(User  ) onAddTap) {
+
+  static void ChangeMemerFunction(bool isExisted, BuildContext context,
+      User item, Function(User) onRemoveTap, Function(User) onAddTap) {
     if (isExisted) {
-      context.read<MembersTeamCubit>().RemoveMember( item);
+      context.read<MembersTeamCubit>().RemoveMember(item);
 
       onRemoveTap(item);
-    }
-    else {
+    } else {
       context.read<MembersTeamCubit>().AddMember(item);
       onAddTap(item);
     }
   }
 
-
   static bool doesObjectExistInList(List<User> list, User targetObject) {
-    return list.any((element) => element.id == targetObject.id)||list.contains(targetObject);
+    return list.any((element) => element.id == targetObject.id) ||
+        list.contains(targetObject);
   }
+
   static List<String> getIds(List<User> objects) {
-    if (objects.isEmpty  ) {
+    if (objects.isEmpty) {
       return [];
     }
-    return objects.map((obj) => obj.id !).toList();
+    return objects.map((obj) => obj.id!).toList();
   }
-  static  void changeInitTeams(BuildContext context,Privacy privacy,bool isPrivate) {
 
+  static void changeInitTeams(
+      BuildContext context, Privacy privacy, bool isPrivate) {
     context.read<TaskVisibleBloc>().add(changePrivacyEvent(privacy));
 
     // Dispatch event to initialize GetTeamsBloc and fetch teams with updated privacy
     context.read<GetTeamsBloc>().add(initStatus());
     context.read<GetTeamsBloc>().add(GetTeams(isPrivate: isPrivate));
   }
-  static  void searchFunction(String value, BuildContext context,bool isPrivate) {
-    if (value.isEmpty){
-      context.read<GetTeamsBloc>().add(GetTeams(isPrivate: isPrivate));
-    }
 
-    else{
-      context.read<GetTeamsBloc>().add(GetTeamByName(
-          {"name": value}));}
+  static void searchFunction(
+      String value, BuildContext context, bool isPrivate) {
+    if (value.isEmpty) {
+      context.read<GetTeamsBloc>().add(GetTeams(isPrivate: isPrivate));
+    } else {
+      context.read<GetTeamsBloc>().add(GetTeamByName({"name": value}));
+    }
   }
-  static  List<int> generateNumbers(int num) {
+
+  static List<int> generateNumbers(int num) {
     return List.generate(num, (index) => num - index + 1).reversed.toList();
   }
+
   static List<Map<String, dynamic>> mapObjects(List<Tasks> objects) {
-    return objects.map((object) => {'id': object.id, 'isCompleted': object.isCompleted}).toList();
+    return objects
+        .map((object) => {'id': object.id, 'isCompleted': object.isCompleted})
+        .toList();
   }
+
   static List<Map<String, dynamic>> mapChecklist(List<CheckList> objects) {
-    return objects.map((object) => {'id': object.id, 'isCompleted': object.isCompleted,"name":object.name,"IsUpdated":false}).toList();
+    return objects
+        .map((object) => {
+              'id': object.id,
+              'isCompleted': object.isCompleted,
+              "name": object.name,
+              "IsUpdated": false
+            })
+        .toList();
   }
 
   static Map<String, dynamic> mapTeam(Team objects) {
-    return {'id': objects.id, 'name': objects.name,
-      "CoverImage":objects.CoverImage,
-      "TeamLeader":objects.TeamLeader,
-      'event':objects.event,
-
-      'description': objects.description, 'status': objects.status, 'Members': objects.Members,};
+    return {
+      'id': objects.id,
+      'name': objects.name,
+      "CoverImage": objects.CoverImage,
+      "TeamLeader": objects.TeamLeader,
+      'event': objects.event,
+      'description': objects.description,
+      'status': objects.status,
+      'Members': objects.Members,
+    };
   }
-  static List<Map<String, dynamic>> filterCompletedTasks(List<Map<String, dynamic>> tasks) {
+
+  static List<Map<String, dynamic>> filterCompletedTasks(
+      List<Map<String, dynamic>> tasks) {
     List<Map<String, dynamic>> completedTasks = [];
 
     for (var task in tasks) {
@@ -151,9 +160,11 @@ class TeamFunction{
     return completedTasks;
   }
 
-  static  List<Map<String, dynamic>> filterPendingTasks(List<Map<String, dynamic>> tasks) {
-    return tasks.where((task) => task['isCompleted']==false).toList();
+  static List<Map<String, dynamic>> filterPendingTasks(
+      List<Map<String, dynamic>> tasks) {
+    return tasks.where((task) => task['isCompleted'] == false).toList();
   }
+
   static int getIndexById(String id, List<Map<String, dynamic>> list) {
     for (int i = 0; i < list.length; i++) {
       if (list[i]['id'] == id) {
@@ -164,26 +175,54 @@ class TeamFunction{
     return -1;
   }
 
-  static  Map<String, dynamic> toMap(Tasks object) {
-    return {'id': object.id, 'isCompleted': object.isCompleted, 'name': object.name,"willDeleted":false, "WillUpdated":false,
-      'description': object.description, 'StartDate': object.StartDate, 'Deadline': object.Deadline, 'AssignTo': object.AssignTo,
-      'attachedFile': object.attachedFile.map((e) => toMapFile(e)).toList(), 'CheckLists': object.CheckLists.map((e) => toMapChecklist(e)),};
+  static Map<String, dynamic> toMap(Tasks object) {
+    return {
+      'id': object.id,
+      'isCompleted': object.isCompleted,
+      'name': object.name,
+      "willDeleted": false,
+      "WillUpdated": false,
+      'description': object.description,
+      'StartDate': object.StartDate,
+      'Deadline': object.Deadline,
+      'AssignTo': object.AssignTo,
+      'attachedFile': object.attachedFile.map((e) => toMapFile(e)).toList(),
+      'CheckLists': object.CheckLists.map((e) => toMapChecklist(e)),
+    };
   }
+
   static List<String> getidsObTask(List<Tasks> objects) {
-    if (objects.isEmpty  ) {
+    if (objects.isEmpty) {
       return [];
     }
-    return objects.map((obj) => obj.id ).toList();
+    return objects.map((obj) => obj.id).toList();
   }
+
   static Map<String, dynamic> toMapFile(TaskFile object) {
-    return {'id': object.id, 'path': object.path, 'url': object.url, 'extension':object.extension};
+    return {
+      'id': object.id,
+      'path': object.path,
+      'url': object.url,
+      'extension': object.extension
+    };
   }
-  static  Map<String, dynamic> toMapChecklist(CheckList object) {
-    return {'id': object.id, 'isCompleted': object.isCompleted, 'name': object.name,};
+
+  static Map<String, dynamic> toMapChecklist(CheckList object) {
+    return {
+      'id': object.id,
+      'isCompleted': object.isCompleted,
+      'name': object.name,
+    };
   }
+
   static Map<String, dynamic> toMapMember(User object) {
-    return {'id': object.id, 'firstName': object.firstName, 'Images': object.Images,};
+    return {
+      'id': object.id,
+      'firstName': object.firstName,
+      'Images': object.Images,
+    };
   }
+
   static List<Map<String, dynamic>> convertIdKey(List<dynamic> inputList) {
     List<Map<String, dynamic>> resultList = [];
 
@@ -206,29 +245,40 @@ class TeamFunction{
     return resultList;
   }
 
-  static Map<String, dynamic> findTaskById(List<Map<String, dynamic>> tasks, String id) {
-    final task = tasks.firstWhere((task) => task['id'] == id, orElse: () => throw Exception('Task with id $id not found'));
+  static Map<String, dynamic> findTaskById(
+      List<Map<String, dynamic>> tasks, String id) {
+    final task = tasks.firstWhere((task) => task['id'] == id,
+        orElse: () => throw Exception('Task with id $id not found'));
     return task;
   }
+
   static bool allCompleted(List<Map<String, dynamic>> maps) {
     return maps.every((map) => map['isCompleted'] ?? false);
   }
+
   static bool noneCompleted(List<Map<String, dynamic>> maps) {
     return !maps.any((map) => map['isCompleted'] ?? false);
   }
 
-  static  List<Map<String, dynamic>> deleteChecklist(List<Map<String, dynamic>> tasks, int taskId, int checklistId) {
-    final updatedTasks = [...tasks.map((task) {
-      if (task['id'] == taskId) {
-        // Remove the checklist with the matching ID
-        task['CheckLists'] = UnmodifiableListView(task['CheckLists'].where((checklist) => checklist['id'] != checklistId).toList());
-      }
-      return task;
-    })];
+  static List<Map<String, dynamic>> deleteChecklist(
+      List<Map<String, dynamic>> tasks, int taskId, int checklistId) {
+    final updatedTasks = [
+      ...tasks.map((task) {
+        if (task['id'] == taskId) {
+          // Remove the checklist with the matching ID
+          task['CheckLists'] = UnmodifiableListView(task['CheckLists']
+              .where((checklist) => checklist['id'] != checklistId)
+              .toList());
+        }
+        return task;
+      })
+    ];
 
     return updatedTasks;
   }
-  static List<Map<String, dynamic>> updateTask(List<Map<String, dynamic>> tasks, Map<String, dynamic> updatedTask) {
+
+  static List<Map<String, dynamic>> updateTask(
+      List<Map<String, dynamic>> tasks, Map<String, dynamic> updatedTask) {
     int index = tasks.indexWhere((task) => task['id'] == updatedTask['id']);
 
     if (index == -1) {
@@ -239,54 +289,60 @@ class TeamFunction{
 
     return tasks;
   }
-  String daysBetween(DateTime date1, DateTime date2) {
 
+  String daysBetween(DateTime date1, DateTime date2) {
     final difference = date1.difference(date2).abs();
     return '${difference.inDays} days';
-
   }
-  static Future<void> DatePickerFun(BuildContext context,DateTime time,Function(DateTime) OnsubmitDate) async {
+
+  static Future<void> DatePickerFun(BuildContext context, DateTime time,
+      Function(DateTime) OnsubmitDate) async {
     final temp = await showDatePicker(
       context: context,
-
-      firstDate: DateTime(DateTime.now().year, DateTime.now().month,),
+      firstDate: DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+      ),
       currentDate: time,
       lastDate: DateTime.now().add(const Duration(days: 365)),
-
     );
 
     if (temp != null) {
       OnsubmitDate(temp);
-
     }
   }
+
   static void ReturnFunbction(BuildContext context, TaskVisibleState ste) {
     GoRouter.of(context).go('/home');
     context.read<GetTaskBloc>().add(resetevent());
 
-    context.read<TaskVisibleBloc>().add(const changePrivacyEvent(Privacy.Primary));
-    context.read<GetTeamsBloc>().add(GetTeams(isPrivate: false,isUpdated: ste.isUpdated));
+    context
+        .read<TaskVisibleBloc>()
+        .add(const changePrivacyEvent(Privacy.Primary));
+    context
+        .read<GetTeamsBloc>()
+        .add(GetTeams(isPrivate: false, isUpdated: ste.isUpdated));
     context.read<TaskVisibleBloc>().add(ChangeIsUpdatedEvent(ste.isUpdated));
 
     context.read<TaskfilterBloc>().add(const filterTask([]));
   }
 
-
-  static  void SearchAction(BuildContext context, String value, MembersTeamState state) {
+  static void SearchAction(
+      BuildContext context, String value, MembersTeamState state) {
     context.read<MembersTeamCubit>().nameChanged(value);
-    if (state.name.length > 1){
-      context.read<MembersBloc>().add(GetMemberByNameEvent( name: state.name));}
-    else if (state.name.isEmpty ){
+    if (state.name.length > 1) {
+      context.read<MembersBloc>().add(GetMemberByNameEvent(name: state.name));
+    } else if (state.name.isEmpty) {
       context.read<MembersBloc>().add(const GetAllMembersEvent(false));
     }
   }
-  static Future<void> ToMembersSection(Team team, BuildContext context, Member member, ChangeSboolsState state,bool mounted) async {
 
-    if (await FunctionMember.isChefAndSuperAdmin(team) && !await FunctionMember.isOwner(member.id!)) {
+  static Future<void> ToMembersSection(Team team, BuildContext context,
+      Member member, ChangeSboolsState state, bool mounted) async {
+    if (true) {
       if (!mounted) return;
       context.read<MembersBloc>().add(
-          GetMemberByIdEvent(MemberInfoParams(id: member.id!,
-              status: true)));
+          GetMemberByIdEvent(MemberInfoParams(id: member.id!, status: true)));
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (BuildContext context) {
@@ -297,36 +353,33 @@ class TeamFunction{
     }
   }
 
-
-
-
-
-
-
-
-  static  void init(String id,BuildContext context)async{
-    final store=await TeamStore.getUpdated();
+  static void init(String id, BuildContext context) async {
+    final store = await TeamStore.getUpdated();
     context.read<GetTaskBloc>().add(GetTasks(id: id, filter: TaskFilter.All));
     context.read<TaskVisibleBloc>().add(const ToggleTaskVisible(true));
-    context.read<GetTeamsBloc>().add(GetTeamById({"id": id,"isUpdated": store}));
-
+    context
+        .read<GetTeamsBloc>()
+        .add(GetTeamById({"id": id, "isUpdated": store}));
   }
-  static void ListenerDelete(GetTeamsState state, BuildContext context,String id) {
+
+  static void ListenerDelete(
+      GetTeamsState state, BuildContext context, String id) {
     if (state.status == TeamStatus.Deleted) {
       SnackBarMessage.showSuccessSnackBar(
           message: "Deleted Succefully", context: context);
       GoRouter.of(context).go('/home');
       context.read<GetTaskBloc>().add(resetevent());
-
-    }
-    else if (state.status == TeamStatus.DeletedError) {
+    } else if (state.status == TeamStatus.DeletedError) {
       SnackBarMessage.showErrorSnackBar(
           message: "Error Deleting", context: context);
-      context.read<GetTeamsBloc>().add(GetTeamById({"id":id,"isUpdated": false}));
-
+      context
+          .read<GetTeamsBloc>()
+          .add(GetTeamById({"id": id, "isUpdated": false}));
     }
   }
-  static Future<File> saveBase64AsFile(String base64String, String fileName) async {
+
+  static Future<File> saveBase64AsFile(
+      String base64String, String fileName) async {
     // Decode the base64 string
     List<int> bytes = base64.decode(base64String);
 
@@ -346,11 +399,13 @@ class TeamFunction{
   XFile? convert64ToXFile(String decodedString) {
     List<int> decodedBytes = base64Decode(decodedString);
     Uint8List data = Uint8List.fromList(decodedBytes);
-    String? mimeType = lookupMimeType('temp.jpg', headerBytes: decodedBytes.take(256).toList());
+    String? mimeType = lookupMimeType('temp.jpg',
+        headerBytes: decodedBytes.take(256).toList());
     XFile xfile = XFile.fromData(data, mimeType: mimeType);
     log(xfile.path.toString());
     return xfile;
   }
+
   void saveFile(String decodedString, String filed) async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String filePath = '${documentsDirectory.path}/$filed';
@@ -358,42 +413,60 @@ class TeamFunction{
 
     file.writeAsString(decodedString);
   }
-  static  Future<void> openFile(BuildContext context,String fileid,String extension) async {
+
+  static Future<void> openFile(
+      BuildContext context, String fileid, String extension) async {
     try {
       // Save the base64 string as a file
 
-context.read<GetTaskBloc>().add(GetFileEvent(fileid));
-final state =BlocProvider.of<GetTaskBloc>(context).state;
-await Future.delayed(const Duration(seconds: 2));
-final directory = await getTemporaryDirectory();
-final file = File('${directory.path}/temp_file.$extension');
-await file.writeAsBytes(state.image!);
+      context.read<GetTaskBloc>().add(GetFileEvent(fileid));
+      final state = BlocProvider.of<GetTaskBloc>(context).state;
+      await Future.delayed(const Duration(seconds: 2));
+      final directory = await getTemporaryDirectory();
+      final file = File('${directory.path}/temp_file.$extension');
+      await file.writeAsBytes(state.image!);
 
-OpenFile.open(file.path,);
-
+      OpenFile.open(
+        file.path,
+      );
 
       // Open file
     } catch (e) {
       log(e.toString());
     }
-  }}
+  }
+}
+
 class FileStorage {
-
-
-  static pickFile(mounted,BuildContext context,String id)async{
+  static pickFile(mounted, BuildContext context, String id) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
     if (result != null) {
       // Get the file
       PlatformFile file = result.files.first;
 
-      final taskFile=TaskFile(url: "url", id: "", path: file.path!, extension: file.extension!, );
+      final taskFile = TaskFile(
+        url: "url",
+        id: "",
+        path: file.path!,
+        extension: file.extension!,
+      );
       if (!mounted) return;
-      final inputFields input=inputFields(taskid: id, teamid:"", file: taskFile, memberid: null, status: null, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: null, fileid: null, );
+      final inputFields input = inputFields(
+        taskid: id,
+        teamid: "",
+        file: taskFile,
+        memberid: null,
+        status: null,
+        Deadline: null,
+        StartDate: null,
+        name: null,
+        task: null,
+        isCompleted: null,
+        member: null,
+        fileid: null,
+      );
       context.read<GetTaskBloc>().add(UpdateFile(input));
-
     }
-
   }
-
 }

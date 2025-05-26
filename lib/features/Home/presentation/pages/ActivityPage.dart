@@ -12,9 +12,12 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.
 import 'package:jci_app/features/Home/presentation/widgets/Activity/ActivityDetailsComponents.dart';
 import 'package:jci_app/features/Home/presentation/widgets/components/Compoenents.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
-import '../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/PermissionsBLoc/permissions_bloc.dart';
+import '../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/Bloc/permissions/permissions_bloc.dart';
+
 import '../../../auth/AuthWidgetGlobal.dart';
+
 import '../bloc/PageIndex/page_index_bloc.dart';
+import '../widgets/Functions/Listeners.dart';
 
 
 
@@ -50,7 +53,18 @@ class _ActivityPageState extends State<ActivityPage> {
       builder: (context, state) {
         return Scaffold(
           body: SafeArea(
-            child: Column(
+            child: MultiBlocListener(
+  listeners: [
+    BlocListener<AcivityFBloc, AcivityFState>(
+  listener: (context, state) {
+    Listeners.    ListentoJoinButton(state, context,widget.Activity.name);
+
+    // TODO: implement listener
+  },
+),
+
+  ],
+  child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Row(
@@ -98,12 +112,13 @@ class _ActivityPageState extends State<ActivityPage> {
                       ),
                     ],
                   ),
-            
+
                   Expanded(
-            
-            
+
+
                       child: buildAllBody(context,state.selectedActivity))
                 ]),
+),
           ),
         );
       },

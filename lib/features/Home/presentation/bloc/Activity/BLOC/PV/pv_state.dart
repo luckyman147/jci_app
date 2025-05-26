@@ -1,5 +1,5 @@
 part of 'pv_bloc.dart';
-enum PvStatus { initial, loading, loaded, error,Added }
+enum PvStatus { initial, loading, loaded, error,Added,Deleted }
  class PvState extends Equatable {
 
   final List<PV> pvs;

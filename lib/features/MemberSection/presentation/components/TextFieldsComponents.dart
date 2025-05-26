@@ -7,7 +7,7 @@ import '../../../../core/app_theme.dart';
 import '../bloc/Members/members_bloc.dart';
 import '../widgets/member/MemberImpl.dart';
 
-class TextFieldComponets{
+                                                                          class TextFieldComponets{
 
 
   static Widget TextfieldNum(String name, String hintText,
@@ -68,92 +68,42 @@ class TextFieldComponets{
     ),
   );
 
-  static Widget MembersWidgetOnlyName(MediaQueryData mediaQuery, BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-            height: 60,
-            width: mediaQuery.size.width * 0.8,
-            child: TextField(
-
-                onChanged: (value) {
-                  context.read<MembersBloc>().add(GetMemberByNameEvent( name: value));
-                },
-                keyboardType: TextInputType.emailAddress,
-                keyboardAppearance: Brightness.dark,
-
-
-                style: PoppinsRegular( 18, textColorBlack),
-
-                decoration:InputDecoration(
-                  hintText: "${"Search".tr(context)} ${"Member".tr(context)}",
-
-                  hintStyle: PoppinsRegular( 15, textColor),
-                  suffixIcon: const Icon(Icons.search),
-                  prefixIcon: IconButton(onPressed: () {
-
-                    showModalBottomSheet(context: context, builder: (context){
-                      return Container(
-
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("${"Sort".tr(context)} ${"By".tr(context)}:",style: PoppinsRegular( 20, textColorBlack),),
-                              const SizedBox(height: 10,),
-                              BuildSortMember(context,"Membership".tr(context),()=>null,true),
-                              BuildSortMember(context,"Points",()=>null,false),
-                              BuildSortMember(context,"Role",()=>null,false),
-                            ],
-                          ),
-                        ),
-                      );
-                    });
-
-                  }, icon: const Icon(Icons.filter_alt),),
-
-                  border:border(PrimaryColor),
-                  focusedBorder: border(PrimaryColor),
-                  enabledBorder: border(PrimaryColor),
-                )
-
-            )),
-        const SizedBox(height: 10,),
-        SizedBox(
-            height: 10,
-            width: mediaQuery.size.width * 0.8,
-
-            child: const Divider()),
-        MemberImpl.       MembersAdminWidget(mediaQuery),
-      ],
-    );
-  }
-
-  static Padding BuildSortMember(BuildContext context,String sort,Function() onChanged,bool isSelected) {
+  static Widget MembersWidgetOnlyName(MediaQueryData mediaQuery, BuildContext context,TextEditingController controller ,FocusNode node) {
     return Padding(
-      padding: paddingSemetricVerticalHorizontal(),
-      child: ListTile(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side: const BorderSide(color: PrimaryColor)
-        ),
-        style: ListTileStyle.drawer,
+      padding:paddingSemetricHorizontal(),
+      child: Column(
+        children: [
+          TextField(
+            autofocus: true,
+      controller: controller,
+              focusNode: node,
 
-        selected:isSelected,
-        selectedTileColor: PrimaryColor,
-        title: Text("${"By".tr(context)} $sort",style: PoppinsRegular( 18, isSelected?textColorWhite:textColorBlack),),
-        onTap: (){
-          onChanged();
-          Navigator.pop(context);
+              keyboardType: TextInputType.emailAddress,
+              keyboardAppearance: Brightness.dark,
 
-          //context.read<MembersBloc>().add(GetMemberByNameEvent( name: ""));
-        },
 
+              style: PoppinsRegular( 18, textColorBlack),
+      cursorColor: ColorsApp.PrimaryColor,
+              decoration:InputDecoration(
+                hintText: "${"Search".tr(context)} ${"Member".tr(context)}",
+
+                hintStyle: PoppinsRegular( 15, textColor),
+
+
+
+                border:border(PrimaryColor),
+                focusedBorder: border(PrimaryColor),
+                enabledBorder: border(PrimaryColor),
+              )
+
+          ),
+
+        ],
       ),
     );
   }
+
+
 
 
 }

@@ -17,11 +17,11 @@ class ObjectifIcons {
 
   ObjectifIcons()
       : objectifIcons = {
-    FeaturesType.events:
+    FeaturesType.Events:
     ObjectifIconData(icon: Icons.event, color: Colors.green), // 📅 Events
-    FeaturesType.meetings:
+    FeaturesType.Meetings:
     ObjectifIconData(icon: Icons.groups, color: Colors.orange), // 👥 Meetings
-    FeaturesType.trainings:
+    FeaturesType.Trainings:
     ObjectifIconData(icon: Icons.school, color: Colors.red), // 🎓 Trainings
     FeaturesType.teams: ObjectifIconData(
         icon: Icons.supervised_user_circle, color: Colors.purple), // 🏆 Teams
@@ -36,7 +36,21 @@ class ObjectifIcons {
     FeaturesType.Culture:
     ObjectifIconData(icon: Icons.public, color: Colors.pink), // 🌍 Culture
     FeaturesType.PastPresident:
-    ObjectifIconData(icon: Icons.history, color: Colors.grey), // ⏳ Past Presidents
+    ObjectifIconData(icon: Icons.person_pin, color: Colors.amber), // ⏳ Past Presidents
+     FeaturesType.Members:
+    ObjectifIconData(icon: Icons.person_rounded, color: Colors.greenAccent), // ⏳ member
+      FeaturesType.Guests:
+    ObjectifIconData(icon: Icons.perm_contact_cal_sharp, color: Colors.teal),
+    FeaturesType.Objectif:
+    ObjectifIconData(icon: Icons.flag_circle, color: Colors.grey), // ⏳ member
+     FeaturesType.Replys:
+    ObjectifIconData(icon: Icons.redo_rounded, color: Colors.limeAccent),
+    FeaturesType.Emojis:
+    ObjectifIconData(icon: Icons.emoji_emotions, color: Colors.yellowAccent),
+    FeaturesType.Pv:
+    ObjectifIconData(icon: Icons.file_copy, color: Colors.red),
+
+    // ⏳ member
   };
 
   ObjectifIconData getIcon(FeaturesType type) {
@@ -68,6 +82,11 @@ class ObjectifActionIcons {
     ObjectifActionType.VoteIn: Icons.how_to_vote, // 🗳 Vote In
     ObjectifActionType.Send: Icons.send, // 📤 Send
     ObjectifActionType.Discover: Icons.explore, // 🔍 Discover
+    ObjectifActionType.CheckIn: Icons.fact_check,
+    ObjectifActionType.ReactTo: Icons.add_reaction,
+    ObjectifActionType.ReplyTo: Icons.reply,
+
+    // 🔍 Discover
   };
 
   static IconData getIcon(ObjectifActionType type) {
@@ -75,16 +94,17 @@ class ObjectifActionIcons {
   }
 }
 class GroupObjectifIcons {
-  static const Map<GroupObjectif, IconData> groupIcons = {
-    GroupObjectif.Modification: Icons.build, // 🛠️ Modification
-    GroupObjectif.Interaction: Icons.sync, // 🔄 Interaction
-    GroupObjectif.Decision: Icons.check_box, // ✅ Decision
-    GroupObjectif.Contribution: Icons.volunteer_activism, // 🤝 Contribution
-    GroupObjectif.Exploration: Icons.explore, // 🔍 Exploration
-    GroupObjectif.AttendanceCheck: Icons.card_membership, // 🔍 Exploration
+  static Map<GroupObjectif, ObjectifIconData> groupIcons = {
+    GroupObjectif.Modification: ObjectifIconData(icon:Icons.build,color:  Colors.orange), // 🛠️ Modification
+    GroupObjectif.Interaction: ObjectifIconData(icon:Icons.sync, color: PrimaryColor), // 🔄 Interaction
+    GroupObjectif.Decision: ObjectifIconData(icon :Icons.check_box,color:  Colors.green), // ✅ Decision
+    GroupObjectif.Contribution: ObjectifIconData( icon:Icons.volunteer_activism,color:  Colors.purple), // 🤝 Contribution
+    GroupObjectif.Exploration: ObjectifIconData(icon:Icons.explore,color:  Colors.teal), // 🔍 Exploration
+    GroupObjectif.AttendanceCheck: ObjectifIconData(icon:Icons.card_membership,color:  Colors.red), // 🏷️ Attendance Check
   };
-
   static IconData getIcon(GroupObjectif type) {
-    return groupIcons[type] ?? Icons.help_outline;
+    return groupIcons[type]==null ? Icons.help_outline:groupIcons[type]!.icon;
+  }static Color getcolor(GroupObjectif type) {
+    return groupIcons[type]==null ? ColorsApp.textColor:groupIcons[type]!.color;
   }
 }

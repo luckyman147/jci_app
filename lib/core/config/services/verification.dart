@@ -1,62 +1,61 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dartz/dartz.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/core/config/services/store.dart';
-import 'package:jci_app/core/config/services/uploadImage.dart';
-import 'package:http/http.dart' as http;
+
 import '../../../features/Home/domain/entities/Activity.dart';
 import '../../../features/auth/AuthWidgetGlobal.dart';
 import '../../../features/auth/presentation/bloc/auth/auth_bloc.dart';
 import '../../error/Exception.dart';
 
+class Verification {
+  final Store store;
+  final MemberStore memberStore;
 
-void check(BuildContext context,bool mounted)async {
-  final authBloc = BlocProvider.of<AuthBloc>(context);
+  Verification(this.memberStore, {required this.store});
 
-authBloc.
-  add(const IsLoggedInEvent());
-await Future.delayed(const Duration(seconds: 2));
-  final authState = authBloc.state;
-  final language = await const Store().getLocaleLanguage();
-  final isfirstEntry = await const Store().isFirstEntry();
+  void check(BuildContext context, bool mounted) async {
+    final authBloc = BlocProvider.of<AuthBloc>(context);
 
-  if (!mounted) return;
+    authBloc.add(const IsLoggedInEvent());
+    await Future.delayed(const Duration(seconds: 2));
+    final authState = authBloc.state;
+    final language = await store.getLocaleLanguage();
+
+    final isfirstEntry = await store.isFirstEntry();
+
+    if (!context.mounted) return;
     if (language == null) {
-
-    context.go('/screen');}
-    else if (authState is LoggedInState) {
+      context.go('/screen');
+    } else if (authState is LoggedInState) {
       context.go('/home');
-    }
-
-    else if (isfirstEntry){
+    } else if (isfirstEntry) {
       context.go('/Intro');
+    } else {
+      context.go('/login');
     }
-
-  else  {
-
-    context.go('/login');
   }
-}
-Future<List<bool>> areMembersInParticipants(List<Activity> activities) async {
-  final member = await MemberStore.getModel();
-  final memberId = member!.id;
-  return activities.map((activity) => activity.Participants.contains(memberId)).toList();
-}
-Future<List<String?>> getTokens() async {
-  final tokens=await const Store().GetTokens();
-  if (tokens[1] == null  || tokens[1].toString().isEmpty) {
 
-    throw EmptyCacheException();
-
+  Future<List<bool>> areMembersInParticipants(List<Activity> activities) async {
+    final member = await memberStore.getModel();
+    final memberId = member!.id;
+    return activities
+        .map((activity) => activity.Participants.contains(memberId))
+        .toList();
   }
-  return tokens;
+
+  Future<List<String?>> getTokens() async {
+    final tokens = await store.GetTokens();
+    if (tokens[1] == null || tokens[1].toString().isEmpty) {
+      throw EmptyCacheException();
+    }
+    return tokens;
+  }
 }
 
 bool hasCommonElement(List<dynamic> list1, List<dynamic> list2) {
@@ -83,8 +82,9 @@ bool hasCommonElement(List<dynamic> list1, List<dynamic> list2) {
 
 Exception handleErrors(FirebaseException e) {
   if (e.code == 'permission-denied') {
-    Logger().e("User does not have permission to create documents in this collection.");
-    return  UnauthorizedException();
+    Logger().e(
+        "User does not have permission to create documents in this collection.");
+    return UnauthorizedException();
   } else if (e.code == 'unavailable') {
     Logger().e("The server is unavailable. Please try again later.");
     return NotVerifiedException();

@@ -21,38 +21,6 @@ class GetUserProfile extends UseCase<Member , bool>{
 
 
 
-class ChangeRoleUseCase extends UseCase<Unit, ChangeRoleParams>{
-  final MemberRepo authRepository;
-
-  ChangeRoleUseCase({required this.authRepository});
-
-  @override
-  Future<Either<Failure, Unit>> call(ChangeRoleParams params) async {
-    return await authRepository.ChangeToAdmin(params.id, params.type);
-  }
-
-}
-class DeleteMemberUseCase extends UseCase<Unit, String>{
-  final MemberRepo authRepository;
-
-  DeleteMemberUseCase({required this.authRepository});
-
-  @override
-  Future<Either<Failure, Unit>> call(String params) async {
-    return await authRepository.deleteMember(params);
-  }
-
-}
-class ChangeRoleParams{
-  final String id;
-  final MemberType type;
-
-  ChangeRoleParams({required this.id, required this.type});
-}
-
-
-
-
 
 
 class GetAllMembersUseCase extends UseCase<List<User>, bool>{
@@ -125,47 +93,10 @@ class MemberInfoParams {
 
   MemberInfoParams({required this.id, required this.status});
 }
-class UpdatePointsUseCase extends UseCase<Unit, UpdatePointsParams>{
-  final MemberRepo authRepository;
 
-  UpdatePointsUseCase({required this.authRepository});
 
-  @override
-  Future<Either<Failure, Unit>> call(UpdatePointsParams params) async {
-    return await authRepository.UpdatePoints(params.memberid, params.points);
-  }
 
-}
-class UpdateCotisationUseCase extends UseCase<Unit, UpdateCotisationParams>{
-  final MemberRepo authRepository;
 
-  UpdateCotisationUseCase({required this.authRepository});
-
-  @override
-  Future<Either<Failure, Unit>> call(UpdateCotisationParams params) async {
-    return await authRepository.UpdateCotisation(params.memberid,params.type, params.cotisation);
-  }
-
-}
-
-class UpdateCotisationParams {
-  final String memberid;
-  final bool cotisation;
-  final int type;
-
-  UpdateCotisationParams({required this.memberid, required this.cotisation, required this.type});
-}
-class validateMemberuseCase extends UseCase<Unit, String>{
-  final MemberRepo authRepository;
-
-  validateMemberuseCase({required this.authRepository});
-
-  @override
-  Future<Either<Failure, Unit>> call(String params) async {
-    return await authRepository.validateMember(params);
-  }
-
-}
 class ChangeLanguageUseCase extends UseCase<Unit, String>{
   final MemberRepo authRepository;
 
@@ -177,33 +108,6 @@ class ChangeLanguageUseCase extends UseCase<Unit, String>{
   }
 
 }
-class SendMembershipReportUseCase extends UseCase<Unit, String>{
-  final MemberRepo authRepository;
-
-  SendMembershipReportUseCase({required this.authRepository});
-
-  @override
-  Future<Either<Failure, Unit>> call(String params) async {
-    return await authRepository.SendMembershipReport(params);
-  }
-
-}
-class SendInactivityReportUseCase extends UseCase<Unit, String>{
-  final MemberRepo authRepository;
-
-  SendInactivityReportUseCase({required this.authRepository});
-
-  @override
-  Future<Either<Failure, Unit>> call(String params) async {
-    return await authRepository.SendInactivityReport(params);
-  }
-
-}
-
-class UpdatePointsParams {
-  final String memberid;
-  final double points;
 
 
-  UpdatePointsParams({required this.memberid, required this.points});
-}
+

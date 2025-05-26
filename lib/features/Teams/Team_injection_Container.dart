@@ -18,21 +18,20 @@ import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visi
 import 'package:jci_app/features/Teams/presentation/bloc/Timeline/timeline_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
 
-
 import 'domain/usecases/TaskUseCase.dart';
 
 final sl = GetIt.instance;
 
 Future<void> initTeams() async {
-
   //bloc
-sl.registerFactory(() => MembersTeamCubit());
+  sl.registerFactory(() => MembersTeamCubit());
   sl.registerFactory(() => TimelineBloc());
   sl.registerFactory(() => TaskVisibleBloc());
   sl.registerFactory(() => TaskfilterBloc());
 
   sl.registerFactory(() => NumPagesBloc());
-  sl.registerFactory(() => GetTaskBloc(addChecklistUseCase:sl(),
+  sl.registerFactory(() => GetTaskBloc(
+      addChecklistUseCase: sl(),
       getTasksOfTeamUseCase: sl(),
       getTasksByIdUseCase: sl(),
       addTaskUseCase: sl(),
@@ -40,16 +39,27 @@ sl.registerFactory(() => MembersTeamCubit());
       deleteTaskUseCase: sl(),
       deleteChecklistUseCase: sl(),
       updateChecklistStatusUseCase: sl(),
-      updateTaskNameUseCase: sl(), updateTaskTimelineUseCase: sl(),
-      UpdateMembersUseCase: sl(), updateFileUseCase: sl (), deleteFileUseCase: sl(), updateChecklistNameUseCase: sl(), addCommentUseCase: sl(), getFileUseCase: sl()));
+      updateTaskNameUseCase: sl(),
+      updateTaskTimelineUseCase: sl(),
+      UpdateMembersUseCase: sl(),
+      updateFileUseCase: sl(),
+      deleteFileUseCase: sl(),
+      updateChecklistNameUseCase: sl(),
+      addCommentUseCase: sl(),
+      getFileUseCase: sl()));
 
-  sl.registerFactory(() => GetTeamsBloc(sl(), sl()  ,sl(),sl(),sl(),sl(),sl(),sl(),sl()));
+  sl.registerFactory(() =>
+      GetTeamsBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   //datasources
 
-  sl.registerLazySingleton<TaskRemoteDataSource>(() => TaskRemoteDataSourceImpl(client: sl()));
-  sl.registerLazySingleton<TeamRemoteDataSource>(() => TeamRemoteDataSourceImpl(client: sl()));
-  sl.registerLazySingleton<TeamLocalDataSource>(() => TeamLocalDataSourceImpl());
-  sl.registerLazySingleton<TaskLocalDataSource>(() => TaskLocalDataSourceImpl());
+  sl.registerLazySingleton<TaskRemoteDataSource>(
+      () => TaskRemoteDataSourceImpl(client: sl()));
+  sl.registerLazySingleton<TeamRemoteDataSource>(
+      () => TeamRemoteDataSourceImpl(sl(), client: sl()));
+  sl.registerLazySingleton<TeamLocalDataSource>(
+      () => TeamLocalDataSourceImpl());
+  sl.registerLazySingleton<TaskLocalDataSource>(
+      () => TaskLocalDataSourceImpl());
   //use cases
   sl.registerLazySingleton(() => AddChecklistUseCase(sl()));
   sl.registerLazySingleton(() => getTeamByNameUseCase(sl()));
@@ -65,7 +75,6 @@ sl.registerFactory(() => MembersTeamCubit());
   sl.registerLazySingleton(() => UpdateTaskNameUseCase(sl()));
   sl.registerLazySingleton(() => UpdateTeamMembersUseCase(sl()));
   sl.registerLazySingleton(() => GetFileUseCase(sl()));
-
 
   sl.registerLazySingleton(() => UpdateChecklistStatusUseCase(sl()));
   sl.registerLazySingleton(() => InviteMemberUseCase(sl()));
@@ -83,6 +92,14 @@ sl.registerFactory(() => MembersTeamCubit());
   sl.registerLazySingleton(() => DeleteTeamUseCase(sl()));
 
   //repo
-  sl.registerLazySingleton<TeamRepo>(() => TeamRepoImpl(teamRemoteDataSource: sl(), teamLocalDataSource: sl(), networkInfo: sl(),));
-  sl.registerLazySingleton<TaskRepo>(() => TaskRepoImpl(taskRemoteDataSource: sl(), taskLocalDataSource: sl(), networkInfo: sl(),));
+  sl.registerLazySingleton<TeamRepo>(() => TeamRepoImpl(
+        teamRemoteDataSource: sl(),
+        teamLocalDataSource: sl(),
+        networkInfo: sl(),
+      ));
+  sl.registerLazySingleton<TaskRepo>(() => TaskRepoImpl(
+        taskRemoteDataSource: sl(),
+        taskLocalDataSource: sl(),
+        networkInfo: sl(),
+      ));
 }

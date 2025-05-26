@@ -10,124 +10,121 @@ import '../../../../core/config/env/urls.dart';
 import '../../../../core/error/Exception.dart';
 
 abstract class RemotePresidentsDataSources {
-  Future<List<PresidentModel>> getPresidents(String start,String limit);
+  Future<List<PresidentModel>> getPresidents(String start, String limit);
   Future<PresidentModel> CreatePresident(PresidentModel president);
   Future<Unit> DeletePresident(String id);
   Future<PresidentModel> UpdatePresident(PresidentModel president);
   Future<PresidentModel> UpdateImagePresident(PresidentModel president);
 }
+
 class RemotePresidentsDataSourcesImpl implements RemotePresidentsDataSources {
   final http.Client client;
 
   RemotePresidentsDataSourcesImpl({required this.client});
   @override
-  Future<PresidentModel> CreatePresident(PresidentModel president) async{
-    final tokens = await getTokens();
-    final body =president.toJson();
-    debugPrint(body.toString()  );
+  Future<PresidentModel> CreatePresident(PresidentModel president) async {
+    final body = president.toJson();
+    debugPrint(body.toString());
 
-    return client.post(
+    return client
+        .post(
       Uri.parse(CreatePresidents()),
-      headers: {"Content-Type": "application/json",
-        "Authorization": "Bearer ${tokens[1]}"
-
+      headers: {
+        "Content-Type": "application/json",
+        //    "Authorization": "Bearer ${tokens[1]}"
       },
       body: json.encode(body),
-    ).then((response) async {
+    )
+        .then((response) async {
       debugPrint(response.statusCode.toString());
       if (response.statusCode == 201) {
-        final Map<String, dynamic> decodedJson = json.decode(response.body) ;
+        final Map<String, dynamic> decodedJson = json.decode(response.body);
         final presidents = PresidentModel.fromJson(decodedJson);
 
-
         return presidents;
-
-      }
-      else if (response.statusCode == 400) {
+      } else if (response.statusCode == 400) {
         throw WrongCredentialsException();
-      }
-      else if  (response.statusCode == 401){
+      } else if (response.statusCode == 401) {
         throw UnauthorizedException();
-      }
-
-      else {
+      } else {
         throw ServerException();
       }
     });
   }
 
-  Future<PresidentModel> uploadimagefunct(Map<String, dynamic> decodedJson, PresidentModel president, PresidentModel presidents) async {
-       throw ServerException();
+  Future<PresidentModel> uploadimagefunct(Map<String, dynamic> decodedJson,
+      PresidentModel president, PresidentModel presidents) async {
+    throw ServerException();
   }
 
   @override
-  Future<Unit> DeletePresident(String id)async {
-    final tokens = await getTokens();
+  Future<Unit> DeletePresident(String id) async {
+    //  final tokens = await getTokens();
     return client.delete(
       Uri.parse(DeletePresidents(id)),
-      headers: {"Content-Type": "application/json",
-        "Authorization": "Bearer ${tokens[1]}"
+      headers: {
+        "Content-Type": "application/json",
+        //    "Authorization": "Bearer ${tokens[1]}"
       },
     ).then((response) async {
       debugPrint(response.statusCode.toString());
       if (response.statusCode == 204) {
         return Future.value(unit);
-      }
-      else if (response.statusCode == 400) {
+      } else if (response.statusCode == 400) {
         throw WrongCredentialsException();
-      }
-      else if  (response.statusCode == 401){
+      } else if (response.statusCode == 401) {
         throw UnauthorizedException();
-      }
-
-      else {
+      } else {
         throw ServerException();
       }
     });
   }
 
   @override
-  Future<PresidentModel> UpdateImagePresident(PresidentModel presidentModel)async {
-   throw ServerException();
+  Future<PresidentModel> UpdateImagePresident(
+      PresidentModel presidentModel) async {
+    throw ServerException();
   }
 
   @override
-  Future<PresidentModel> UpdatePresident(PresidentModel president)async {
-    final tokens = await getTokens();
-    final body =president.toJson();
-    return client.patch(
+  Future<PresidentModel> UpdatePresident(PresidentModel president) async {
+    //final tokens = await getTokens();
+    final body = president.toJson();
+    return client
+        .patch(
       Uri.parse(UpdatePresidents(president.id)),
-      headers: {"Content-Type": "application/json",
-        "Authorization": "Bearer ${tokens[1]}"
+      headers: {
+        "Content-Type": "application/json",
+        //  "Authorization": "Bearer ${tokens[1]}"
       },
-
       body: json.encode(body),
-    ).then((response) async {
+    )
+        .then((response) async {
       debugPrint(response.statusCode.toString());
       if (response.statusCode == 201) {
-        final Map<String, dynamic> decodedJson = json.decode(response.body) ;
+        final Map<String, dynamic> decodedJson = json.decode(response.body);
         final president = PresidentModel.fromJson(decodedJson);
         return president;
-      }
-      else if (response.statusCode == 400) {
+      } else if (response.statusCode == 400) {
         throw WrongCredentialsException();
-      }
-      else if  (response.statusCode == 401){
+      } else if (response.statusCode == 401) {
         throw UnauthorizedException();
-      }
-
-      else {
+      } else {
         throw ServerException();
       }
     });
   }
 
   @override
-  Future<List<PresidentModel>> getPresidents(String start,String limit) {
-    return client.get(Uri.parse(getAllPresidents(start,limit))).then((response) {
+  Future<List<PresidentModel>> getPresidents(String start, String limit) {
+    return client
+        .get(Uri.parse(getAllPresidents(start, limit)))
+        .then((response) {
       if (response.statusCode == 200) {
         final List<dynamic> decodedJson = json.decode(response.body);
-        return decodedJson.map((json) => PresidentModel.fromJson(json)).toList();
+        return decodedJson
+            .map((json) => PresidentModel.fromJson(json))
+            .toList();
       } else {
         throw ServerException();
       }

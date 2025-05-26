@@ -257,7 +257,7 @@ visualDensity: VisualDensity.comfortable,
           child: Column(
             children: [
           
-              MemberImpl.MembersWithRanks(mediaQuery),
+              MemberImpl.membersWithRanks(mediaQuery),
           
             ],
           )),

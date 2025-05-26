@@ -28,6 +28,8 @@ Widget BlocMonthlyWeeklyActivity(activity act, MediaQueryData mediaQuery) =>
               case ActivityFetchState.ActivityLoaded:
               case ActivityFetchState.ActivityChanged:
               case ActivityFetchState.LoadingButton:
+              case ActivityFetchState.Left:
+              case ActivityFetchState.Participate:
 
               case ActivityFetchState.ACtivityLoadedMonth:
                 return RefreshIndicator(
@@ -66,6 +68,9 @@ Widget ActivityDetails(activity Act, String id, index) {
               case ActivityFetchState.ActivityLoaded:
               case ActivityFetchState.ActivityChanged:
               case ActivityFetchState.LoadingButton:
+              case ActivityFetchState.Participate:
+              case ActivityFetchState.Left:
+
 
               case ActivityFetchState.ActivityByIdLoaded:
                 if (state.activityById == null) {
@@ -133,6 +138,9 @@ Widget _handleParticipantStates(BuildContext context, AcivityFState state,
     case ActivityFetchState.ActivityLoaded:
     case ActivityFetchState.ActivityChanged:
     case ActivityFetchState.LoadingButton:
+    case ActivityFetchState.Participate:
+    case ActivityFetchState.Left:
+
       return ActivityWidget(Activities: state.activitiesSearch, act: act);
     case ActivityFetchState.Error:
 

@@ -17,61 +17,64 @@ import 'package:jci_app/core/config/services/store.dart';
 import 'package:jci_app/core/error/Exception.dart';
 
 import '../../../../core/config/services/FCMService/FCmServi.dart';
+import '../../../../core/config/services/permissionService/PermissionsStore.dart';
 
+abstract class AuthRemote {
+  Future<Unit> signOut(bool value);
 
+  Future<Unit> signInWithGoogle();
 
-abstract class  AuthRemote {
-  Future<Unit>  signOut(bool value);
+  Future<Unit> RegisterWithEmail(SignInDtos signin);
 
-Future<Unit> signInWithGoogle();
+  Future<Unit> RegisterWithPhone(SignInDtos signin);
 
+  Future<Unit> logInWithEmail(LoginWithEmailDtos login);
 
-
-
-  Future<Unit>  RegisterWithEmail(SignInDtos signin) ;
-
-  Future<Unit>  RegisterWithPhone(SignInDtos signin) ;
-
-  Future<Unit> logInWithEmail(LoginWithEmailDtos login) ;
-
-  Future<Unit> logInWithPhone(LoginWithPhoneDtos login) ;
-
+  Future<Unit> logInWithPhone(LoginWithPhoneDtos login);
 }
-class AuthRemoteImpl implements AuthRemote {
-  final Logger logger ;
 
+class AuthRemoteImpl implements AuthRemote {
+  final Logger logger;
+  final SecurePermissionStore permissionStore;
+  final MemberStore memberStore;
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
   final FirebaseAuth auth;
   final Store store;
-
+  final FSMToken fsmToken;
   final GoogleSignIn googleSignIn;
 
-  AuthRemoteImpl(this.auth, this.googleSignIn, this.logger, this.store, );
+  AuthRemoteImpl(
+    this.auth,
+    this.googleSignIn,
+    this.logger,
+    this.store,
+    this.permissionStore,
+    this.memberStore,
+    this.fsmToken,
+  );
 
   @override
   Future<Unit> signOut(bool value) async {
     try {
+      await permissionStore.removePermissions();
       if (value) {
         await googleSignIn.signOut();
       }
 
-        await auth.signOut();
-
+      await auth.signOut();
 
       await store.clear();
-      await MemberStore.clearModel();
+      await memberStore.clearModel();
       await store.setLoggedIn(false);
       await TeamStore.clearCache();
+
       return Future.value(unit);
     } catch (e) {
       await store.setLoggedIn(false);
       throw AlreadyLogoutException();
     }
   }
-
-
-
 
   Map<String, dynamic> filterMap(Map<String, dynamic> user) {
     return user.containsKey('constraints') ? user : {};
@@ -80,20 +83,20 @@ class AuthRemoteImpl implements AuthRemote {
   @override
   Future<Unit> signInWithGoogle() async {
     try {
-
       await googleSignIn.signOut();
 
       logger.i("Starting Google Sign-In process.");
 
-
-      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+      final GoogleSignInAccount? googleSignInAccount =
+          await googleSignIn.signIn();
 
       if (googleSignInAccount != null) {
         logger.i("Google account obtained: ${googleSignInAccount.email}");
 
         final GoogleSignInAuthentication googleSignInAuthentication =
-        await googleSignInAccount.authentication;
-        logger.i("Google account obtained: ${googleSignInAuthentication.accessToken}");
+            await googleSignInAccount.authentication;
+        logger.i(
+            "Google account obtained: ${googleSignInAuthentication.accessToken}");
 
         final AuthCredential credential = GoogleAuthProvider.credential(
           accessToken: googleSignInAuthentication.accessToken,
@@ -102,19 +105,21 @@ class AuthRemoteImpl implements AuthRemote {
         logger.i("Google account obtained: ${googleSignInAccount.email}");
 
         // Sign in with credential
-        final UserCredential authResult = await auth.signInWithCredential(
-            credential);
+        final UserCredential authResult =
+            await auth.signInWithCredential(credential);
         final User? user = authResult.user;
 
         logger.i("User signed in: ${user?.email}");
 
         // Check if user exists in Firestore
         final DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('users').doc(user?.uid).get();
+            .collection('users')
+            .doc(user?.uid)
+            .get();
 
         if (userDoc.exists) {
           logger.i("User already exists in Firestore.");
-         await SaveInCache(db, user!);
+          await SaveInCache(db, user!);
           return Future.value(unit); // User already exists, return the user
         } else {
           logger.i("User does not exist in Firestore, creating new user.");
@@ -134,32 +139,25 @@ class AuthRemoteImpl implements AuthRemote {
     }
   }
 
-
   @override
-  Future<Unit>   RegisterWithEmail(SignInDtos signin)async {
+  Future<Unit> RegisterWithEmail(SignInDtos signin) async {
     try {
-   await auth.createUserWithEmailAndPassword(
+      await auth.createUserWithEmailAndPassword(
         email: signin.member!.email.trim(),
         password: signin.member!.password.trim(),
       );
 
+      final authuser = AuthUserModel.fromEntity(signin.member!);
+      await RegisterInUSer(authuser, db);
 
-        final authuser=AuthUserModel.fromEntity(signin.member!);
-        await RegisterInUSer(authuser, db);
-
-        return Future.value(unit);
-
-
-
-    }   on FirebaseAuthException catch (e) {
-    if (e.code == 'email-already-in-use') {
-    throw AlreadyParticipateException();
-    }
-
-    else {
-    throw ServerException();
-    }
-    }  catch (e) {
+      return Future.value(unit);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        throw AlreadyParticipateException();
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
       throw ServerException();
     }
   }
@@ -171,118 +169,99 @@ class AuthRemoteImpl implements AuthRemote {
   }
 
   @override
-  Future <Unit> logInWithEmail(LoginWithEmailDtos login) async {
-
+  Future<Unit> logInWithEmail(LoginWithEmailDtos login) async {
     try {
-      logger.i("Logging in with email and password."
-      ,login.email
-
-      );
-      logger.i("Logging in with email and password."
-          ,login.password
-      );
-
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
         email: login.email,
         password: login.password,
       );
 
-      logger.i("mmmm in with email and password."
-          ,login.password
-      );
+      await SaveInCache(db, userCredential.user!);
 
-
-     await SaveInCache(db, userCredential.user!);
-      logger.i("mmmm in with email and password."
-          ,login.password
-      );
-
-        return Future.value(unit);
-
-
-    }   on FirebaseAuthException catch (e) {
-    if (e.code == 'user-not-found') {
-    throw NotFoundException();
-    }
-    else if (e.code == 'wrong-password') {
-    throw WrongVerificationException();
-    }
-    else {
-      logger.e("Error during email login: $e");
-    rethrow ;
-    }
-
-
-    }  catch (e) {
+      return Future.value(unit);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        throw NotFoundException();
+      } else if (e.code == 'wrong-password') {
+        throw WrongVerificationException();
+      } else {
+        logger.e("Error during email login: $e");
+        rethrow;
+      }
+    } catch (e) {
       logger.e("Error during email login: $e");
       throw ServerException();
     }
   }
-
 
   @override
   Future<Unit> logInWithPhone(LoginWithPhoneDtos login) async {
     return Future.value(unit);
   }
 
-
-  Future<Unit> RegisterInUSer(AuthUserModel memberModelGoogleSignUp,
-      FirebaseFirestore db) async {
+  Future<Unit> RegisterInUSer(
+      AuthUserModel memberModelGoogleSignUp, FirebaseFirestore db) async {
     final body = memberModelGoogleSignUp.toJson();
     //collect user id from firebase
     final User? user = FirebaseAuth.instance.currentUser;
 
-    final sto=await FirebaseFirestore.instance.collection('users').doc(user!.uid).set(
-        body);
+    final sto = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid)
+        .set(body);
     //update id
-    await FirebaseFirestore.instance.collection('users').doc(user.uid).update(
-        {'id': user.uid});
-
-
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .update({'id': user.uid});
 
     return Future.value(unit);
   }
+
   Future<void> SaveInCache(FirebaseFirestore db, User user) async {
-     // Create a logger instance
+    // Create a logger instance
 
     logger.i('Start saving user to cache'); // Log the beginning of the function
 
     DocumentSnapshot userDoc = await db.collection('users').doc(user.uid).get();
-final userJson=AuthUserModel.fromJson(userDoc.data() as Map<String,dynamic>);
+    final userJson =
+        AuthUserModel.fromJson(userDoc.data() as Map<String, dynamic>);
 
-
-
-
-await store.SetEmail(user.email!);
+    await store.SetEmail(user.email!);
 
     if (userJson.role != null) {
       await store.setRole(userJson.role!);
-      getFcmToken(FirebaseMessaging.instance);
-     // logger.i('User saved to cache',userJson.role!.path); // Log the end of the function
+      fsmToken.getFcmToken(FirebaseMessaging.instance);
+      // logger.i('User saved to cache',userJson.role!.path); // Log the end of the function
       await store.setLoggedIn(true);
       await store.setUserId(user.uid);
-      await MemberStore.savePrimitiveModel(UserModel.fromEntity(userJson));
+      await memberStore.savePrimitiveModel(UserModel.fromEntity(userJson));
       // Log setting logged in flag
+    } else {
+      throw NotFoundException();
     }
-    else {
-      throw NotFoundException();}
-  // Log setting logged in flag
+    // Log setting logged in flag
   }
-  Future <void> RegisterInWithGoogle(
-      FirebaseFirestore db) async {
+
+  Future<void> RegisterInWithGoogle(FirebaseFirestore db) async {
     final User? user = FirebaseAuth.instance.currentUser;
     logger.i("User signed in: ${user?.email}");
     final language = await store.getLocaleLanguage();
 
-    final UserGoogle=AuthUserModel.ofGoogle(email: user!.email!, displayName: user.displayName!, language: language!, photoUrl: user.photoURL!, role:await getRoleReferenceByName("Member"), id: user.uid);
-
-
+    final UserGoogle = AuthUserModel.ofGoogle(
+        email: user!.email!,
+        displayName: user.displayName!,
+        language: language!,
+        photoUrl: user.photoURL!,
+        role: await getRoleReferenceByName("Member"),
+        id: user.uid);
 
     final body = UserGoogle.toJson();
     //collect user id from firebase
     logger.i("User sqs in: $body");
 
-    final userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+    final userRef =
+        FirebaseFirestore.instance.collection('users').doc(user.uid);
 
 // Set the initial document
     await userRef.set(body);
@@ -291,18 +270,14 @@ await store.SetEmail(user.email!);
     await userRef.update({'id': userRef.id});
 
     // update user id in firestore
+  }
 
-
-
-
-
-}
   Future<DocumentReference?> getRoleReferenceByName(String roleName) async {
     // Query the roles collection to find the document with the specified roleName
     final querySnapshot = await FirebaseFirestore.instance
         .collection("roles")
         .where("roleName", isEqualTo: roleName)
-        .limit(1)  // Limit to 1 since roleName is expected to be unique
+        .limit(1) // Limit to 1 since roleName is expected to be unique
         .get();
 
     // Check if any documents were found

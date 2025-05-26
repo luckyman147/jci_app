@@ -89,7 +89,7 @@ class ParticipateActivityUseCases extends UseCase<Unit,activityParams > {
 
   @override
   Future<Either<Failure, Unit>> call(activityParams params) {
-    Logger().i("participateActivity",params.Eventid);
+
     return activitiesRepo.participateActivity(params.Eventid!, params.type);
   }
 }

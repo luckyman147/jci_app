@@ -8,7 +8,6 @@ import 'package:equatable/equatable.dart';
 
 import 'package:jci_app/core/config/services/MemberStore.dart';
 
-
 import 'package:jci_app/features/Teams/domain/usecases/TeamUseCases.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -29,6 +28,7 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
     return droppable<E>().call(events.throttle(duration), mapper);
   };
 }
+
 class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
   final GetAllTeamsUseCase getAllTeamsUseCase;
   final GetTeamByIdUseCase getTeamByIdUseCase;
@@ -37,12 +37,23 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
   final DeleteTeamUseCase deleteTeamUseCase;
   final InviteMemberUseCase inviteMemberUseCase;
   final getTeamByNameUseCase TeamByNameUseCase;
+  final MemberStore memberStore;
   final UpdateTeamMembersUseCase updateTeamMembersUseCase;
   final JoinTeamUseCase joinTeamUseCase;
-  GetTeamsBloc(this.getAllTeamsUseCase, this.getTeamByIdUseCase, this.addTeamUseCase, this.updateTeamUseCase, this.deleteTeamUseCase, this.TeamByNameUseCase, this.updateTeamMembersUseCase, this.inviteMemberUseCase, this.joinTeamUseCase)
+  GetTeamsBloc(
+      this.getAllTeamsUseCase,
+      this.getTeamByIdUseCase,
+      this.addTeamUseCase,
+      this.updateTeamUseCase,
+      this.deleteTeamUseCase,
+      this.TeamByNameUseCase,
+      this.updateTeamMembersUseCase,
+      this.inviteMemberUseCase,
+      this.joinTeamUseCase,
+      this.memberStore)
       : super(GetTeamsInitial()) {
-    on<GetTeams>(onGetTeams,transformer: throttleDroppable(throttleDuration));
-   on<GetTeamById>(onGetTeamById);
+    on<GetTeams>(onGetTeams, transformer: throttleDroppable(throttleDuration));
+    on<GetTeamById>(onGetTeamById);
     on<initStatus>(_initStatus);
 
     on<AddTeam>(ACtionEvent);
@@ -65,18 +76,16 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
 
   void _inviteMember(InviteMembers event, Emitter<GetTeamsState> emit) async {
     try {
-
-      final result = await inviteMemberUseCase(event. teamfi);
-      emit(_mapFailureOrInviteMemberToState(result,event.teamfi));
+      final result = await inviteMemberUseCase(event.teamfi);
+      emit(_mapFailureOrInviteMemberToState(result, event.teamfi));
     } catch (error) {
       emit(state.copyWith(status: TeamStatus.error));
     }
   }
 
-void _initStatus(initStatus event, Emitter<GetTeamsState> emit) {
+  void _initStatus(initStatus event, Emitter<GetTeamsState> emit) {
     emit(state.copyWith(status: TeamStatus.IsRefresh));
   }
-
 
   void getByname(GetTeamByName event, Emitter<GetTeamsState> emit) async {
     try {
@@ -87,235 +96,241 @@ void _initStatus(initStatus event, Emitter<GetTeamsState> emit) {
     }
   }
 
-
   void onUpdateTeam(UpdateTeam event, Emitter<GetTeamsState> emit) async {
     try {
-  emit(state.copyWith(status: TeamStatus.initial));
+      emit(state.copyWith(status: TeamStatus.initial));
       final result = await updateTeamUseCase(event.team);
-      emit(_updateTeamName(result,event.team));
+      emit(_updateTeamName(result, event.team));
     } catch (error) {
       log("fffff$error");
-      emit(state.copyWith(status: TeamStatus.error, errorMessage: error.toString()));
+      emit(state.copyWith(
+          status: TeamStatus.error, errorMessage: error.toString()));
     }
   }
 
   void ACtionEvent(AddTeam event, Emitter<GetTeamsState> emit) async {
-
-
-
     try {
       final result = await addTeamUseCase(event.team);
-emit(_mapFailureOrAddToState(result));
+      emit(_mapFailureOrAddToState(result));
     } catch (error) {
       emit(state.copyWith(status: TeamStatus.error));
-
     }
-
   }
 
-
-
-
-void deleteTeam(DeleteTeam event, Emitter<GetTeamsState> emit) async {
+  void deleteTeam(DeleteTeam event, Emitter<GetTeamsState> emit) async {
     try {
       final result = await deleteTeamUseCase(event.id);
-      emit(_mapFailureOrDeleteToState(result,event.id));
+      emit(_mapFailureOrDeleteToState(result, event.id));
     } catch (error) {
       emit(state.copyWith(status: TeamStatus.error));
     }
   }
 
-
-
   Future<void> onGetTeams(GetTeams event, Emitter<GetTeamsState> emit) async {
-
-  //  if (state.hasReachedMax ) return;
+    //  if (state.hasReachedMax ) return;
     try {
-      if (state.status == TeamStatus.initial || state.status == TeamStatus.error|| state.status == TeamStatus.IsRefresh||state.teams.isEmpty) {
-
+      if (state.status == TeamStatus.initial ||
+          state.status == TeamStatus.error ||
+          state.status == TeamStatus.IsRefresh ||
+          state.teams.isEmpty) {
         if (state.teams.isEmpty) {
           emit(state.copyWith(status: TeamStatus.Loading));
         }
 
-      final result = await getAllTeamsUseCase.call(isPrivate: event.isPrivate,updated: event.isUpdated);
-      final teams= result.getOrElse(() => []);
+        final result = await getAllTeamsUseCase.call(
+            isPrivate: event.isPrivate, updated: event.isUpdated);
+        final teams = result.getOrElse(() => []);
 
-      final members=teams.isEmpty?[]:teams.map((e) => e.Members).toList();
+        final members =
+            teams.isEmpty ? [] : teams.map((e) => e.Members).toList();
 
+        final store = await memberStore.getModel();
 
-      final store=await MemberStore.getModel();
+        final UpdatedExisted = members.isEmpty
+            ? []
+            : members
+                .map((e) => e.any((element) => element['_id'] == store!.id))
+                .toList();
 
-
-      final UpdatedExisted=members.isEmpty?[]:members.map((e) => e.any((element) => element['_id']==store!.id)).toList() ;
-
-    return emit(state.copyWith(
-     status: TeamStatus.success,
-     teams: result.getOrElse(() => []),
-members: members ,
-isExisted: UpdatedExisted ,
+        return emit(state.copyWith(
+          status: TeamStatus.success,
+          teams: result.getOrElse(() => []),
+          members: members,
+          isExisted: UpdatedExisted,
           hasReachedMax: false,
-   ));}
+        ));
+      }
       state.copyWith(status: TeamStatus.Loading);
-      final result = await getAllTeamsUseCase.call(page: state.teams.length.toString(), isPrivate: event.isPrivate);
-      final teams= result.getOrElse(() => []);
-      final members=teams.isEmpty?[]:teams.map((e) => e.Members).toList();
-      final UpdatedMembers=List.of(state.members)..addAll(members );
-      final store=await MemberStore.getModel();
-      final UpdatedExisted=UpdatedMembers.map((e) => e.any((element) => element['_id']==store!.id)).toList() ;
+      final result = await getAllTeamsUseCase.call(
+          page: state.teams.length.toString(), isPrivate: event.isPrivate);
+      final teams = result.getOrElse(() => []);
+      final members = teams.isEmpty ? [] : teams.map((e) => e.Members).toList();
+      final UpdatedMembers = List.of(state.members)..addAll(members);
+      final store = await memberStore.getModel();
+      final UpdatedExisted = UpdatedMembers.map(
+          (e) => e.any((element) => element['_id'] == store!.id)).toList();
       emit(result.getOrElse(() => []).isEmpty
           ? state.copyWith(hasReachedMax: true)
           : state.copyWith(
-        status: TeamStatus.success,
-        members: UpdatedMembers,
-        isExisted: UpdatedExisted,
-
-        teams: List.of(state.teams)..addAll(result.getOrElse(() => [])),
-        hasReachedMax: false,
-      ));
-
+              status: TeamStatus.success,
+              members: UpdatedMembers,
+              isExisted: UpdatedExisted,
+              teams: List.of(state.teams)..addAll(result.getOrElse(() => [])),
+              hasReachedMax: false,
+            ));
     } catch (error) {
-log(error.toString());
+      log(error.toString());
       emit(state.copyWith(status: TeamStatus.error));
-
     }
   }
-void _updateMember(UpdateTeamMember event ,Emitter<GetTeamsState> emit) async {
+
+  void _updateMember(
+      UpdateTeamMember event, Emitter<GetTeamsState> emit) async {
     try {
       final result = await updateTeamMembersUseCase(event.fields);
 
-      emit(_mapFailureOrUpdateMemberToState(result,event.fields));
+      emit(_mapFailureOrUpdateMemberToState(result, event.fields));
     } catch (error) {
       log(error.toString());
 
       emit(state.copyWith(status: TeamStatus.error));
     }
   }
+
   void onGetTeamById(GetTeamById event, Emitter<GetTeamsState> emit) async {
     emit(GetTeamsLoading());
     try {
       final result = await getTeamByIdUseCase(event.fields);
-      emit(_mapFailureOrTeamByIdToState(result,emit));
-
-
+      emit(_mapFailureOrTeamByIdToState(result, emit));
     } catch (error) {
-      emit(state.copyWith(status: TeamStatus.error, errorMessage: error.toString()));
+      emit(state.copyWith(
+          status: TeamStatus.error, errorMessage: error.toString()));
     }
   }
+
   GetTeamsState _mapFailureOrTeamToState(Either<Failure, List<Team>> either) {
     return either.fold(
-          (failure) => GetTeamsError(mapFailureToMessage(failure)),
-          (act) =>
-          GetTeamsLoaded(
-            act,
-          ),
+      (failure) => GetTeamsError(mapFailureToMessage(failure)),
+      (act) => GetTeamsLoaded(
+        act,
+      ),
     );
   }
 
-  GetTeamsState _mapFailureOrTeamByIdToState(Either<Failure, Team> either,Emitter<GetTeamsState> emit) {
+  GetTeamsState _mapFailureOrTeamByIdToState(
+      Either<Failure, Team> either, Emitter<GetTeamsState> emit) {
     return either.fold(
-          (failure) => state.copyWith(status: TeamStatus.error, errorMessage: mapFailureToMessage(failure)),
-          (act) {
-
-
-            return   state.copyWith(teamById: TeamFunction.mapTeam(act),status: TeamStatus.success);
+        (failure) => state.copyWith(
+            status: TeamStatus.error,
+            errorMessage: mapFailureToMessage(failure)), (act) {
+      return state.copyWith(
+          teamById: TeamFunction.mapTeam(act), status: TeamStatus.success);
+    });
   }
-    );
-  }  GetTeamsState _mapFailureOrTeamByNameToState(Either<Failure, List<Team>> either) {
+
+  GetTeamsState _mapFailureOrTeamByNameToState(
+      Either<Failure, List<Team>> either) {
     return either.fold(
-          (failure) => state.copyWith(status: TeamStatus.error, errorMessage: mapFailureToMessage(failure)),
-
-      (act) =>
-          state.copyWith(
-            teams: act
-            ,status: TeamStatus.success
-    ));
+        (failure) => state.copyWith(
+            status: TeamStatus.error,
+            errorMessage: mapFailureToMessage(failure)),
+        (act) => state.copyWith(teams: act, status: TeamStatus.success));
   }
+
   GetTeamsState _mapFailureOrAddToState(Either<Failure, Team> either) {
     return either.fold(
-            (failure) => state.copyWith(status: TeamStatus.error, errorMessage: mapFailureToMessage(failure)),
-            (act) => state.copyWith(
-           status: TeamStatus.Created,
-              // insert in the beginning of the list
+        (failure) => state.copyWith(
+            status: TeamStatus.error,
+            errorMessage: mapFailureToMessage(failure)),
+        (act) => state.copyWith(
+            status: TeamStatus.Created,
+            // insert in the beginning of the list
 
-                teams: UnmodifiableListView([act,...state.teams])
-
-        )
-
-    );
+            teams: UnmodifiableListView([act, ...state.teams])));
   }
 
-  GetTeamsState _mapFailureOrDeleteToState(Either<Failure, Unit> result,String id) {
+  GetTeamsState _mapFailureOrDeleteToState(
+      Either<Failure, Unit> result, String id) {
     return result.fold(
-            (failure) => state.copyWith(status: TeamStatus.DeletedError, errorMessage: mapFailureToMessage(failure)),
-            (act) => state.copyWith(
+        (failure) => state.copyWith(
+            status: TeamStatus.DeletedError,
+            errorMessage: mapFailureToMessage(failure)),
+        (act) => state.copyWith(
             teams: UnmodifiableListView(
-                state.teams.where((element) => element.id != id)
-            ),status: TeamStatus.Deleted
-        )
-
-    );
+                state.teams.where((element) => element.id != id)),
+            status: TeamStatus.Deleted));
   }
+
   GetTeamsState _updateTeamName(Either<Failure, Unit> either, Team team) {
-    return either.fold(
-          (failure) {
-            log(failure.toString());
-            return state.copyWith(status: TeamStatus.error, errorMessage: mapFailureToMessage(failure));}
-          ,(act) {
-
-    return state.copyWith(status: TeamStatus.success);
-  });
+    return either.fold((failure) {
+      log(failure.toString());
+      return state.copyWith(
+          status: TeamStatus.error, errorMessage: mapFailureToMessage(failure));
+    }, (act) {
+      return state.copyWith(status: TeamStatus.success);
+    });
   }
 
-  GetTeamsState _mapFailureOrUpdateMemberToState(Either<Failure, Unit> result, TeamInput field,)  {
+  GetTeamsState _mapFailureOrUpdateMemberToState(
+    Either<Failure, Unit> result,
+    TeamInput field,
+  ) {
     return result.fold(
-            (failure) => state.copyWith(status: TeamStatus.error, errorMessage: mapFailureToMessage(failure)),
-            (act) {
-              if (field.Status=="add") {
-                List<Map<String, dynamic>> updatedMember = List.from(
-                    state.teamById['Members']);
-                updatedMember.add(field.member!);
-                state.teamById['Members'] = updatedMember;
-              }
-              else {
+        (failure) => state.copyWith(
+            status: TeamStatus.error,
+            errorMessage: mapFailureToMessage(failure)), (act) {
+      if (field.Status == "add") {
+        List<Map<String, dynamic>> updatedMember =
+            List.from(state.teamById['Members']);
+        updatedMember.add(field.member!);
+        state.teamById['Members'] = updatedMember;
+      } else {
+        List<Map<String, dynamic>> updatedMember =
+            RemoveMember(field.memberid!);
 
-                List<Map<String, dynamic>> updatedMember = RemoveMember(field.memberid!);
+        state.teamById['Members'] = updatedMember;
+      }
 
-                state.teamById['Members'] = updatedMember;
-              }
-
-
-              return state.copyWith(status: state.status == TeamStatus.IsRefresh ?
-                  TeamStatus.success : TeamStatus.IsRefresh
-                  , teamById: state.teamById);
-            }
-    );
+      return state.copyWith(
+          status: state.status == TeamStatus.IsRefresh
+              ? TeamStatus.success
+              : TeamStatus.IsRefresh,
+          teamById: state.teamById);
+    });
   }
 
   List<Map<String, dynamic>> RemoveMember(String id) {
-    List<Map<String, dynamic>> updatedMember = List.from(
-        state.teamById['Members']);
-    updatedMember.removeWhere((element) => Member.toMember(element).id== id);
+    List<Map<String, dynamic>> updatedMember =
+        List.from(state.teamById['Members']);
+    updatedMember.removeWhere((element) => Member.toMember(element).id == id);
     return updatedMember;
   }
 
-  GetTeamsState _mapFailureOrInviteMemberToState(Either<Failure, Unit> result,TeamInput fields) {
+  GetTeamsState _mapFailureOrInviteMemberToState(
+      Either<Failure, Unit> result, TeamInput fields) {
     return result.fold(
-            (failure) => state.copyWith(status: TeamStatus.error, errorMessage: mapFailureToMessage(failure)),
-            (act) {
-      List<Map<String, dynamic>> updatedMember = List.from(
-          state.teamById['Members']);
+        (failure) => state.copyWith(
+            status: TeamStatus.error,
+            errorMessage: mapFailureToMessage(failure)), (act) {
+      List<Map<String, dynamic>> updatedMember =
+          List.from(state.teamById['Members']);
       updatedMember.add(fields.member!);
       state.teamById['Members'] = updatedMember;
-              return  state.copyWith(status:state.status==TeamStatus.IsRefresh? TeamStatus.Updated:TeamStatus.Updated);}
-    );
+      return state.copyWith(
+          status: state.status == TeamStatus.IsRefresh
+              ? TeamStatus.Updated
+              : TeamStatus.Updated);
+    });
   }
 
   GetTeamsState _mapFailureOrJoinTeamToState(Either<Failure, Unit> result) {
     return result.fold(
-            (failure) => state.copyWith(status: TeamStatus.error, errorMessage: mapFailureToMessage(failure)),
-            (act) => state.copyWith(status: state.status==TeamStatus.IsRefresh? TeamStatus.Updated:TeamStatus.IsRefresh)
-    );
+        (failure) => state.copyWith(
+            status: TeamStatus.error,
+            errorMessage: mapFailureToMessage(failure)),
+        (act) => state.copyWith(
+            status: state.status == TeamStatus.IsRefresh
+                ? TeamStatus.Updated
+                : TeamStatus.IsRefresh));
   }
 }
-
-

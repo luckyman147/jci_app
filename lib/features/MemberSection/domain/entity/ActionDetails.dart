@@ -1,7 +1,7 @@
+import '../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Role.dart';
 import 'Objectif.dart';
 enum PrivacyType { Public, Private }
-enum CibleType { Members, NewMembers, VPs,President,Advisors,Secretary,CommittedMember }
-enum ObjectifActionType{Create,Update,Delete,Attend,Join,Comment,VoteIn,Send,Discover,CheckIn}
+enum ObjectifActionType{Create,Update,Delete,Attend,Join,Comment,VoteIn,Send,Discover,CheckIn,ReplyTo,ReactTo}
 enum GroupObjectif{Modification,Interaction,Decision,Contribution,Exploration,AttendanceCheck}
 
 class ObjectifType{

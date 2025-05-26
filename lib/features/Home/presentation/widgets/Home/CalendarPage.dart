@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/member/functionMember.dart';
+import 'package:jci_app/features/MemberSection/presentation/functions/functionMember.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';

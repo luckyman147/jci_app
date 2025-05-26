@@ -1,4 +1,6 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jci_app/app.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
@@ -23,7 +25,8 @@ class SnackBarMessage {
   ,IconData icon,
    Color color) {
     return SnackBar(
-      duration: const Duration(seconds: 10),
+
+      duration: const Duration(seconds: 3),
     padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0)
     //make it floating
        ,   behavior: SnackBarBehavior.floating,
@@ -37,43 +40,34 @@ class SnackBarMessage {
      ),
 
 
-    content: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-       Row(
-         mainAxisSize: MainAxisSize.min,
-         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-         children: [
+    content: SingleChildScrollView(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+      
+           Padding(
+             padding: paddingSemetricHorizontal(),
+             child: Icon(
+               icon,
+               color: ColorsApp.textColorWhite,
+             ),
+           ),
+           SingleChildScrollView(
+             scrollDirection: Axis.horizontal,
+             child: AutoSizeText(
+               message,
 
-            Icon(
-              icon,
-              color: color,
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * .5,
-              child: Text(
-                message,
-                overflow: TextOverflow.ellipsis,
-                style: PoppinsSemiBold(14, ColorsApp.textColorBlack, TextDecoration.none),
-              ),
-            ),
-         ],
-       ),
-        // icon closed
-  IconButton(onPressed: (){
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-
-  }, icon: const Icon(Icons.close,color: ColorsApp.textColorBlack,)),
-      ],
+               style: PoppinsNorml(14.sp, textColorWhite,),
+             ),
+           ),
+        ],
+      ),
     ),
-    backgroundColor: ColorsApp.textColorWhite,
+    backgroundColor: color,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
-      side: const BorderSide(
-        color: ColorsApp.textColor,
-        width: 2,
-      ),
+
     ),
   );
   }

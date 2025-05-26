@@ -8,7 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/member/functionMember.dart';
+import 'package:jci_app/features/MemberSection/presentation/functions/functionMember.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/TeamImpl.dart';
 
 import '../../../../core/app_theme.dart';

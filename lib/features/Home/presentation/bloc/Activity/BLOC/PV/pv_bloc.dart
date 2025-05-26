@@ -60,7 +60,7 @@ PvState _eitherFailureOrSuccess<T>( Either<Failure,T> result , Function(T) onSuc
     emit(state.copyWith(status: PvStatus.loading));
     final result = await deletePv(event.params);
     state.pvs.removeWhere((element) => element.id == event.params.PVId);
-    emit(_eitherFailureOrSuccess(result, (success) => state.copyWith(status: PvStatus.loaded,Message: 'Deleted Successfully',pvs: state.pvs)));
+    emit(_eitherFailureOrSuccess(result, (success) => state.copyWith(status: PvStatus.Deleted,Message: 'Deleted Successfully',pvs: state.pvs)));
 
   }
 

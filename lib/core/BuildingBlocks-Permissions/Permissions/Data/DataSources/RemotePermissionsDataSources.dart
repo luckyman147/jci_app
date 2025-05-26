@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Data/Models/FeatureModel.dart';
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Data/Models/FeaturePermissionsModel.dart';
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/domain/Dtos/LoadPermission.dart';
 import 'package:jci_app/core/error/Exception.dart';
@@ -17,6 +18,7 @@ abstract class RemoteDataSources{
 Future<List<FeaturePermissionsModel>> AddMisingFeature(List<String> missingFeaturesId,List<FeaturePermissionsModel> OriginalList);
   Future<Unit> addTemporaryPermissions(
       TempoPermissions tempoPermissions);
+  Future<List<FeatureModel>> fetchFeatures();
 
 }
 class RemotePermissionsDataSourcesImpl implements RemoteDataSources {
@@ -128,5 +130,28 @@ return originalList;
 
 
 
+  }
+
+
+  @override
+  Future<List<FeatureModel>> fetchFeatures() async {
+    try {
+      // Get reference to the features collection
+      final collection = FirebaseFirestore.instance.collection('features');
+
+      // Get documents from Firestore
+      final querySnapshot = await collection.get();
+
+      // Convert documents to FeatureModel objects
+      final features = querySnapshot.docs.map((doc) {
+        final data = doc.data();
+        return FeatureModel.fromMap(data);
+      }).toList();
+
+      return features;
+    } catch (e) {
+logger.e(e.toString());
+throw ServerException();
+    }
   }
 }

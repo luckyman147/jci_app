@@ -8,6 +8,7 @@ import 'package:jci_app/core/usescases/usecase.dart';
 import '../Dtos/CheckPermissionDtos.dart';
 import '../Dtos/LoadPermission.dart';
 import '../Dtos/TempoPermissions.dart';
+import '../Entities/Feature.dart';
 import '../Entities/FeaturePermissions.dart';
 import '../Entities/UserPermissions.dart';
 import '../repo/PermissionsRepositories.dart';
@@ -76,8 +77,19 @@ class AddTemporaryPermissionsUseCase extends UseCase<Unit,TempoPermissions>{
   AddTemporaryPermissionsUseCase(this.permissionsRepository);
 
   @override
-  Future<Either<Failure, Unit>> call(TempoPermissions params) {
-    return permissionsRepository.addTemporaryPermissions(params);
+  Future<Either<Failure, Unit>> call(TempoPermissions params)async {
+    return await permissionsRepository.addTemporaryPermissions(params);
+  }
+
+}
+class FetchFeaturesUsesCases extends UseCase<List<Feature>,NoParams>{
+  final PermissionsRepository permissionsRepository;
+
+  FetchFeaturesUsesCases({required this.permissionsRepository});
+
+  @override
+  Future<Either<Failure, List<Feature>>> call(NoParams params) async{
+    return  await permissionsRepository.loadAllFeatures();
   }
 
 }

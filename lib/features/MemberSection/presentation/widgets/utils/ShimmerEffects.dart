@@ -2,7 +2,89 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../../../core/app_theme.dart';
+class ShimmerListView extends StatelessWidget {
+  final int itemCount;
+  final double itemHeight;
+  final EdgeInsetsGeometry padding;
 
+  const ShimmerListView({
+    super.key,
+    this.itemCount = 6,
+    this.itemHeight = 80.0,
+    this.padding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: padding,
+      itemCount: itemCount,
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: _buildListItem(context),
+        );
+      },
+    );
+  }
+
+  Widget _buildListItem(BuildContext context) {
+    return Container(
+      height: itemHeight,
+      margin: const EdgeInsets.only(bottom: 12.0),
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Left placeholder (avatar)
+          Container(
+            width: 56.0,
+            height: 56.0,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 12.0),
+          // Right content placeholders
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Title placeholder
+                Container(
+                  width: double.infinity,
+                  height: 16.0,
+                  color: Colors.white,
+                ),
+                const SizedBox(height: 8.0),
+                // Subtitle placeholder
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  height: 14.0,
+                  color: Colors.white,
+                ),
+                const SizedBox(height: 8.0),
+                // Additional info placeholder
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  height: 12.0,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 class ShimmerGridView extends StatelessWidget {
   const ShimmerGridView({super.key});
 
@@ -36,140 +118,6 @@ class ShimmerGridView extends StatelessWidget {
     );
   }
 
-
-  static Widget hh( BuildContext context) {
-    return SizedBox(
-      height: 280,
-      width: 350,
-      child: Stack(
-        children: [
-          Center(
-            child: Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Container(
-                height: 200,
-                width: 350,
-                decoration: BoxDecoration(
-                  color: Colors.white, // You can set a background color for the shimmer effect
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-            ),
-          ),
-
-          Positioned(
-            top: 0,
-            right: 0,
-            left: 0,
-            child: Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Container(
-                height: 100,
-                width: 100,
-                decoration: const BoxDecoration(
-                  color: Colors.white, // You can set a background color for the shimmer effect
-                shape: BoxShape.circle,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 85,
-            left: 0,
-            right: 0,
-            child:  Column(
-                  children: [
-                    Shimmer.fromColors(
-                      baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.grey[100]!,
-                      child: const SizedBox(
-                        height: 30,
-                        width: 200,
-                      )  ,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Shimmer.fromColors(
-                          baseColor: Colors.grey[300]!,
-                          highlightColor: Colors.grey[100]!,
-                          child: const SizedBox(
-                            height: 30,
-                            width: 200,
-                          )  ,
-                        ),
-
-                      ],
-                    ),
-                  ],
-                )
-
-            ),
-
-
-          Positioned(
-            top: 170,
-            right: 0,
-            left: 0,
-            child: Align(
-              alignment: Alignment.center,
-              child: Padding(
-                padding: paddingSemetricHorizontal(),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: paddingSemetricHorizontal(),
-                      child:SizedBox(
-                        height: 30,
-                        width: 30,
-                        child: Shimmer.fromColors(
-                          baseColor: Colors.grey[300]!,
-                          highlightColor: Colors.grey[100]!,
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              color: Colors.white, // You can set a background color for the shimmer effect
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                      ),
-  ) ,
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ]
-      ));
-  }
-static Widget UserprofileShimmer(BuildContext ctx)=>SingleChildScrollView(
-  child: Column(
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-  
-        Row(
-          children: [
-            padding( 20, 30),
-            padding( 20, 100),
-          ],
-        ),
-        padding( 10, 10)
-      ],),
-      hh(ctx),
-      padding( 80, MediaQuery.of(ctx).size.width),
-      padding( 80, MediaQuery.of(ctx).size.width),
-      padding( 80, MediaQuery.of(ctx).size.width),
-      padding( 80, MediaQuery.of(ctx).size.width),
-  
-    ],
-  ),
-);
-
 static Padding padding(double height,double width) {
   return Padding(
     padding: paddingSemetricVerticalHorizontal(h: 18),
@@ -182,7 +130,7 @@ static Padding padding(double height,double width) {
         decoration: BoxDecoration(
           color: Colors.white, // You can set a background color for the shimmer effect
           borderRadius: BorderRadius.circular(20),
-        
+
         ), // Optionally, you can set a background color
       ),
     ),

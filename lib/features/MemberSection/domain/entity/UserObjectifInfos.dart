@@ -5,4 +5,6 @@ class UserObjectifInfos{
   final UserObjectif userObjectif;
 
   UserObjectifInfos({required this.objectif, required this.userObjectif});
+
+
 }

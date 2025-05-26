@@ -11,6 +11,7 @@ import 'package:jci_app/features/about_jci/Presentations/widgets/BoardComponents
 import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/dialogs.dart';
 
+import '../../../../core/widgets/CommonTextField.dart';
 import '../../../Home/domain/enums/ActionImage.dart';
 import '../../../Home/presentation/widgets/Activity/AddActivityWidgets.dart';
 
@@ -81,7 +82,7 @@ final ScrollController controller = ScrollController();
               ),
 
           //    ProfileComponents.imagezChanged(state.image,MediaQuery.of(context),context),
-              TextfieldNormal(context,"${"President".tr(context)} ${"Name".tr(context)}", "${"Enter".tr(context)} ${"Presidents".tr(context)}  ${"Name".tr(context)}",name,(poo){}),
+              TextfieldNormal(name: "${"President".tr(context)} ${"Name".tr(context)}",hintText:  "${"Enter".tr(context)} ${"Presidents".tr(context)}  ${"Name".tr(context)}",controller: name,onChanged: (poo){}),
              buildAddyear(context, ste),
       //add Select Year
           //  PresWidgets.yearForm(ste.year, context, mounted, controller),

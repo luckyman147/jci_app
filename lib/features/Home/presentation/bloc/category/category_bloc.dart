@@ -126,6 +126,6 @@ on<ChangeIndex>((event, emit) {
   FutureOr<void> _UpdateCategoriesEvent(FetchCategoriesById event, Emitter<CategoryState> emit)async {
     emit(state.copyWith(isLoading: true));
     final result = await FetchCategoriesByIdsUseCase(event.categories);
-    emit(_mapFailureEither<List<Category>>((categories) => state.copyWith(SelectedCategories: categories, isLoading: false), result));
+    emit(_mapFailureEither<List<Category>>((categories) => state.copyWith(SelectedCategories: categories, isLoading: false,categories: categories,Clonecategories: categories), result));
   }
 }

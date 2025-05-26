@@ -1,6 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 
+import '../../../../MemberSection/domain/dto/UpdateObjectiveProgressDTO.dart';
+import '../../../../MemberSection/domain/entity/ActionDetails.dart';
+import '../../../../MemberSection/domain/entity/Objectif.dart';
+import '../../../../MemberSection/presentation/bloc/objectifs/ObjectifUserProgress/user_objectif_progress_cubit.dart';
 import '../../../Activity_Global.dart';
 import '../../../domain/Dtos/PArticipantParam.dart';
 import '../../../domain/enums/AttendeceEmum.dart';
@@ -143,16 +148,62 @@ class ParticpantsComponents{
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       participant.status!=Attendance.Absent?
-                      AbsenceButton(participant, activityid, ctx,Icons.close,(){
+                      AbsenceButton(participant, activityid, ctx,Icons.close,()async{
                         final param = ParticipantsParams(activityid, partcipantImage: participant.partcipantImage, status: Attendance.Absent, partcipantName: participant.partcipantName, partipantId: participant.partipantId);
                         ctx.read<ParticpantsBloc>().add(CheckAbsenceEvent(params: param));
+                        ctx.read<UserObjectifProgressCubit>().updateProgressUserObjective(
+                          UpdateObjectiveProgressDTO(
+                              userId:  "", // Provide the actual user ID
+                              actionType: ObjectifActionType.CheckIn.name,
+                              feature: [FeaturesType.Members.name ],
+                              progress: -1
+                          ),
+                        );
+                        // Add a delay before the second update
+                        await Future.delayed(const Duration(seconds: 1)); // Adjust the duration as needed
 
+// Second update
+                        if (!ctx.mounted) return;
+
+                        ctx.read<UserObjectifProgressCubit>().updateProgressUserObjective(
+                          UpdateObjectiveProgressDTO(
+                              userId:  participant.partipantId, // Provide the actual user ID
+                              actionType: ObjectifActionType.Attend.name,
+                              feature: [FeaturesType.Activities.name,  ctx.read<ActivityCubit>().state.selectedActivity.name, ],
+                              progress: -1
+                          ),
+                        );
                       }):const SizedBox(),
                       participant.status!=Attendance.Present?
-                      AbsenceButton(participant, activityid, ctx, Icons.check, () {
+                      AbsenceButton(participant, activityid, ctx, Icons.check, ()async {
                         final param = ParticipantsParams( activityid, partcipantImage: participant.partcipantImage, status: Attendance.Present, partcipantName: participant.partcipantName, partipantId: participant.partipantId);
                         ctx.read<ParticpantsBloc>().add(CheckAbsenceEvent(params: param));
-                        // Add your logic to check participant
+
+                        ctx.read<UserObjectifProgressCubit>().updateProgressUserObjective(
+                          UpdateObjectiveProgressDTO(
+                              userId:  "", // Provide the actual user ID
+                              actionType: ObjectifActionType.CheckIn.name,
+                              feature: [FeaturesType.Members.name ],
+                              progress: 1
+                          ),
+                        );
+Logger().i(participant.ActivityId);
+// Add a delay before the second update
+                        await Future.delayed(const Duration(seconds: 10)); // Adjust the duration as needed
+
+// Second update
+                        if (!ctx.mounted) return;
+
+                        ctx.read<UserObjectifProgressCubit>().updateProgressUserObjective(
+                          UpdateObjectiveProgressDTO(
+                              userId:  participant.partipantId, // Provide the actual user ID
+                              actionType: ObjectifActionType.Attend.name,
+                              feature: [FeaturesType.Activities.name,  ctx.read<ActivityCubit>().state.selectedActivity.name, ],
+                              progress: 1
+                          ),
+                        );
+
+
                       }):const SizedBox()
 
                     ],

@@ -5,6 +5,7 @@ import 'package:jci_app/features/Home/presentation/widgets/Fields/meetLinkTextFi
 import 'package:jci_app/features/Home/presentation/widgets/buttons/ButtonsComponent.dart';
 import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 
+import '../../../../../core/widgets/CommonTextField.dart';
 import '../../../Activity_Global.dart';
 
 class LocationVisibility extends StatelessWidget {
@@ -27,8 +28,10 @@ class LocationVisibility extends StatelessWidget {
             }, isOn: Icons.online_prediction, isOff: Icons.place, textOn: "Online", textOff: "Local", colorOn: PrimaryColor, labelText: "Is Online")
             ,Visibility(
               visible:!state.IsOnline,
-              child: TextfieldNormal(context,"Location", "Location Here".tr(context), _LocationController,
-                      (value){
+              child: TextfieldNormal(name: "Location",
+                 hintText:  "Location Here".tr(context),
+                 controller:  _LocationController,
+                      onChanged: (value){
                     context.read<FormzBloc>().add(LocationChanged(location: value));
                   }),
 

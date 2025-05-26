@@ -4,6 +4,9 @@ import 'package:jci_app/core/error/Exception.dart';
 import 'package:jci_app/features/MemberSection/data/model/ObjectifsModels.dart';
 
 import '../../../auth/AuthWidgetGlobal.dart';
+import '../../domain/dto/UpdateObjectiveProgressDTO.dart';
+import '../../presentation/functions/ObjectifCreationService.dart';
+import '../Services/ObjectifLogicService.dart';
 import '../model/UserObjectifsInfosModel.dart';
 
 abstract class ObjectifDataSource {
@@ -11,12 +14,17 @@ abstract class ObjectifDataSource {
   Future<Unit> deleteObjectif(String objId);
   Future<Unit> UpdateObjectif(ObjectifModel obj);
   Future<({List<userObjectifsInfosModel> userObjectifInfos, DocumentSnapshot? lastDoc})> fetchUserWithHisObjectifsProgress({required String userId, DocumentSnapshot<Object?>? lastDocument, required int limit});
+Future<List<userObjectifsInfosModel>> updateUserProgress(UpdateObjectiveProgressDTO update) ;
+
+
+
 }
 
 class ObjectifDataSourcesImpl implements ObjectifDataSource {
   final FirebaseFirestore firestore ;
+  final ObjectifService objectiveService;
 
-  ObjectifDataSourcesImpl({required this.firestore});
+  ObjectifDataSourcesImpl({required this.firestore,required this.objectiveService});
 
   @override
   Future<Unit> AddObjectif(ObjectifModel obj) async {
@@ -48,12 +56,28 @@ class ObjectifDataSourcesImpl implements ObjectifDataSource {
       throw Exception('Failed to update Objectif: $e');
     }
   }
-
   @override
   Future<Unit> deleteObjectif(String objId) async {
     try {
+      // Get all users
+      final usersSnapshot = await firestore.collection('users').get();
+
+      // Iterate through users and delete the objectif from each user's 'line_objectifs'
+      for (var userDoc in usersSnapshot.docs) {
+        await firestore
+            .collection('users')
+            .doc(userDoc.id)
+            .collection('line_objectifs')
+            .doc(objId)
+            .delete()
+            .catchError((e) {
+        throw ServerException();
+        });
+      }
+
       // Delete the Objectif from the 'objectifs' collection
       await firestore.collection('objectifs').doc(objId).delete();
+
       return unit; // Success
     } catch (e) {
       throw Exception('Failed to delete Objectif: $e');
@@ -121,6 +145,12 @@ class ObjectifDataSourcesImpl implements ObjectifDataSource {
       Logger().e(e);
       throw ServerException();
     }
+  }
+
+  @override
+  Future<List<userObjectifsInfosModel>> updateUserProgress(UpdateObjectiveProgressDTO updateDto)async {
+      return await objectiveService.updateUserObjectiveProgress(updateDto: updateDto);
+
   }
 
 }

@@ -15,7 +15,7 @@ class EventStore {
   static const String _eventTimestampKey = 'eventTimestamp'; // Key for storing the timestamp
   static String _eventByIdKey(String id) => 'Event$id';
 
-  static const Duration cacheDuration = Duration(minutes: 30); // Cache duration
+  static const Duration cacheDuration = Duration(seconds: 1); // Cache duration
 
   static Future<void> cacheEvents(List<EventModel> events) async {
     final pref = await SharedPreferences.getInstance();

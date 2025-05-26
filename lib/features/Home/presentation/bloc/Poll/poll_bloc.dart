@@ -21,87 +21,100 @@ part 'poll_event.dart';
 part 'poll_state.dart';
 
 class PollBloc extends Bloc<PollEvent, PollState> {
-  PollBloc(this.createPollUseCase, this.getPollsOfActivityUseCase, this.addOptionUseCase, this.updateOption, this.updateVote, this.deletePollUseCase, this.getPollAsTemplatesUseCase) : super(PollInitial()) {
+  PollBloc(
+      this.createPollUseCase,
+      this.getPollsOfActivityUseCase,
+      this.addOptionUseCase,
+      this.updateOption,
+      this.updateVote,
+      this.deletePollUseCase,
+      this.getPollAsTemplatesUseCase,
+      this.store,
+      this.memberStore)
+      : super(PollInitial()) {
     on<PollEvent>((event, emit) {
       // TODO: implement event handler
     });
     on<AddPollEvent>(_AddPoll);
     on<FetchPolls>(_fetchPolls);
     on<ReseTSTate>((event, emit) {
-      emit(state.copyWith(pollEnum: PollEnum.Initial,voted: {}));
+      emit(state.copyWith(pollEnum: PollEnum.Initial, voted: {}));
     });
     on<AddOptionEvent>((event, emit) {
-      emit(state.copyWith(options: [ ...state.options,event.pollOptions]));
+      emit(state.copyWith(options: [...state.options, event.pollOptions]));
     });
     on<CancelPollEvent>((event, emit) {
       emit(state.copyWith(options: []));
     });
     on<DeleteOptionEvent>((event, emit) {
-      emit(state.copyWith(options: state.options.where((element) => element.id != event.pollOptions.id).toList()));
+      emit(state.copyWith(
+          options: state.options
+              .where((element) => element.id != event.pollOptions.id)
+              .toList()));
     });
-    on<InitOptions>(
-       _votesInit
-    );
+    on<InitOptions>(_votesInit);
     on<ChangeIsSelected>((event, emit) {
       emit(state.copyWith(isSelected: event.isSelected));
     });
     on<GetPollsAsTemplates>(_getTemplates);
-on<DeletePollEvent>(_deletePoll);
-    on<voteEvent> (_addVote);
-    on<unvoteEvent>( _removeVote);
-    on<SubmitVotes>((event, emit) {
-      _submitVotes(event, emit);
-    });
-
+    on<DeletePollEvent>(_deletePoll);
+    on<voteEvent>(_addVote);
+    on<unvoteEvent>(_removeVote);
+    on<SubmitVotes>(_submitVotes);
   }
 
-
-
-
-  Future<void> _getTemplates(GetPollsAsTemplates event , Emitter<PollState> emit) async {
+  Future<void> _getTemplates(
+      GetPollsAsTemplates event, Emitter<PollState> emit) async {
     if (state.Templates.isNotEmpty) {
       return;
     }
     final result = await getPollAsTemplatesUseCase(NoParams());
-    emit(_EitherSuccessOrFailure(result, (polls) => state.copyWith(Templates:polls)));
+    emit(_EitherSuccessOrFailure(
+        result, (polls) => state.copyWith(Templates: polls)));
   }
 
   Future<void> _votesInit(InitOptions event, Emitter<PollState> emit) async {
-
     Logger().i("InitOptions");
-    final usezrId=await const Store().getUserId();
-    Map<String,bool> votes={};      Logger().i("ddddddd",event.options);
+    final usezrId = await store.getUserId();
+    Map<String, bool> votes = {};
     for (var option in event.options) {
-
       if (option.votes.isEmpty) {
-     votes[option.id]=false;
-      }
-      else {
-        if (option.votes.any((element) => element.userId==usezrId)) {
-        votes[option.id]=true;
-        }
-        else {
-        votes[option.id]=false;
+        votes[option.id] = false;
+      } else {
+        if (option.votes.any((element) => element.userId == usezrId)) {
+          votes[option.id] = true;
+        } else {
+          votes[option.id] = false;
         }
       }
     }
     Logger().i("done");
-    emit(state.copyWith(options: event.options, voted: votes, ));
+    emit(state.copyWith(
+      options: event.options,
+      voted: votes,
+    ));
   }
+
   final CreatePollUseCase createPollUseCase;
-final AddOptionUseCase addOptionUseCase;
+  final AddOptionUseCase addOptionUseCase;
+  final Store store;
   final GetPollsOfActivityUseCase getPollsOfActivityUseCase;
-final UpdateOption updateOption;
-final UpdateVote updateVote;
-final DeletePollUseCase deletePollUseCase;
-final GetPollAsTemplatesUseCase getPollAsTemplatesUseCase;
-  void _AddPoll(AddPollEvent event ,Emitter<PollState> emit)async{
+  final UpdateOption updateOption;
+  final UpdateVote updateVote;
+  final MemberStore memberStore;
+  final DeletePollUseCase deletePollUseCase;
+  final GetPollAsTemplatesUseCase getPollAsTemplatesUseCase;
+  _AddPoll(AddPollEvent event, Emitter<PollState> emit) async {
     emit(state.copyWith(pollEnum: PollEnum.Loading));
     final result = await createPollUseCase(event.poll);
-    emit(_EitherSuccessOrFailure(result, (poll) => state.copyWith(polls: state.polls, pollEnum: PollEnum.Loaded)));
+    emit(_EitherSuccessOrFailure(
+        result,
+        (poll) => state.copyWith(
+            polls: state.polls, pollEnum: PollEnum.CreatedPoll)));
   }
- Future< void> _addVote(voteEvent event, Emitter<PollState> emit) async {
-    final userEvent = await MemberStore.getPrimitiveModel();
+
+  _addVote(voteEvent event, Emitter<PollState> emit) async {
+    final userEvent = await memberStore.getPrimitiveModel();
     final vote = Vote(
       userId: userEvent.id!,
       userImage: userEvent.Images.isNotEmpty ? userEvent.Images[0] : "",
@@ -116,12 +129,14 @@ final GetPollAsTemplatesUseCase getPollAsTemplatesUseCase;
       }
       return option;
     }).toList();
-    state.voted[event.pollOptionId]=true;
+    state.voted[event.pollOptionId] = true;
 
-    emit(state.copyWith(options: updatedOptions ,voted: state.voted));
+    emit(state.copyWith(
+        options: updatedOptions, voted: state.voted, pollEnum: PollEnum.Voted));
   }
-  Future<void> _removeVote(unvoteEvent event, Emitter<PollState> emit) async {
-    final userEvent = await MemberStore.getPrimitiveModel();
+
+  _removeVote(unvoteEvent event, Emitter<PollState> emit) async {
+    final userEvent = await memberStore.getPrimitiveModel();
     final userId = userEvent.id!;
 
     // Update only the relevant poll option
@@ -133,47 +148,50 @@ final GetPollAsTemplatesUseCase getPollAsTemplatesUseCase;
       }
       return option;
     }).toList();
-    state.voted[event.pollOptionId]=false;
+    state.voted[event.pollOptionId] = false;
 
-    emit(state.copyWith(options: updatedOptions,voted: state.voted));
+    emit(state.copyWith(
+        options: updatedOptions,
+        voted: state.voted,
+        pollEnum: PollEnum.Unvoted));
   }
 
-
-
-  Future<void> _fetchPolls(FetchPolls event, Emitter<PollState> emit) async{
+  _fetchPolls(FetchPolls event, Emitter<PollState> emit) async {
     emit(state.copyWith(pollEnum: PollEnum.Loading));
-    await emit.forEach<Either<Failure,List<Poll>>>(
-        getPollsOfActivityUseCase.call(event.ActivityId),
+    await emit.forEach<Either<Failure, List<Poll>>>(
+      getPollsOfActivityUseCase.call(event.ActivityId),
       onData: (polls) {
-
-          final pollList = polls.getOrElse(() => []);
-          return state.copyWith(polls: pollList, pollEnum: PollEnum.Loaded);
+        final pollList = polls.getOrElse(() => []);
+        return state.copyWith(polls: pollList, pollEnum: PollEnum.Loaded);
       },
-      onError: (failure,stack) {
-        return state.copyWith(error: mapFailureToMessage(failure as Failure), pollEnum: PollEnum.Error);
+      onError: (failure, stack) {
+        return state.copyWith(
+            error: mapFailureToMessage(failure as Failure),
+            pollEnum: PollEnum.Error);
       },
     );
-
-
-
   }
 
-void _deletePoll(DeletePollEvent event, Emitter<PollState> emit) async {
+  _deletePoll(DeletePollEvent event, Emitter<PollState> emit) async {
     emit(state.copyWith(pollEnum: PollEnum.Loading));
     final result = await deletePollUseCase(event.poldto);
-    emit(_EitherSuccessOrFailure(result, (r) => state.copyWith(pollEnum: PollEnum.Loaded)));
+    emit(_EitherSuccessOrFailure(
+        result, (r) => state.copyWith(pollEnum: PollEnum.Deleted)));
   }
 
-  PollState _EitherSuccessOrFailure<T>(Either<Failure,T> Result, PollState Function(T) function) {
+  PollState _EitherSuccessOrFailure<T>(
+      Either<Failure, T> Result, PollState Function(T) function) {
     return Result.fold(
-          (failure) => state.copyWith(error: failure.toString(), pollEnum: PollEnum.Error),
-          (success) => function(success),
+      (failure) =>
+          state.copyWith(error: failure.toString(), pollEnum: PollEnum.Error),
+      (success) => function(success),
     );
   }
 
-  void _submitVotes(SubmitVotes event, Emitter<PollState> emit) async{
-    emit (state.copyWith(pollEnum: PollEnum.Loading));
-    final result=await updateVote(event.poldto);
-    emit(_EitherSuccessOrFailure(result, (r) => state.copyWith(pollEnum: PollEnum. Voted)));
+  _submitVotes(SubmitVotes event, Emitter<PollState> emit) async {
+    emit(state.copyWith(pollEnum: PollEnum.Loading));
+    final result = await updateVote(event.poldto);
+    emit(_EitherSuccessOrFailure(
+        result, (r) => state.copyWith(pollEnum: PollEnum.Loaded)));
   }
 }

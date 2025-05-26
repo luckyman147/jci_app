@@ -23,7 +23,7 @@ class Handler<T> implements IHandler<T, Failure> {
         T result = await onCall(); // Await the result from onCall
         return Right(result); // Return the successful result
       } catch (e) {
-        logger.e(e); // Log the error
+        logger.e(e);
 
         return Left(onError(e)); // Pass the caught error to onError
       }

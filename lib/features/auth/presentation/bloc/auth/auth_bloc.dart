@@ -108,7 +108,11 @@ void check(
         message: mapFailureToMessage(failure),
       ),
           (value) {
-            return LoggedInState();
+        if (value) {
+            return LoggedInState();}
+        else {
+          return LoggedOutState();
+        }
           },
     );
   }

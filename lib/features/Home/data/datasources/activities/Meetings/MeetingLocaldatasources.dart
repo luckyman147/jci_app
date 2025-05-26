@@ -19,27 +19,24 @@ abstract class MeetingLocalDataSource {
   Future<List<MeetingModel>> getCachedMeetingsOfTheWeek();
   Future<List<MeetingModel>> getCachedMeetingsOfTheMonth();
 
-
   Future<Unit> cacheMeetings(List<MeetingModel> Meeting);
   Future<Unit> cacheMeetingsOfTheWeek(List<MeetingModel> Meeting);
   Future<Unit> cacheMeetingsOfTheMonth(List<MeetingModel> Meeting);
   Future<Unit> saveExcelFile(Uint8List bytes, String filename);
 
-  Future<bool> checkPermissions() ;
+  Future<bool> checkPermissions();
 
-Future<void>  deleteMeeting(String id) ;
-Future<void>
-  cacheMeeting(MeetingModel result) ;Future<void>
-  cacheMeetingById(MeetingModel result) ;
-
+  Future<void> deleteMeeting(String id);
+  Future<void> cacheMeeting(MeetingModel result);
+  Future<void> cacheMeetingById(MeetingModel result);
 }
 
-class MeetingLocalDataSourceImpl implements MeetingLocalDataSource{
+class MeetingLocalDataSourceImpl implements MeetingLocalDataSource {
   final MeetingStore meetingStore;
-
-  MeetingLocalDataSourceImpl({required this.meetingStore});
+  final Store store;
+  MeetingLocalDataSourceImpl(this.store, {required this.meetingStore});
   @override
-  Future<Unit> cacheMeetings(List<MeetingModel> Meeting)async {
+  Future<Unit> cacheMeetings(List<MeetingModel> Meeting) async {
     await MeetingStore.cacheMeetings(Meeting);
     return Future.value(unit);
   }
@@ -47,54 +44,48 @@ class MeetingLocalDataSourceImpl implements MeetingLocalDataSource{
   @override
   Future<Unit> cacheMeetingsOfTheMonth(List<MeetingModel> Meeting) async {
     throw UnimplementedError();
-
   }
 
   @override
   Future<Unit> cacheMeetingsOfTheWeek(List<MeetingModel> Meeting) async {
-throw UnimplementedError();
+    throw UnimplementedError();
   }
 
   @override
   Future<List<MeetingModel>> getAllCachedMeetings() async {
-    final Meetings=await MeetingStore.getCachedMeetings();
+    final Meetings = await MeetingStore.getCachedMeetings();
     if (Meetings.isNotEmpty) {
       return Meetings.toSet().toList();
     } else {
-      return [];}
+      return [];
+    }
   }
 
   @override
-  Future<MeetingModel?>getCachedMeetingById(String id)async {
-    final result= await MeetingStore.getCachedMeetingById(id);
-    if (result!=null) {
+  Future<MeetingModel?> getCachedMeetingById(String id) async {
+    final result = await MeetingStore.getCachedMeetingById(id);
+    if (result != null) {
       return result;
     } else {
       return null;
     }
-
   }
 
   @override
-  Future<List<MeetingModel>> getCachedMeetingsOfTheMonth() async{
+  Future<List<MeetingModel>> getCachedMeetingsOfTheMonth() async {
     throw UnimplementedError();
-
-
   }
 
   @override
-  Future<List<MeetingModel>> getCachedMeetingsOfTheWeek()async {
+  Future<List<MeetingModel>> getCachedMeetingsOfTheWeek() async {
     throw UnimplementedError();
-
-
   }
-
-
 
   @override
   Future<Unit> saveExcelFile(Uint8List bytes, String filename) async {
     final directory = await getExternalStorageDirectory();
-    final downloadsDir = Directory('/storage/emulated/0/Download'); // Default path for downloads on most Android devices
+    final downloadsDir = Directory(
+        '/storage/emulated/0/Download'); // Default path for downloads on most Android devices
 
     // Ensure the Downloads directory exists
     if (!downloadsDir.existsSync()) {
@@ -123,52 +114,40 @@ throw UnimplementedError();
   }
 
   @override
-  Future<bool> checkPermissions()async {
-    final eventPermission=await  MeetingStore.getmeetPermissions();
-    final userPermissions=await const Store().getPermissions();
-    if(eventPermission .isEmpty || userPermissions.isEmpty){
+  Future<bool> checkPermissions() async {
+    final eventPermission = await MeetingStore.getmeetPermissions();
+    final userPermissions = store.getPermissions();
+    if (eventPermission.isEmpty || userPermissions!.isEmpty) {
       return false;
-    }
-    else{
-
-      return hasCommonElement(eventPermission, userPermissions)? true:false;
+    } else {
+      return hasCommonElement(eventPermission, userPermissions) ? true : false;
     }
   }
 
   @override
-  Future<void> deleteMeeting(String id)async
-  {
+  Future<void> deleteMeeting(String id) async {
     try {
       await MeetingStore.deleteMeeting(id);
-    }
-    catch(e){
+    } catch (e) {
       throw NotFoundException();
     }
-
-
   }
 
   @override
-  Future<void> cacheMeeting(MeetingModel result)  async {
-
-   try{
+  Future<void> cacheMeeting(MeetingModel result) async {
+    try {
       await MeetingStore.cacheMeeting(result);
-   }
-   catch(e){
-     throw ServerException();
-   }
-
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
   Future<void> cacheMeetingById(MeetingModel result) async {
-    try{
+    try {
       await MeetingStore.cacheMeetingById(result);
-    }
-    catch(e){
+    } catch (e) {
       throw ServerException();
     }
-
   }
-
 }

@@ -25,14 +25,7 @@ final UpdatePointsParams updatePointsParams;
   @override
   List<Object> get props => [updatePointsParams];}
 
-class ChangeRoleEvent extends MemberManagementEvent {
-  final ChangeRoleParams changeRoleParams;
 
-  const ChangeRoleEvent(this.changeRoleParams);
-
-  @override
-  List<Object?> get props => [changeRoleParams];
-}
 
 
 class validateMember extends MemberManagementEvent{

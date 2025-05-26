@@ -22,11 +22,20 @@ class FeaturePermissionsModel extends FeaturePermissions {
 
   Map<String, dynamic> toMap() {
     return {
-      "featureId": featureId,
-      "permissions": {
+      'featureId': featureId,
+      'permissions': {
         for (var permission in permissions)
           permission.type.name: permission.isGranted,
       },
     };
   }
+  Map<String, dynamic> toRoleMap() {
+    return {
+
+        for (var permission in permissions)
+          permission.type.name: permission.isGranted,
+
+    };
+  }
+
 }

@@ -33,8 +33,6 @@ class GuestRemoteDataSourcesImpl implements GuestRemoteDataSources{
   @override
   Future<Unit> addGuest(String activityId, GuestModel guest)async {
 try{
-  // Check if the guest already exists
-  logger.i("Adding guest to activity",activityId);
 
 
   final guestQuery = await firabaseFireStore.collection('guests').where('email', isEqualTo: guest.email).get();

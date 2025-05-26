@@ -9,6 +9,10 @@ import 'package:jci_app/features/Home/domain/usercases/ActivityUseCases.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 
 import '../../../../../core/strings/app_strings.dart';
+import '../../../../MemberSection/domain/dto/UpdateObjectiveProgressDTO.dart';
+import '../../../../MemberSection/domain/entity/ActionDetails.dart';
+import '../../../../MemberSection/domain/entity/Objectif.dart';
+import '../../../../MemberSection/presentation/bloc/objectifs/ObjectifUserProgress/user_objectif_progress_cubit.dart';
 import '../../../domain/entities/guest/ActivityGuest.dart';
 import '../../../domain/enums/ParticipantWithEvents.dart';
 import '../../bloc/Activity/BLOC/guests/guests_bloc.dart';
@@ -421,8 +425,26 @@ ActivityAction.        DeleteGestFunction(context, guest.guest,widget.activityId
                     onPressed: () {
                       if (guest.status!="present") {
                         ActivityAction.      ConfirmPreence(guest.guest, context,widget.activityId,"present");
+                        context.read<UserObjectifProgressCubit>().updateProgressUserObjective(
+                          UpdateObjectiveProgressDTO(
+                              userId:  "", // Provide the actual user ID
+                              actionType: ObjectifActionType.CheckIn.name,
+                              feature: [FeaturesType.Guests.name ],
+                              progress: 1
+                          ),
+                        );
+
                       } else {
                         ActivityAction.      ConfirmPreence(guest.guest, context,widget.activityId,"absent");
+                        context.read<UserObjectifProgressCubit>().updateProgressUserObjective(
+                          UpdateObjectiveProgressDTO(
+                              userId:  "", // Provide the actual user ID
+                              actionType: ObjectifActionType.CheckIn.name,
+                              feature: [FeaturesType.Guests.name ],
+                              progress: -1
+                          ),
+                        );
+
                       }
 
                     },

@@ -2,6 +2,7 @@ enum PollEnum{
   Initial,
   Loading,
   Loaded,
-  Error
-,Added,Deleted,Updated,Voted
+  Error,
+  CreatedPoll,
+Added,Deleted,Updated,Voted,Unvoted
 }

@@ -67,3 +67,4 @@ class AlreadyLoginFailure extends Failure {
 }
 class NotVerifiedFailure extends Failure {
 }
+class AlreadyExistedFailure extends Failure{}

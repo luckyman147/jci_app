@@ -13,7 +13,7 @@ import '../../../../../../core/strings/app_strings.dart';
 import '../../../../../../core/widgets/loading_widget.dart';
 import '../../../../../MemberSection/domain/usecases/MemberUseCases.dart';
 import '../../../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
-import '../../../../../MemberSection/presentation/pages/memberProfilPage.dart';
+import '../../../../../MemberSection/presentation/pages/user/memberProfilPage.dart';
 import '../../../../../../core/Member.dart';
 //import '../../../auth/presentation/bloc/Members/members_bloc.dart';
 import '../../../../domain/enums/Privacy.dart';

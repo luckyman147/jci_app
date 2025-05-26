@@ -19,7 +19,8 @@ class SubmitFunctions{
     if (key.currentState!.validate()) {
       final language=await context.read<localeCubit>().cachedLanguageCode();
       final member =
-      AuthUser.SignUp(email:state.email.value,password:  state.password.value,firstName:  state.firstname.value, lastName:state.lastname.value,language:  language??'fr');
+      AuthUser.SignUp(email:state.email.value,password:  state.password.value,firstName:  state.firstname.value,
+          lastName:state.lastname.value,language:  language??'fr');
   context.read<SignUpBloc>().add(SendVerificationEmailEventOrRegister(
       false, null, email: state.email.value));
   resetform();

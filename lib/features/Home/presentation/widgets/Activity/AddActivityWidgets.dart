@@ -15,7 +15,7 @@ import 'package:jci_app/features/Home/domain/enums/Privacy.dart';
 
 
 import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_bloc.dart';
-import 'package:jci_app/features/Home/presentation/widgets/Fields/StandardTextFieldWidget.dart';
+import 'package:jci_app/core/widgets/StandardTextFieldWidget.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Formz.dart';
 import 'package:jci_app/features/Home/presentation/widgets/buttons/ButtonsComponent.dart';
 import 'package:jci_app/features/Home/presentation/widgets/buttons/SaveButton.dart';
@@ -25,6 +25,7 @@ import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.
 
 import '../../../../../core/PrimitiveUser/User.dart';
 import '../../../../../core/app_theme.dart';
+import '../../../../../core/widgets/CommonTextField.dart';
 import '../../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../../../../core/Member.dart';
 import '../../bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
@@ -51,9 +52,11 @@ final Director=      act==activity.Events?"Leader":"Director";
 return
       act==activity.Trainings
           ?
-      TextfieldNormal(context,
-          "Trainer Name".tr(context), "Name of the Trainer here".tr(context), ProfesseurName,
-              (value){
+      TextfieldNormal(name:
+          "Trainer Name".tr(context),
+          hintText: "Name of the Trainer here".tr(context),
+         controller:  ProfesseurName,
+              onChanged: (value){
             context.read<FormzBloc>().add(ProfesseurNameChanged(profName: value));
           }):
 
@@ -231,46 +234,6 @@ class AgendaFieldWidget extends StatelessWidget {
 }
 
 
-
-
-Widget TextfieldNormal(
-    BuildContext context,
-    String name,
-    String hintText,
-    TextEditingController controller,
-    Function(String) onChanged,
-    ) {
-  return StandardTextFieldWidget(
-    context: context,
-    name: name,
-    hintText: hintText,
-    controller: controller,
-    onChanged: onChanged,
-    minLines: 1,
-    maxLines: 2,
-    keyboardType: name == "Points" || name.contains("Year") ? TextInputType.number : TextInputType.text,
-    textInputAction: TextInputAction.next,
-  );
-}
-Widget TextfieldDescription(
-    BuildContext context,
-    String name,
-    String hintText,
-    TextEditingController controller,
-    Function(String) onChanged,
-    ) {
-  return StandardTextFieldWidget(
-    context: context,
-    name: name,
-    hintText: hintText,
-    controller: controller,
-    onChanged: onChanged,
-    isMultiline: true,
-    minLines: 1,
-    maxLines: 2,
-    textInputAction: TextInputAction.done,
-  );
-}
 
 Widget PriceWidget(mediaQuery,TextEditingController controller) => BlocBuilder<VisibleBloc, VisibleState>(
       builder: (context, state) {

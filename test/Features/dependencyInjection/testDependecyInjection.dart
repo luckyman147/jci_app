@@ -1,8 +1,11 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:get_it/get_it.dart';
 import 'package:jci_app/core/Handlers/Handler.dart';
 import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 
 import '../../core/networks/network_info_test.dart';
+import 'TestAuthDependencyInjection.dart';
 
 
 

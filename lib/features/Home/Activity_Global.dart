@@ -58,7 +58,7 @@ export 'package:dotted_border/dotted_border.dart';
 export 'package:jci_app/core/util/snackbar_message.dart';
 export 'package:jci_app/features/Home/domain/entities/Note.dart';
 export 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
-export 'package:jci_app/features/MemberSection/presentation/widgets/member/functionMember.dart';
+export 'package:jci_app/features/MemberSection/presentation/functions/functionMember.dart';
 export 'package:jci_app/features/Teams/presentation/widgets/MembersTeamSelection.dart';
 export 'package:jci_app/features/Teams/presentation/widgets/TaskComponents.dart';
 export 'domain/usercases/ActivityUseCases.dart';

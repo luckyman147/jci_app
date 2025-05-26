@@ -6,7 +6,7 @@ import 'package:jci_app/features/Home/presentation/bloc/category/category_bloc.d
 
 import '../../../Activity_Global.dart';
 import '../../../domain/entities/Category.dart';
-import '../Fields/StandardTextFieldWidget.dart';
+import '../../../../../core/widgets/StandardTextFieldWidget.dart';
 import '../components/SearchTextField.dart';
 import 'CategoryButton.dart';
 

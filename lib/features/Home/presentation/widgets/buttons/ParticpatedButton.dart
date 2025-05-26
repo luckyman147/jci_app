@@ -1,3 +1,7 @@
+import '../../../../MemberSection/domain/dto/UpdateObjectiveProgressDTO.dart';
+import '../../../../MemberSection/domain/entity/ActionDetails.dart';
+import '../../../../MemberSection/domain/entity/Objectif.dart';
+import '../../../../MemberSection/presentation/bloc/objectifs/ObjectifUserProgress/user_objectif_progress_cubit.dart';
 import '../../../../auth/AuthWidgetGlobal.dart';
 import '../../../domain/Dtos/ActivityParam.dart';
 import '../../../domain/entities/Activity.dart';
@@ -34,10 +38,13 @@ class _ParticipateButtonState extends State<ParticipateButton> {
       onTap: () {
         final result=activityParams(act:  widget.acti, type: widget.act, Eventid:  widget.acti.id, name: '');
         if (widget.isPartFromState) {
+
           context.read<AcivityFBloc>().add(RemoveParticipantEvent( act: result));
+
         } else {
 
           context.read<AcivityFBloc>().add(AddParticipantEvent( act:result));
+
         }
       },
       child: AnimatedContainer(
