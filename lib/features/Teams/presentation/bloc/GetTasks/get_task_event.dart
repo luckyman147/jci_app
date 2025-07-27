@@ -6,7 +6,7 @@ abstract class GetTaskEvent extends Equatable {
 
 class GetTasks extends GetTaskEvent {
   final String id;
-  final TaskFilter filter;
+  final TaskCompletionStatus filter;
   const GetTasks({required this.id,required this.filter});
   @override
   List<Object> get props => [id,filter];

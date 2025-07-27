@@ -10,6 +10,13 @@ class ToggleTaskVisible extends TaskVisibleEvent {
   List<
       Object> get props => [WillVisible];
 }
+class ToggleTaskVisibleById extends TaskVisibleEvent {
+  final String taskId;
+
+  const ToggleTaskVisibleById(this.taskId, );
+  @override
+  List<Object> get props => [taskId];
+}
 
 
 

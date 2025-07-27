@@ -12,7 +12,7 @@ import '../bloc/TaskIsVisible/task_visible_bloc.dart';
 class TeamListeners{
   static void init(String id, BuildContext context) async {
     final store = await TeamStore.getUpdated();
-    context.read<GetTaskBloc>().add(GetTasks(id: id, filter: TaskFilter.All));
+  //  context.read<GetTaskBloc>().add(GetTasks(id: id, filter: TaskFilter.All));
     context.read<TaskVisibleBloc>().add(const ToggleTaskVisible(true));
     context
         .read<GetTeamsBloc>()

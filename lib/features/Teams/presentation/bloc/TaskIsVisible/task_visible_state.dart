@@ -8,6 +8,7 @@ part of 'task_visible_bloc.dart';
 final Privacy privacy;
 final Section section;
 final List<String> images;
+final String? SelectedTaskId;
 
 
 final TextFieldsTitle textFieldsTitle;
@@ -17,6 +18,7 @@ final Status status;
 
    const TaskVisibleState({this.WillAdded=false,this.WillDeleted=false,
       this.willSearch=false,
+     this.SelectedTaskId,
       this.privacy=Privacy.Primary,
      this.isUpdated=false,
 
@@ -32,6 +34,7 @@ final Status status;
    TaskVisibleState copyWith({
       Privacy? privacy,
      bool? willSearch,
+      String? SelectedTaskId,
 
      List<String>? images,
      bool? WillDeleted,
@@ -44,6 +47,7 @@ final Status status;
 
    }) {
    return TaskVisibleState(
+     SelectedTaskId: SelectedTaskId??this.SelectedTaskId,
       privacy: privacy ?? this.privacy,
       WillDeleted: WillDeleted ?? this.WillDeleted,
       WillAdded: WillAdded ?? this.WillAdded,
@@ -63,7 +67,7 @@ final Status status;
    @override
    // TODO: implement props
    List<Object?> get props => [WillAdded,WillDeleted,section,
-      privacy,
+      privacy,SelectedTaskId,
      textFieldsTitle,textFieldsDescription,images,status,willSearch,isUpdated];
    }
 
