@@ -1,13 +1,14 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../../auth/domain/entities/Member.dart';
+import '../../../../../core/Member.dart';
+import '../../../../../core/PrimitiveUser/User.dart';
 
 part 'members_state.dart';
 
 class MembersTeamCubit extends Cubit<MembersTeamState> {
   MembersTeamCubit() : super(MembersInitial());
-void RemoveMember(Member member){
+void RemoveMember(User member){
   final currentMembers = state.members;
 
   final updatedMembers = List<Member>.from(currentMembers)
@@ -15,10 +16,10 @@ void RemoveMember(Member member){
 
   emit(state.copyWith(members: updatedMembers));
 }
-void AddMember(Member member){
+void AddMember(User member){
   final currentMembers = state.members;
 
-  final updatedMembers = List<Member>.from(currentMembers)
+  final updatedMembers = List<User>.from(currentMembers)
     ..add(member);
 
   emit(state.copyWith(members: updatedMembers));

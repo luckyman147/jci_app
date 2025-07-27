@@ -1,12 +1,13 @@
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 
-import 'package:jci_app/features/Teams/presentation/widgets/TeamImpl.dart';
-import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
-
+import 'package:jci_app/features/Teams/presentation/widgets/Team/implementation/TeamImpl.dart';
+import 'package:jci_app/features/Teams/presentation/Listeners/TeamListener.dart';
+@RoutePage()
 class TeamDetailsScreen extends StatefulWidget {
   final String id;
   final int index;
@@ -25,7 +26,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
 
 
 
-TeamFunction.init(widget.id,context);
+TeamListeners.init(widget.id,context);
 
     // TODO: implement initState
     super.initState();
@@ -39,7 +40,7 @@ TeamFunction.init(widget.id,context);
 
       body: SafeArea(child: BlocListener<GetTeamsBloc, GetTeamsState>(
         listener: (context, state) {
-             TeamFunction. ListenerDelete(state, context,widget.id);
+             TeamListeners. ListenerDelete(state, context,widget.id);
 
         },
         child: SingleChildScrollView(

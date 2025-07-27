@@ -12,7 +12,6 @@ import 'package:jci_app/features/about_jci/Domain/entities/President.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 import '../../../../core/error/Failure.dart';
-import '../../../../core/usescases/usecase.dart';
 import '../../Domain/useCases/PresidentUseCAses.dart';
 
 part 'presidents_event.dart';

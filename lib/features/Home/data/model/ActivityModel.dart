@@ -1,43 +1,72 @@
-import 'package:jci_app/features/Home/domain/entities/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/Activity.dart';
 
-class ActivityModel extends Activity{
-  ActivityModel({required super.name, required super.id, required super.IsPart, required super.description, required super.ActivityBeginDate, required super.ActivityEndDate, required super.ActivityAdress, required super.ActivityPoints, required super.categorie, required super.IsPaid, required super.price, required super.Participants, required super.CoverImages});
+import '../../domain/entities/Activitys/ActivityBasics.dart';
+import '../../domain/entities/Activitys/ActivitySettings.dart';
+import '../../domain/entities/Activitys/OnlineSettings.dart';
+import '../../domain/entities/Activitys/ParicipationStatus.dart';
+
+class ActivityModel extends Activity {
+  ActivityModel({
+    required super.activityBasics,
+    required super.settings,
+    required super.online,
+    required super.participation,
+  });
+
   factory ActivityModel.fromJson(Map<String, dynamic> json) {
     return ActivityModel(
-      name: json['name'],
-      id: json['id']??json['_id'],
-      IsPart: json['IsPart']??false,
-      description: json['description']??"",
-      ActivityBeginDate: json['ActivityBeginDate'] != null ? DateTime.parse(json['ActivityBeginDate']) : json['ActivityBegindate']!=null? DateTime.parse(json['ActivityBegindate']): DateTime.now(),
-      ActivityEndDate: json['ActivityEndDate'] != null ? DateTime.parse(json['ActivityEndDate']) : json['ActivityEnddate']!=null? DateTime.parse(json['ActivityEnddate']):   DateTime.now(),
+      activityBasics: ActivityBasics(
+        id: json['id'] ?? json['_id'] ?? '',
+        name: json['name'] ?? '',
+        description: json['description'] ?? '',
+        activityBeginDate: json['ActivityBeginDate'] != null
+            ? DateTime.parse(json['ActivityBeginDate'])
+            : json['ActivityBegindate'] != null
+            ? DateTime.parse(json['ActivityBegindate'])
+            : DateTime.now(),
+        activityEndDate: json['ActivityEndDate'] != null
+            ? DateTime.parse(json['ActivityEndDate'])
+            : json['ActivityEnddate'] != null
+            ? DateTime.parse(json['ActivityEnddate'])
+            : DateTime.now(),
+        activityAdress: json['ActivityAdress'] ?? '',
+        coverImages: (json['CoverImages'] ?? json['coverImages'] ?? [])
+            .cast<String>(),
+      ),
+      settings: ActivitySettings(
+        activityPoints: json['ActivityPoints'] ?? 0,
 
-      ActivityAdress: json['ActivityAdress']??"",
-      ActivityPoints: json['ActivityPoints']??0,
-      categorie: json['categorie']??"",
-      IsPaid: json['IsPaid']??false,
-      price: json['price']??0,
-      Participants: json['Participants']?? json['participants']??[],
-      CoverImages: json['CoverImages'] != null ? (json['CoverImages'] as List<dynamic>).map((e) => e as String).toList() : json['coverImages']!=null?(json['coverImages'] as List<dynamic>).map((e) => e as String).toList():[],
+        isPaid: json['IsPaid'] ?? false,
+        price: json['price'] ?? 0,
+        isPublic: json['IsPublic'] ?? false,
+       categoryIds:  (json['categorieId'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList() ??
+          [],
+      ),
+      online: OnlineSettings(
+        isOnline: json['isOnline'] ?? false,
+        googleMeetLink: json['googleMeetLink'] ?? '',
+      ),
+      participation:  ParticipationStatus(tempPart: false,
+        participants: (json['Participants'] ??
+            json['participants'] ??
+            <dynamic>[])
+            .map<String>((e) => e.toString())
+            .toList(),
+        isPart: json['IsPart'] ?? false,
 
+
+      ),
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
-      'name': name,
-      'id': id,
-      'IsPart': IsPart,
-      'description': description,
-      'ActivityBeginDate': ActivityBeginDate,
-      'ActivityEndDate': ActivityEndDate,
-      'ActivityAdress': ActivityAdress,
-      'ActivityPoints': ActivityPoints,
-      'categorie': categorie,
-      'IsPaid': IsPaid,
-      'price': price,
-      'Participants': Participants,
-      'CoverImages': CoverImages,
+      ...activityBasics.toJson(),
+      ...settings.toJson(),
+      ...online.toJson(),
+      ...participation.toJson(),
     };
   }
-
-
 }

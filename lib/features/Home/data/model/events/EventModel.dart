@@ -1,64 +1,138 @@
-
-
-import 'package:jci_app/features/Home/presentation/widgets/EventListWidget.dart';
+import 'package:jci_app/core/PrimitiveUser/User.dart';
+import 'package:jci_app/core/PrimitiveUser/UserModel.dart';
 import 'package:json_annotation/json_annotation.dart';
+import '../../../domain/entities/Activitys/Activity.dart';
+import '../../../domain/entities/Activity/event/Event.dart';
+import '../../../domain/entities/Activitys/ActivityBasics.dart';
+import '../../../domain/entities/Activitys/ActivitySettings.dart';
+import '../../../domain/entities/Activitys/OnlineSettings.dart';
+import '../../../domain/entities/Activitys/ParicipationStatus.dart';
 
-import '../../../domain/entities/Activity.dart';
-import '../../../domain/entities/Event.dart';
+class EventModel extends Event {
+  EventModel({
+    required super.leaderName,
+    required super.registrationDeadline,
+    required super.activityBasics,
+    required super.settings,
+    required super.online,
+    required super.participation,
+  });
 
-
-part 'EventModel.g.dart';
-@JsonSerializable()
-class EventModel extends Event{
-
-  EventModel({required super.id, required super.LeaderName, required super.name, required super.description,
-    required super.ActivityBeginDate, required super.ActivityEndDate, required super.ActivityAdress, required super.ActivityPoints,
-    required super.categorie, required super.IsPaid, required super.price, required super.Participants,
-    required super.CoverImages, required super.registrationDeadline, required super.IsPart,});
-// empty constructor
-
-  factory EventModel.fromEntity( Event event){
+  // Factory constructor from Event Entity
+  factory EventModel.fromEntity({required Event event, String? link}) {
     return EventModel(
-      id:event.id,
-      LeaderName: event.LeaderName,
-      name: event.name,
-      description: event.description,
-      ActivityBeginDate: event.ActivityBeginDate,
-      ActivityEndDate: event.ActivityEndDate,
-      ActivityAdress: event.ActivityAdress,
-      ActivityPoints: event.ActivityPoints,
-      categorie: event.categorie,
-      IsPaid: event.IsPaid,
-      price: event.price,
-      Participants: event.Participants,
-      CoverImages: event.CoverImages,
+      leaderName: event.leaderName,
       registrationDeadline: event.registrationDeadline,
-      IsPart: event.IsPart,
+      activityBasics: event.activityBasics,
+      settings: event.settings,
+      online: event.online,
+      participation: event.participation,
     );
   }
 
-  factory EventModel.fromJson(Map<String, dynamic> json) {
+  // Factory constructor from JSON
+  factory EventModel.fromJson(Map<String, dynamic> json, {bool isDecode = false}) {
     return EventModel(
-      id: json['id'] ?? json['_id']??"", // Use _id if id is null
-      LeaderName: json['LeaderName']??"",
-      name: json['name'],
-      description: json['description']??"",
-      ActivityBeginDate: json['ActivityBeginDate'] != null ? DateTime.parse(json['ActivityBeginDate']) : json['ActivityBegindate']!=null? DateTime.parse(json['ActivityBegindate']): DateTime.now(),
-      ActivityEndDate: json['ActivityEndDate'] != null ? DateTime.parse(json['ActivityEndDate']) : json['ActivityEnddate']!=null? DateTime.parse(json['ActivityEnddate']):   DateTime.now(),
-
-      ActivityAdress: json['ActivityAdress']??"",
-      ActivityPoints: json['ActivityPoints']??0,
-      categorie: json['categorie']??"",
-      IsPaid: json['IsPaid']??false,
-      price: json['price']??0,
-      Participants: json['Participants']?? json['participants']??[],
-      CoverImages: json['CoverImages'] != null ? (json['CoverImages'] as List<dynamic>).map((e) => e as String).toList() : json['coverImages']!=null?(json['coverImages'] as List<dynamic>).map((e) => e as String).toList():[],
-
-      registrationDeadline:json['registrationDeadline']==null ? DateTime.now() :DateTime.parse( json['registrationDeadline']) ,
-      IsPart: json['IsPart']??false,
+      leaderName: UserModel.fromJson(json['leaderName'],true), // Assuming UserModel handles the conversion
+      registrationDeadline: DateTime.parse(json['registrationDeadline']),
+      activityBasics: ActivityBasics.fromJson(json['activityBasics']),
+      settings: ActivitySettings.fromJson(json['settings']),
+      online: OnlineSettings.fromJson(json['online']),
+      participation: ParticipationStatus.fromJson(json['participation']),
     );
   }
-  Map<String, dynamic> toJson() => _$EventModelToJson(this);
+
+  // Set Images
+  factory EventModel.setImages({required EventModel event, required List<String> images}) {
+    return EventModel(
+      leaderName: event.leaderName,
+      registrationDeadline: event.registrationDeadline,
+      activityBasics: event.activityBasics.copyWith(coverImages: images), // Assuming copyWith method exists in ActivityBasics
+      settings: event.settings,
+      online: event.online,
+      participation: event.participation,
+    );
+  }
+
+  // Set Participants
+  factory EventModel.setParticipants({required EventModel event, required List<String> participants}) {
+    return EventModel(
+      leaderName: event.leaderName,
+      registrationDeadline: event.registrationDeadline,
+      activityBasics: event.activityBasics,
+      settings: event.settings,
+      online: event.online,
+      participation: event.participation.copyWith(participants: participants), // Assuming copyWith method exists in ParticipationStatus
+    );
+  }
+ factory EventModel.setId({required EventModel event, required String id}) {
+    return EventModel(
+      leaderName: event.leaderName,
+      registrationDeadline: event.registrationDeadline,
+      activityBasics: event.activityBasics.copyWith(id: id),
+      settings: event.settings,
+      online: event.online,
+      participation: event.participation
+      , // Assuming copyWith method exists in ParticipationStatus
+    );
+  }
+
+  // Set isPart
+  factory EventModel.setIsPart({required EventModel event, required bool isPart}) {
+    return EventModel(
+      leaderName: event.leaderName,
+      registrationDeadline: event.registrationDeadline,
+      activityBasics: event.activityBasics,
+      settings: event.settings,
+      online: event.online,
+      participation: event.participation.copyWith(isPart: isPart), // Assuming copyWith method exists in ParticipationStatus
+    );
+  }
+
+  // Convert from Activity to EventModel
+  EventModel fromActivity(Activity activity) {
+    return EventModel(
+      leaderName: (activity as Event).leaderName,
+      registrationDeadline: activity.registrationDeadline,
+      activityBasics: activity.activityBasics,
+      settings: activity.settings,
+      online: activity.online,
+      participation: activity.participation,
+    );
+  }
+
+  // Convert to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'leaderName': UserModel.fromEntity(leaderName).toJson(true), // Assuming UserModel has toJson method
+      'registrationDeadline': registrationDeadline.toIso8601String(),
+      'activityBasics': activityBasics.toJson(),
+      'settings': settings.toJson(),
+      'online': online.toJson(),
+      'type':type,
+      'participation': participation.toJson(),
+    };
+  }
+// to event
+  Event toEvent() {
+    return Event(
+      leaderName: leaderName,
+      registrationDeadline: registrationDeadline,
+      activityBasics: activityBasics,
+      settings: settings,
+      online: online,
+      participation: participation,
+    );
+  }
+  // Copy method with new participants list
+  EventModel copyWith(List<String> activitiesParticipants) {
+    return EventModel(
+      leaderName: leaderName,
+      registrationDeadline: registrationDeadline,
+      activityBasics: activityBasics, // Assuming copyWith method exists in ActivityBasics
+      settings: settings,
+      online: online,
+      participation: participation.copyWith(participants: activitiesParticipants), // Assuming copyWith method exists in ParticipationStatus
+    );
+  }
 }
-
-

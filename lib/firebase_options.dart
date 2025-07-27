@@ -17,29 +17,17 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -52,11 +40,59 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyA_E-ZbM98k75ERlUTCZaom6yamdLnIsbc',
+    appId: '1:651392688142:web:8d05972aba71f7dee25c5f',
+    messagingSenderId: '651392688142',
+    projectId: 'jci-app-e8e4c',
+    authDomain: 'jci-app-e8e4c.firebaseapp.com',
+    databaseURL: 'https://jci-app-e8e4c-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'jci-app-e8e4c.appspot.com',
+    measurementId: 'G-B0BEX0S829',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBZmpFXZ3JrUdLbWLGCu7200Gfvsfwir70',
     appId: '1:651392688142:android:951e992ea8e6d93ee25c5f',
     messagingSenderId: '651392688142',
     projectId: 'jci-app-e8e4c',
+    databaseURL: 'https://jci-app-e8e4c-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'jci-app-e8e4c.appspot.com',
   );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyBFU1aYoZ5zb_jzVVKALB12wmX6KxIzPOQ',
+    appId: '1:651392688142:ios:9a15d10b88444ed1e25c5f',
+    messagingSenderId: '651392688142',
+    projectId: 'jci-app-e8e4c',
+    databaseURL: 'https://jci-app-e8e4c-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'jci-app-e8e4c.appspot.com',
+    androidClientId: '651392688142-5nor7q3rv99v1527o0prduon3snmuhco.apps.googleusercontent.com',
+    iosClientId: '651392688142-ql2kqf0dlcbscoaaj05vvvjkea5g0foi.apps.googleusercontent.com',
+    iosBundleId: 'com.example.jciApp',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBFU1aYoZ5zb_jzVVKALB12wmX6KxIzPOQ',
+    appId: '1:651392688142:ios:9a15d10b88444ed1e25c5f',
+    messagingSenderId: '651392688142',
+    projectId: 'jci-app-e8e4c',
+    databaseURL: 'https://jci-app-e8e4c-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'jci-app-e8e4c.appspot.com',
+    androidClientId: '651392688142-5nor7q3rv99v1527o0prduon3snmuhco.apps.googleusercontent.com',
+    iosClientId: '651392688142-ql2kqf0dlcbscoaaj05vvvjkea5g0foi.apps.googleusercontent.com',
+    iosBundleId: 'com.example.jciApp',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyA_E-ZbM98k75ERlUTCZaom6yamdLnIsbc',
+    appId: '1:651392688142:web:a1ecbf214a5f6ea5e25c5f',
+    messagingSenderId: '651392688142',
+    projectId: 'jci-app-e8e4c',
+    authDomain: 'jci-app-e8e4c.firebaseapp.com',
+    databaseURL: 'https://jci-app-e8e4c-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'jci-app-e8e4c.appspot.com',
+    measurementId: 'G-NWTQX1XMY3',
+  );
+
 }

@@ -1,74 +1,113 @@
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart';
 
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'package:flutter/services.dart' show rootBundle;
+class FirebaseImageUploader {
+  final _uploadStreamController = StreamController<List<String>>.broadcast();
+  final List<String> _uploadedUrls = [];
 
-Future<http.StreamedResponse> uploadImages(String id, String? imagePath,String getUrl,String text) async {
-  try {
-    // Create a MultipartRequest object
-    var request = http.MultipartRequest('POST', Uri.parse('$getUrl$id/uploadImage'));
+  /// Stream of uploaded image URLs
+  Stream<List<String>> get uploadStream => _uploadStreamController.stream;
 
-    // Add the images to the request
+  Future<List<String>> uploadImagesToFirebase(List<String> imagePaths) async {
+    try {
+      FirebaseStorage storage = FirebaseStorage.instance;
 
-    // Create a File object from the file path
-    File image = File(imagePath!);
+      // List to store uploaded URLs
+      List<String> uploadedUrls = [];
+      if (imagePaths.isEmpty || imagePaths.any((path) => path.isEmpty)) {
+        final fallbackUrl =
+        await _uploadAssetImage('assets/images/jci.png', storage);
+        uploadedUrls.add(fallbackUrl);
+        _uploadStreamController.add(List.from(uploadedUrls));
+        return uploadedUrls;
+      }
+      for (String imagePath in imagePaths) {
+        if (_isImageUrl(imagePath)) {
+          // If it's already a URL, add it to the list
+          uploadedUrls.add(imagePath);
+        } else {
+          // Otherwise, treat it as a file path and upload it
+          File imageFile = File(imagePath);
 
+          // Get a unique filename
+          String fileName = basename(imageFile.path);
 
-    var multiport = http.MultipartFile(
-        text,
-        image.readAsBytes().asStream(),
-        image.lengthSync(),
-        filename: image.path.split('/').last
-    );
+          // Upload the file to Firebase Storage
+          Reference ref = storage.ref().child('uploads/$fileName');
+          UploadTask uploadTask = ref.putFile(imageFile);
 
-    request.files.add(multiport);
+          // Wait for the upload to complete
+          TaskSnapshot snapshot = await uploadTask.whenComplete(() => null);
 
-    // Send the request
-    var response = await request.send();
-    debugPrint(response.toString());
-    debugPrint(response.request.toString());
-    return response;
-  } catch (error) {
-    // Log the error
-    debugPrint('Error during image upload: $error');
+          // Get the download URL
+          String downloadUrl = await snapshot.ref.getDownloadURL();
+          uploadedUrls.add(downloadUrl);
+        }
 
-    // Handle or rethrow the error as needed
-    throw error;
+        // Notify listeners of the new state
+        _uploadStreamController.add(List.from(uploadedUrls));
+      }
+      return uploadedUrls;
+    } catch (error) {
+
+      rethrow;
+    }
+  }
+  Future<String> _uploadAssetImage(String assetPath, FirebaseStorage storage) async {
+    final byteData = await rootBundle.load(assetPath);
+    final fileName = basename(assetPath);
+    final ref = storage.ref().child('uploads/$fileName');
+    final snapshot = await ref.putData(byteData.buffer.asUint8List());
+    return await snapshot.ref.getDownloadURL();
+  }
+  /// Check if the imagePath is a URL
+  bool _isImageUrl(String imagePath) {
+    return imagePath.startsWith('http') || imagePath.startsWith('https');
+  }
+
+  /// Close the stream controller
+  void dispose() {
+    _uploadStreamController.close();
+  }Future<String> uploadFile({
+    required String teamId,
+    required String taskId,
+    required File file,
+    required String fieldName, // Not strictly used for Firebase, but kept for naming if needed
+  }) async {
+    try {
+      final fileName = basename(file.path);
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('tasks/$teamId/$taskId/$fileName');
+
+      final uploadTask = await ref.putFile(file);
+
+      final downloadUrl = await uploadTask.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (error) {
+      print('Firebase Storage uploadFile error: $error');
+      throw Exception('Upload failed: $error');
+    }
+  }
+
+  refFromURL(fileUrl) async{
+    try {
+      // Create a reference from a URL
+      final ref = FirebaseStorage.instance.refFromURL(fileUrl);
+      return ref;
+    } catch (error) {
+      print('Firebase Storage refFromURL error: $error');
+      throw Exception('Reference creation failed: $error');
+    }
   }
 }
-Future<http.StreamedResponse> uploadFile(String id, String? imagePath,String getUrl,String text) async {
-  try {
-    // Create a MultipartRequest object
-    var request = http.MultipartRequest('PUT', Uri.parse('$getUrl$id/UpdateFiles'));
 
-    // Add the images to the request
 
-    // Create a File object from the file path
-    File image = File(imagePath!);
-    debugPrint("image $image");
-
-    var multiport = http.MultipartFile(
-        text,
-        image.readAsBytes().asStream(),
-        image.lengthSync(),
-        filename: image.path.split('/').last
-    );
-
-    request.files.add(multiport);
-
-    // Send the request
-    var response = await request.send();
-    debugPrint(response.toString());
-    debugPrint(response.request.toString());
-    return response;
-  } catch (error) {
-    // Log the error
-    debugPrint('Error during image upload: $error');
-
-    // Handle or rethrow the error as needed
-    throw error;
-  }
-}Future<http.StreamedResponse> UpdateImage(String id, String? imagePath,String getUrl) async {
+Future<http.StreamedResponse> UpdateImage(String id, String? imagePath,String getUrl) async {
   try {
     // Create a MultipartRequest object
     var request = http.MultipartRequest('PATCH', Uri.parse('$getUrl$id/UpdateImage'));
@@ -77,7 +116,7 @@ Future<http.StreamedResponse> uploadFile(String id, String? imagePath,String get
 
     // Create a File object from the file path
     File image = File(imagePath!);
-    debugPrint("image $image");
+
 
     var multiport = http.MultipartFile(
         'CoverImages',
@@ -90,14 +129,11 @@ Future<http.StreamedResponse> uploadFile(String id, String? imagePath,String get
 
     // Send the request
     var response = await request.send();
-    debugPrint(response.toString());
-    debugPrint(response.request.toString());
     return response;
   } catch (error) {
-    // Log the error
-    debugPrint('Error during image upload: $error');
+
 
     // Handle or rethrow the error as needed
-    throw error;
+    rethrow;
   }
 }

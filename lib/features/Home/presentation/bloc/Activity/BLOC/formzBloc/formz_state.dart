@@ -6,6 +6,7 @@ part of 'formz_bloc.dart';
     this.leaderName = const LeaderName.pure(),
     this.professeurName = const ProfesseurName.pure(),
 
+
     this.activityName = const ActivityName.pure(),
     this.location = const Location.pure(),
     this.description = const Description.pure(),
@@ -20,16 +21,20 @@ part of 'formz_bloc.dart';
     this.jokertime = const JokerDateofDayInput.pure(),
     this.joker = const JokerTimeInput.pure(),
     this.membersTeamFormz = const MembersTeamFormz.pure(),
+    this.PrivateParticipants = const [],
+    this.Error="",
 
     this.isValid = false,
-    this.category = Category.Comity
+
   } );
   final MembersTeamFormz membersTeamFormz;
+  final List<User> PrivateParticipants;
   final EventFormz eventFormz;
   final MemberName memberName;
   final MemberFormz memberFormz;
   final bool isValid;
-  final Category category;
+
+
   final JokerTimeInput joker;
   final ProfesseurName professeurName;
   final JokerDateofDayInput jokertime;
@@ -38,7 +43,7 @@ part of 'formz_bloc.dart';
   final ActivityName activityName;
   final Location location;
   final BeginTimeInput beginTimeInput;
-
+final String Error;
 
   final EndTimeInput endTimeInput;
 
@@ -48,7 +53,10 @@ part of 'formz_bloc.dart';
   final ImageInput imageInput;
   FormzState copyWith(
       {FormzSubmissionStatus? status,
+        List<User>? PrivateParticipants,
+
         EventFormz? eventFormz,
+        String? Error,
         LeaderName? leaderName,
         MemberName? memberName,
         MembersTeamFormz? membersTeamFormz,
@@ -65,8 +73,11 @@ part of 'formz_bloc.dart';
         JokerTimeInput?jokerTimeInput,
         EndTimeInput? endTimeInput,
         bool? isValid,
-        Category? category}) {
+    }) {
     return FormzState(
+        Error: Error ?? this.Error,
+        PrivateParticipants: PrivateParticipants ?? this.PrivateParticipants,
+
         membersTeamFormz: membersTeamFormz ?? this.membersTeamFormz,
         eventFormz: eventFormz ?? this.eventFormz,
 
@@ -81,22 +92,25 @@ part of 'formz_bloc.dart';
         description: description ?? this.description,
         imageInput: imageInput ?? this.imageInput,
         endTimeInput: endTimeInput ?? this.endTimeInput,
-        joker: jokerTimeInput?? this.joker,
-        jokertime: jokerDateofDayInput??this.jokertime,
+        joker: jokerTimeInput?? joker,
+        jokertime: jokerDateofDayInput??jokertime,
 
 
         beginTimeInput: beginTimeInput ?? this.beginTimeInput,
 
         registrationTimeInput:
         registrationTimeInput ?? this.registrationTimeInput,
-        category: category ?? this.category,
+
         isValid: isValid ?? this.isValid);
   }
 
   @override
   List<Object?> get props => [
+    isValid,
+Error,
     status,
     leaderName,
+    PrivateParticipants,
     activityName,
     location,
  memberName,
@@ -106,38 +120,13 @@ part of 'formz_bloc.dart';
     imageInput,
     endTimeInput,
 professeurName,
-    beginTimeInput,registrationTimeInput,
-    category
+    beginTimeInput,registrationTimeInput
     ,jokertime,
     memberFormz,
     eventFormz,
   ];
 
 }
-enum Category {
-   Comity,Officiel,
-  Technology,
-  Science,
-  Business,
-  Health,
-  Economy,
-  Entertainment,
-  Sports,
-  Food,
-  Fashion,
-  Education,
-  Arts,
-  Music,
-  Literature,
-  Gaming,
-  Automotive,
-  Fitness,
-  Parenting,
-  Pets,
-  fun,
-  Environment,Other
-}
-
 
 class FormzInitial extends FormzState {
   @override

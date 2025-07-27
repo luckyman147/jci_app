@@ -8,13 +8,20 @@ part 'toggle_bool_event.dart';
 part 'toggle_bool_state.dart';
 
 class ToggleBooleanBloc extends Bloc<ToggleBooleanEvent, ToggleBooleanState> {
-  ToggleBooleanBloc() : super(ToggleBooleanState()) {
+  ToggleBooleanBloc() : super(const ToggleBooleanState()) {
     on<ToggleBoolean>((event, emit) {
       emit(state.copyWith(value: !state.value));
     });
     on<ResetBoolean>(reset);
     on<ChangeIscompleted>(ChangeBoolean);
     on<ChangeIsEnabled>(ChangeisEnbled);
+    on<ChangeIsImage1>(ChangeImage1);
+  }
+  void ChangeImage1(
+      ChangeIsImage1 event,
+      Emitter<ToggleBooleanState> emit,
+      ) {
+    emit(state.copyWith(IsImage1: !state.IsImage1));
   }
 void ChangeisEnbled(
       ChangeIsEnabled event,

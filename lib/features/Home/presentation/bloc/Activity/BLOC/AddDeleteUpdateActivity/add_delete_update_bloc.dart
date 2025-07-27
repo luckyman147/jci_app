@@ -1,27 +1,20 @@
-import 'dart:async';
-import 'dart:developer';
 
-import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
-import 'package:jci_app/core/usescases/usecase.dart';
 
 
 import 'package:jci_app/features/Home/domain/usercases/ActivityUseCases.dart';
-import 'package:jci_app/features/Home/domain/usercases/MeetingsUseCase.dart';
+
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
+import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 
 
-import '../../../../../../../core/error/Failure.dart';
 import '../../../../../../../core/strings/failures.dart';
+import '../../../../../domain/Dtos/ActivityParam.dart';
 
 
 
-import '../../../../../domain/entities/Meeting.dart';
-import '../../../../../domain/usercases/EventUseCases.dart';
-import '../../../../../domain/usercases/TrainingUseCase.dart';
-import '../../../../widgets/AddUpdateFunctions.dart';
 
 part 'add_delete_update_event.dart';
 part 'add_delete_update_state.dart';
@@ -31,16 +24,13 @@ class AddDeleteUpdateBloc
  final CreateActivityUseCases createActivityUseCase;
  final DeleteActivityUseCases deleteActivityUseCases ;
  final UpdateActivityUseCases updateActivityUseCases;
-final CheckPermissionsUseCase checkPermissionsUseCase;
-final CheckTrainingPermissionsUseCase checkTrainingPermissionsUseCase;
-final CheckMeetPermissionsUseCase checkMeetingPermissionsUseCase;
+final CheckPermissionsUseCases checkPermissionsUseCase;
 
   AddDeleteUpdateBloc({
     required this.updateActivityUseCases,
     required this.createActivityUseCase, required this.deleteActivityUseCases,
 
-    required this.checkTrainingPermissionsUseCase,
-    required this.checkMeetingPermissionsUseCase,
+
     required this.checkPermissionsUseCase,
 
 
@@ -87,7 +77,7 @@ void checkPermissions(
       Emitter<AddDeleteUpdateState> emit
 
       )async {
-  final failureOrEvents= await checkPermissionsUseCase(NoParams());
+  final failureOrEvents= await checkPermissionsUseCase(event.act);
   emit(_checkPermissionsOrFailure(failureOrEvents));
 
   }
@@ -98,6 +88,7 @@ void checkPermissions(
 
       )async {
     try {
+
 
 
       final failureOrEvents = await updateActivityUseCases(event.params);
@@ -128,7 +119,7 @@ void checkPermissions(
     );
   } AddDeleteUpdateState _UpdatedActivityOrFailure(Either<Failure, Unit> either) {
     return either.fold(
-          (failure) => ErrorAddDeleteUpdateState(message: failure.toString()),
+          (failure) => ErrorAddDeleteUpdateState(message: mapFailureToMessage(failure)),
           (act) => ActivityUpdatedState(message: 'Updated With Success'),
     );
   }AddDeleteUpdateState _checkPermissionsOrFailure(Either<Failure, bool> either) {

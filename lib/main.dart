@@ -1,29 +1,21 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:secure_shared_preferences/secure_shared_pref.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'app.dart';
-import 'bloc_observer.dart';
 
+import 'core/di/Services/app_initialize.dart';
+import 'features/auth/AuthWidgetGlobal.dart';
 
-import 'firebase_options.dart';
 import 'injection_container.dart' as di;
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await di.init();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  final pref= await SharedPreferences.getInstance();
-  final secure=await SecureSharedPref.getInstance();
+  await  di.sll<AppInitializer>().init();
 
 
-  Bloc.observer = AppObserver();
+   // Logs widget build times
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
-

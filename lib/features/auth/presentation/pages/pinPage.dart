@@ -1,24 +1,30 @@
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/core/route/app_router.dart';
+import 'package:jci_app/features/auth/domain/entities/AuthUser.dart';
 
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
+import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/bool/toggle_bool_bloc.dart';
-import 'package:jci_app/features/auth/presentation/widgets/Components.dart';
+import 'package:jci_app/features/auth/presentation/widgets/Buttons/PinButton.dart';
+import 'package:jci_app/features/auth/presentation/widgets/Components/TimerComponent.dart';
 
 import 'package:jci_app/features/auth/presentation/widgets/PinForm.dart';
-import 'package:jci_app/features/auth/presentation/widgets/SubmitFunctions.dart';
+import 'package:jci_app/features/auth/presentation/widgets/Functions/SubmitFunctions.dart';
 
-import '../../domain/entities/Member.dart';
+import '../../../../core/util/snackbar_message.dart';
 
+import '../widgets/Functions/Listeners.dart';
 import '../widgets/Text.dart';
 
 class Pincode extends StatefulWidget {
-final Member? member;
+final AuthUser? member;
 final String?email;
 final VerifyEvent verifyEvent;
   const Pincode({Key? key, required this.member, required this.verifyEvent,required this.email}) : super(key: key);
@@ -31,35 +37,43 @@ class _PincodeState extends State<Pincode> {
 
   final formKey = GlobalKey<FormState>();
   final _controller1 = TextEditingController();
+
+
 @override
   void initState() {
-  context.read<ToggleBooleanBloc>().add(ChangeIscompleted(isCompleted: false));
-  context.read<ToggleBooleanBloc>().add(ChangeIsEnabled(isEnabled: true));
+  context.read<ToggleBooleanBloc>().add(const ChangeIscompleted(isCompleted: false));
+  context.read<ToggleBooleanBloc>().add(const ChangeIsEnabled(isEnabled: true));
 
     // TODO: implement initState
     super.initState();
   }
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    _controller1.dispose();
 
-  }
+
   @override
   Widget build(BuildContext context) {
     final MediaQueryData mediaquery = MediaQuery.of(context);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text ('Verification Code'.tr(context), style: PoppinsSemiBold(16, textColorBlack,TextDecoration.none),),
       ),
       body: Center(
-        child: BlocListener<ResetBloc, ResetPasswordState>(
+        child: BlocListener<SignUpBloc, SignUpState>(
   listener: (context, state) {
-   SubmitFunctions. Listener(state, context,widget.email);
+    if (state.signUpStatus==SignUpStatus.MessageSignUp){
+      SnackBarMessage.showSuccessSnackBar(
+          message: state.message, context: context);
+      context.replaceRoute(LoginRoute());
+    }
     // TODO: implement listener}
   },
-  child: Column(
+  child: BlocListener<ResetBloc, ResetPasswordState>(
+  listener: (context, state) {
+    ListenerRestFunction.Listener(state, context,widget.email);
+    // TODO: implement listener}
+  },
+  child:
+     Column(
 
           crossAxisAlignment: CrossAxisAlignment.center,
 
@@ -70,18 +84,24 @@ class _PincodeState extends State<Pincode> {
             width: mediaquery.size.width/1.32,
 
             child: Text ('We have sent the verification code. Please check your inbox.'.tr(context), style: PoppinsLight(mediaquery.size.width/22, ThirdColor),)),
-        AuthComponents.    TimerWidget(context,widget.email??'',widget.verifyEvent,(){
-          SubmitFunctions.    Resendemail(context,widget.email,widget.verifyEvent);
+          Align(
+            alignment: Alignment.topLeft,
+            child: TimerWidget(email:
+                widget.email??'',verifyEvent:  widget.verifyEvent,onPressed:  (){
+            SubmitFunctions.    Resendemail(context,widget.email,widget.verifyEvent);
 
-        }),
+                    },),
+          ),
             BuildForm(mediaquery, context),
 
-
-       AuthComponents.     buildButtonPin(mediaquery,_controller1,formKey,widget.verifyEvent,widget.member),
+        PinButton(mediaQuery: mediaquery,controller: _controller1, formKey: formKey,verifyEvent:  widget.verifyEvent,member:  widget.member, email: widget.email??"",),
 
 
           ]
-        ),
+
+
+),
+),
 ),
       ),
     );
@@ -97,12 +117,12 @@ class _PincodeState extends State<Pincode> {
     return BlocBuilder<ToggleBooleanBloc, ToggleBooleanState>(
   builder: (context, state) {
     return SizedBox(
-            width: mediaquery.size.width/1.32,
+            width: mediaquery.size.width / 1.32,
 
             child: Column(
               children: [
                 SizedBox(
-                  width: mediaquery.size.width/1.32,
+                  width: MediaQuery.of(context).size.width / 1.32,
 
                   child: Padding(
                     padding: EdgeInsets.only(top: mediaquery.size.height /22,left: 8 ),
@@ -112,6 +132,7 @@ class _PincodeState extends State<Pincode> {
                   ),
                 ),
                 PinForm(controller1: _controller1,size:mediaquery.size.width/4, formKey:formKey, isenabled: state.isEnbled,),
+
               ],
             ),
           );

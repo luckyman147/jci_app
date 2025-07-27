@@ -21,7 +21,7 @@ class AuthLoading extends AuthState{
 class AuthFailureState extends AuthState {
   final String message;
 
-  AuthFailureState({required this.message});
+  const AuthFailureState({required this.message});
 
   @override
   List<Object?> get props => [message];
@@ -37,4 +37,11 @@ class AuthLogoutState extends AuthState {
   @override
   List<Object?> get props => [];
 }
-
+class LoggedInState extends AuthState {
+  @override
+  List<Object?> get props => [];
+}
+class LoggedOutState extends AuthState {
+  @override
+  List<Object?> get props => [];
+}

@@ -6,8 +6,8 @@ class Lastname extends FormzInput<String, LastnameValidationError> {
   const Lastname.pure() : super.pure('');
   const Lastname.dirty([super.value = '']) : super.dirty();
 
-  static final _minLength = 6;
-  static final _maxLength = 20;
+  static const _minLength = 6;
+  static const _maxLength = 20;
 
   @override
   LastnameValidationError? validator(String value) {

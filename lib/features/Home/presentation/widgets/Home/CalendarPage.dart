@@ -1,0 +1,267 @@
+import 'dart:developer';
+
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
+import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
+import 'package:table_calendar/table_calendar.dart';
+
+import '../../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
+import '../../../../../core/app_theme.dart';
+import '../../../../../core/route/app_router.dart';
+import '../../../../changelanguages/presentation/bloc/locale_cubit.dart';
+import '../../../domain/Dtos/ActivityParam.dart';
+import '../../../domain/entities/Activitys/Activity.dart';
+import '../../bloc/Activity/BLOC/Participants/particpants_bloc.dart';
+import '../../bloc/calendar/calendar_cubit.dart';
+
+class CalendarPage extends StatefulWidget {
+  final List<Activity> activities;
+  const CalendarPage({Key? key, required this.activities}) : super(key: key);
+
+  @override
+  State<CalendarPage> createState() => _CalendarPageState();
+}
+
+class _CalendarPageState extends State<CalendarPage> {
+  DateTime today = DateTime.now();
+  late final ValueNotifier<List<Activity>> _selectedEvents;
+  @override
+  void initState() {
+    context.read<CalendarCubit>().selectDate(DateTime.now());
+    _selectedEvents = ValueNotifier(_getEventsForDay(DateTime.now()));
+
+    // TODO: implement initState
+    super.initState();
+
+  }
+  @override
+  Widget build(BuildContext context) {
+    return  BlocBuilder<localeCubit,LocaleState >(
+        builder: (context, state) {
+          return Container(
+
+
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+
+                calendar(state),
+                const SizedBox(height: 20,),
+                EvnetBuilder(state)],
+
+            ),
+          );
+        },
+
+    );
+
+  }
+
+  Widget EvnetBuilder(LocaleState ste) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height/3,
+                width: MediaQuery.of(context).size.width,
+                child: ValueListenableBuilder(valueListenable: _selectedEvents, builder: (context, value, child) {
+                  return BlocBuilder<ActivityCubit, ActivityState>(
+  builder: (context, state) {
+    return ListView.builder(
+                    itemCount: value.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: paddingSemetricHorizontal(),
+                        child: Container(
+                     decoration: BoxDecoration(
+                       borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: textColorBlack, width: 2),
+                     gradient: const LinearGradient(
+                     begin: Alignment.topLeft,
+                     end: Alignment.bottomRight,
+                     stops: [0.1, 0.9],
+                     colors: [PrimaryColor, PrimaryColor]),
+
+
+                     ),
+                          child: listTileCalendar(context, value, index, state,ste),
+                        ),
+                      );
+                    },
+                  );
+  },
+);
+                }
+
+
+                ),
+              );
+  }
+
+  ListTile listTileCalendar(BuildContext context, List<Activity> value, int index, ActivityState state,LocaleState lste) {
+    String formattedDate = DateFormat('dd MMM yyyy', lste.locale == const Locale("en") ? "en_US" : "fr_FR").format(value[index].activityBasics.activityBeginDate);
+    String formattedTime = DateFormat('HH:mm').format(value[index].activityBasics.activityBeginDate);
+    String formattedDateTime = lste.locale == const Locale("en") ? "$formattedDate At $formattedTime" : "$formattedDate A $formattedTime";
+
+    return ListTile(
+                          onTap: (){
+                            context.pushRoute(ActivityDetailsRoute(
+                              id: value[index].activityBasics.id,
+                              activityType: state.selectedActivity.name,
+                              index: index,
+                            ));
+                          },
+
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),side: const BorderSide(color: textColorBlack)),
+                        trailing: const Icon(Icons.arrow_forward_ios_rounded,color: textColorWhite,),
+
+
+                          title: SizedBox(
+                            width: MediaQuery.of(context).size.width/1.5,
+                            child: Row(
+
+                              children: [
+                                AsyncComponents.buildFutureBuilder(    ReminderButton(context, value, index), PermissionType.canUpdate,""),
+
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(value[index].activityBasics.name,  overflow: TextOverflow.ellipsis,   style: PoppinsSemiBold(16, textColorWhite,TextDecoration.none),),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: paddingSemetricHorizontal(),
+                                          child: const Icon(Icons.location_on,color: textColorWhite,),
+                                        ),
+
+                                        SizedBox(
+                                            width: MediaQuery.of(context).size.width/2.5,
+                                            child: Text(value[index].activityBasics.activityAdress,overflow: TextOverflow.ellipsis,style: PoppinsRegular(16, textColorWhite,),)),
+
+
+                                      ],
+
+                                    ),
+                                    Padding(
+                                      padding: paddingSemetricVertical(),
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding: paddingSemetricHorizontal(),
+                                            child:const  Icon(Icons.calendar_today_rounded,color: textColorWhite,),
+                                          ),
+                                          Text(formattedDateTime,style: PoppinsRegular(14, textColorWhite),),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+
+                        );
+  }
+
+  IconButton ReminderButton(BuildContext context, List<Activity> value, int index) {
+    return IconButton(icon:
+      const Icon(Icons.alarm_on_outlined,color: textColorWhite,), onPressed: () {
+      context.read<ParticpantsBloc>().add(SendReminderEvent(reminderParams: ReminderParams(value[index].activityBasics.activityAdress,ActivityName: value[index].activityBasics.name,
+          ActivityBeginDate: value[index].activityBasics.activityBeginDate.toIso8601String())));
+
+    }
+      ,);
+  }
+
+  BlocBuilder<CalendarCubit, CalendarState> calendar(LocaleState state) {
+    return BlocBuilder<CalendarCubit, CalendarState>(
+                builder: (context, se) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      color: Colors.white,
+                      surfaceTintColor:backgroundColored,
+                      elevation: 9,
+                      child: TableCalendar(
+
+                        calendarStyle: CalendarStyle(
+                       markersAutoAligned: true,
+
+                          markerDecoration: BoxDecoration(
+                            color: PrimaryColor,
+                            border: Border.all(color: PrimaryColor),
+                          ),
+                    weekNumberTextStyle: PoppinsRegular(16, textColorWhite),
+
+                          todayTextStyle: PoppinsRegular(16, textColorBlack),
+                          selectedTextStyle: PoppinsRegular(16, textColorBlack),
+                      markersAlignment: Alignment.topCenter,
+                          selectedDecoration: const BoxDecoration(
+
+                              border: Border(
+
+                                top: BorderSide(color: SecondaryColor,width: 2),
+                              )
+                          ),
+                          todayDecoration: const BoxDecoration(
+
+                           border: Border(
+
+                             top: BorderSide(color: PrimaryColor,width: 2),
+                           )
+                          ),
+                          defaultTextStyle: PoppinsRegular(16, textColorBlack),
+                          outsideTextStyle: PoppinsRegular(16, textColorBlack),
+                          outsideDecoration: const BoxDecoration(
+                            color: Colors.transparent,
+                            shape: BoxShape.circle,
+                          ),
+
+                          outsideDaysVisible: true,
+                         ),
+                        eventLoader: (day) => _getEventsForDay(day),
+                        locale: state.locale==const Locale("en")?"en_Us":"fr_FR",
+                        rowHeight: 40,
+                        headerStyle: HeaderStyle(
+                          titleTextStyle: PoppinsSemiBold(20, textColorBlack, TextDecoration.none),
+                          formatButtonVisible: false,
+                          leftChevronIcon: const Icon(Icons.arrow_back_ios_rounded,color: textColorBlack,),
+                          rightChevronIcon: const Icon(Icons.arrow_forward_ios_rounded,color: textColorBlack,),
+                          titleCentered: true,
+                          headerPadding: const EdgeInsets.all(0),
+                          headerMargin: const EdgeInsets.all(0),
+
+
+                        ),
+                        onDaySelected: (selectedDay, focusedDay) {
+                          setState(() {
+
+                            context.read<CalendarCubit>().selectDate(selectedDay);
+                      _selectedEvents.value = _getEventsForDay(selectedDay);
+                            log('${se.selectedDate}');
+                          });
+
+
+
+                        },
+                        selectedDayPredicate: (day) {
+                          return isSameDay(se.selectedDate, day);
+                        }
+                        ,
+                        availableGestures: AvailableGestures.all,
+                        focusedDay: se.selectedDate!, firstDay: DateTime(2024,1,1), lastDay: DateTime.now().add(const Duration(days: 356)),),
+                    ),
+                  );
+                },
+              );
+  }
+
+  List<Activity> _getEventsForDay(DateTime dateTime) {
+    return widget.activities.where((element) => isSameDay(element.activityBasics.activityBeginDate, dateTime)).toList();
+  }
+}

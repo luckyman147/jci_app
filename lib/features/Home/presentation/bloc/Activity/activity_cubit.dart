@@ -1,9 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-
+import 'package:jci_app/features/Home/domain/enums/Privacy.dart';
 
 part 'activity_state.dart';
-
 
 class ActivityCubit extends Cubit<ActivityState> {
   ActivityCubit() : super(ActivityState(activity.Events));
@@ -11,16 +10,25 @@ class ActivityCubit extends Cubit<ActivityState> {
   void selectActivity(activity activity) {
     emit(ActivityState(activity));
   }
-  void changeNotePage (int index){
+
+  void changeNotePage(int index) {
     emit(state.copyWith(noteIndex: index));
   }
+
   void selectIndex(int index) {
     emit(state.copyWith(index: index));
   }
-void search(bool isSearching) {
+
+  void search(bool isSearching) {
     emit(state.copyWith(isSearching: isSearching));
   }
+
   void selectSearchActivity(activity activity) {
-    emit(state.copyWith(selectedSearchActivity: activity,stateChange: StateChange.Changed));
+    emit(state.copyWith(
+        selectedSearchActivity: activity, stateChange: StateChange.Changed));
+  }
+
+  void changeUserStatus(UserChoice userStatus) {
+    emit(state.copyWith(userChoice: userStatus));
   }
 }

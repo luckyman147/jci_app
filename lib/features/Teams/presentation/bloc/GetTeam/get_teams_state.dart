@@ -1,5 +1,5 @@
 part of 'get_teams_bloc.dart';
-enum TeamStatus { initial, success, error ,Deleted,DeletedError,IsRefresh,Loading,Created,Updated}
+enum TeamStatus { initial, success, error ,Deleted,DeletedError,IsRefresh,Loading,Created,Updated,LoadedTeams ,LoadedTeam}
  class GetTeamsState extends Equatable {
    final TeamStatus status;
    final List<Team> teams;
@@ -7,14 +7,15 @@ enum TeamStatus { initial, success, error ,Deleted,DeletedError,IsRefresh,Loadin
    final String errorMessage;
    final List<dynamic> isExisted;
    final List<dynamic> members;
-   final Map<String,dynamic> teamById;
+   final Team? teamById;
 
-
+   final DocumentSnapshot? lastDocument;
   const GetTeamsState({this.status = TeamStatus.initial,
    this.hasReachedMax = false,
+    this.lastDocument,
    this.teams = const [],
     this.isExisted = const[],
-    this.teamById = const {},
+    this.teamById ,
 
     this.members = const [],
    this.errorMessage = ""}
@@ -22,16 +23,18 @@ enum TeamStatus { initial, success, error ,Deleted,DeletedError,IsRefresh,Loadin
 
    GetTeamsState copyWith({
 
-
+     DocumentSnapshot? lastDocument,
      List<dynamic >?isExisted,
      List<dynamic>? members,
      TeamStatus? status,
      List<Team>? teams,
      bool? hasReachedMax,
      String? errorMessage,
-     Map<String,dynamic>? teamById
+     Team? teamById
    }) {
      return GetTeamsState(
+
+       lastDocument: lastDocument??this.lastDocument,
         isExisted: isExisted ?? this.isExisted,
         members: members ?? this.members,
        status: status ?? this.status,
@@ -56,19 +59,20 @@ class GetTeamsLoading extends GetTeamsState {
 }
 class GetTeamsLoaded extends GetTeamsState {
 
+  @override
   final List<Team> teams;
-  GetTeamsLoaded(this.teams);
+  const GetTeamsLoaded(this.teams);
   @override
   List<Object> get props => [teams,];
 }
 class GetTeamsError extends GetTeamsState {
   final String message;
-  GetTeamsError(this.message);
+  const GetTeamsError(this.message);
   @override
   List<Object> get props => [message];
 }
 class GetTeamsLoadedByid extends GetTeamsState{
   final Team team;
-  GetTeamsLoadedByid(this.team);
+  const GetTeamsLoadedByid(this.team);
   @override
   List<Object> get props => [team];}

@@ -1,5 +1,3 @@
-import 'package:dartz/dartz.dart';
-import 'package:equatable/equatable.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/core/strings/failures.dart';

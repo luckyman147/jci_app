@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import '../../Domain/entities/BoardYear.dart';
 import 'PostModel.dart';

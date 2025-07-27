@@ -1,0 +1,47 @@
+
+import 'package:auto_route/auto_route.dart';
+import 'package:jci_app/core/route/app_router.dart';
+
+import '../../../AuthWidgetGlobal.dart';
+
+class Checkbutton extends StatelessWidget {
+  final GlobalKey<FormState> keyConr ;
+  const Checkbutton({super.key, required this.keyConr});
+
+  @override
+  Widget build(BuildContext context) {
+       final MediaQueryData mediaquery = MediaQuery.of(context);
+    return BlocBuilder<ResetBloc, ResetPasswordState>(
+      builder: (context, state)
+       {
+         return
+
+           Padding(
+             padding: EdgeInsets.symmetric(
+                 horizontal: mediaquery.size.width / 10),
+             child: Container(
+
+               height: 66,
+               decoration: decoration,
+               child: InkWell(
+
+                 onTap: () {
+                   if (keyConr.currentState!.validate()) {
+                     context.read<ResetBloc>().add(
+                         sendResetPasswordEmailEvent(email: state.email.value));
+context.navigateTo(PasswordResetSentRoute(email: state.email.value));
+                   }
+                 },
+
+                 child: Center(child: Text('Next'.tr(context),
+                   style: PoppinsSemiBold(
+                       24, textColorWhite, TextDecoration.none),)),
+               ),
+             ),
+           );
+       }
+    );
+
+  }
+}
+

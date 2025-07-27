@@ -16,6 +16,12 @@ class RefreshTokenEvent extends AuthEvent {
   List<Object?> get props => [];
 }
 
+class CheckIdUserExistedEvent extends AuthEvent {
+  const CheckIdUserExistedEvent();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class SignoutEvent extends AuthEvent {
   const SignoutEvent();
@@ -23,4 +29,12 @@ class SignoutEvent extends AuthEvent {
   @override
   List<Object?> get props => [];
 }
+//verify if loggedin
+class IsLoggedInEvent extends AuthEvent {
+  const IsLoggedInEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
 

@@ -15,6 +15,7 @@ final ResetPasswordStatus status;
   final Email email;
   final String message;
   final Password password;
+
   final bool isValid;
   final ConfirmPassword confirmPassword;
   factory ResetPasswordState.initial() {

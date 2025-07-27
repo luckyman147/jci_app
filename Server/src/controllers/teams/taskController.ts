@@ -2,6 +2,7 @@ import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
 import moment from 'moment';
+import { GridFSBucket, MongoClient, ObjectId } from 'mongodb';
 import * as path from "path";
 import { CommentInput, IsCompletedInput, MembersInput, TaskInput, TimelineInput, firstTaskInput } from "../../dto/teams.dto";
 import { File } from "../../models/FileModel";
@@ -10,6 +11,10 @@ import { CheckList } from "../../models/teams/CheckListModel";
 import { Comment } from "../../models/teams/commentModel";
 import { Task } from "../../models/teams/TaskModel";
 import { team } from "../../models/teams/team";
+
+
+require('dotenv').config({ path: 'Server\\src\\.env' });
+
 import { sendTaskAssignmentEmail, sendTaskCompletedEmail } from "../../utility/NotificationEmailUtility";
 import { getCheckListsInfoByIds, getCommentsInfo, getFilesInfoByIds, getMembersInfo, getTaskById, getTasksInfo } from "../../utility/role";
 
@@ -62,6 +67,55 @@ export const GetTaskById=async(req:Request,res:Response,next:NextFunction)=>{
     }
     
 }
+export const getFile = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const fileId = req.params.fileId as string;
+    const file=await File.findById(fileId)
+    if (!file) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+    const MongoURI = process.env.MONGO_URL;
+    const dbName = 'jci'; // Replace with your database name
+    const cl = new MongoClient(MongoURI!, );
+
+    await cl.connect();
+    const qs = cl.db(dbName);
+   
+   
+    const bucket = new GridFSBucket(qs, {
+      bucketName: 'Downloads'
+    });
+
+    const files = await bucket.find({ _id: new ObjectId(file.url) }).limit(1).toArray();
+
+    if (files.length === 0) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+    const downloadStream = bucket.openDownloadStream(files[0]._id);
+    const contentType = files[0].contentType || ''; // Assign an empty string if contentType is undefined
+
+    res.setHeader('Content-disposition', 'attachment; filename=' + files[0].filename);
+    res.setHeader('Content-type', contentType);
+
+    downloadStream.pipe(res);
+
+    downloadStream.on('data', (chunk) => {
+      res.write(chunk);
+    });
+
+    downloadStream.on('end', () => {
+      res.end();
+    });
+
+    downloadStream.on('error', (error) => {
+      console.error(error);
+      res.status(500).json({ error: 'Error retrieving file' });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
 
 export const addTask = async (req: Request, res: Response, next: NextFunction) => {
@@ -71,7 +125,6 @@ if (!Team) {
     }
 
     try {
-
     
       const fitaskInput=plainToClass(firstTaskInput,req.body)
       const  errors=await validate(fitaskInput,{ validationError: { target: false } })
@@ -178,71 +231,72 @@ if (!Team) {
       res.status(500).json({ error: 'Internal server error' });
     }
   };
- export const updateFiles = async (req: Request, res: Response, next: NextFunction) => {
+  export const updateFiles = async (req: Request, res: Response, next: NextFunction) => {
     try {
-     
-      const taskId = req.params.taskid ;
+      const taskId = req.params.taskid;
   
-      
-  
-      const taskToUpdate = await Task.findById(taskId)
+      const taskToUpdate = await Task.findById(taskId);
       if (!taskToUpdate) {
         return res.status(404).json({ error: 'Task not found in the team' });
       }
   
-      
-  
-  console.log(req.file)
-     
-  
-     
       const attachedFile = req.file;
       if (!attachedFile) {
         return res.status(400).send('Invalid or missing files');
       }
+      const MongoURI = process.env.MONGO_URL;
+      const dbName = 'jci'; // Replace with your database name
+      const cl = new MongoClient(MongoURI!, );
   
+      await cl.connect();
+      const qs = cl.db(dbName);
+
+      // Create a GridFSBucket instance
+      const bucket = new GridFSBucket(qs, { bucketName: 'Downloads' });
       const fileExtension = path.extname(attachedFile.originalname);
-    
-     const founded= await File
-     .findOne({ path: attachedFile.originalname })
-
-    if (!founded) {
-      // Convert the file to a base64 string
-      const base64File = attachedFile.buffer.toString('base64');
-      const file=new File({
-        path: attachedFile.originalname ,
-        url:base64File,
-        extension:fileExtension,
-
-      })
-
-      taskToUpdate.attachedFile.push(file._id);
-await   file.save()
   
-     
-      await taskToUpdate.save();
+      const founded = await File.findOne({ path: attachedFile.originalname });
   
-      res.status(200).json( file);
-    }
-  else{
-    if (taskToUpdate.attachedFile.includes(founded._id)){
-      return res.status(400).json({ error: 'File already exists' });
-    }
-    else{
-      taskToUpdate.attachedFile.push(founded._id);
-      await taskToUpdate.save();
-      res.status(200).json(founded);
-    }
-  }
-  }
-    
-    
-    catch (error) {
+  
+      if (!founded) {
+        const uploadStream = bucket.openUploadStream(attachedFile.originalname, {
+          contentType: attachedFile.mimetype
+        });
+  
+        uploadStream.end(attachedFile.buffer);
+  
+        uploadStream.on('finish', async () => {
+          const file = new File({
+            path: attachedFile.originalname,
+            url: uploadStream.id,
+            extension: fileExtension,
+          });
+  
+          taskToUpdate.attachedFile.push(file._id);
+          await file.save();
+          await taskToUpdate.save();
+  
+          res.status(200).json(file);
+        });
+  
+        uploadStream.on('error', (error) => {
+          console.error(error);
+          res.status(500).json({ error: 'Error uploading file' });
+        });
+      } else {
+        if (taskToUpdate.attachedFile.includes(founded._id)) {
+          return res.status(400).json({ error: 'File already exists' });
+        } else {
+          taskToUpdate.attachedFile.push(founded._id);
+          await taskToUpdate.save();
+          res.status(200).json(founded);
+        }
+      }
+    } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Internal server error' });
     }
   };
-
   export const addComment=async(req:Request,res:Response)=>{
 
 try {
@@ -546,7 +600,27 @@ await task.save()
 
                     return res.status(404).json({ error: 'File not found' });
                   }
+                  const MongoURI = process.env.MONGO_URL;
+                  const dbName = 'jci'; // Replace with your database name
+                  const cl = new MongoClient(MongoURI!, );
+              
+                  await cl.connect();
+                  const qs = cl.db(dbName);
+                 
+                 
+                  const bucket = new GridFSBucket(qs, {
+                    bucketName: 'Downloads'
+                  });
+              
+                  const files = await bucket.find({ _id: new ObjectId(file.url) }).limit(1).toArray();
+              
+                  if (files.length === 0) {
+                    return res.status(404).json({ error: 'File not found' });
+                  }
+                  await qs.collection('Downloads.files').deleteOne({ _id: new ObjectId(file.url) });
 
+                  // Delete chunks associated with the file from 'chunks' collection
+                  await qs.collection('Downloads.chunks').deleteMany({ files_id: new ObjectId(file.url) });
             task.attachedFile = task.attachedFile.filter((file) => file._id.toString() !== file._id.toString());
 await file.deleteOne()
                   await task.save();

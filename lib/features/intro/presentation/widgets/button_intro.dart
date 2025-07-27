@@ -33,7 +33,8 @@ final String text;
 
 
   }
-}class button_intro_widget extends StatelessWidget {
+}
+class button_intro_widget extends StatelessWidget {
 const button_intro_widget({Key? key, required this.text, required this.onPressed}) : super(key: key);
 final Function onPressed;
 final String text;
@@ -50,7 +51,7 @@ highlightColor: Colors.transparent,
       onTap: () {
           onPressed();
         },
-        child: Center(child: Text(text,style: PoppinsSemiBold(22, PrimaryColor,TextDecoration.none),)),
+        child: Center(child: Text(text,style: PoppinsSemiBold(22, ColorsApp.PrimaryColor,TextDecoration.none),)),
       ),
     );
 

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import '../widgets.global.dart';
 
 class Language_widget extends StatefulWidget {
   const Language_widget({Key? key}) : super(key: key);
@@ -22,7 +22,7 @@ class _Language_widgetState extends State<Language_widget> {
       padding: const EdgeInsets.all(10.0),
       child: DropdownButton<String>(
         value: "English",
-        items: [],
+        items: const [],
         onChanged: (Object? value) {},
         icon: Image.asset(
           "assets/icons/18165.jpg",

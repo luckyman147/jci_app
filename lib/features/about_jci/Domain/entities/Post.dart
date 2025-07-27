@@ -1,4 +1,4 @@
-import '../../../auth/domain/entities/Member.dart';
+import '../../../../core/Member.dart';
 
 class Post{
   final String id;

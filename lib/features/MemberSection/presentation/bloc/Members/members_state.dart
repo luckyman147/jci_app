@@ -1,16 +1,18 @@
 part of 'members_bloc.dart';
 enum UserStatus{Initial ,Loading ,MembersLoaded,userLoaded ,Error,MemberByname,Updated,MembersRanksLoaded,ErrorMembers}
  class MembersState extends Equatable {
-  final List<Member> members;
+  final List<User> members;
   final String Errormessage;
-final List<Member> memberByName;
+final List<User> memberByName;
   final UserStatus userStatus;
   final Member? user;
+
   final List<Member> membersWithRanks;
 final Member? memberWithRank  ;
     const MembersState({
 this.memberWithRank,
       this.user,
+
     this.members=const[],
       this.membersWithRanks=const[],
     this.Errormessage='',
@@ -25,7 +27,7 @@ this.memberWithRank,
       Member? user,
       Member? memberWithRank,
 
-    List<Member>? members,  List<Member>? memberByName,
+    List<User>? members,  List<User>? memberByName,
 
     String? Errormessage,
     UserStatus? userStatus,

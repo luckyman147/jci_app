@@ -1,57 +1,87 @@
+import 'package:jci_app/core/PrimitiveUser/UserModel.dart';
+import 'package:jci_app/features/Home/Activity_Global.dart';
+import 'package:jci_app/features/Home/data/model/meetingModel/AgendaModel.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../../domain/entities/Activitys/ActivityBasics.dart';
+import '../../../domain/entities/Activitys/ActivitySettings.dart';
+import '../../../domain/entities/Activitys/OnlineSettings.dart';
+import '../../../domain/entities/Activitys/ParicipationStatus.dart';
 import '../../../domain/entities/Meeting.dart';
 
-part 'MeetingModel.g.dart';
-@JsonSerializable()
-class MeetingModel extends Meeting{
+import 'package:jci_app/core/PrimitiveUser/UserModel.dart';
+import 'package:json_annotation/json_annotation.dart';
+import '../../../domain/entities/Activitys/Activity.dart';
 
-  MeetingModel({required super.id,  required super.name, required super.description,
-    required super.ActivityBeginDate, required super.ActivityEndDate, required super.ActivityAdress, required super.ActivityPoints,
-    required super.categorie, required super.IsPaid, required super.price, required super.Participants, required super.CoverImages,
-    required super.Director, required super.agenda, required super.IsPart,  });
+class MeetingModel extends Meeting {
 
+  MeetingModel({
+    required super.director,
+    required super.agenda,
+    required super.activityBasics,
+    required super.settings,
+    required super.online,
+    required super.participation,
+  });
 
-  factory MeetingModel.fromEntities(Meeting meeting){
+  // Factory constructor from Meeting Entity
+  factory MeetingModel.fromEntities({required Meeting meeting, String? link}) {
     return MeetingModel(
-      id:meeting.id,
-      name: meeting.name,
-      description: meeting.description,
-      ActivityBeginDate: meeting.ActivityBeginDate,
-      ActivityEndDate: meeting.ActivityEndDate,
-      ActivityAdress: meeting.ActivityAdress,
-      ActivityPoints: meeting.ActivityPoints,
-      categorie: meeting.categorie,
-      IsPaid: meeting.IsPaid,
-      price: meeting.price,
-      Participants: meeting.Participants,
-      CoverImages: meeting.CoverImages,
-      Director: meeting.Director,
+      director: meeting.director,
       agenda: meeting.agenda,
-      IsPart: meeting.IsPart,
+      activityBasics: meeting.activityBasics,
+      settings: meeting.settings,
+      online: meeting.online,
+      participation: meeting.participation,
     );
   }
 
-factory MeetingModel.fromJson(Map<String, dynamic> json) {
-    return  MeetingModel(
-      id: json['id'] ?? json['_id'], // Use _id if id is null
-      name: json['name'] as String,
-      description: json['description'] as String,
-      ActivityBeginDate: json['ActivityBeginDate'] != null ? DateTime.parse(json['ActivityBeginDate']) : DateTime.parse(json['ActivityBegindate']),
-      ActivityEndDate: json['ActivityEndDate'] != null ? DateTime.parse(json['ActivityEndDate']) : json['ActivityEnddate']!=null? DateTime.parse(json['ActivityEnddate']):   DateTime.now(),
-      ActivityAdress: "Local Menchia Hammem Sousse",
-      ActivityPoints: json['ActivityPoints']??0,
-      categorie: json['categorie'] as String,
-      IsPaid: false,
-      price:0,
-      Participants: json['Participants'] != null ? (json['Participants'] as List<dynamic>).map((e) => e ).toList() :(json['participants'] as List<dynamic>).toList(),
+  // Factory constructor from JSON
+  factory MeetingModel.fromJson(Map<String, dynamic> json, {bool isDecode = false}) {
+    return MeetingModel(
+      director: UserModel.fromJson(json['director'],isDecode), // Assuming UserModel handles the conversion
+      agenda: json['agenda'],
+      activityBasics: ActivityBasics.fromJson(json['activityBasics']),
+      settings: ActivitySettings.fromJson(json['settings']),
+      online: OnlineSettings.fromJson(json['online']),
+      participation: ParticipationStatus.fromJson(json['participation']),
+    );
+  }
 
-      CoverImages: [],
-      Director: json['Director'],
-      agenda: json['agenda'] != null?
-      (json['agenda'] as List<dynamic>).map((e) => e as String).toList():(json['Agenda'] as List<dynamic>).map((e) => e as String).toList(),
-      IsPart: json['IsPart'] as bool,
-    )..tempPart = false;
+  // Convert to JSON
+  Map<String, dynamic> toJson({bool isDecode = false}) {
+    return {
+      'director': UserModel.fromEntity(director).toJson(isDecode), // Assuming UserModel has toJson method
+      'agenda': agenda,
+      'activityBasics': activityBasics.toJson(),
+      'settings': settings.toJson(),
+      'online': online.toJson(),
+      'participation': participation.toJson(),
+    };
+  }
+
+  // Convert from Activity to MeetingModel
+  MeetingModel fromActivity(Activity activity) {
+    return MeetingModel(
+      director: (activity as Meeting).director,
+      agenda: activity.agenda,
+      activityBasics: activity.activityBasics,
+      settings: activity.settings,
+      online: activity.online,
+      participation: activity.participation,
+    );
+  }
+
+  // Copy method with new participants list
+  MeetingModel copywith(List<String> activitiesParticipants) {
+    return MeetingModel(
+      director: director,
+      agenda: agenda,
+      activityBasics: activityBasics, // Assuming copyWith method exists in ActivityBasics
+      settings: settings,
+      online: online,
+      participation: participation.copyWith(participants: activitiesParticipants), // Assuming copyWith method exists in ParticipationStatus
+    );
+  }
 }
-  Map<String, dynamic> toJson() => _$MeetingModelToJson(this);
-}
+

@@ -9,14 +9,22 @@ sealed class VisibleEvent extends Equatable {
 
 final class VisibleEndDateToggleEvent extends VisibleEvent {
   final bool isvisible;
-  VisibleEndDateToggleEvent(this.isvisible);
+  const VisibleEndDateToggleEvent(this.isvisible);
 }
 
 final class VisibleIsPaidToggleEvent extends VisibleEvent {
   final bool ispaid;
-  VisibleIsPaidToggleEvent(this.ispaid);
+  const VisibleIsPaidToggleEvent(this.ispaid);
 }
 
 final class ResetEvent extends VisibleEvent {
-  ResetEvent();
+  const ResetEvent();
+}
+final class ChangePrivacy extends VisibleEvent{
+  final bool isPrivate;
+  const ChangePrivacy(this.isPrivate);
+}
+final class ChangeOnline extends VisibleEvent{
+  final bool IsOnline;
+  const ChangeOnline(this.IsOnline);
 }

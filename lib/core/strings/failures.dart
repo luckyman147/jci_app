@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 
 import '../error/Failure.dart';
 
@@ -9,6 +8,7 @@ const String EMPTY_DATA_FAILURE_MESSAGE = 'No Activity Found  ';
 const String OFFLINE_FAILURE_MESSAGE = 'Please Check your Internet Connection';
 const String SIGNUP_FAILURE_MESSAGE = "Sign up failed Please try again";
 const String EMAIL_EXISTED_FAILURE_MESSAGE = "Email already existed";
+const String ALreadyExisted  = "Already existed";
 const String WRONG_CRED_Failure = "Wrong credentials Check Again";
 const String ALREA_FAILURE_MESSAGE = 'Already logged out';
 const String  UNAUTHORIZED_MESSAGE= 'Unauthorized';
@@ -39,6 +39,8 @@ String mapFailureToMessage(Failure failure) {
       return AlreadyParticipated;
       case WrongVerificationCodeFailure:
       return "Wrong Verification Code";
+      case NotFoundFailure:
+      return "Not Found";
 
     default:
         return "Unexpected Error , Please try again later .";

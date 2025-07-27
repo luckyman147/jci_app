@@ -9,25 +9,25 @@ class GetAllPresidentsEvent extends PresidentsEvent {
 }
 class CreatePresident extends PresidentsEvent {
   final President president;
-  CreatePresident(this.president);
+  const CreatePresident(this.president);
   @override
   List<Object> get props => [president];
 }
 class DeletePresident extends PresidentsEvent {
   final String id;
-  DeletePresident(this.id);
+  const DeletePresident(this.id);
   @override
   List<Object> get props => [id];
 }
 class UpdatePresident extends PresidentsEvent {
   final President president;
-  UpdatePresident(this.president);
+  const UpdatePresident(this.president);
   @override
   List<Object> get props => [president];
 }
 class UpdateImagePresident extends PresidentsEvent {
   final President president;
-  UpdateImagePresident(this.president);
+  const UpdateImagePresident(this.president);
   @override
   List<Object> get props => [president];
 }

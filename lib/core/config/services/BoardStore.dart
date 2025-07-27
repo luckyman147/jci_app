@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:jci_app/features/about_jci/Domain/entities/BoardYear.dart';
 import 'package:jci_app/features/about_jci/data/models/BoardYearModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

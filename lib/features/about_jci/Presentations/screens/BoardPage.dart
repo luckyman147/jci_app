@@ -64,11 +64,11 @@ class _BoardPageState extends State<BoardPage> {
                   TextButton(child: Row(
                     children: [
                       Text('Last Presidents'.tr(context),style:PoppinsSemiBold(16,PrimaryColor, TextDecoration.underline)),
-                      Icon(Icons.arrow_forward_ios_rounded,color: PrimaryColor,)
+                      const Icon(Icons.arrow_forward_ios_rounded,color: PrimaryColor,)
                     ],
                   ),onPressed: (){
                     context.read<PresidentsBloc>().add(GetAllPresidentsEvent());
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>PresidentsPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const PresidentsPage()));
 
                   },)
 

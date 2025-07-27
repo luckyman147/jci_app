@@ -1,22 +1,22 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:formz/formz.dart';
-import 'package:go_router/go_router.dart';
-import 'package:jci_app/core/app_theme.dart';
-import 'package:jci_app/core/config/locale/app__localizations.dart';
 
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
-import 'package:jci_app/features/auth/presentation/widgets/SubmitFunctions.dart';
 
-import 'package:jci_app/features/auth/presentation/widgets/Text.dart';
-import 'package:jci_app/features/auth/presentation/widgets/button_auth.dart';
-import 'package:jci_app/features/auth/presentation/widgets/formText.dart';
 
-import '../../../../core/strings/app_strings.dart';
-import '../../../../core/util/snackbar_message.dart';
+
+import 'dart:math';
+
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jci_app/core/route/app_router.dart';
+import 'package:jci_app/features/auth/presentation/bloc/bool/INPUTS/inputs_cubit.dart';
+
+import '../../../../core/strings/Images.string.dart';
 import '../../../../core/widgets/backbutton.dart';
+import '../../AuthWidgetGlobal.dart';
 import '../bloc/login/login_bloc.dart';
+import 'Buttons/ButtonsComponents.dart';
+import 'Buttons/SubmitButton.dart';
+import 'Components/ForgetPasswordComponent.dart';
+import 'Inputs/InputsWithLabels.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -29,191 +29,134 @@ class _LoginFormState extends State<LoginForm> {
   final _key = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  void resetform(){
-    _key.currentState?.reset();
 
-    _emailController.clear();
-    _passwordController.clear();
+  final randomNumber = Random().nextInt(2);
+  
 
+@override
+  void initState() {
+  context.read<LoginBloc>().add(const HandleUserEmail());
+
+  
+    // TODO: implement initState
+    super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
 final mediaquery = MediaQuery.of(context);
 
-    return BlocBuilder<LoginBloc, LoginState>(
-      builder: (context, state) {
-
-   return  Form(
-     key: _key,
-     child: Column(
-           mainAxisAlignment: MainAxisAlignment.start,
-
-          children: [
-            Backbutton(mediaquery, context, "/Intro"),
-            TextWidget(text: "Sign In".tr(context), size: 43),
+    return Column(
 
 
-            Padding(
-              padding: paddingSemetricHorizontal(h: 25),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Align(
-                      alignment:    Alignment.topLeft,
-                      child: Label(text: "Email", size: mediaquery.size.width/22.5)),
-                  _UsernameInput(controller: _emailController,),
-                ],
-              ),
+
+      children: [
+        Backbutton(text: IntroductionRoute(),onTap: (){
+          context.read<InputsCubit>().resetInputs();
+        },),
+        BlocBuilder<InputsCubit, InputsState>(
+      builder: (context, sta) {
+     return BlocListener<LoginBloc, LoginState>(
+  listener: (context, state) {
+    if (state is GetUserEmailState){
+      _emailController.text=state.emai;
+    }
+    // TODO: implement listener
+  },
+  child: Form(
+          key: _key,
+          child: Padding(
+            padding:EdgeInsets.only(top: mediaquery.padding.top*1.2,bottom: mediaquery.padding.bottom*1.56),
+
+            child: Center(
+              child: BlocBuilder<LoginBloc, LoginState>(
+  builder: (context, state) {
+    return Column(
+                mainAxisSize: MainAxisSize.min,
+                 mainAxisAlignment: MainAxisAlignment.start,
+
+
+                   children: [
+
+                     TextWidget(text: "Sign In".tr(context), size: 33).animate(effects: [const FadeEffect()]),
+                     Image.asset(randomNumber==0?images.hello:images.team,
+                         width: 300.w, height: 280.h, fit: BoxFit.contain).animate(effects: [const FadeEffect()]),
+                      LoginWithEmailButton(state: sta,),
+                     EmailWithText(emailController: _emailController,  inputState: sta, onTap: (String ) {
+                       context.read<LoginBloc>().add(LoginEmailnameChanged(String));
+                     },),
+                     //PhoneWithText(mediaquery: mediaquery,  state: state, inputState: sta, PhoneController: _PhoneController),
+
+                     PassWordWithText( passwordController: _passwordController, inputState: sta, onTap: (String ) {
+                       context.read<LoginBloc>().add(LoginPasswordChanged(String));
+                     }, errorText: state.password.displayError != null ? "Invalid Password" : null, labelText: 'Password',),
+                     ForgetPasswordWidget(state: sta,),
+
+
+
+                     SubmitButton(  keyConr: _key, isInprogress: state is LoadingLoginWithEmail, onTap: () {
+                       SubmitFunctions.Login(context, state, _key, () {
+                         resetForm();
+                       });
+                     }, text: 'Login', state: sta ,),
+                     Visibility(
+                         visible:sta.inputsValue==Inputs.Email,
+                         child: const Padding(padding: EdgeInsets.all(12))),
+                     GoogleButton(state: state,),
+
+                   //  const LoginWithPhoneButton(),
+
+
+                     Padding(
+                       padding: const EdgeInsets.only(top: 10),
+                       child: DontHaveAccountWidget(mediaquery, context).animate(effects: [const FadeEffect()]),
+                     )
+                   ],
+                 );
+  },
+),
             ),
-            const Padding(padding: EdgeInsets.all(12)),
-            Padding(
-              padding: paddingSemetricHorizontal(h: 25),
-              child: Column(
-                children: [
-                  Align(
-                      alignment:    Alignment.topLeft,
-                      child: Label(text: "Password".tr(context), size: mediaquery.size.width/22.5)),
-                  _PasswordInput(controller: _passwordController,),
-                  Padding(
-                    padding: paddingSemetricAll(),
-                    child: Align(
-                    alignment:  Alignment.centerRight,
-                        child: InkWell(
-                          splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            onTap: (){
-                              context.go('/forget');
-                            },
-                            child: LinkedText(text: "Forgot Password?".tr(context), size:  mediaquery.size.width/27.5))),
-                  ),
-                ],
-              ),
-            ),
+          ),
+        ),
+);
+      },
+    ),
+      ],
+    );
+  }
 
-            Padding(
-              padding: paddingSemetricVerticalHorizontal(v: 18,h: 25),
-              child: _LoginButton( _key,),
-            ),
-          divider(mediaquery),
-            Padding(
-              padding: paddingSemetricVerticalHorizontal(v: 18,h: 25),
-              child: Column(
-
-                children: [
-                  authButton(onPressed: (){
-
-                    context.read<LoginBloc>().add(SignInWithGoogleEvent());
-
-                  }, text: 'Login With Google'.tr(context), string: google),
-
-                // authButton(onPressed: (){}, text: 'Login With Facebook'.tr(context), string: facebook),
-                ],
-
-              ),
-            ),
-     Row(
-     mainAxisAlignment: MainAxisAlignment.center,
-       children: [
-      Padding(
-        padding: paddingSemetricHorizontal(h:  mediaquery.size.width/60.5),
-        child: Text("Don't have an account?".tr(context),style:PoppinsLight( mediaquery.size.width/30.5, textColorBlack),),
+  Row DontHaveAccountWidget(MediaQueryData mediaquery, BuildContext context) {
+    return Row(
+   mainAxisAlignment: MainAxisAlignment.center,
+     children: [
+    Text("Don't have an account?".tr(context),style:PoppinsLight( mediaquery.size.width/30.5, textColorBlack),),
+    InkWell(
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      radius: 10.0,
+      borderRadius: BorderRadius.circular(10.0),
+      onTap: (){
+        context.navigateTo(SignUpRoute());
+        context.read<InputsCubit>().ActivateEmail();
+      },
+      child: LinkedText(text: "SignUp".tr(context), size: mediaquery.size.width/30.5
       ),
-      InkWell(
-        highlightColor: Colors.transparent,
-        splashColor: Colors.transparent,
-        radius: 10.0,
-        borderRadius: BorderRadius.circular(10.0),
-        onTap: (){
-          context.go('/SignUp/${null}/${null}');
-        },
-        child: LinkedText(text: "SignUp".tr(context), size: mediaquery.size.width/30.5
-        ),
-      )
-       ],
-     )
-          ],
-        ),
-   );}
-    );
-  }
-  Widget _LoginButton  (
-      GlobalKey<FormState> keyConr,
-      ) {
-    return BlocBuilder<LoginBloc, LoginState>(
-      builder: (context, state) {
-        return state.status.isInProgress
-            ? const CircularProgressIndicator()
-            : Container(
-          width: double.infinity,
-          height: 66,
-          decoration: BoxDecoration(
-            color: PrimaryColor,
-
-            borderRadius: BorderRadius.circular(16.0),
-            border: Border.all(color: textColorBlack, width: 2.0),
-          ),
-          child: InkWell(
-
-
-            onTap: () {
-SubmitFunctions.Login(context, state, keyConr, () {
-  resetform();
-
-});
-
-            },
-
-            child: Center(child: Text('Login'.tr(context),
-              style: PoppinsSemiBold(18, textColorWhite, TextDecoration.none),)),
-          ),
-        );
-      },
-    );
+    )
+     ],
+   );
   }
 
-}
+  void resetForm() {
+    _key.currentState?.reset();
+    _passwordController.clear();
 
-class _UsernameInput extends StatelessWidget {
-  final TextEditingController controller;
-
-  const _UsernameInput({super.key, required this.controller});
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
-      buildWhen: (previous, current) => previous.email != current.email,
-      builder: (context, state) {
-        return FormText(inputkey: "loginForm_EmailInput_textField",
-            Onchanged:
-            (email) => context.read<LoginBloc>().add(LoginEmailnameChanged(email)),
-
-            errorText:  state.  email.displayError!=null?"Invalid Email":null, controller: controller,);
-      },
-    );
   }
-}
 
-class _PasswordInput extends StatelessWidget {
-  final TextEditingController controller;
 
-  const _PasswordInput({super.key, required this.controller});
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
-      buildWhen: (previous, current) => previous.password != current.password,
-      builder: (context, state) {
-        return FormTextPassword(inputkey: "loginForm_passwordInput_textField",
-            Onchanged: (password) =>
-                context.read<LoginBloc>().add(LoginPasswordChanged(password)),
-            errortext:
-           null, controller: controller, validator: (String ) {  },
-        );}
-    );
-  }
-}
 
 
 Widget line(double width)=> SizedBox(
 width: width, // Set a fixed width for the Divider
-child: Divider(color:ThirdColor ,thickness: 1,height: 20,),
+child: const Divider(color:ThirdColor ,thickness: 1,height: 20,),
 );
+
+}

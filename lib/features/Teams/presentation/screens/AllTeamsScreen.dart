@@ -7,12 +7,12 @@ import 'package:jci_app/core/app_theme.dart';
 
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/widgets/TeamComponent.dart';
+import 'package:jci_app/features/Teams/presentation/widgets/Team/%20component/TeamComponent.dart';
 
-import 'package:jci_app/features/Teams/presentation/widgets/TeamImpl.dart';
+import 'package:jci_app/features/Teams/presentation/widgets/Team/implementation/TeamImpl.dart';
 
+import '../../../Home/domain/enums/Privacy.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
-
 
 
 class AllTeamsScreen extends StatefulWidget {
@@ -24,12 +24,14 @@ class AllTeamsScreen extends StatefulWidget {
 
 class _AllTeamsScreenState extends State<AllTeamsScreen> {
   final _scrollController = ScrollController();
+  late GetTeamsBloc teamsBloc;
   @override
   void initState() {
+    teamsBloc = context.read<GetTeamsBloc>();
 
      context.read<GetTaskBloc>().add(resetevent());
-    context.read<GetTeamsBloc>().add(GetTeams(isPrivate: false));
-    context.read<TaskVisibleBloc>().add(changePrivacyEvent(Privacy.Primary));
+    context.read<GetTeamsBloc>().add( GetTeams(null,true,isPrivate: false));
+    context.read<TaskVisibleBloc>().add(const changePrivacyEvent(Privacy.Primary));
 
 
      _scrollController.addListener(_onScroll);
@@ -49,7 +51,7 @@ class _AllTeamsScreenState extends State<AllTeamsScreen> {
     return currentScroll >= (maxScroll * 0.9);
   }
   void _onScroll() {
-    if (_isBottom) context.read<GetTeamsBloc>().add(GetTeams(isPrivate: false));
+    if (_isBottom) context.read<GetTeamsBloc>().add( GetMoreTeams(teamsBloc.state.lastDocument,isPrivate: false));
   }
 
   @override

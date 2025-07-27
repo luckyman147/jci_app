@@ -1059,7 +1059,7 @@ export const ReminderActivity = async (language: string, email: string, activity
     <p>Cordialement,<br>
     </div>
   </div>
-    ${footer}
+
     </body>
     </html>`;
   

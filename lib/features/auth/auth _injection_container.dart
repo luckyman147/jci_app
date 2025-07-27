@@ -1,82 +1,118 @@
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get_it/get_it.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:jci_app/features/auth/data/datasources/authRemote.dart';
-import 'package:jci_app/features/auth/data/repositories/auth.dart';
-import 'package:jci_app/features/auth/domain/repositories/AuthRepo.dart';
-import 'package:jci_app/features/auth/presentation/bloc/Permissions/permissions_bloc.dart';
-
-import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
-import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
-import 'package:jci_app/features/auth/presentation/bloc/login/login_bloc.dart';
-import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
-
-
-import '../../core/network/network_info.dart';
-
-import 'data/datasources/authLocal.dart';
-
+import 'package:encrypt_shared_preferences/provider.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:jci_app/core/config/services/MemberStore.dart';
 
-import 'domain/usecases/authusecase.dart';
+import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../core/config/locale/app_localizations_delegate.dart';
+import '../../core/config/services/FCMService/FCmServi.dart';
+import '../../core/route/status/status_cubit.dart';
+import '../changelanguages/presentation/bloc/locale_cubit.dart';
+import 'data/datasources/UserAccountDataSource.dart';
+import 'data/datasources/UserStatusRemoteDataSources.dart';
+import 'data/datasources/authRemote.dart';
 
 final sl = GetIt.instance;
 
-Future <void > initAuth()async{
-  sl.registerFactory(() => ResetBloc(sl(),sl(),sl()));  sl.registerFactory(() => PermissionsBloc(sl()));
-
-sl.registerFactory(() => AuthBloc(
-     refreshTokenUseCase: sl(), signoutUseCase: sl(),
-  ));
+Future<void> initAuth() async {
+  sl.registerFactory(() => ResetBloc(sl(), sl(), sl()));
+sl.registerFactory(() => localeCubit(sl()));
+  sl.registerFactory(() => AuthBloc(
+        sl(),
+        refreshTokenUseCase: sl(),
+        signoutUseCase: sl(),
+      ));
 
   sl.registerFactory(() => SignUpBloc(
-    signUpUseCase: sl(), sendVerificationEmailUseCase: sl(), RegisterGoogleUseCase: sl(),
-  ));
-  sl.registerFactory(
-          () =>  LoginBloc(loginUseCase: sl(), googleSignUseCase: sl(),));
+        signUpUseCase: sl(),
+        sendVerificationEmailUseCase: sl(),
+      ));
+  sl.registerFactory(() => LoginBloc(
+        sl(),
+        sl(),
+        googleSignUseCase: sl(),
+      ));
 
+  sl.registerLazySingleton<AuthRemote>(
+      () => AuthRemoteImpl(sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerLazySingleton<UserStatusRemoteDataSource>(
+      () => UserStatusRemoteDataSourceImpl(sl(), sl(), auth: sl()));
+  sl.registerLazySingleton<UserAccountDataSource>(
+      () => UserAccountDataSourceImpl(sl(), sl(), sl(), auth: sl()));
 
-
-sl.registerLazySingleton<AuthRemote>(() => AuthRemoteImpl(sl(),sl (),client: sl()));
-sl.registerLazySingleton<AuthLocalDataSources>(() => AuthLocalImpl());
-
-
-
+  // Replace with your implementation
 
 //use cases
 
-  sl.registerLazySingleton(() => UpdatePasswordUseCase(authRepository: sl()));
-  sl.registerLazySingleton(() => GoogleRegisterUseCase(sl()));
+  //auth Uses Cases
   sl.registerLazySingleton(() => GoogleSignUseCase(sl()));
-  sl.registerLazySingleton(() => IsNewMemberUseCase(authRepository:  sl()));
-
-  sl.registerLazySingleton(() => SendVerifyCodeUseCases( sl()));
-  sl.registerLazySingleton(() => SendResetPasswordEmailUseCase( sl()));
-  sl.registerLazySingleton(() => CheckOtpUseCase( sl()));
+  sl.registerLazySingleton(() => LoginWithEmailUseCase(sl()));
+  sl.registerLazySingleton(() => LoginWithPhoneUseCase(sl()));
+  sl.registerLazySingleton(
+      () => RegisterWithEmailUseCase(authRepository: sl()));
+  sl.registerLazySingleton(() => SignUpWithPhoneUseCase(authRepository: sl()));
   sl.registerLazySingleton(() => SignOutUseCase(authRepository: sl()));
-  sl.registerLazySingleton(() => RefreshTokenUseCase( authRepository: sl()));
-  sl.registerLazySingleton(() => SignUpUseCase( authRepository: sl  ()));
-  sl.registerLazySingleton(() => LoginUseCase(sl()));
+  sl.registerLazySingleton(() => IsLoggedInUseCase(authRepository: sl()));
+//user account use cases
+  sl.registerLazySingleton(() => UpdatePasswordUseCase(userAccountRepo: sl()));
+  sl.registerLazySingleton(() => IsNewMemberUseCase(userStatusRepo: sl()));
+  sl.registerLazySingleton(() => GetPreviousEmailUseCase(authRepository: sl()));
+
+  sl.registerLazySingleton(() => SendVerifyCodeUseCases(sl()));
+  sl.registerLazySingleton(() => SendResetPasswordEmailUseCase(sl()));
+  sl.registerLazySingleton(() => CheckOtpUseCase(sl()));
+
+  sl.registerLazySingleton(
+      () => RefreshTokenUseCase(userAccountRepository: sl()));
 
   // Repositories
 
-sl.registerLazySingleton<AuthRepo>(() => AuthRepositoryImpl(api: sl(), networkInfo: sl(), local: sl(), ));
+  sl.registerLazySingleton<AuthRepo>(
+      () => AuthRepositoryImpl(sl(), sl(), handler: sl()));
+  sl.registerLazySingleton<UserStatusRepo>(
+      () => UserStatusRepoImpl(sl(), userStatusRemoteDataSource: sl()));
+  sl.registerLazySingleton<UserAccountRepo>(
+      () => UserAccountRepoIml(handler: sl(), userAccountDataSource: sl()));
 
   //datasources
   // Register http.Client first
 
   sl.registerLazySingleton(() => http.Client());
-  sl.registerLazySingleton(() => GoogleSignIn());
+  sl.registerLazySingleton(() => GoogleSignIn(
+        scopes: [
+          'email',
+          'https://www.googleapis.com/auth/contacts.readonly',
+          'https://www.googleapis.com/auth/calendar',
+          'https://www.googleapis.com/auth/calendar.events',
+          'https://www.googleapis.com/auth/calendar.readonly',
+          'https://www.googleapis.com/auth/calendar.events.readonly',
+        ],
+      ));
   sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+  sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
+  sl.registerLazySingleton<FirebaseStorage>(() => FirebaseStorage.instance);
+
+// Register other dependencies
+  sl.registerLazySingleton(() => InternetConnectionChecker.createInstance());
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
 
 
-
-  // Register other dependencies
-  sl.registerLazySingleton(() => InternetConnectionChecker());
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
+  sl.registerFactory(() => MemberStore(sl()));
+  final key = dotenv.env['ENCRYPTION_KEY'];
+  if (key == null) {
+    throw Exception("ENCRYPTION_KEY not found in .env");
+  }
+
+  await EncryptedSharedPreferences.initialize(key);
+  final sharedPref =  EncryptedSharedPreferences.getInstance();
+  sl.registerLazySingleton<EncryptedSharedPreferences>(() => sharedPref);
+
+  sl.registerFactory(() => LanguageCacheHelper(store: sl()));
 
   // Register SignUpRemoteDataSource with http.Client as a parameter
 

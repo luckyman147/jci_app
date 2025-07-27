@@ -15,10 +15,10 @@ class TextFieldState extends Equatable {
   List<Object> get props => [textFieldControllers];
 }
 class TextFieldInitial extends TextFieldState{
-  TextFieldInitial({required super.textFieldControllers});
+  const TextFieldInitial({required super.textFieldControllers});
 }
 class TextfieldChanged extends TextFieldState{
   final List<TextEditingController> pp;
 
-  TextfieldChanged(this.pp, {required super.textFieldControllers});
+  const TextfieldChanged(this.pp, {required super.textFieldControllers});
 }

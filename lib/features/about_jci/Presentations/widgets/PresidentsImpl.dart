@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jci_app/core/widgets/loading_widget.dart';
-import 'package:jci_app/features/Home/presentation/widgets/ErrorDisplayMessage.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/presidents_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/ShimmerEffects.dart';
 
+import '../../../Home/domain/enums/Privacy.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../Domain/entities/President.dart';
 import 'LastPresidentsWidget.dart';

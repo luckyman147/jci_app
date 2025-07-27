@@ -28,13 +28,21 @@ final class LoginPasswordChanged extends LoginEvent {
   List<Object> get props => [password];
 }
 
-final class LoginSubmitted extends LoginEvent {
-  final String email  ;
-  final String password;
-  const LoginSubmitted(this.email, this.password);
+final class LoginPhoneChanged extends LoginEvent {
+  const LoginPhoneChanged(this.phone);
+
+  final String phone;
 
   @override
-  List<Object> get props => [email, password];
+  List<Object> get props => [phone];
+}
+
+final class LoginWithEmailSubmitted extends LoginEvent {
+final LoginWithEmailDtos loginWithEmailDtos;
+  const LoginWithEmailSubmitted(this.loginWithEmailDtos);
+
+  @override
+  List<Object> get props => [loginWithEmailDtos];
 
 
 }
@@ -43,4 +51,11 @@ class ResetFormLogin extends LoginEvent {
 }
 class GetUserEvent extends LoginEvent {
   const GetUserEvent();
+}
+final class HandleUserEvent extends LoginEvent {
+
+  const HandleUserEvent();
+}
+final class HandleUserEmail extends LoginEvent{
+  const HandleUserEmail();
 }

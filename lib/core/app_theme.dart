@@ -3,8 +3,18 @@ import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
-import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
-
+mixin ColorsApp {
+static Color PrimaryColor = const Color.fromRGBO(0, 150, 215, 1);
+  static const Color SecondaryColor = Color.fromRGBO(248, 189, 0, 1);
+  static const Color backgroundColored = Color.fromRGBO(255, 252, 255, 1);
+  static const Color dotscolor = Color.fromRGBO(210, 210, 210, 1);
+  static const Color ThirdColor = Color.fromRGBO(125, 125, 125, 1);
+  static const Color textColorBlack = Color.fromRGBO(0, 0, 0, 1);
+  static const Color BackWidgetColor = Color.fromRGBO(243, 243, 243, 1);
+  static const Color textColor = Color.fromRGBO(194, 194, 194, 1);
+  static const Color textColorWhite = Color.fromRGBO(255, 255, 255, 1);
+}
+class AppTheme with ColorsApp{}
 const PrimaryColor = Color.fromRGBO(0, 150, 215, 1);
 const SecondaryColor = Color.fromRGBO(248, 189, 0, 1);
 const backgroundColored = Color.fromRGBO(255, 252, 255, 1);
@@ -21,8 +31,8 @@ TextStyle PoppinsSemiBold(double size,Color color,TextDecoration decoration) => 
 TextStyle PoppinBold(double size,Color color,TextDecoration decoration) => GoogleFonts.poppins(fontWeight: FontWeight.bold,fontSize: size,color: color,decoration: decoration,decorationColor: PrimaryColor);
 TextStyle ErrorStyle(double size,Color color) => GoogleFonts.poppins(fontWeight: FontWeight.w600,fontSize: size,color: color);
 OutlineInputBorder border(Color color)=> OutlineInputBorder(
-  borderRadius: BorderRadius.circular(16.0),
-  borderSide: BorderSide(color: color,width: 3 ),
+  borderRadius: BorderRadius.circular(10.0),
+  borderSide: BorderSide(color: color,width: 2 ),
 );
 final   taskdex=BoxDecoration(
   color: Colors.white,
@@ -47,12 +57,15 @@ EdgeInsetsGeometry paddingSemetricVerticalHorizontal ({double h=8,double v=8})=>
 
 
 
-InputDecoration decorationTextField(String? errorText)=> InputDecoration(
+InputDecoration decorationTextField(String? errorText,String hintText,BuildContext context)=> InputDecoration(
+
+    hintText:  "${"Enter".tr(context)} ${hintText.tr(context).toLowerCase()}",
+    hintStyle: PoppinsRegular(17, ColorsApp.ThirdColor),
     enabledBorder: border(textColorBlack) ,
     focusedBorder: border(PrimaryColor),
     errorBorder: border(Colors.red),
     focusedErrorBorder: border(Colors.red),
-    errorStyle: ErrorStyle(18, Colors.red),
+    errorStyle: ErrorStyle(14, Colors.red),
     errorText:errorText
 
 );
@@ -60,20 +73,20 @@ InputDecoration decorationTextField(String? errorText)=> InputDecoration(
 
 final memberdeco= BoxDecoration(
 
-    borderRadius: BorderRadius.circular(16.0),
+    borderRadius: BorderRadius.circular(10.0),
     border: Border.all(
       color: ThirdColor,
-      width: 3,
+      width: 2,
     ));
 final ActivityDecoration=  BoxDecoration(
 
-borderRadius:  BorderRadius.only(
-bottomLeft: Radius.circular(43),
+borderRadius:  const BorderRadius.only(
+bottomLeft: Radius.circular(23),
 bottomRight: Radius.circular(20),
 topLeft: Radius.circular(15),
 topRight: Radius.circular(15),
 ),
-border: Border.all(color: BackWidgetColor, width: 1.0),
+border: Border.all(color: ColorsApp.textColorBlack, width: 2.0),
 color: textColorWhite,
 
 );
@@ -94,11 +107,11 @@ ButtonStyle styleFrom(bool isActive) {
 
     shadowColor: SecondaryColor.withOpacity(.3),
     splashFactory: InkRipple.splashFactory,
-    surfaceTintColor: isActive?PrimaryColor:BackWidgetColor,
-    side: BorderSide(color: BackWidgetColor, width: 2),
-    fixedSize: Size(120, 40),
+    surfaceTintColor: isActive?PrimaryColor:ColorsApp.BackWidgetColor,
+    side: const BorderSide(color: BackWidgetColor, width: 2),
+    fixedSize: const Size(120, 40),
     elevation: 0,
-    backgroundColor: isActive?PrimaryColor:textColorWhite,
+    backgroundColor: isActive?PrimaryColor:ColorsApp.BackWidgetColor,
 
     shape: RoundedRectangleBorder(
 
@@ -117,7 +130,7 @@ final taskDecoration=BoxDecoration(
         color: textColorBlack.withOpacity(.1),
         spreadRadius: 1,
         blurRadius: 2,
-        offset: Offset(0, 1), // changes position of shadow
+        offset: const Offset(0, 1), // changes position of shadow
       ),
     ]);
 
@@ -133,11 +146,11 @@ final shadowDecoration=BoxDecoration(
         color: Colors.grey.withOpacity(0.5),
         spreadRadius: 5,
         blurRadius: 17,
-        offset: Offset(0, 5), // changes position of shadow
+        offset: const Offset(0, 5), // changes position of shadow
       ),
     ]
 );
-final ActivityRaduis=BorderRadius.only(
+const ActivityRaduis=BorderRadius.only(
 
   topLeft: Radius.circular(15),
   topRight: Radius.circular(15),
@@ -154,14 +167,23 @@ ThemeData themeData = ThemeData(
   primaryColor: PrimaryColor,
 scaffoldBackgroundColor:backgroundColored ,
 canvasColor: backgroundColored,
-  textTheme: TextTheme(
+  textTheme: const TextTheme(
 
   ),
 );
 
+
+final gradient=  LinearGradient(
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    colors: [ColorsApp.PrimaryColor,PrimaryColor,const Color(0xffF2F2F2),const Color(0xffF2F2F2),const Color(0xffF2F2F2),const Color(0xffF2F2F2)],
+    stops: const [0.1,0.3,0.5,0.7,0.9,1]
+
+  );
+
 InputDecoration inputDecoration (mediaQuery,bool isempty,BuildContext context )=> InputDecoration(
   errorText:isempty ?"Empty Field":null,
-  prefixIcon: Icon(
+  prefixIcon: const Icon(
     Icons.search,
     color: textColor,
   ),

@@ -1,54 +1,42 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
+import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 
+import '../../../../../core/config/env/urls.dart';
+import '../../../../../core/config/services/store.dart';
 import '../../../../../core/config/services/verification.dart';
 import '../../../../../core/error/Exception.dart';
 import "package:http/http.dart" as http;
-Future<Unit> leaveActivity(String id,http.Client client ,String geturl) async{
-  final tokens=await getTokens();
-  try {
-    final Response = await client.delete(
-      Uri.parse("$geturl/$id/deleteParticipant"),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${tokens[1]}',
-      },
-    );
 
-    if (Response.statusCode == 200) {
-      return Future.value(unit);
-    } else if (Response.statusCode == 400) {
-      throw AlreadyParticipateException();
-    } else {
-      throw EmptyDataException();
-    }}catch(e){
-    throw ServerException();
-  }
-}
-Future<Unit> ParticiActivity(String id,http.Client client ,String geturl) async{
-  final tokens=await getTokens();
-  debugPrint(tokens.toString());
+import '../../../domain/enums/ParticipantWithEvents.dart';
 
+class ActivityRemoteDataSource {
+  final Store store;
 
-  final Response = await client.post(
-    Uri.parse("$geturl/$id/addParticipant"),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${tokens[1]}',
-    },
+  ActivityRemoteDataSource({required this.store});
 
-  );
-
-  if (Response.statusCode == 200) {
-    return Future.value(unit);
-  } else if (Response.statusCode == 400) {
-    throw AlreadyParticipateException();
-
-  }
-  else if (Response.statusCode == 401) {
-    throw UnauthorizedException();
-  }
-  else {
-    throw EmptyDataException();
+  Future<Unit> ParticiActionActivity(
+      String Eventid, PaticipantWithEventsAction action) async {
+    try {
+      final userId = await store.getUserId();
+      Logger().i('ParticiActionActivity: $Eventid');
+      Logger().i('ParticiActionActivity: $userId');
+      final url =
+          '${Urls.mainurl}/${action.name}?eventId=$Eventid&memberId=$userId';
+      final response = await http.post(Uri.parse(url));
+      if (response.statusCode == 200) {
+        Logger().i('ParticiActionActivity: $response');
+        return Future.value(unit);
+      } else if (response.statusCode == 400) {
+        throw WrongCredentialsException();
+      } else {
+        Logger().e('ParticiActionActivity: ${response.body}');
+        throw NotVerifiedException();
+      }
+    } catch (e) {
+      Logger().e('ParticiActionActivity: $e');
+      throw ServerException();
+    }
   }
 }

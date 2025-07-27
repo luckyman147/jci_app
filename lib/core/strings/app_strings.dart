@@ -65,7 +65,10 @@ const englishFlag="""
 const FrenshFlag="""
 <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--twemoji" preserveAspectRatio="xMidYMid meet" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="#ED2939" d="M36 27a4 4 0 0 1-4 4h-8V5h8a4 4 0 0 1 4 4v18z"></path><path fill="#002495" d="M4 5a4 4 0 0 0-4 4v18a4 4 0 0 0 4 4h8V5H4z"></path><path fill="#EEE" d="M12 5h12v26H12z"></path></g></svg>
 """;
+const helloImage="""
 
+
+""";
 
 const EventIcon="""<svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M26.7084 29.7H3.33855V11.55H26.7084M21.7006 0V3.3H8.34638V0H5.00783V3.3H3.33855C1.50235 3.3 0 4.785 0 6.6V29.7C0 30.5752 0.351739 31.4146 0.977839 32.0335C1.60394 32.6523 2.45311 33 3.33855 33H26.7084C28.5613 33 30.047 31.5315 30.047 29.7V6.6C30.047 5.72479 29.6952 4.88542 29.0691 4.26655C28.443 3.64768 27.5938 3.3 26.7084 3.3H25.0391V0M13.1539 18.15H7.12781L12.0021 21.6315L10.1492 27.324L15.0235 23.8095L19.8978 27.324L18.0282 21.648L22.9025 18.15H16.8931L15.0235 12.474L13.1539 18.15Z" fill="#7D7D7D"/>

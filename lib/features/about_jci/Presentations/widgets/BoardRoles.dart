@@ -33,7 +33,7 @@ class _BoardRolesDropButtonState extends State<BoardRolesDropButton> {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height/3, // Adjust the height as per your requirement
-      padding: EdgeInsets.all(12.0),
+      padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.0),
       ),
@@ -56,12 +56,12 @@ class _BoardRolesDropButtonState extends State<BoardRolesDropButton> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: DottedBorder(
-                      radius: Radius.circular(10),
+                      radius: const Radius.circular(10),
                       dashPattern: const [21, 17, 21, 17],
                       color: textColor,
                       strokeWidth: 1,
                       borderType: BorderType.RRect,
-                      child: Center(
+                      child: const Center(
                         child: Icon(Icons.add, color: textColor, size: 50,),
                       ),
                     ),
@@ -91,7 +91,6 @@ class _BoardRolesDropButtonState extends State<BoardRolesDropButton> {
 
         onTap: () {
         JCIFunctions.  ChangeRoleFunction(state, role, context);
-          ;
 
         },
         child: BoardComponents.CardComponet(JCIFunctions. isSelected(state, role) , role, context,role.name),

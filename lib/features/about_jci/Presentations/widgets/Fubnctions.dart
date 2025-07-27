@@ -3,30 +3,23 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
-import 'package:jci_app/features/MemberSection/presentation/widgets/ProfileComponents.dart';
 import 'package:jci_app/features/about_jci/Domain/entities/BoardRole.dart';
 import 'package:jci_app/features/about_jci/Domain/useCases/BoardUseCases.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/BoardBloc/boord_bloc.dart';
 
 import 'package:jci_app/features/about_jci/Presentations/bloc/Board/YearsBloc/years_bloc.dart';
-import 'package:jci_app/features/about_jci/Presentations/widgets/BoardComponents.dart';
-import 'package:jci_app/features/about_jci/Presentations/widgets/BoardImpl.dart';
-import 'package:jci_app/features/about_jci/Presentations/widgets/PresComponents.dart';
-import 'package:jci_app/features/about_jci/Presentations/widgets/PresWidgets.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/PresidentsImpl.dart';
 
 
 
+import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/util/snackbar_message.dart';
 
-import '../../../MemberSection/presentation/widgets/functionMember.dart';
 import '../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import '../../../auth/domain/entities/Member.dart';
-import '../../Domain/entities/Post.dart';
+import '../../../../core/Member.dart';
 import '../../Domain/entities/President.dart';
 import '../bloc/presidents_bloc.dart';
-import '../screens/AddUpdatePresidentsPage.dart';
 
 
 class JCIFunctions {
@@ -110,7 +103,7 @@ class JCIFunctions {
       context.read<YearsBloc>().add(ChangeRoleEvent(role: role));
     }
     else{
-      context.read<YearsBloc>().add(ChangeRoleEvent(role: null));
+      context.read<YearsBloc>().add(const ChangeRoleEvent(role: null));
     }
   }
   static   bool isSelected(YearsState state, BoardRole role) => state.newrole['role']!=null&& state.newrole['role'] .id == role.id;
@@ -147,7 +140,7 @@ class JCIFunctions {
   }
 
 static   void update( TaskVisibleState state, BuildContext context, TextEditingController name, President? presidents, PresidentsAction action,GlobalKey<FormState> form,ActionJciState ste) {
-  if ( !form.currentState!.validate() || ste.year == null || ste.year.isEmpty){
+  if ( !form.currentState!.validate() || ste.year.isEmpty){
     SnackBarMessage.showErrorSnackBar(message: "Something  Empty", context: context);
 
   }
@@ -155,10 +148,10 @@ static   void update( TaskVisibleState state, BuildContext context, TextEditingC
   if (action == PresidentsAction.Add) {
 
 
-    final President president = President(name: name.text, year: ste.year, CoverImage: state.image, id: '');
+    final President president = President(name: name.text, year: ste.year, CoverImage: state.images[0], id: '');
     context.read<PresidentsBloc>().add(CreatePresident(president));
   } else if (action == PresidentsAction.Update) {
-    final President president = President(name: name.text, year: ste.year, CoverImage: state.image, id: presidents!.id);
+    final President president = President(name: name.text, year: ste.year, CoverImage: state.images[0], id: presidents!.id);
 
     context.read<PresidentsBloc>().add(UpdatePresident(president));
   }}
@@ -177,7 +170,7 @@ static ListenerBoard(BuildContext context, YearsState state, BoordState ste){
 
     SnackBarMessage.showSuccessSnackBar(
         message: ste.message, context: context);
-    context.read<YearsBloc>().add(ChangeCloneYear(year:""));
+    context.read<YearsBloc>().add(const ChangeCloneYear(year:""));
 
   }
   else if (ste.state == BoardStatus.Removed) {
@@ -199,8 +192,8 @@ static ListenerBoard(BuildContext context, YearsState state, BoordState ste){
   }
 
 }
-static bool isExist(Member member,Map<String, dynamic> map){
-    if (map['member'] == null || map['member'] is! Member || member.id == null) {
+static bool isExist(User member,Map<String, dynamic> map){
+    if (map['member'] == null || map['member'] is! Member) {
       return false;
     }
     return member.id == (map['member'] as Member).id;

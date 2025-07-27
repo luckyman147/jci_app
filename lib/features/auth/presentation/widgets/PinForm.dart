@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jci_app/features/auth/presentation/widgets/Components.dart';
 
-import '../../../../core/app_theme.dart';
 import '../bloc/bool/toggle_bool_bloc.dart';
+import 'Inputs/PinWidget.dart';
 
 class PinForm extends StatelessWidget {
-   PinForm({Key? key, required this.controller1, required this.formKey,  required this.size, required this.isenabled}) : super(key: key);
+   const PinForm({Key? key, required this.controller1, required this.formKey,  required this.size, required this.isenabled}) : super(key: key);
    final TextEditingController controller1 ;
+
 
   final GlobalKey<FormState> formKey ;
   final double size;
@@ -22,19 +21,19 @@ final bool isenabled ;
       child: Form(
         key: formKey,
         child:
-  AuthComponents.    NumberInput(context,
+      NumberInput(onChanged:
           (String value) {
-        if  (value.isEmpty){
-          context.read<ToggleBooleanBloc>().add(ChangeIscompleted(isCompleted: false));
+        if  (value.isEmpty || value.length < 6) {
+          context.read<ToggleBooleanBloc>().add(const ChangeIscompleted(isCompleted: false));
 
         }
 
-        if (value.length == 6||value.length == 5) {
-          context.read<ToggleBooleanBloc>().add(ChangeIscompleted(isCompleted: true));
+        if (value.length == 6) {
+          context.read<ToggleBooleanBloc>().add(const ChangeIscompleted(isCompleted: true));
 
             }
           }
-      ,controller1,size,isenabled),),
+      , controller: controller1, size: size, isEnabled: isenabled,),),
     );
   }
 

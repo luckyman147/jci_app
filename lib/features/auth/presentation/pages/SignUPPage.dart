@@ -1,20 +1,20 @@
 
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
 
 import 'package:jci_app/features/auth/presentation/widgets/SignUpForm.dart';
 
-import '../../../../core/util/snackbar_message.dart';
 import '../../../../core/widgets/loading_widget.dart';
 
 
 
 import '../bloc/bool/toggle_bool_bloc.dart';
+import '../widgets/Functions/Listeners.dart';
 
-
+@RoutePage()
 class SignUpPage extends StatefulWidget {
 
 final String? email;
@@ -42,24 +42,7 @@ class _SignUpPageState extends State<SignUpPage> {
         padding: const EdgeInsets.all(12),
         child: BlocConsumer<SignUpBloc, SignUpState>(
           listener: (context, state) {
-            if (state.signUpStatus ==SignUpStatus. Loading){
-
-            }
-            if (state.signUpStatus ==SignUpStatus. EmailSuccessState){
-              SnackBarMessage.showSuccessSnackBar(message: state.message, context: context);
-
-            }
-
-            if (state.signUpStatus ==SignUpStatus. RegisterGoogle) {
-
-SnackBarMessage.showSuccessSnackBar(message: state.message, context: context);
-context.go('/login');
-            }
-            else if (state.signUpStatus ==SignUpStatus. ErrorSignUp) {
-
-              SnackBarMessage.showErrorSnackBar(message: state.message, context: context);
-            }
-
+            ListenerSignUpFunctionsBlocs.      listenerBloc(state, context);
 
           },
           builder: (context, state) {
@@ -76,4 +59,6 @@ context.go('/login');
       ),
     );
   }
+
+
 }

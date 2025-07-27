@@ -1,22 +1,19 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
-import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/about_jci/Domain/entities/President.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/presidents_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/BoardComponents.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/Fubnctions.dart';
-import 'package:jci_app/features/about_jci/Presentations/widgets/PresWidgets.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/dialogs.dart';
 
-import '../../../../core/util/snackbar_message.dart';
-import '../../../Home/presentation/widgets/AddActivityWidgets.dart';
-import '../../../MemberSection/presentation/widgets/ProfileComponents.dart';
+import '../../../../core/widgets/CommonTextField.dart';
+import '../../../Home/domain/enums/ActionImage.dart';
+import '../../../Home/presentation/widgets/Activity/AddActivityWidgets.dart';
 
 class AddUpdatePage extends StatefulWidget {
   final President? president;
@@ -75,7 +72,7 @@ final ScrollController controller = ScrollController();
               Row(
                 children: [
                   BackButton(color: Colors.black,onPressed: (){
-                    context.read<TaskVisibleBloc>().add(ChangeImageEvent(""));
+                    context.read<TaskVisibleBloc>().add(const ChangeImageEvent("",ActionImage.DELETE));
                     context.read<ActionJciCubit>().changeYear("");
 
                     Navigator.pop(context);
@@ -85,7 +82,7 @@ final ScrollController controller = ScrollController();
               ),
 
           //    ProfileComponents.imagezChanged(state.image,MediaQuery.of(context),context),
-              TextfieldNormal(context,"${"President".tr(context)} ${"Name".tr(context)}", "${"Enter".tr(context)} ${"Presidents".tr(context)}  ${"Name".tr(context)}",name,(poo){}),
+              TextfieldNormal(name: "${"President".tr(context)} ${"Name".tr(context)}",hintText:  "${"Enter".tr(context)} ${"Presidents".tr(context)}  ${"Name".tr(context)}",controller: name,onChanged: (poo){}),
              buildAddyear(context, ste),
       //add Select Year
           //  PresWidgets.yearForm(ste.year, context, mounted, controller),

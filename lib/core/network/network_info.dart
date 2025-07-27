@@ -1,5 +1,4 @@
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:mockito/mockito.dart';
 
 abstract class NetworkInfo {
   Future<bool> get isConnected;

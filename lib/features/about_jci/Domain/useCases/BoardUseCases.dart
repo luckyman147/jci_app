@@ -5,7 +5,6 @@ import 'package:jci_app/features/about_jci/Domain/Repository/BoardRepo.dart';
 
 import '../entities/BoardRole.dart';
 import '../entities/BoardYear.dart';
-import '../entities/Post.dart';
 
 class getYearsUseCase extends UseCase<List<String>, NoParams> {
   final BoardRepo boardRepo;

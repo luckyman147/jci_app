@@ -8,7 +8,7 @@ import '../models/TeamModel.dart';
 
 
 abstract class TeamLocalDataSource {
-  Future<List<TeamModel>> getAllCachedTeams(CacheStatus cacheStatus);
+  Future<List<TeamModel>?> getAllCachedTeams(CacheStatus cacheStatus);
 
 
 
@@ -29,12 +29,12 @@ class TeamLocalDataSourceImpl implements TeamLocalDataSource{
 
 
   @override
-  Future<List<TeamModel>> getAllCachedTeams(CacheStatus cache) async {
+  Future<List<TeamModel>?> getAllCachedTeams(CacheStatus cache) async {
     final Teams=await TeamStore.getCachedTeams(cache);
     if (Teams.isNotEmpty) {
       return Teams;
     } else {
-      throw EmptyCacheException();
+      return null;
     }
   }
 

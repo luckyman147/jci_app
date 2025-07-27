@@ -1,7 +1,7 @@
 import express, { Response } from "express";
 import multer from "multer";
 import { addCheck, deleteChecklist, updateChecklistName, updateIsCompletedChecklist } from "../../controllers/teams/ChecklistController";
-import { GetTaskById, GetTasksOFTeam, addComment, addTask, deleteComment, deleteFile, deleteTask, updateComment, updateDeadline, updateFiles, updateIsCompleted, updateMembers, updateTask, updateTaskName } from "../../controllers/teams/taskController";
+import { GetTaskById, GetTasksOFTeam, addComment, addTask, deleteComment, deleteFile, deleteTask, getFile, updateComment, updateDeadline, updateFiles, updateIsCompleted, updateMembers, updateTask, updateTaskName } from "../../controllers/teams/taskController";
 import { AddTeam, GetTeams, JoinTeam, UpdateTeamMembers, addMember, deleteTeam, getTeamById, getTeamByName, updateImage, updateTeam, uploadTeamImage } from "../../controllers/teams/teamsController";
 import { Authenticate, AuthenticateAdmin } from "../../middleware/CommonAuth";
   interface CustomResponse extends Response {
@@ -53,5 +53,5 @@ router.delete('/checklist/:checklistid',deleteChecklist)
 router.put('/:taskid/UpdateCheckStatus/:checkid',updateIsCompletedChecklist)
 router.put('/:taskid/UpdateCheckName/:checkid',updateChecklistName)
 router.post('/:idTask/Checklist',addCheck)// create a a checklist
-
+router.get('/file/:fileId',getFile);
 export { router as TeamRoute };

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:jci_app/core/widgets/loading_widget.dart';
 
 class LoadingDialog extends StatelessWidget {
+  const LoadingDialog({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return const Dialog(
       backgroundColor: Colors.transparent,
       elevation: 0,
       child: Center(

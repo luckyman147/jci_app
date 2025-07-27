@@ -1,0 +1,12 @@
+specVersion: "v1beta"
+serviceId: "jci-app-e8e4c"
+location: "europe-west8"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "postgres"
+      cloudSql:
+        instanceId: "y"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]

@@ -1,55 +1,99 @@
+import 'package:jci_app/features/Home/Activity_Global.dart';
+import 'package:jci_app/features/Home/domain/entities/ParticipantDetailsParam.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 
+import '../../../domain/entities/Activitys/ActivityBasics.dart';
+import '../../../domain/entities/Activitys/ActivitySettings.dart';
+import '../../../domain/entities/Activitys/OnlineSettings.dart';
+import '../../../domain/entities/Activitys/ParicipationStatus.dart';
 import '../../../domain/entities/training.dart';
 
-part 'TrainingModel.g.dart';
-@JsonSerializable()
-class TrainingModel extends Training{
+import 'package:jci_app/core/PrimitiveUser/UserModel.dart';
+import 'package:json_annotation/json_annotation.dart';
+import '../../../domain/entities/Activitys/Activity.dart';
 
-  TrainingModel({required super.id,  required super.name, required super.description,
-    required super.ActivityBeginDate, required super.ActivityEndDate, required super.ActivityAdress, required super.ActivityPoints,
-    required super.categorie, required super.IsPaid, required super.price, required super.Participants, required super.CoverImages, required super.Duration,
-    required super.ProfesseurName, required super.IsPart,   });
+class TrainingModel extends Training {
 
-  factory TrainingModel.fromEntity(Training train)=>
-  TrainingModel(
-    id: train.id,
-    name: train.name,
-    description: train.description,
-    ActivityBeginDate: train.ActivityBeginDate,
-    ActivityEndDate: train.ActivityEndDate,
-    ActivityAdress: train.ActivityAdress,
-    ActivityPoints: train.ActivityPoints,
-    categorie: train.categorie,
-    IsPaid: train.IsPaid,
-    price: train.price,
-    Participants: train.Participants,
-    CoverImages: train.CoverImages,
-    Duration: train.Duration,
-    ProfesseurName: train.ProfesseurName,
-    IsPart: train.IsPart,
+  TrainingModel({
+    required super.professeurName,
+    required super.duration,
+    required super.activityBasics,
+    required super.settings,
+    required super.online,
+    required super.participation,
+  });
 
-  );
-
-  factory TrainingModel.fromJson(Map<String, dynamic> json) {
+  // Factory constructor to create TrainingModel from Training entity
+  factory TrainingModel.fromEntity(Training train) {
     return TrainingModel(
-      id: json['id'] ?? json['_id'], // Use _id if id is null
-      name: json['name'],
-      description: json['description'],
-      ActivityBeginDate: json['ActivityBeginDate'] != null ? DateTime.parse(json['ActivityBeginDate']) : DateTime.parse(json['ActivityBegindate']),
-      ActivityEndDate: json['ActivityEndDate'] != null ? DateTime.parse(json['ActivityEndDate']) : DateTime.parse(json['ActivityEnddate']),
-      ActivityAdress: json['ActivityAdress'],
-      ActivityPoints: json['ActivityPoints'],
-      categorie: json['categorie'],
-      IsPaid: json['IsPaid'],
-      price: json['price'],
-      Participants: json['Participants'] != null ? (json['Participants'] as List<dynamic>).map((e) => e as String).toList() :(json['participants'] as List<dynamic>).toList(),
-      CoverImages: json['CoverImages'] != null ? (json['CoverImages'] as List<dynamic>).map((e) => e as String).toList() : (json['coverImages'] as List<dynamic>).map((e) => e as String).toList(),
-      Duration: json['Duration'],
-      ProfesseurName: json['ProfesseurName'],
-      IsPart: json['IsPart'],
+      professeurName: train.professeurName,
+      duration: train.duration,
+      activityBasics: train.activityBasics,
+      settings: train.settings,
+      online: train.online,
+      participation: train.participation,
     );
   }
-  Map<String, dynamic> toJson() => _$TrainingModelToJson(this);
+
+  // Factory constructor to set images for the training
+  factory TrainingModel.SetImages(TrainingModel train, List<String> images) {
+    return TrainingModel(
+      professeurName: train.professeurName,
+      duration: train.duration,
+      activityBasics: train.activityBasics.copyWith(coverImages: images), // Assuming copyWith method exists
+      settings: train.settings,
+      online: train.online,
+      participation: train.participation,
+    );
+  }
+
+  // Factory constructor to create TrainingModel from JSON
+  factory TrainingModel.fromJson(Map<String, dynamic> json, {bool isDecode = false}) {
+    return TrainingModel(
+      professeurName: (json['professeurName']), // Assuming UserModel handles the conversion
+      duration: json['duration'],
+      activityBasics: ActivityBasics.fromJson(json['activityBasics']),
+      settings: ActivitySettings.fromJson(json['settings']),
+      online: OnlineSettings.fromJson(json['online']),
+      participation: ParticipationStatus.fromJson(json['participation']),
+    );
+  }
+
+  // Convert from Activity to TrainingModel
+  TrainingModel fromActivity(Activity acr) {
+    return TrainingModel(
+      professeurName: (acr as Training).professeurName,
+      duration: acr.duration,
+      activityBasics: acr.activityBasics,
+      settings: acr.settings,
+      online: acr.online,
+      participation: acr.participation,
+    );
+  }
+
+  // Convert the model to JSON
+  Map<String, dynamic> toJson({bool isDecode = false}) {
+    return {
+      'professeurName': professeurName, // Assuming UserModel has toJson method
+      'duration': duration,
+      'activityBasics': activityBasics.toJson(),
+      'settings': settings.toJson(),
+      'online': online.toJson(),
+      'participation': participation.toJson(),
+    };
+  }
+
+  // Copy method with updated participants list
+  TrainingModel copywith(List<String> parts) {
+    return TrainingModel(
+      professeurName: professeurName,
+      duration: duration,
+      activityBasics: activityBasics, // Assuming copyWith exists in ActivityBasics
+      settings: settings,
+      online: online,
+      participation: participation.copyWith(participants: parts), // Assuming copyWith exists in ParticipationStatus
+    );
+  }
 }
+

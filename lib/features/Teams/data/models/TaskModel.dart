@@ -1,59 +1,47 @@
-import 'package:jci_app/features/Teams/domain/entities/Checklist.dart';
-import 'package:jci_app/features/Teams/domain/entities/Task.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:jci_app/features/Teams/domain/entities/task/Task.dart';
 
-import '../../domain/entities/Comment.dart';
+import '../../domain/entities/task/TaskCommunication.dart';
+import '../../domain/entities/task/TaskContent.dart';
+import '../../domain/entities/task/TaskMeta.dart';
 import 'CheckListModel.dart';
 import 'CommentsModel.dart';
-import 'FileModel.dart';
 
-@JsonSerializable()
+
+
 class TaskModel extends Tasks{
-  TaskModel({required super.name, required super.AssignTo,
-    required super.Deadline, required super.attachedFile, required super.CheckLists, required super.isCompleted, required super.id, required super.StartDate, required super.description, required super.comments});
+  TaskModel({required super.meta, required super.content, required super.communication});
 
   factory TaskModel.fromJson(Map<String, dynamic> json) =>
-      TaskModel(
-    comments: json['comments'] == null
-        ? []
-        : (json['comments'] as List<dynamic>).map((e) => CommentModel.fromJson(e as Map<String, dynamic>)).toList().cast(),
-        name: json['name'] as String,
-        AssignTo:   json['AssignTo'] == null ? [] : (json['AssignTo'] as List<dynamic>)
-           ,
+    TaskModel(
+      meta: TaskMeta.fromJson(json['meta'] as Map<String, dynamic>),
+      content: TaskContent.fromJson(json['content'] as Map<String, dynamic>),
+      communication: TaskCommunication.fromJson(json['communication'] as Map<String, dynamic>),
 
-        Deadline: json['Deadline'] != null  ?  json['Deadline'].runtimeType!=DateTime  ?     DateTime.parse(json['Deadline']) :json["Deadline"]: DateTime.now() ,
-        attachedFile:
-        json['attachedFile'] == null ? [] : (json['attachedFile'] as List<dynamic>)
-            .map((e) => FileModel.fromJson(e as Map<String, dynamic>))
-            .toList(),
+  );
 
-
-        isCompleted: json['isCompleted'] as bool,
-        id: json['id'] !=null? json['id'] as String : json['_id'] as String,
-
-
-        StartDate: json['StartDate'] != null ?  json["StartDate"].runtimeType!=DateTime?       DateTime.parse(json['StartDate']):json['StartDate'] : DateTime.now(),
-        description: json['description'] != null ? json['description'] as String : "",
-        CheckLists: json['CheckList'] == null ? [] :
-
-
-        (json['CheckList'] as List<dynamic>)
-            .map((e) => CheckListModel.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
-
+  @override
   Map<String, dynamic> toJson() => {
-    'name': name,
-    'AssignTo': AssignTo,
-    'Deadline': Deadline.toIso8601String(),
-    'attachedFile': attachedFile,
-    'CheckList': CheckLists,
-    'isCompleted': isCompleted,
-
-
-
-    'id': id,
-    'StartDate': StartDate.toIso8601String(),
-    'description': description,
+    'meta': meta.toJson(),
+    'content': content.toJson(),
+    'communication': communication.toJson(),
   };
+
+  //to entity
+  Tasks toEntity() {
+    return Tasks(
+      meta: meta,
+      content: content,
+      communication: communication,
+    );
+  }
+  // to json with only name and id
+ static Map<String, dynamic> toJsonWithNameAndId(String name) {
+    return {
+      'meta': TaskMeta.empty(name).toJson(),
+      'content':  TaskContent.empty().toJson(),
+      'communication': TaskCommunication.empty().toJson(),
+    };
+
+  }
+
 }

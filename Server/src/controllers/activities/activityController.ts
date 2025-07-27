@@ -73,11 +73,14 @@ export const GetActivityByid= async (req: Request, res: Response, next: NextFunc
       activity.Participants[memberIndex].status = status;
       if (member){
         if (status === 'absent' && member && member.Points >= activity.ActivityPoints) {
+          member.PreviousPoints=member.Points
           member.Points -= activity.ActivityPoints;
           await member.save();
           sendAbsenceEmail(member.language, member.email, activity.name);
         } else if (status === 'present' && member) {
           console.log("ddddd")
+        member.PreviousPoints=member.Points
+
           member.Points += activity.ActivityPoints;
           await member.save();
           sendPresenceEmail(member.language, member.email, activity.name, activity.ActivityPoints);

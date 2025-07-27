@@ -5,8 +5,8 @@ enum FirstnameValidationError { empty, tooShort, tooLong }
 class Firstname extends FormzInput<String, FirstnameValidationError> {
   const Firstname.pure() : super.pure('');
   const Firstname.dirty([super.value = '']) : super.dirty();
-  static final _minLength = 6;
-  static final _maxLength = 20;
+  static const _minLength = 6;
+  static const _maxLength = 20;
   @override
   FirstnameValidationError? validator(String value) {
     if (value.isEmpty) return FirstnameValidationError.empty;

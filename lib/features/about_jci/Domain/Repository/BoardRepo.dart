@@ -3,7 +3,6 @@ import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/features/about_jci/Domain/entities/BoardYear.dart';
 
 import '../entities/BoardRole.dart';
-import '../entities/Post.dart';
 
 abstract class BoardRepo {
   //getters

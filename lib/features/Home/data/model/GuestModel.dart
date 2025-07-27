@@ -1,4 +1,4 @@
-import '../../domain/entities/Guest.dart';
+import '../../domain/entities/guest/Guest.dart';
 
 class GuestModel extends Guest{
   GuestModel({required super.id, required super.name, required super.email, required super.phone, required super.isConfirmed});

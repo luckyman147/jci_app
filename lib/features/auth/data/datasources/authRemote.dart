@@ -1,408 +1,296 @@
-import 'dart:convert';
-import 'dart:developer';
-
-
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:jci_app/core/PrimitiveUser/UserModel.dart';
+import 'package:jci_app/features/auth/data/models/Member/AuthUserModel.dart';
+import 'package:jci_app/features/auth/domain/dtos/LoginWithEmailDto.dart';
+import 'package:jci_app/features/auth/domain/dtos/LoginWithPhoneDto.dart';
+import 'package:jci_app/features/auth/domain/dtos/SignInDtos.dart';
+import 'package:logger/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/core/config/services/TeamStore.dart';
-import 'package:jci_app/features/auth/data/models/Member/AuthModel.dart';
 
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:jci_app/core/config/env/urls.dart';
 
 import 'package:jci_app/core/config/services/store.dart';
 import 'package:jci_app/core/error/Exception.dart';
 
+import '../../../../core/config/services/FCMService/FCmServi.dart';
+import '../../../../core/config/services/permissionService/PermissionsStore.dart';
 
-import 'package:http/http.dart' as http;
+abstract class AuthRemote {
+  Future<Unit> signOut(bool value);
 
-import '../../../../core/config/services/verification.dart';
-import '../../../../core/error/Failure.dart';
-import '../../domain/entities/Member.dart';
-import '../models/MemberSIgnUP/MerberSignUp.dart';
+  Future<Unit> signInWithGoogle();
 
-abstract class  AuthRemote {
-  Future<bool>  signOut(bool value);
-  Future<Either<Failure, MemberModel>> sendPasswordResetEmail(String email);
-  Future<Either<Failure, MemberModel>> verifyEmail();
-  Future<Unit> updatePassword(MemberModel member);
-  Future<Unit> refreshToken();
-Future<User?> signInWithGoogle();
-Future<Unit> RegisterInWithGoogle(MemberModel memberModelGoogleSignUp);
-  Future<Unit> Login(String email,String password);
-  Future<Unit> SendVerificationEmail(String email,bool isReset);
+  Future<Unit> RegisterWithEmail(SignInDtos signin);
 
-  Future<Unit> signUp(MemberModel memberModelSignUp);
+  Future<Unit> RegisterWithPhone(SignInDtos signin);
 
+  Future<Unit> logInWithEmail(LoginWithEmailDtos login);
+
+  Future<Unit> logInWithPhone(LoginWithPhoneDtos login);
 }
+
 class AuthRemoteImpl implements AuthRemote {
+  final Logger logger;
+  final SecurePermissionStore permissionStore;
+  final MemberStore memberStore;
+  final FirebaseFirestore db = FirebaseFirestore.instance;
 
-final http.Client client;
+  final FirebaseAuth auth;
+  final Store store;
+  final FSMToken fsmToken;
+  final GoogleSignIn googleSignIn;
 
-final FirebaseAuth auth ;
-final GoogleSignIn googleSignIn ;
-  AuthRemoteImpl(this.auth, this.googleSignIn,  {required this.client});
-
-
-
-
-  Future<Unit> refreshToken() async {
-
-    final tokens=await Store.GetTokens();
-
-    // replace with your actual access token
-
-    try {
-      final Response = await client.post(
-        Uri.parse(RefreshTokenUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${tokens[0]}'
-
-        },
-
-      );
-
-      if (Response.statusCode == 200) {
-        final Map<String, dynamic> response = jsonDecode(Response.body);
-
-
-
-        Store.setTokens( response['refreshToken'],response['accessToken'] );
-        return Future.value(unit);
-      } else {
-        // Request failed
-      //  print('Request failed with status: ${Response.statusCode}');
-
-        throw ExpiredException();
-      }
-    } catch (e) {
-
-
-    throw ServerException();
-    }}
-
-
-  @override
-  Future<bool> signOut(value)async {
-  final tokens=await Store.GetTokens();
-
-
-
-
-
-
-    // replace with your API endpoint
-    final  accessToken =  tokens[1]; // replace with your actual access token
-
-    try {
-      final Response = await client.post(
-        Uri.parse(LogoutUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken',
-        },
-        body: jsonEncode({
-          'refreshToken': '${tokens[0]}', // replace with your actual refresh token
-        }),
-      );
-      if (value){
-        await googleSignIn.signOut();
-        await auth.signOut();
-      }
-
-      if (Response.statusCode == 200) {
-        final Map<String, dynamic> response = jsonDecode(Response.body);
-       await  Store.clear();
-      await   MemberStore.clearModel();
-     await    Store.setLoggedIn(false);
-     await TeamStore.clearCache();
-        return true;
-      } else  if (Response.statusCode == 400 ) {
-         return false;
-      }
-      else {
-
-        await    Store.setLoggedIn(false);
-
-        throw ServerException();
-      }
-    } catch (e) {
-      // Exception occurred during the request
-
-      await    Store.setLoggedIn(false);
-
-      throw UnauthorizedException()  ;
-
-
-
-
-  }}
-
-  @override
-  Future<Unit> updatePassword(MemberModel member)async {
-
-  final body=jsonEncode(member.toJson());
-
-    final Response = await client.patch(
-      Uri.parse(ForgetPasswordUrl),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: body,
-    );
-
-    if (Response.statusCode == 200) {
-      final Map<String, dynamic> response = jsonDecode(Response.body);
-
-      return Future.value(unit);
-    }
-    else if (Response.statusCode==401){
-        throw WrongCredentialsException();
-    }
-
-    else {
-
-      throw ServerException();
-    }
-  }
-
-  @override
-  Future<Either<Failure, MemberModel>> verifyEmail() {
-    // TODO: implement verifyEmail
-    throw UnimplementedError();
-  }
-
-
-
-
-
-
-  @override
-  Future<Either<Failure, MemberModel>> sendPasswordResetEmail(String email) {
-    // TODO: implement sendPasswordResetEmail
-    throw UnimplementedError();
-  }
-
-
-
-Future<Unit> Login(String email,String password) async {
-
-
-
-
-
-
-
-  final Response = await client.post(
-    Uri.parse(LoginUrl),
-    headers: {"Content-Type": "application/json"},
-    body: jsonEncode({"email":email,"password":password}),
+  AuthRemoteImpl(
+    this.auth,
+    this.googleSignIn,
+    this.logger,
+    this.store,
+    this.permissionStore,
+    this.memberStore,
+    this.fsmToken,
   );
 
-
-  final response = jsonDecode(Response.body);
-
-  if (Response.statusCode == 200) {
-
-
-
-await MemberStore.saveModel(MemberModel.fromJson(response['member']));
-    await Store.setTokens(response['refreshToken'],response['accessToken'] );
-
-    await Store.setLoggedIn(true);
-
-    List<String> stringList = (response['Permissions'] as List).map((element) => element.toString()).toList();
-    await Store.setPermissions(stringList);
-    await MemberStore.saveModel(MemberModel.fromJson(response['member']));
-    return Future.value(unit);
-
-
-
-
-
-
-
-
-
-  } else if (Response.statusCode == 400) {
-    throw WrongCredentialsException();
-  } else {
-    throw ServerException();
-  }
-}
-
-@override
-Future<Unit> signUp(MemberModel memberModelSignUp)async {
-
-  final body = jsonEncode(memberModelSignUp.toJson());
-  final Response=await client.post(
-    Uri.parse(SignUpUrl),
-
-    headers: {"Content-Type": "application/json"},
-
-    body: body,);
-
-
-
-  if (Response.statusCode == 201) {
-
-    return Future.value(unit);
-  } else if (Response.statusCode==400){
-
-
-    throw ServerException();
-  }
-  else if (Response.statusCode==409){
-
-
-    throw IsEmailException();
-  }
-  else{
-
-    throw ServerException();
-  }
-
-}
-Map<String, dynamic> filterMap(Map<String, dynamic> user) {
-  return user.containsKey('constraints')  ? user : {};
-}
-
   @override
-  Future<Unit> SendVerificationEmail(String email,bool isReset) async {
-    try{
-    final Response = await client.post(
-      Uri.parse(isReset?Urls.ResetPassword: Urls.mailVerify),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"email": email,}),
-    );
+  Future<Unit> signOut(bool value) async {
+    try {
+      await permissionStore.removePermissions();
+      if (value) {
+        await googleSignIn.signOut();
+      }
 
+      await auth.signOut();
 
-    final Map<String,dynamic> response  = jsonDecode(Response.body);
+      await store.clear();
+      await memberStore.clearModel();
+      await store.setLoggedIn(false);
+      await TeamStore.clearCache();
 
-    if (Response.statusCode == 200) {
-      log(response.toString());
-      final  otp = response['otp'];
-      log(otp.toString());
-      await Store.setOtp(otp.toString());
       return Future.value(unit);
-    }
-    else if (Response.statusCode == 400) {
-      throw WrongCredentialsException();
-    }
-    else if (Response.statusCode == 404) {
-      throw WrongCredentialsException();
-    }
-
-
-    else {
-      throw ServerException();
+    } catch (e) {
+      await store.setLoggedIn(false);
+      throw AlreadyLogoutException();
     }
   }
-  catch(e){
-    log(e.toString());
-    throw ServerException();
-    }}
+
+  Map<String, dynamic> filterMap(Map<String, dynamic> user) {
+    return user.containsKey('constraints') ? user : {};
+  }
 
   @override
-  Future<User?> signInWithGoogle()async  {
-    final GoogleSignInAccount? googleSignInAccount =
-        await googleSignIn.signIn();
-    if (googleSignInAccount != null) {
-      final GoogleSignInAuthentication googleSignInAuthentication =
-      await googleSignInAccount.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
+  Future<Unit> signInWithGoogle() async {
+    try {
+      await googleSignIn.signOut();
+
+      logger.i("Starting Google Sign-In process.");
+
+      final GoogleSignInAccount? googleSignInAccount =
+          await googleSignIn.signIn();
+
+      if (googleSignInAccount != null) {
+        logger.i("Google account obtained: ${googleSignInAccount.email}");
+
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+        logger.i(
+            "Google account obtained: ${googleSignInAuthentication.accessToken}");
+
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+        logger.i("Google account obtained: ${googleSignInAccount.email}");
+
+        // Sign in with credential
+        final UserCredential authResult =
+            await auth.signInWithCredential(credential);
+        final User? user = authResult.user;
+
+        logger.i("User signed in: ${user?.email}");
+
+        // Check if user exists in Firestore
+        final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user?.uid)
+            .get();
+
+        if (userDoc.exists) {
+          logger.i("User already exists in Firestore.");
+          await SaveInCache(db, user!);
+          return Future.value(unit); // User already exists, return the user
+        } else {
+          logger.i("User does not exist in Firestore, creating new user.");
+          await RegisterInWithGoogle(db);
+          await SaveInCache(db, user!);
+          return Future.value(unit); // Return the newly created user
+        }
+      } else {
+        logger.e("Google Sign-In was unsuccessful.");
+        throw ServerException();
+      }
+    } catch (e) {
+      await googleSignIn.signOut();
+      await auth.signOut();
+      logger.e("Error during Google Sign-In: $e");
+      throw ServerException(); // Rethrow the error after logging it
+    }
+  }
+
+  @override
+  Future<Unit> RegisterWithEmail(SignInDtos signin) async {
+    try {
+      await auth.createUserWithEmailAndPassword(
+        email: signin.member!.email.trim(),
+        password: signin.member!.password.trim(),
       );
-      final UserCredential authResult =
-      await auth.signInWithCredential(credential);
 
-      final User? user = authResult.user;
+      final authuser = AuthUserModel.fromEntity(signin.member!);
+      await RegisterInUSer(authuser, db);
 
-
-      final Response = await client.post(
-        Uri.parse(LoginGoogleUrl),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"email":user!.email,}),
-      );
-
-
-      final response = jsonDecode(Response.body);
-
-      if (Response.statusCode == 200) {
-
-
-
-
-        await Store.setTokens(response['refreshToken'],response['accessToken'] );
-
-        await Store.setLoggedIn(true);
-
-        List<String> stringList = (response['Permissions'] as List).map((element) => element.toString()).toList();
-        await Store.setPermissions(stringList);
-        await Store.setStatus(true);
-        await MemberStore.saveModel(MemberModel.fromJson(response['member']));
-
-        return null;
-
-      } else if (Response.statusCode == 400 && response['status'].toString().toUpperCase()=="NTR") {
-        await Store.setStatus(false);
-        return user;
+      return Future.value(unit);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        throw AlreadyParticipateException();
       } else {
         throw ServerException();
       }
-
-
-  }
-    else {
+    } catch (e) {
       throw ServerException();
     }
-
   }
 
   @override
-  Future<Unit> RegisterInWithGoogle(MemberModel memberModelGoogleSignUp)async {
-
-    final body = jsonEncode(memberModelGoogleSignUp.toJson());
-    final Response=await client.post(
-      Uri.parse(SignUpGoogleUrl),
-
-      headers: {"Content-Type": "application/json"},
-
-      body: body,);
-
-
-    final response = jsonDecode(Response.body);
-
-    if (Response.statusCode == 201) {
-      await MemberStore.saveModel(MemberModel.fromJson(response['member']));
-      await Store.setTokens(response['refreshToken'],response['accessToken'] );
-      await Store.setLoggedIn(true);
-
-      List<String> stringList = (response['Permissions'] as List).map((element) => element.toString()).toList();
-      await Store.setPermissions(stringList);
-      await Store.setStatus(true);
-
-
-      return Future.value(unit);
-    } else if (Response.statusCode==400){
-
-
-      throw ServerException();
-    }
-    else if (Response.statusCode==409){
-
-
-      throw IsEmailException();
-    }
-    else{
-
-      throw ServerException();
-    }
-
+  RegisterWithPhone(SignInDtos signin) {
+    // TODO: implement RegisterWithPhone
+    throw UnimplementedError();
   }
 
+  @override
+  Future<Unit> logInWithEmail(LoginWithEmailDtos login) async {
+    try {
+      UserCredential userCredential = await auth.signInWithEmailAndPassword(
+        email: login.email,
+        password: login.password,
+      );
+
+      await SaveInCache(db, userCredential.user!);
+
+      return Future.value(unit);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        throw NotFoundException();
+      } else if (e.code == 'wrong-password') {
+        throw WrongVerificationException();
+      } else {
+        logger.e("Error during email login: $e");
+        rethrow;
+      }
+    } catch (e) {
+      logger.e("Error during email login: $e");
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<Unit> logInWithPhone(LoginWithPhoneDtos login) async {
+    return Future.value(unit);
+  }
+
+  Future<Unit> RegisterInUSer(
+      AuthUserModel memberModelGoogleSignUp, FirebaseFirestore db) async {
+    final body = memberModelGoogleSignUp.toJson();
+    //collect user id from firebase
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    final sto = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid)
+        .set(body);
+    //update id
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .update({'id': user.uid});
+
+    return Future.value(unit);
+  }
+
+  Future<void> SaveInCache(FirebaseFirestore db, User user) async {
+    // Create a logger instance
+
+    logger.i('Start saving user to cache'); // Log the beginning of the function
+
+    DocumentSnapshot userDoc = await db.collection('users').doc(user.uid).get();
+    final userJson =
+        AuthUserModel.fromJson(userDoc.data() as Map<String, dynamic>);
+
+    await store.SetEmail(user.email!);
+
+    if (userJson.role != null) {
+      await store.setRole(userJson.role!);
+      fsmToken.getFcmToken(FirebaseMessaging.instance);
+
+      // logger.i('User saved to cache',userJson.role!.path); // Log the end of the function
+      await store.setLoggedIn(true);
+      await store.setFirstEntry();
+      logger.w("helklol");
+
+      await store.setUserId(user.uid);
+      await memberStore.savePrimitiveModel(UserModel.fromEntity(userJson));
+      // Log setting logged in flag
+    } else {
+      throw NotFoundException();
+    }
+    // Log setting logged in flag
+  }
+
+  Future<void> RegisterInWithGoogle(FirebaseFirestore db) async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    logger.i("User signed in: ${user?.email}");
+    final language = await store.getLocaleLanguage();
+
+    final UserGoogle = AuthUserModel.ofGoogle(
+        email: user!.email!,
+        displayName: user.displayName!,
+        language: language!,
+        photoUrl: user.photoURL!,
+        role: await getRoleReferenceByName("Member"),
+        id: user.uid);
+
+    final body = UserGoogle.toJson();
+    //collect user id from firebase
+    logger.i("User sqs in: $body");
+
+    final userRef =
+        FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+// Set the initial document
+    await userRef.set(body);
+
+// Update the document to include the `id` field
+    await userRef.update({'id': userRef.id});
+
+    // update user id in firestore
+  }
+
+  Future<DocumentReference?> getRoleReferenceByName(String roleName) async {
+    // Query the roles collection to find the document with the specified roleName
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection("roles")
+        .where("roleName", isEqualTo: roleName)
+        .limit(1) // Limit to 1 since roleName is expected to be unique
+        .get();
+
+    // Check if any documents were found
+    if (querySnapshot.docs.isNotEmpty) {
+      // Return the DocumentReference of the found role
+      return querySnapshot.docs.first.reference;
+    } else {
+      // No document found with the specified roleName
+      return null;
+    }
+  }
 }

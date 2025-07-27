@@ -13,7 +13,7 @@ final TypeDelete typeDelete;
 
 final Map<String,dynamic> member;
 final int pageNum;
-   ActionJciState({ this.action=PresidentsAction.Initial,this.year='',this.cloneYear='',this.member=const {}, this.pageNum=0,
+   const ActionJciState({ this.action=PresidentsAction.Initial,this.year='',this.cloneYear='',this.member=const {}, this.pageNum=0,
    this.typeDelete=TypeDelete.Board,
    });
   ActionJciState copyWith({PresidentsAction? action,String? year,String? cloneYear,Map<String,dynamic>? member,int? pageNum,

@@ -5,14 +5,14 @@ abstract class TimelineEvent extends Equatable {
 }
 class initTimeline extends TimelineEvent {
   final Map<String,dynamic> timelines;
-  initTimeline( this.timelines);
+  const initTimeline( this.timelines);
   @override
   List<Object> get props => [timelines];
 }
 class onStartDateChanged extends TimelineEvent{
   final DateTime startdate;
 
-  onStartDateChanged({required this.startdate});
+  const onStartDateChanged({required this.startdate});
 
   @override
   // TODO: implement props
@@ -21,7 +21,7 @@ class onStartDateChanged extends TimelineEvent{
 class onEndDateDateChanged extends TimelineEvent{
   final DateTime enddate;
 
-  onEndDateDateChanged({required this.enddate});
+  const onEndDateDateChanged({required this.enddate});
 
   @override
   // TODO: implement props

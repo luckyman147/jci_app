@@ -1,193 +1,238 @@
-import 'dart:async';
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:jci_app/features/Home/domain/entities/Activity.dart';
-import 'package:jci_app/features/Home/domain/usercases/MeetingsUseCase.dart';
+import 'package:jci_app/core/config/services/store.dart';
+import 'package:jci_app/features/Home/data/model/TrainingModel/TrainingModel.dart';
+import 'package:jci_app/features/Home/data/model/events/EventModel.dart';
+import 'package:jci_app/features/Home/data/model/meetingModel/MeetingModel.dart';
+import 'package:jci_app/features/Home/domain/Dtos/ActivityParam.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/Activity.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
-import 'package:jci_app/features/Home/presentation/widgets/Functions.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
+import 'package:jci_app/features/Home/presentation/widgets/Functions/Functions.dart';
+import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 
-import '../../../../../../../core/config/services/verification.dart';
-import   '../../../../../../../core/error/Failure.dart';
+import '../../../../../../../core/error/Failure.dart';
 import '../../../../../../../core/strings/failures.dart';
 import '../../../../../../../core/usescases/usecase.dart';
-import '../../../../../domain/entities/Event.dart';
-import '../../../../../domain/entities/Meeting.dart';
-import '../../../../../domain/entities/training.dart';
+import '../../../../../domain/entities/Category.dart';
+import '../../../../../domain/enums/ActivityEnum.dart';
 import '../../../../../domain/usercases/ActivityUseCases.dart';
-import '../../../../../domain/usercases/EventUseCases.dart';
-import '../../../../../domain/usercases/TrainingUseCase.dart';
-import '../formzBloc/formz_bloc.dart';
+
 part 'acivity_f_event.dart';
-
-
-
 
 part 'acivity_f_state.dart';
 
 class AcivityFBloc extends Bloc<AcivityFEvent, AcivityFState> {
-
-final GetActivityByIdUseCases getActivityByIdUseCases;
-  final GetEventsOfTheMonthUseCase getEventsOfTheMonthUseCase;
-  final GetTrainingsOfTheMonthUseCase getTrainingsOfTheMonthUseCase;
-final GetActivityByNameUseCases getActivityByNameUseCases;
+  final GetActivityByIdUseCases getActivityByIdUseCases;
+  final GetAllActivitiesUseCases getEventsOfTheMonthUseCase;
+  final GetActivityByNameUseCases getActivityByNameUseCases;
   final ParticpantsBloc participantBloc;
+  final Store store;
   final GetAllActivitiesUseCases getAllActivitiesUseCases;
-
-  AcivityFBloc({required  this.getTrainingsOfTheMonthUseCase,
-    required  this.getActivityByNameUseCases,
-
-    required  this.participantBloc,
-    required this.getActivityByIdUseCases,
-    required  this.getEventsOfTheMonthUseCase,
-
-    required this.getAllActivitiesUseCases
-
-
-
-
-  }) : super(AcivityFInitial()) {
+  final ParticipateActivityUseCases participateActivityUseCases;
+  final LeaveActivityUseCases leaveActivityUseCases;
+  AcivityFBloc(
+      this.participateActivityUseCases, this.leaveActivityUseCases, this.store,
+      {required this.getActivityByNameUseCases,
+      required this.getEventsOfTheMonthUseCase,
+      required this.participantBloc,
+      required this.getActivityByIdUseCases,
+      required this.getAllActivitiesUseCases})
+      : super(const AcivityFInitial()) {
     on<AcivityFEvent>((event, emit) {
       // TODO: implement event handler
     });
     on<GetActivitiesOfMonthEvent>(_getActivityOfMonth);
-on<RefreshActivities>(refresh);
-on<GetActivitiesByid>(_getActivityByid);
-on<GetAllActivitiesEvent>(_getAllActivities);
-on<SearchTextChanged>(SearchCat);
-on<GetActivitiesByName>(_getActivityByName);
+    on<RefreshActivities>(refresh);
+    on<GetActivitiesByid>(_getActivityByid);
+    on<GetAllActivitiesEvent>(_getAllActivities);
+    on<AddParticipantEvent>(_AddParticipent);
+    on<RemoveParticipantEvent>(_RemoveParticipent);
+    on<GetActivitiesByName>(_getActivityByName);
   }
-  void refresh(
-      RefreshActivities event ,
-      Emitter<AcivityFState> emit
-      ) {
-
-
-
-      add(GetActivitiesOfMonthEvent(act: event.act));
+  void refresh(RefreshActivities event, Emitter<AcivityFState> emit) {
+    add(GetActivitiesOfMonthEvent(act: event.act));
     add(GetAllActivitiesEvent(act: event.act));
-
-
   }
 
   void _getActivityByid(
-      GetActivitiesByid event,
-      Emitter<AcivityFState> emit
+      GetActivitiesByid event, Emitter<AcivityFState> emit) async {
+    emit(state.copyWith(activityfetchState: ActivityFetchState.Loading));
 
-      )async {
-    emit(ActivityLoadingState());
+    final failureOrEvents = await getActivityByIdUseCases(event.params);
 
-    final failureOrEvents= await getActivityByIdUseCases(event.params);
-    emit(_mapFailureActivityId(failureOrEvents));
+    emit(_mapSuccessFailureActivity(failureOrEvents, (act) {
+      return state.copyWith(
+          activityById: act,
+          activityfetchState: ActivityFetchState.ActivityByIdLoaded);
+    }));
   }
 
   void _getAllActivities(
-      GetAllActivitiesEvent event,
-      Emitter<AcivityFState> emit
+      GetAllActivitiesEvent event, Emitter<AcivityFState> emit) async {
+    emit(state.copyWith(activityfetchState: ActivityFetchState.Loading));
 
-      )async {
-    emit(ActivityLoadingState());
+    final failureOrEvents = await getAllActivitiesUseCases(event.act);
 
-      final failureOrEvents= await getAllActivitiesUseCases(event.act);
-
-      emit(_mapFailureOrActivityToState(failureOrEvents));
-
-
-
-  }
-void _getActivityByName(
-    GetActivitiesByName event,
-      Emitter<AcivityFState> emit
-
-      )async {
-    emit(ActivityLoadingState());
-
-    final failureOrEvents= await getActivityByNameUseCases(event.params);
-    emit(_mapFailureOrActivityToState(failureOrEvents));
+    emit(_mapSuccessFailureActivity(failureOrEvents, (act) {
+      return state.copyWith(
+          activities: act,
+          activityfetchState: ActivityFetchState.ActivityLoaded,
+          activitiesSearch: act);
+    }));
   }
 
-void _getActivityOfMonth(
-      GetActivitiesOfMonthEvent event,
-      Emitter<AcivityFState> emit
+  void _getActivityByName(
+      GetActivitiesByName event, Emitter<AcivityFState> emit) async {
+    emit(state.copyWith(activityfetchState: ActivityFetchState.Loading));
 
-      )async {
+    final failureOrEvents = await getActivityByNameUseCases(event.params);
+    emit(_mapSuccessFailureActivity(
+        failureOrEvents,
+        (act) => state.copyWith(
+            activitiesSearch: act,
+            activityfetchState: ActivityFetchState.ActivityLoaded)));
+  }
 
-    if (event.act==activity.Events){
-
-      final failureOrEvents= await getEventsOfTheMonthUseCase(NoParams());
-      emit(_mapFailureOrActivityMonthToState(failureOrEvents));
-
-
+  void _getActivityOfMonth(
+      GetActivitiesOfMonthEvent event, Emitter<AcivityFState> emit) async {
+    if (
+        [ActivityFetchState.ACtivityLoadedMonth,ActivityFetchState.ActivityLoaded,].contains(state.activityfetchState ) && state.activities.isNotEmpty) {
+      emit(state.copyWith(
+          activityfetchState: ActivityFetchState.ACtivityLoadedMonth));
+      return;
     }
-    else if (event.act==activity.Trainings){
+    else {
+    emit(state.copyWith(activityfetchState: ActivityFetchState.Loading));
 
+    final failureOrEvents = await getEventsOfTheMonthUseCase(event.act);
+    emit(_mapSuccessFailureActivity(
+        failureOrEvents,
+        (act) {
+          Logger ().i("Activity of the month loaded: ${act.length}");
+         return  state.copyWith(
+            activities: act,
+            activityfetchState: ActivityFetchState.ACtivityLoadedMonth,
+            activitiesSearch: act);}));
+  }}
 
-      final failureOrEvents= await getAllActivitiesUseCases(event.act);
-      emit(_mapFailureOrActivityMonthToState(failureOrEvents));
+  void _AddParticipent(
+      AddParticipantEvent event, Emitter<AcivityFState> emit) async {
+    // TODO: search events by id
+    emit(state.copyWith(
+        activityfetchState: ActivityFetchState.LoadingButton,
+        eventid: event.act.Eventid));
+    final result = await participateActivityUseCases(event.act);
+    final user = await store.getUserId();
+    emit(_mapSuccessFailureActivity(result, (act) {
+      final activitys = state.activities
+          .firstWhere((element) => element.activityBasics.id == event.act.Eventid);
+      final index = state.activities
+          .indexWhere((element) => element.activityBasics.id == event.act.Eventid);
+      final activitiesPartcipants = activitys.participation.participants;
+      activitiesPartcipants.add(user ?? "");
+      return CopyActivity(event.act.type, activitys, activitiesPartcipants,
+          index, ActivityFetchState.Participate);
+    }));
+  }
 
+  AcivityFState CopyActivity(
+      activity type,
+      Activity activitys,
+      List<String> activitiesPartcipants,
+      int index,
+      ActivityFetchState status) {
+    if (type == activity.Trainings) {
+      return TRainingPartcipantFun(
+          activitys, activitiesPartcipants, index, status);
     }
-    else if (event.act==activity.Meetings){
-      emit(ActivityLoadingState());
-
-      final failureOrEvents= await getAllActivitiesUseCases(event.act);
-      emit(_mapFailureOrActivityMonthToState(failureOrEvents));
+    if (type == activity.Meetings) {
+      return MeetingPOartFun(activitys, activitiesPartcipants, index, status);
+    } else {
+      return EventPartFun(activitys, activitiesPartcipants, index, status);
     }
-}
-
-
-
-
-
-
-
-
-
-AcivityFState _mapFailureOrActivityToState(Either<Failure, List<Activity>> either) {
-    return either.fold(
-          (failure) => ErrorActivityState(message: mapFailureToMessage(failure)),
-          (act) {
-
-            participantBloc.add(initstateList(act: ActivityAction.mapObjects(act))); log("eee"+participantBloc.state.toString());
-            return ActivityLoadedState(
-       activitys: act,
-      );}
-    );
   }
 
-  AcivityFState _mapFailureOrActivityMonthToState(Either<Failure, List<Activity>> either) {
-    return either.fold(
-          (failure) => ErrorActivityState(message: mapFailureToMessage(failure)),
-          (act) => ActivityLoadedMonthState(
-       activitys: act,
-      ),
-    );
-  }AcivityFState _mapFailureActivityId(Either<Failure, Activity>either) {
-    return either.fold(
-          (failure) => ErrorActivityState(message: mapFailureToMessage(failure)),
-          (act) => ACtivityByIdLoadedState(
-       activity: act,
-      ),
-    );
-  }
-void SearchCat(SearchTextChanged event,Emitter<AcivityFState>emit ) async {
-
-
-    emit(SearchLoading());
-
-        final categories = _filterCategories(event.searchText);
-       emit( SearchLoaded(categories));
-     if (categories.isEmpty)
-        emit(SearchError("not found"));
-
-
+  AcivityFState EventPartFun(
+      Activity activitys,
+      List<String> activitiesPartcipants,
+      int index,
+      ActivityFetchState status) {
+    EventModel eventModel = (activitys as EventModel).fromActivity(activitys);
+    EventModel event = eventModel.copyWith(activitiesPartcipants);
+    state.activities[index] = event;
+    final cState = status;
+    return state.copyWith(
+        eventid: "",
+        activities: state.activities,
+        activityfetchState: cState,
+        activitiesSearch: state.activities);
   }
 
-  List<Category> _filterCategories(String searchText) {
+  AcivityFState MeetingPOartFun(
+      Activity activitys,
+      List<String> activitiesPartcipants,
+      int index,
+      ActivityFetchState status) {
+    MeetingModel meeting = (activitys as MeetingModel).fromActivity(activitys);
+    MeetingModel newMeeting = meeting.copywith(activitiesPartcipants);
+    state.activities[index] = newMeeting;
+    final cState = status;
 
-    return Category.values.where((category) => category.name.contains(searchText)).toList();
+    return state.copyWith(
+        activities: state.activities,
+        activityfetchState: cState,
+        activitiesSearch: state.activities,
+        eventid: "");
+  }
+
+  AcivityFState TRainingPartcipantFun(
+      Activity activitys,
+      List<String> activitiesPartcipants,
+      int index,
+      ActivityFetchState status) {
+    TrainingModel training =
+        (activitys as TrainingModel).fromActivity(activitys);
+
+    TrainingModel newTraining = training.copywith(activitiesPartcipants);
+    state.activities[index] = newTraining;
+    final cState = status;
+    return state.copyWith(
+        activities: state.activities,
+        activityfetchState: cState,
+        activitiesSearch: state.activities,
+        eventid: "");
+  }
+
+  void _RemoveParticipent(
+      RemoveParticipantEvent event, Emitter<AcivityFState> emit) async {
+    emit(state.copyWith(
+        activityfetchState: ActivityFetchState.LoadingButton,
+        eventid: event.act.Eventid));
+
+    final result = await leaveActivityUseCases(event.act);
+    final user = await store.getUserId();
+    emit(_mapSuccessFailureActivity(result, (act) {
+      final activitys = state.activities
+          .firstWhere((element) => element.activityBasics.id == event.act.Eventid);
+      final index = state.activities
+          .indexWhere((element) => element.activityBasics.id == event.act.Eventid);
+      final activitiesPartcipants = activitys.participation.participants;
+      activitiesPartcipants.remove(user);
+
+      return CopyActivity(event.act.type, activitys, activitiesPartcipants,
+          index, ActivityFetchState.Left);
+    }));
+  }
+
+  AcivityFState _mapSuccessFailureActivity<T>(
+      Either<Failure, T> either, Function(T) onSuccess) {
+    return either.fold(
+        (failure) => state.copyWith(
+            errorMessage: mapFailureToMessage(failure),
+            activityfetchState: ActivityFetchState.Error),
+        (act) => onSuccess(act));
   }
 }

@@ -1,0 +1,1 @@
+enum SearchType { All,Name }

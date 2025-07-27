@@ -10,6 +10,7 @@ import { Member } from '../models/Member';
 import { Role } from '../models/role';
 import { CheckObjectif } from '../utility/objectifcheck';
 import { findroleByid, getActivitiesInfo, getBoardRole, getFilesInfoByIds, getMeetingsInfo, getRank, getteamsInfo, getTrainingInfo } from '../utility/role';
+import { ExtractMembersInfo } from './AuthController';
 
 
 //& Verify email
@@ -99,8 +100,9 @@ if (profile){
 
 
             const updated=await profile.save()
+            const info = await ExtractMembersInfo(updated);
             if(updated){
-                return res.status(200).json({message:'profile updated'})
+                return res.status(200).json(info)
             }
             return res.status(400).json({message:'error with profile'})
         }
@@ -142,8 +144,9 @@ export const updateImageProfile = async (req: Request, res: Response, next: Next
   
       // Save the team
       const saveduser = await user.save();
+      const info = await ExtractMembersInfo(saveduser);
   
-      res.status(200).json(saveduser);
+      res.status(200).json(info);
     }
     else{
         
@@ -200,6 +203,7 @@ export const getMembersWithRank=async(req:Request,res:Response)=>{
                     email: member.email,
                     Images:await getFilesInfoByIds(member.Images),
                     Points: member.Points,
+                    PreviousPoints:member.PreviousPoints
               
 
                 }))
@@ -248,3 +252,4 @@ export const getMemberWithHighestRank=async(req:Request,res:Response)=>{
   }
 
 }
+

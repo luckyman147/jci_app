@@ -3,9 +3,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:formz/formz.dart';
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
-import 'package:jci_app/features/auth/domain/usecases/authusecase.dart';
 
 
 
@@ -14,6 +11,8 @@ import '../../../../../core/strings/failures.dart';
 import '../../../data/models/formz/Email.dart';
 import '../../../data/models/formz/cPassword.dart';
 import '../../../data/models/formz/password.dart';
+import '../../../domain/dtos/ResetpasswordDtos.dart';
+import '../../../domain/usecases/UserAccountUsesCases.dart';
 
 
 part 'reset_event.dart';
@@ -31,7 +30,9 @@ class ResetBloc extends Bloc<ResetEvent, ResetPasswordState> {
 
   }
 
-
+void _resetError(ResetErrorEvent event, Emitter<ResetPasswordState> emit) {
+  emit(state.copyWith(status: ResetPasswordStatus.initial));
+}
 
 
 final UpdatePasswordUseCase updatePasswordUseCase;
@@ -52,7 +53,7 @@ try{
   void CheckOtp(CheckOtpEvent event, Emitter<ResetPasswordState> emit) async {
     try{
       emit(state.copyWith(status: ResetPasswordStatus.loading));
-      final failureOrDoneMessage = await checkOtpUseCase.call(event.otp);
+      final failureOrDoneMessage = await checkOtpUseCase.call(event.checkOTPDtos);
       emit(_eitherVerifiedMessageOrErrorState(failureOrDoneMessage, 'OTP Verified Successfully'));
     }catch(e){
       emit(state.copyWith(status: ResetPasswordStatus.error, message: e.toString()));
@@ -106,7 +107,7 @@ try{
     emit(
       state.copyWith(
         confirmPassword: cpassword,
-        isValid: state.password.isValid && state.email.isValid
+        isValid: state.password.isValid && state.confirmPassword.isValid
       ),
     );
   }
@@ -120,8 +121,9 @@ try{
 
         try {
 
+          emit(state.copyWith(status: ResetPasswordStatus.loading));
 
-          final failureOrDoneMessage = await updatePasswordUseCase.call(event.member);
+          final failureOrDoneMessage = await updatePasswordUseCase(event.member);
 
 
 
@@ -162,7 +164,7 @@ try{
     );
   }
 
-  ResetPasswordState _eitherVerifiedMessageOrErrorState(Either<Failure, bool> failureOrDoneMessage, String s) {
+  ResetPasswordState _eitherVerifiedMessageOrErrorState(Either<Failure, Unit> failureOrDoneMessage, String s) {
     return failureOrDoneMessage.fold(
             (failure) => state.copyWith(status: ResetPasswordStatus.error
           ,

@@ -28,14 +28,7 @@ export  const FindMember=async(id:string |undefined ,email?:string)=>{
 
 
 //TODO change role
-export const changeRole=async( req:Request,res:Response,nex:NextFunction)=>{
-const admin=req.member
-if (admin){
- const   roleChanged=req.body
- const role=findrole(roleChanged)
-}
 
-}
 
 
 //* get members
@@ -103,18 +96,7 @@ const id=req.params.id
     }
 
 //? create role
-    export const createRole=async (req:Request,res:Response,next:NextFunction) => {
-        const admin=req.member
-        const {name,description}=<CreateRoleInput>req.body
-        if  (admin){
-        const newRole = await Role.create({ name: name,description:description});
-        if (newRole) {
-          return res.status(201).json(newRole);
-        }
-        return res.status(400).json({ message: "something went wrong" });
-    }
 
-    }
 //find members by name
 export const searchByName = async (req: Request, res: Response,next:NextFunction)=>{
     const admin=req.member
@@ -173,6 +155,7 @@ console.log(id)
         }
         const member=await Member.findById(id)
         if (member){
+            member.PreviousPoints=member.Points
         
             member.Points=validateAction.Points
        

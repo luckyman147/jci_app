@@ -1,13 +1,12 @@
 import 'package:dartz/dartz.dart';
-import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/core/usescases/usecase.dart';
-import 'package:jci_app/features/Home/domain/entities/Activity.dart';
-import 'package:jci_app/features/Home/domain/entities/ActivityGuest.dart';
-import 'package:jci_app/features/Home/domain/entities/Guest.dart';
+import 'package:jci_app/features/Home/domain/Dtos/ActivityParam.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/Activity.dart';
 import 'package:jci_app/features/Home/domain/repsotories/ActivitiesRepo.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 
-import '../entities/ActivityParticpants.dart';
+import '../../../auth/AuthWidgetGlobal.dart';
+
 
 class GetAllActivitiesUseCases extends UseCase<List<Activity>,activity >{
   final ActivitiesRepo activitiesRepo;
@@ -15,20 +14,11 @@ class GetAllActivitiesUseCases extends UseCase<List<Activity>,activity >{
   GetAllActivitiesUseCases({required this.activitiesRepo});
   @override
   Future<Either<Failure, List<Activity>>> call(activity params) {
-    return activitiesRepo.getAllActvities(params);
+    return activitiesRepo.getAllActivities(params);
 
   }
 }
-class ChangeGuestToMemberUseCases extends UseCase<Unit,String >{
-  final ActivitiesRepo activitiesRepo;
 
-  ChangeGuestToMemberUseCases({required this.activitiesRepo});
-
-  @override
-  Future<Either<Failure, Unit>> call( params) {
-    return activitiesRepo.ChangeGuestToMember(params);
-  }
-}
 class GetActivityByIdUseCases extends UseCase<Activity,activityParams >{
   final ActivitiesRepo activitiesRepo;
 
@@ -36,7 +26,7 @@ class GetActivityByIdUseCases extends UseCase<Activity,activityParams >{
 
   @override
   Future<Either<Failure, Activity>> call(activityParams params) {
-    return activitiesRepo.getActivityById(params.id!, params.type);
+    return activitiesRepo.getActivityById(params.Eventid!, params.type);
   }
 }class GetActivityByNameUseCases extends UseCase<List<Activity>,activityParams >{
   final ActivitiesRepo activitiesRepo;
@@ -45,7 +35,7 @@ class GetActivityByIdUseCases extends UseCase<Activity,activityParams >{
 
   @override
   Future<Either<Failure, List<Activity>>> call(activityParams params) {
-    return activitiesRepo.getActivityByname(params.name!, params.type);
+    return activitiesRepo.getActivityByName(params.name!, params.type);
   }
 }
 
@@ -56,7 +46,7 @@ class CreateActivityUseCases extends UseCase<Unit,activityParams >{
 
   @override
   Future<Either<Failure, Unit>> call(activityParams params) {
-    return activitiesRepo.createEvent(params.act!, params.type);
+    return activitiesRepo.createActivity(params.act!, params.type);
   }
 
 
@@ -69,7 +59,7 @@ class UpdateActivityUseCases extends UseCase<Unit,activityParams > {
 
   @override
   Future<Either<Failure, Unit>> call(activityParams params) {
-    return activitiesRepo.updateEvent(params.act!, params.type);
+    return activitiesRepo.updateActivity(params.act!, params.type);
   }
 }
 class DeleteActivityUseCases extends UseCase<Unit,activityParams > {
@@ -79,7 +69,7 @@ class DeleteActivityUseCases extends UseCase<Unit,activityParams > {
 
   @override
   Future<Either<Failure, Unit>> call(activityParams params) {
-    return activitiesRepo.deleteEvent(params.id!, params.type);
+    return activitiesRepo.deleteActivity(params.Eventid!, params.type);
   }
 }
 class LeaveActivityUseCases extends UseCase<Unit,activityParams > {
@@ -89,7 +79,7 @@ class LeaveActivityUseCases extends UseCase<Unit,activityParams > {
 
   @override
   Future<Either<Failure, Unit>> call(activityParams params) {
-    return activitiesRepo.leaveEvent(params.id!, params.type);
+    return activitiesRepo.leaveActivity(params.Eventid!, params.type);
   }
 }
 class ParticipateActivityUseCases extends UseCase<Unit,activityParams > {
@@ -99,133 +89,22 @@ class ParticipateActivityUseCases extends UseCase<Unit,activityParams > {
 
   @override
   Future<Either<Failure, Unit>> call(activityParams params) {
-    return activitiesRepo.participateEvent(params.id!, params.type);
+
+    return activitiesRepo.participateActivity(params.Eventid!, params.type);
   }
 }
-class CheckAbsenceUseCases extends UseCase<Unit,ParticipantsParams > {
+class CheckPermissionsUseCases extends UseCase<bool,activity > {
   final ActivitiesRepo activitiesRepo;
 
-  CheckAbsenceUseCases({required this.activitiesRepo});
+  CheckPermissionsUseCases({required this.activitiesRepo});
 
   @override
-  Future<Either<Failure, Unit>> call(ParticipantsParams params) {
-    return activitiesRepo.CheckAbsence(params.ActivityId, params.partipantId, params.status);
-  }
-}
-class GetAllParticipantsUseCases extends UseCase<List<ActivityParticipants>,String > {
-  final ActivitiesRepo activitiesRepo;
-
-  GetAllParticipantsUseCases({required this.activitiesRepo});
-
-  @override
-  Future<Either<Failure, List<ActivityParticipants>>> call( params) {
-    return activitiesRepo.getAllParticipants(params);
-  }
-}
-class GetGuestsUseCases extends UseCase<List<ActivityGuest>,String > {
-  final ActivitiesRepo activitiesRepo;
-
-  GetGuestsUseCases({required this.activitiesRepo});
-
-  @override
-  Future<Either<Failure, List<ActivityGuest>>> call( params) {
-    return activitiesRepo.getAllguestOfActivity(params);
-  }
-}class GetAllGuestsUseCases extends UseCase<List<Guest>,bool > {
-  final ActivitiesRepo activitiesRepo;
-
-  GetAllGuestsUseCases({required this.activitiesRepo});
-
-  @override
-  Future<Either<Failure, List<Guest>>> call( params) {
-    return activitiesRepo.getAllguest(params);
-  }
-}
-class AddGuestUseCases extends UseCase<ActivityGuest,guestParams > {
-  final ActivitiesRepo activitiesRepo;
-
-  AddGuestUseCases({required this.activitiesRepo});
-
-  @override
-  Future<Either<Failure, ActivityGuest>> call(guestParams params) {
-    return activitiesRepo.addGuest(params.activityid!, params.guest!.guest);
-  }
-}class AddGuestToActivityUseCases extends UseCase<Unit,guestParams > {
-  final ActivitiesRepo activitiesRepo;
-
-  AddGuestToActivityUseCases({required this.activitiesRepo});
-
-  @override
-  Future<Either<Failure, Unit>> call(guestParams params) {
-    return activitiesRepo.addGuestToActivity(params.activityid!, params.guestId!);
-  }
-}
-class ConfirmGuestUseCases extends UseCase<Unit,guestParams > {
-  final ActivitiesRepo activitiesRepo;
-
-  ConfirmGuestUseCases({required this.activitiesRepo});
-
-  @override
-  Future<Either<Failure, Unit>> call(guestParams params) {
-    return activitiesRepo.updateGuestStatus(params.activityid!, params.guestId!, params.status!);
-  }
-}
-class DeleteGuestUseCases extends UseCase<Unit,guestParams > {
-  final ActivitiesRepo activitiesRepo;
-
-  DeleteGuestUseCases({required this.activitiesRepo});
-
-  @override
-  Future<Either<Failure, Unit>> call(guestParams params) {
-    return activitiesRepo.deleteGuest(params.activityid!, params.guestId!);
-  }
-}
-class UpdateGuestUseCases extends UseCase<Unit,guestParams > {
-  final ActivitiesRepo activitiesRepo;
-
-  UpdateGuestUseCases({required this.activitiesRepo});
-
-  @override
-  Future<Either<Failure, Unit>> call(guestParams params) {
-    return activitiesRepo.updateGuest(params.activityid!, params.guest!.guest);
-  }
-}
-class SendReminderUseCases extends UseCase<Unit,String > {
-  final ActivitiesRepo activitiesRepo;
-
-  SendReminderUseCases({required this.activitiesRepo});
-
-  @override
-  Future<Either<Failure, Unit>> call( params) {
-    return activitiesRepo.SendRemiderActivity(params);
+  Future<Either<Failure, bool>> call(activity params) {
+    return activitiesRepo.checkPermissions(params);
   }
 }
 
 
-class guestParams {
-  final  ActivityGuest? guest;
-  final String? guestId;
-  final String? status;
-  final String? activityid;
-
-  guestParams({required this.guest, required this.guestId, required this.status, required this.activityid});
-
-}
-
-class ParticipantsParams{
-  final String ActivityId;
-  final String partipantId;
-  final String status;
-
-  ParticipantsParams({required this.ActivityId, required this.partipantId, required this.status});
-}
 
 
 
-class activityParams {
-  final Activity? act;
-  final activity type;
-final String? id;
-final String? name;
-  activityParams( {required this.act, required this.type,required this.id,required this.name});
-}

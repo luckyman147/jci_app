@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
@@ -11,7 +9,6 @@ import '../../../../../../core/error/Failure.dart';
 import '../../../../../../core/usescases/usecase.dart';
 import '../../../../Domain/entities/BoardRole.dart';
 import '../../../../Domain/useCases/BoardUseCases.dart';
-import '../BoardBloc/boord_bloc.dart';
 
 part 'years_event.dart';
 part 'years_state.dart';
@@ -86,7 +83,7 @@ final RemovePositionUseCase removePositionUseCase;
       emit(state.copyWith(state: yearsStates.Loaded,years: years,));
       emit(state.copyWith(year: state.years[0],));
 
-    } on Exception catch (e) {
+    } on Exception {
       // TODO
     }
   }
@@ -95,7 +92,7 @@ final RemovePositionUseCase removePositionUseCase;
       emit(state.copyWith(state: yearsStates.Loading));
       final result = await addPositionUseCase(event.postField);
       _mapAddPositionorFailure(result, emit);
-    } on Exception catch (e) {
+    } on Exception {
       // TODO
     }
   }  void _RemovePosition(RemovePosition event,Emitter<YearsState> emit) async {
@@ -103,7 +100,7 @@ final RemovePositionUseCase removePositionUseCase;
       emit(state.copyWith(state: yearsStates.Loading));
       final result = await removePositionUseCase(event.post);
       _mapRemovePositionorFailure(result, emit);
-    } on Exception catch (e) {
+    } on Exception {
       // TODO
     }
   }
@@ -114,7 +111,7 @@ final RemovePositionUseCase removePositionUseCase;
       emit(state.copyWith(state: yearsStates.Loading));
       final result = await getYears(NoParams());
       _mapGetorFailure(result, emit);
-    } on Exception catch (e) {
+    } on Exception {
       // TODO
     }
 
@@ -129,7 +126,7 @@ final RemovePositionUseCase removePositionUseCase;
      final finalList=JCIFunctions.insertSorted(state.years, event.year);
       emit(state.copyWith(state: yearsStates.Loaded,years: finalList,year: event.year));
 
-    } on Exception catch (e) {
+    } on Exception {
       // TODO
     }
   }

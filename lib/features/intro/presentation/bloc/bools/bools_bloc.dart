@@ -8,18 +8,18 @@ part 'bools_event.dart';
 part 'bools_state.dart';
 
 class BoolBloc extends Bloc<BoolEvent, BoolState> {
-  BoolBloc() : super(Bool1State(true)) {
+  BoolBloc() : super(const Bool1State(true)) {
     on<SetBool1Event>(_onBool1);
     on<SetBool2Event>(_onBool2);
     on<SetBool3Event>(_onBool3);
-    on<resetEvent>((event, emit) => _reset());
+    on<resetEvent>((event, emit) => _reset(emit));
 
   }
 
-  void _reset() {
-    add( SetBool1Event(true));
-    add( SetBool2Event(false));
-    add( SetBool3Event(false));
+  void _reset(Emitter<BoolState> emit) {
+    emit(const Bool1State(true));
+    emit(const Bool2State(false));
+    emit(const Bool3State(false));
   }
   void _onBool1(
     SetBool1Event event,

@@ -15,33 +15,63 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_localization:
+
+  faker:
   path_to_regexp:
   freezed:
+  timeago:
+  pinput:
+  simple_animation_progress_bar: "^1.8.2"
+  flutter_dotenv:
+  googleapis:
+  auto_route:
+  webview_flutter:
+  googleapis_auth:
+  flutter_screenutil:
   image_picker: ^1.0.7
-  jwt_decoder:
+  collection:
   url_launcher:
   flutter_countdown_timer:
   dotted_border:
-  bloc_concurrency: ^0.2.0
+  bloc_concurrency: ^0.3.0
   stream_transform: ^2.0.0
+  font_awesome_flutter:
+  firebase_data_connect:
+  firebase_messaging:
+  google_mlkit_translation:
+  firebase_storage:
+  firebase_database:
+
+  cloud_functions:
+  firebase_performance: ^0.10.1+6
+  firebase_remote_config:
+  firebase_in_app_messaging:
+
+  firebase_dynamic_links:
+
+
+
+
     # Bloc for state management
-  flutter_bloc: ^8.1.2
+  flutter_bloc: ^9.1.0
   connectivity_plus:
+  logger: ^2.5.0
+  cloud_firestore:
   # Functional programming things
   dartz: ^0.10.1
   # Value equality
   equatable: ^2.0.5
   json_serializable:
   image:
-  flutter_web_browser: ^0.16.0
+
   # Service locator
-  get_it: ^7.6.0
+  get_it: ^8.0.3
   firebase_core:
   firebase_auth:
   google_sign_in:
 
   # Remote API
-  internet_connection_checker: ^1.0.0+1
+  internet_connection_checker: ^3.0.1
   http:
   flutter_svg:
   dropdown_button2: ^2.3.8
@@ -56,32 +86,42 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   mockito:
-  secure_shared_preferences: ^0.0.4
-  google_fonts: ^4.0.4
-  go_router: ^13.1.0
-  carousel_slider: ^4.2.1
+  comment_tree:
+  encrypt_shared_preferences: ^0.9.9
+  google_fonts: ^6.2.1
+
+  carousel_slider:
   smooth_page_indicator: ^1.1.0
-  flutter_secure_storage: ^5.1.2
+  flutter_local_notifications:
 
   json_annotation: ^4.8.1
   jwt_decode:
   google_nav_bar: ^5.0.6
   shimmer: ^3.0.0
-  permission_handler:
 
+  cached_network_image:
 
   flutter_time_picker_spinner: ^2.0.0
   table_calendar: ^3.0.9
   flutter_animate: ^4.5.0
+  firebase_app_check: ^0.3.1+4
+  flutter_chat_reactions: ^0.1.0
+  flutter_slidable: ^3.1.1
+  emoji_picker_flutter: ^4.3.0
+  auto_size_text: ^3.0.0
+  flutter_typeahead: ^5.2.0
+
 dev_dependencies:
+  bloc_test:
   flutter_test:
 
 
     sdk: flutter
-
+  analyzer: ^6.7.0
+  auto_route_generator:
   build_runner:
-  flutter_lints: ^2.0.0
-  flutter_launcher_icons: "^0.13.1"
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
 flutter_launcher_icons:
     android: "launcher_icon"
     ios: true
@@ -115,10 +155,15 @@ flutter:
     - assets/images/jciTunisie.jpg
     - assets/images/Person_Vip.png
     - assets/images/task.jpg
-
+    - assets/images/team.png
+    - assets/images/Mail.png
+    - assets/images/MailSenti.png
+    - .env
     - assets/images/blankjci.jpeg
     - assets/images/classement.jpg
     - assets/images/cap.png
+    - assets/images/Hello.png
+    - assets/imagesf/no_notification.png
     - assets/json/
     - assets/lang/en.json
     - assets/lang/fr.json

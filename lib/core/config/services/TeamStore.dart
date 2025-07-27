@@ -2,7 +2,6 @@ import 'dart:convert';
 
 
 
-import 'package:dartz/dartz.dart';
 import 'package:jci_app/features/Teams/data/models/TaskModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -68,7 +67,7 @@ static Future<void> clearCache() async {
 }
 static Future<void> cacheTeamByid(TeamModel team) async {
   final pref = await SharedPreferences.getInstance();
-  pref.setString(_cachedTeamByid(team.id), jsonEncode(team.toJson()));
+  pref.setString(_cachedTeamByid(team.meta.id), jsonEncode(team.toJson()));
 }
 
 static Future<void> cacheUpdated(bool IsUpdated) async {

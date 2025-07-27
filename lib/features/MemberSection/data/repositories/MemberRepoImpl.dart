@@ -3,308 +3,236 @@ import 'dart:developer';
 import 'package:dartz/dartz.dart';
 
 import 'package:jci_app/core/error/Failure.dart';
-import 'package:jci_app/features/MemberSection/data/datasources/MemberLocalDataSources.dart';
-import 'package:jci_app/features/MemberSection/data/datasources/MemberRemoteDataSources.dart';
+import 'package:jci_app/features/MemberSection/data/datasources/members/MemberLocalDataSources.dart';
+import 'package:jci_app/features/MemberSection/data/datasources/members/MemberRemoteDataSources.dart';
 
-import 'package:jci_app/features/auth/domain/entities/Member.dart';
+import 'package:jci_app/core/Member.dart';
 
+import '../../../../core/Handlers/Handler.dart';
+import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/error/Exception.dart';
 import '../../../../core/network/network_info.dart';
-import '../../../auth/data/datasources/authLocal.dart';
-import '../../../auth/data/models/Member/AuthModel.dart';
+import '../../../../core/MemberModel.dart';
 import '../../domain/repositories/MemberRepo.dart';
-import '../../presentation/bloc/memberBloc/member_management_bloc.dart';
+import '../datasources/members/AdminMemberOperations.dart';
 
 class MemberRepoImpl extends MemberRepo {
   final MemberRemote memberRemote;
   final MemberLocalDatasoources membersLocalDataSource;
-  final NetworkInfo networkInfo;
-
-  MemberRepoImpl({required this.memberRemote, required this.networkInfo, required this.membersLocalDataSource});
-
-  @override
-  Future<Either<Failure, Unit>> UpdateCotisation(String memberid, int type, bool cotisation) {
-    return _getMessageReset(memberRemote.validateCotisation(memberid, type, cotisation));
-  }
-
-  @override
-  Future<Either<Failure, Unit>> UpdatePoints(String memberid, double points) {
- return _getMessageReset(memberRemote.UpdatePoints(memberid, points, ));
-  }
+final Handler<Unit> handler;
+final Handler<Member> memberHandler;
+final Handler<List<Member>> membersListHandler;
+final Handler<List<User>> UsersListHandler;
 
 
-  Future<Either<Failure, Unit>> _getMessageReset(
-      Future<Unit> AuthReset) async {
-    if (await networkInfo.isConnected) {
-      try {
-        await AuthReset;
-        return Right(unit);
-      }
+  MemberRepoImpl({required this.memberRemote, required this.membersLocalDataSource, required this.handler, required this.memberHandler, required this.membersListHandler, required this.UsersListHandler, });
 
 
-      catch(e){
-
-        return Left(ServerFailure());
-      }
-
-    }
-
-
-    else {
-      return Left(OfflineFailure());
-    }
-  }
   @override
   Future<Either<Failure, Member>> GetUserProfile(bool isUpdated) async{
-
-    if (await networkInfo.isConnected) {
-      try {
-        if (!isUpdated) {
-          final members = await membersLocalDataSource.getUserProfile();
-          if (members == null) {
-            final members = await memberRemote.getUserProfile();
-            membersLocalDataSource.ChangeUserProfile(members);
-            return Right(members);
-          }
-          return Right(members);
-        }
-
-        else{
-
-
-
-        final members = await memberRemote.getUserProfile();
-        membersLocalDataSource.ChangeUserProfile(members);
-
-        return Right(members);}
-      } on ServerException {
-        return Left(ServerFailure());
-      }
-      on UnauthorizedException {
-        return Left(UnauthorizedFailure());
-      }
-    } else {
-     final members = await membersLocalDataSource.getUserProfile();
-      return Right(members!);
-
+return await memberHandler.handle(onCall: ()async{
+    final members = await membersLocalDataSource.getUserProfile();
+  if (isUpdated) {
+    if (members == null) {
+      final members = await memberRemote.getUserProfile();
+      membersLocalDataSource.ChangeUserProfile(members);
+      return members;
     }
+    return members;
+  }
+
+  else{
+
+
+
+    final members = await memberRemote.getUserProfile();
+    membersLocalDataSource.ChangeUserProfile(members);
+
+    return members;}
+
+}, onError: (error){
+  if (error is Exception) throw error;
+
+}
+
+);
   }
 
   @override
   Future<Either<Failure, Member>> getMemberByid(String id,bool status)async  {
-    if (await networkInfo.isConnected) {
-      try {
-         if ( status==true ||(await membersLocalDataSource.getMemberById(id)==null && status==false)){
+
+return await memberHandler.handle(
+    onCall: ()async {
+      if ( status==true ||(await membersLocalDataSource.getMemberById(id)==null && status==false)){
 
 
-           final members = await memberRemote.getMemberByid(id);
-        await membersLocalDataSource.saveMemberByID(members,id);
-        return Right(members);
+      final members = await memberRemote.getMemberByid(id);
+      await membersLocalDataSource.saveMemberByID(members,id);
+      return members;
 
-         }
-          else {
-
-            final members = await membersLocalDataSource.getMemberById(id);
-            return Right(members!);
-          }
-
-
-      } on ServerException {
-        return Left(ServerFailure());
       }
-      on UnauthorizedException {
-        return Left(UnauthorizedFailure());
-      }
-    } else {
-      log("dddd");
+      else {
 
       final members = await membersLocalDataSource.getMemberById(id);
-      if (members==null){
-        return Left(EmptyCacheFailure());
+      return members!;
       }
-      return Right(members);
-    }
+    },
 
+    onError: (error){       if (error is Exception) throw error;
+
+},
+onFailConnection:  ()async{
+    final members = await membersLocalDataSource.getMemberById(id);
+    return members!;
+
+}
+);
   }
 
   @override
-  Future<Either<Failure,Unit>> updateMember(Member member) {
+  Future<Either<Failure,Unit>> updateMember(Member member)async {
    final membermodel=MemberModel.fromEntity(member);
-   return _getMessageReset(memberRemote.UpdateMember(membermodel));
+
+   return await handler.handle(
+
+       onCall: ()=>    memberRemote.UpdateMemberProfile(membermodel),
+       onError: (error) {
+         if (error is Exception) throw error;
+       });
   }
   @override
-  Future<Either<Failure, List<Member>>> GetMemberByName(String name)async {
-    if (await networkInfo.isConnected) {
-      try {
-        final members = await memberRemote.GetmMemberByName(name);
-
-        return Right(members);
-      } on ServerException {
-        return Left(ServerFailure());
-      }
-      on UnauthorizedException {
-        return Left(UnauthorizedFailure());
-      }
-    } else {
-      return Left(OfflineFailure());
-
+  Future<Either<Failure, List<User>>> GetMemberByName(String name) async {
+    List<User> cachedMembers = [];
+    try {
+      // Try to get members from the local cache
+      cachedMembers = await membersLocalDataSource.GetMembers();
+    } catch (e) {
+      // Log the error for debugging purposes if needed
+      // Logger().e("Error fetching members from local cache: $e");
+      // If there's an error getting cached members, proceed to remote
+      return await membersListHandler.handle(
+        onCall: () => memberRemote.GetmMemberByName(name),
+        onError: (error) {
+          if (error is Exception) throw error;
+          return ServerFailure(); // Or a more specific failure
+        },
+      );
     }
-  }
-  @override
-  Future<Either<Failure, List<Member>>> GetMembers(bool isUpdated) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final members = await membersLocalDataSource.GetMembers();
-        if (members.isEmpty  ||  isUpdated) {
-          final members = await memberRemote.GetMembers();
-          membersLocalDataSource.CacheMembers(members);
-          return Right(members);
-        }
-         return Right(members);
-      } on ServerException {
 
-        final members = await membersLocalDataSource.GetMembers();
-        if (members.isEmpty){
-          return Left(ServerFailure());
-        }
-        return Right(members);
+    // If cached members are available and not empty
+    if (cachedMembers.isNotEmpty) {
+      // Search in cache by first name or last name (case-insensitive)
+      final foundMembers = cachedMembers.where((member) {
+        final lowerCaseName = name.toLowerCase();
+        return (member.firstName?.toLowerCase().contains(lowerCaseName) ?? false) ||
+            (member.lastName?.toLowerCase().contains(lowerCaseName) ?? false);
+      }).toList();
+
+      if (foundMembers.isNotEmpty) {
+        return Right(foundMembers); // Found in cache
       }
-      on UnauthorizedException {
-        final members = await membersLocalDataSource.GetMembers();
-        if (members.isEmpty){
-          return Left(UnauthorizedFailure());
-        }
-        return Right(members);
+    }
+
+    // If cache is empty, or member not found in cache, call remote
+    return await membersListHandler.handle(
+      onCall: () => memberRemote.GetmMemberByName(name),
+      onError: (error) {
+        if (error is Exception) throw error;
+        return ServerFailure(); // Or a more specific failure
+      },
+    );
+  }
+  @override
+  Future<Either<Failure, List<User>>> GetMembers(bool isUpdated) async {
+      final members = await membersLocalDataSource.GetMembers();
+    return await UsersListHandler.handle(onCall: ()async{
+
+      if (members.isEmpty  ||  isUpdated) {
+        final members = await memberRemote.GetMembers();
+        membersLocalDataSource.CacheMembers(members);
+        return members;
       }
-    } else {
-      try {
-        final members = await membersLocalDataSource.GetMembers();
-        return Right(members);
-      } on EmptyCacheException {
-        return Left(EmptyCacheFailure());
-      }
+      return members;
 
+    },
+        onError: (error)async{    ;
+
+
+    final members = await membersLocalDataSource.GetMembers();
+    if (members.isEmpty){
+    return ServerFailure();
     }
+    return members;
+
+        });
   }
 
-  @override
-  Future<Either<Failure, Unit>> validateMember(String memberid) {
-     return _getMessageReset(memberRemote.validateMember(memberid));
-  }
+
+
+
 
   @override
-  Future<Either<Failure, Unit>> ChangeToAdmin(String id,MemberType type) {
-    if (type==MemberType.admin){
-      return _getMessageReset(memberRemote.ChangeToAdmin(id));
-    }
-    else if (type==MemberType.member){
-      return _getMessageReset(memberRemote.ChangeToMember(id));
-    }
-    else{
-    return _getMessageReset(memberRemote.ChangeToSuperAdmin(id));}
+  Future<Either<Failure, Unit>> ChangeLanguage(String language) async{
+    return await handler.handle(
+
+        onCall: ()=>    memberRemote.ChangeLanguage(language),
+        onError: (error) {
+          if (error is Exception) throw error;
+        });
   }
 
-  @override
-  Future<Either<Failure, Unit>> ChangeLanguage(String language) {
-    return _getMessageReset(memberRemote.ChangeLanguage(language));
-  }
 
-  @override
-  Future<Either<Failure, Unit>> SendInactivityReport(String id) {
-    return _getMessageReset(memberRemote.SendInactivityReport(id));
-  }
-
-  @override
-  Future<Either<Failure, Unit>> SendMembershipReport(String id) {
-    return _getMessageReset(memberRemote.SendMembershipReport(id));
-  }
 
   @override
   Future<Either<Failure, List<Member>>> GetMembersRank(bool isUpdated)async {
-    if (await networkInfo.isConnected) {
-      try {
-        final members = await membersLocalDataSource.GetMembersWithRanks
-    ();
-        if (members.isEmpty  ||  isUpdated) {
-          final members = await memberRemote.getMembersWithRanks();
-          membersLocalDataSource.CacheMemberwithRanks(members);
-          return Right(members);
-        }
-        return Right(members);
-      } on ServerException {
+    return await membersListHandler.handle(onCall: ()async{
+      final members = await membersLocalDataSource.GetMembersWithRanks
+        ();
+      if (members.isEmpty  ||  isUpdated) {
+        final members = await memberRemote.getMembersWithRanks();
+        membersLocalDataSource.CacheMemberwithRanks(members);
+        return members;
+      }
+      return members;
 
-        final members = await membersLocalDataSource.GetMembersWithRanks();
-        if (members.isEmpty){
-          return Left(ServerFailure());
-        }
-        return Right(members);
-      }
-      on UnauthorizedException {
-        final members = await membersLocalDataSource.GetMembersWithRanks();
-        if (members.isEmpty){
-          return Left(UnauthorizedFailure());
-        }
-        return Right(members);
-      }
-    } else {
-      try {
-        final members = await membersLocalDataSource.GetMembersWithRanks();
-        return Right(members);
-      } on EmptyCacheException {
-        return Left(EmptyCacheFailure());
-      }
 
-    }
+    }, onError: (error)async{
+
+      final members = await membersLocalDataSource.GetMembersWithRanks();
+      if (members.isEmpty){
+        return Left(ServerFailure());
+      }
+      return Right(members);
+
+    });
   }
 
   @override
   Future<Either<Failure, Member>> GetMembeWithHighestRank(bool isUpdated)async  {
-    if (await networkInfo.isConnected) {
-      try {
-        final members = await membersLocalDataSource.GetMemberWithRanks();
-          ();
-        if (members==null  ||  isUpdated) {
-          final members = await memberRemote.getMemberWithHightRank();
-          membersLocalDataSource.CacheMembewithRanks(members);
-          return Right(members);
-        }
-        return Right(members);
-      } on ServerException {
+    return await memberHandler.handle(onCall: ()async{
 
-        final members = await membersLocalDataSource.GetMemberWithRanks();
-
-        if (members==null){
-          return Left(ServerFailure());
-        }
-        return Right(members);
+      final members = await membersLocalDataSource.GetMemberWithRanks();
+      ();
+      if (members==null  ||  isUpdated) {
+        final members = await memberRemote.getMemberWithHightRank();
+        membersLocalDataSource.CacheMembewithRanks(members);
+        return members;
       }
-      on UnauthorizedException {
-        final members = await membersLocalDataSource.GetMemberWithRanks();
+      return members;
 
-        if (members==null){
-          return Left(UnauthorizedFailure());
-        }
-        return Right(members);
-      }
-    } else {
-      try {
-        final members = await membersLocalDataSource.GetMemberWithRanks();
-        if (members==null){
-          return Left(EmptyCacheFailure());
-        }
 
-        return Right(members);
-      } on EmptyCacheException {
-        return Left(EmptyCacheFailure());
-      }
 
+
+    }, onError: (error)async{
+    final members = await membersLocalDataSource.GetMemberWithRanks();
+    if (members==null){
+    return EmptyCacheFailure();
     }
+
+    });
+
   }
 
-  @override
-  Future<Either<Failure, Unit>> deleteMember(String id) async{
-    return _getMessageReset(memberRemote.deleteMember(id));
-  }
 
   }
 

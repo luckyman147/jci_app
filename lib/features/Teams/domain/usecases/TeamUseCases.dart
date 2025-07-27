@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/features/Teams/domain/repository/TeamRepo.dart';
 
+import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/error/Failure.dart';
 import '../../../../core/usescases/usecase.dart';
-import '../../../auth/domain/entities/Member.dart';
-import '../entities/Team.dart';
+import '../entities/Team/Team.dart';
 
 class GetAllTeamsUseCase {
   final TeamRepo _teamRepository;
@@ -13,8 +14,8 @@ class GetAllTeamsUseCase {
 
 
 
-  Future<Either<Failure, List<Team>>> call({String page="0",String limit="3",isPrivate=false,updated=true}) async {
-    return await _teamRepository.getTeams(page, limit, isPrivate, updated);
+  Future<Either<Failure, ({List<Team> Teams, DocumentSnapshot? lastDoc})>> call({int limit=3,isPrivate=false,DocumentSnapshot? doc}) async {
+    return await _teamRepository.getTeams( limit, isPrivate, doc);
   }
 }
 class GetTeamByIdUseCase  extends UseCase<Team, Map<String,dynamic>>{
@@ -105,7 +106,7 @@ class TeamInput{
   final String id;
   final String? memberid;
   final String? Status;
-  final Map<String,dynamic>? member;
+  final User? member;
 
 
   TeamInput(this.id, this.memberid, this.Status, this.member);

@@ -1,18 +1,19 @@
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
-import 'package:jci_app/core/config/services/store.dart';
 import 'package:jci_app/core/config/services/verification.dart';
 
 import 'package:jci_app/core/widgets/loading_widget.dart';
 
-import '../../../auth/presentation/bloc/auth/auth_bloc.dart';
-
+import '../../../../core/config/services/MemberStore.dart';
+import '../../../../core/config/services/store.dart';
+import '../../../../core/strings/Images.string.dart';
+import '/injection_container.dart' as di;
+@RoutePage()
 class SplashScreen extends StatefulWidget {
-
-  const SplashScreen({super.key,
+  const SplashScreen({
+    super.key,
   });
 
   @override
@@ -20,40 +21,40 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final st = di.sll<Store>();
+  final member = di.sll<MemberStore>();
+ late  Verification verification;
   @override
   void initState() {
     super.initState();
 
-    _navigateAfterDelay();
-  }
-
-  void _navigateAfterDelay() async {
-    await Future.delayed(const Duration(seconds: 3));
-    if (mounted) {
-      check(context,mounted);
-    }
   }
 
   @override
-  Widget build(BuildContext context) {
-
-
-
-        return Container(
-            decoration: BoxDecoration(color: backgroundColored),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-
-                children: [
-                  Expanded(child: Center(
-                      child: Image.asset("assets/images/jci.png",
-                          width: 250, height: 250, fit: BoxFit.contain))),
-
-                  LoadingWidget()
-                ],
-              ),
-            ));
-      }
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(AssetImage(images.jci), context); // Preload the image
   }
-
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        decoration: const BoxDecoration(color: backgroundColored),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                  child: Center(
+                      child: Image.asset(
+                images.jci,
+                width: 250,
+                height: 250,
+                fit: BoxFit.contain,
+                gaplessPlayback: true,
+              ))),
+              const LoadingWidget()
+            ],
+          ),
+        ));
+  }
+}
