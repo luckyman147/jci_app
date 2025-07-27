@@ -1,25 +1,25 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/core/route/app_router.dart';
 import 'package:jci_app/core/strings/Images.string.dart';
 import 'package:jci_app/features/Home/Activity_Global.dart';
 import 'package:jci_app/features/Home/data/model/events/EventModel.dart';
 import 'package:jci_app/features/Home/domain/Dtos/PArticipantParam.dart';
-import 'package:jci_app/features/Home/domain/entities/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/Activity.dart';
 import 'package:jci_app/features/Home/domain/entities/training.dart';
 import 'package:jci_app/features/Home/domain/enums/ActivityEnum.dart';
 import 'package:jci_app/features/Home/domain/enums/AttendeceEmum.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Functions/ActivityFunctions.dart';
-import 'package:jci_app/features/Home/presentation/widgets/components/NetworkCachedImageWidget.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import '../../../../../core/app_theme.dart';
@@ -39,6 +39,7 @@ import '../activityDetailsWidget/DcrollingTextAnimation.dart';
 import '../activityDetailsWidget/ImageListCard.dart';
 import '../buttons/ParticpatedButton.dart';
 import '../buttons/PinnedButton.dart';
+import '../components/stuff/NetworkCachedImageWidget.dart';
 import '../shimmer/ShimmerButton.dart';
 
 import '../Functions/Functions.dart';
@@ -88,7 +89,7 @@ class ActivityDetailsComponent {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: DescriptionToggle(
-                        description: activitys.description,
+                        description: activitys.activityBasics.description,
                       ),
                     ),
                   ],
@@ -102,18 +103,15 @@ class ActivityDetailsComponent {
   static Widget buildAddButtonWi(
       BuildContext context, String act, String work) {
     return AddButtonWi(PrimaryColor, textColorBlack, Icons.add_rounded, () {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (BuildContext context) {
-            return CreateUpdateActivityPage(
+context.navigateTo(CreateUpdateActivityRoute(
               id: 'id',
               activity: act,
               work: work,
               particpants: const [],
-            );
-          },
-        ),
-      );
+            ));
+
+
+
 
       context
           .read<ChangeSboolsCubit>()
@@ -159,15 +157,12 @@ class ActivityDetailsComponent {
 
   static Widget dots(BuildContext context, MediaQueryData mediaQuery,
           Activity activitys) =>
-      Positioned(
-          top: mediaQuery.size.height / 27,
-          right: 10,
-          child: Padding(
+      Padding(
             padding: const EdgeInsets.all(8.0),
             child: BlocListener<AddDeleteUpdateBloc, AddDeleteUpdateState>(
               listener: (context, state) {
                 if (state is DeletedActivityMessage) {
-                  context.go('/home');
+                  context.pushRoute(HomeRoute());
                 }
 
                 // TODO: implement listener
@@ -188,7 +183,7 @@ class ActivityDetailsComponent {
                 ),
               ),
             ),
-          ));
+          );
 
   static Widget rowName(mediaQuery, BuildContext context, Activity activitys,
           activity act, int index) =>
@@ -209,7 +204,7 @@ class ActivityDetailsComponent {
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         return Text(
-                          "#${activitys.categorieId[index]}",
+                          "#${activitys.settings.categoryIds[index]}",
                           style: PoppinsSemiBold(
                               14.sp, PrimaryColor, TextDecoration.none),
                         );
@@ -219,14 +214,14 @@ class ActivityDetailsComponent {
                           width: 3,
                         );
                       },
-                      itemCount: activitys.categorieId.length),
+                      itemCount: activitys.settings.categoryIds.length),
                 ),
               ),
             ),
             //  PriceWidget(mediaQuery, activitys, context),
             ScrollingTextAnimation(
-              address: activitys.ActivityAdress,
-              name: activitys.name,
+              address: activitys.activityBasics.activityAdress,
+              name: activitys.activityBasics.name,
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -249,21 +244,21 @@ class ActivityDetailsComponent {
           padding: const EdgeInsets.all(8.0),
           child: Center(
             child: Text(
-                activitys.price.toString() == "0"
+                activitys.settings.price.toString() == "0"
                     ? "Free".tr(context)
-                    : "${activitys.price.toString()} dt",
+                    : "${activitys.settings.price.toString()} dt",
                 style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 4,
                     PrimaryColor, TextDecoration.none)),
           ),
         ));
   }
 
-  static Widget Back(mediaQuery, context) => Positioned(
+  static Widget Back(mediaQuery, BuildContext context) => Positioned(
       top: mediaQuery.size.height / 27,
       left: 10,
       child: GestureDetector(
         onTap: () {
-          GoRouter.of(context).go('/home');
+          context.pushRoute(HomeRoute());
         },
         child: Container(
           decoration: const BoxDecoration(
@@ -295,7 +290,7 @@ class ActivityDetailsComponent {
                             mediaQuery.devicePixelRatio * 6,
                             isMeeting
                                 ? ColorsApp.textColorBlack
-                                : ColorsApp.textColorWhite,
+                                : ColorsApp.PrimaryColor,
                             TextDecoration.none),
                       )),
                 );
@@ -328,11 +323,7 @@ class ActivityDetailsComponent {
                 );
               },
             ),
-            Pinnedbutton(
-              onTap: (Activity) {},
-              isPinned: true,
-              activity: activitys,
-            )
+
           ],
         ),
       );
@@ -346,6 +337,9 @@ class ActivityDetailsComponent {
       double width,
       double textsize,
       BuildContext context) {
+    final ifExist=ActivityAction.checkifMemberExist(
+        state.activitiesSearch[index].participation.participants,
+        context);
     return
       state.activityfetchState==ActivityFetchState.LoadingButton?
           ShimmerButton(width: width, height:
@@ -360,9 +354,7 @@ class ActivityDetailsComponent {
         UniqueKey(), // Ensure widget is rebuilt when its properties change
         acti: activitys,
         index: index,
-        isPartFromState:ActivityAction.checkifMemberExist(
-            state.activitiesSearch[index].Participants,
-            context),
+        isPartFromState:ifExist,
         act: act,
         textSize: textsize,
         containerWidth: width,
@@ -377,7 +369,7 @@ class ActivityDetailsComponent {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             IconInfo(
-                activitys.isOnline ? Icons.online_prediction : Icons.place),
+                activitys.online.isOnline ? Icons.online_prediction : Icons.place),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -386,20 +378,20 @@ class ActivityDetailsComponent {
                   width: mediaQuery.size.width / 1.5,
                   child: InkWell(
                     onTap: () {
-                      if (activitys.isOnline) {
-                        ActivityFunctions.launchURL(activitys.googleMeetLink);
+                      if (activitys.online.isOnline) {
+                        ActivityFunctions.launchURL(activitys.online.googleMeetLink);
                       }
                     },
                     child: Padding(
                       padding: paddingSemetricVerticalHorizontal(v: 20),
                       child: Text(
-                        activitys.isOnline
-                            ? activitys.googleMeetLink
-                            : activitys.ActivityAdress,
+                        activitys.online.isOnline
+                            ? activitys.online.googleMeetLink
+                            : activitys.activityBasics.activityAdress,
                         style: PoppinsSemiBold(
                             17.sp,
                             textColorBlack,
-                            activitys.isOnline
+                            activitys.online.isOnline
                                 ? TextDecoration.underline
                                 : TextDecoration.none),
                       ),
@@ -441,7 +433,7 @@ class ActivityDetailsComponent {
                                         state.locale == const Locale('en')
                                             ? 'en_US'
                                             : 'fr_FR')
-                                    .format(activitys.ActivityBeginDate)
+                                    .format(activitys.activityBasics.activityBeginDate)
                                     .toUpperCase(),
                                 style: PoppinsSemiBold(
                                     17, textColorBlack, TextDecoration.none),
@@ -451,8 +443,8 @@ class ActivityDetailsComponent {
                               children: [
                                 Text(
                                   ActivityAction.calculateDurationhour(
-                                      activitys.ActivityBeginDate,
-                                      activitys.ActivityEndDate,
+                                      activitys.activityBasics.activityBeginDate,
+                                      activitys.activityBasics.activityEndDate,
                                       state),
                                   style: PoppinsSemiBold(
                                       15.sp, textColor, TextDecoration.none),
@@ -490,19 +482,19 @@ class ActivityDetailsComponent {
 
     if (activity is EventModel) {
       title = "Leader Informations";
-      name = "${activity.LeaderName.firstName} ${activity.LeaderName.lastName}";
-      imageUrl = activity.LeaderName.Images.isNotEmpty
-          ? activity.LeaderName.Images[0]
+      name = "${activity.leaderName.firstName} ${activity.leaderName.lastName}";
+      imageUrl = activity.leaderName.Images.isNotEmpty
+          ? activity.leaderName.Images[0]
           : null;
     } else if (activity is MeetingModel) {
       title = "Director Informations";
-      name = "${activity.Director.firstName} ${activity.Director.lastName}";
-      imageUrl = activity.Director.Images.isNotEmpty
-          ? activity.Director.Images[0]
+      name = "${activity.director.firstName} ${activity.director.lastName}";
+      imageUrl = activity.director.Images.isNotEmpty
+          ? activity.director.Images[0]
           : null;
     } else if (activity is Training) {
       title = "By Trainer".tr(context);
-      name = activity.ProfesseurName;
+      name = activity.professeurName;
       imageUrl = null; // Training does not seem to have an image.
     } else {
       throw Exception("Unsupported activity type");
@@ -571,7 +563,7 @@ class ActivityDetailsComponent {
           Padding(
             padding: paddingSemetricHorizontal(),
             child: Text(
-                activitys.IsPaid ? "Paid".tr(context) : "Free".tr(context),
+                activitys.settings.isPaid ? "Paid".tr(context) : "Free".tr(context),
                 style:
                     PoppinsSemiBold(18, textColorBlack, TextDecoration.none)),
           ),

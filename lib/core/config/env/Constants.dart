@@ -7,4 +7,6 @@ static String MANAGE_TRAININGS=dotenv.env['MANAGE_TRAININGS']??"".trim();
 static String MANAGE_POINTS=dotenv.env['MANAGE_POINTS']??"".trim();
 static String MANAGE_MEMBERS=dotenv.env['MANAGE_MEMBERS']??"".trim();
 static String MANAGE_OBJECTIFS =dotenv.env['MANAGE_OBJ']??"".trim();
+static String MANAGE_TEAMS =dotenv.env['MANAGE_OBJ']??"".trim();
+static String MANAGE_PROJECTS =dotenv.env['MANAGE_OBJ']??"".trim();
 }

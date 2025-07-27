@@ -64,7 +64,8 @@ class ActivityChoiceDots extends StatelessWidget {
                            () {
                              context
                            .read<ParticpantsBloc>()
-                           .add(SendReminderEvent(reminderParams: ReminderParams(activity.ActivityAdress,ActivityName: activity.name, ActivityBeginDate: activity.ActivityBeginDate.toIso8601String())));
+                           .add(SendReminderEvent(reminderParams: ReminderParams(activity.activityBasics.activityAdress,ActivityName: activity.activityBasics.name,
+                                 ActivityBeginDate: activity.activityBasics.activityBeginDate.toIso8601String())));
                              ///pop
                              Navigator.pop(context);
 
@@ -94,10 +95,10 @@ class ActivityChoiceDots extends StatelessWidget {
                              context.read<PageIndexBloc>().add(
                                SetParticipantIndexEvent( ParticipantIndex: 0),
                              );
-Logger().i("activity id ${activity.Participants .map((e) => e.toString())}");
+Logger().i("activity id ${activity.participation.participants .map((e) => e.toString())}");
    //routes to the participants page
 context.read<ParticpantsBloc>().add(
-    LoadIsParttipatedList(context.read<AcivityFBloc>().state.activityById!.Participants,activityId: activity.id));
+    LoadIsParttipatedList(context.read<AcivityFBloc>().state.activityById!.participation.participants,activityId: activity.activityBasics.id));
                          Navigator.push(
                            context,
                            MaterialPageRoute(
@@ -116,7 +117,7 @@ context.read<ParticpantsBloc>().add(
                        "Guests",
                            () {
 Navigator.pop(context);
-                        context.read<GuestsBloc>().add( GetGuestsOfActivityEvent(activityId: activity.id));
+                        context.read<GuestsBloc>().add( GetGuestsOfActivityEvent(activityId: activity.activityBasics.id));
    //routes to the participants page
 
 showModalBottomSheet(
@@ -139,7 +140,7 @@ showModalBottomSheet(
                           padding: const EdgeInsets.all(8.0),
                           child: SizedBox(
                                height: mediaQuery.size.height,
-                               child: ShowGuests(activity.id)),
+                               child: ShowGuests(activity.activityBasics.id)),
                         );
 
                        });

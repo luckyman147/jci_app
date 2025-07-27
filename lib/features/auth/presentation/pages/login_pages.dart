@@ -1,3 +1,4 @@
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,7 +10,7 @@ import 'package:jci_app/features/intro/presentation/bloc/internet/internet_bloc.
 import '../bloc/login/login_bloc.dart';
 import '../widgets/Form.dart';
 import '../widgets/Functions/Listeners.dart';
-
+@RoutePage()
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 

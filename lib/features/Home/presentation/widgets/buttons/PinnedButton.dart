@@ -16,10 +16,10 @@ class Pinnedbutton extends StatelessWidget {
     return Padding(padding: paddingSemetricHorizontal(),
       child: Container(
         height: 45.h,
-        width: 40.h,
+        width: 45.h,
         decoration: BoxDecoration(
           border: Border.all(color: isPinned ? ColorsApp.SecondaryColor : ColorsApp.BackWidgetColor, width: 1),
-          color: isPinned ? ColorsApp.textColorWhite : ColorsApp.BackWidgetColor,
+          color: isPinned ? ColorsApp.SecondaryColor : ColorsApp.BackWidgetColor,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Padding(
@@ -27,7 +27,7 @@ class Pinnedbutton extends StatelessWidget {
           child: GestureDetector(
 
             onTap: onTap(activity),
-            child: Icon(Icons.push_pin_rounded, color: isPinned ? ColorsApp.SecondaryColor : ColorsApp.textColorBlack, ),
+            child: Icon(Icons.push_pin_rounded, color: isPinned ? ColorsApp.textColorWhite : ColorsApp.textColorBlack, ),
           ),
         ),
       ),).animate(

@@ -5,7 +5,7 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/functions/functionMember.dart';
-import 'package:jci_app/features/Teams/presentation/widgets/TaskComponents.dart';
+import 'package:jci_app/features/Teams/presentation/widgets/Task/components/TaskComponents.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_jci_cubit.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/presidents_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/widgets/dialogs.dart';

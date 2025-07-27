@@ -7,10 +7,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/features/Home/domain/enums/ActionImage.dart';
 import 'package:jci_app/features/Home/domain/enums/Privacy.dart';
-import 'package:jci_app/features/Home/presentation/widgets/components/ErrorDisplayMessage.dart';
+import 'package:jci_app/features/Home/presentation/widgets/components/stuff/ErrorDisplayMessage.dart';
 
 import '../../../../../core/app_theme.dart';
 import '../../../../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
+import '../../../../auth/AuthWidgetGlobal.dart';
 
 class ImageActivityPicker extends StatelessWidget {
 
@@ -21,12 +22,13 @@ class ImageActivityPicker extends StatelessWidget {
      final mediaQuery = MediaQuery.of(context);
     return BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
       builder: (context, state) {
+        Logger().i("ImageActivityPicker: Building widget with state: ${state.images}");
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ImagePickerArea(
               mediaQuery: mediaQuery,
-              images: state.images,
+              images:state.images,
               onEditTap: () => _pickImages(context),
               onContainerTap: () => _pickImages(context),
             ),
@@ -97,7 +99,7 @@ class ImageContainer extends StatelessWidget {
       height: 200,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: textColorBlack, width: 2),
+        border: Border.all(color: ThirdColor, width: 2),
         color: textColorWhite,
       ),
       child: images.isEmpty

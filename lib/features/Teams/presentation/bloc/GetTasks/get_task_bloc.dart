@@ -5,13 +5,17 @@ import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:jci_app/features/Teams/domain/entities/Task.dart';
+import 'package:jci_app/features/Teams/domain/entities/task/Task.dart';
+import 'package:jci_app/features/Teams/presentation/utils/ChecklistUtils.dart';
+import 'package:jci_app/features/Teams/presentation/utils/MemberUtils.dart';
+import 'package:jci_app/features/Teams/presentation/utils/TaskUtils.dart';
 
-import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 
+import '../../../../../core/PrimitiveUser/User.dart';
 import '../../../../../core/error/Failure.dart';
 import '../../../../../core/strings/failures.dart';
 
+import '../../../domain/dto/TaskIdParams.dart';
 import '../../../domain/entities/Checklist.dart';
 import '../../../domain/usecases/TaskUseCase.dart';
 import '../TaskFilter/taskfilter_bloc.dart';
@@ -22,78 +26,62 @@ part 'get_task_state.dart';
 
 class GetTaskBloc extends Bloc<GetTaskEvent, GetTaskState> {
   final GetTasksOfTeamUseCase getTasksOfTeamUseCase;
-  final GetTasksByIdUseCase getTasksByIdUseCase;  final AddTaskUseCase addTaskUseCase;
-  final AddChecklistUseCase addChecklistUseCase;
-  final UpdateIsCompletedUseCases updateIsCompletedUseCases;
-  final UpdateChecklistStatusUseCase updateChecklistStatusUseCase;
-  final DeleteTaskUseCase deleteTaskUseCase;
-  final DeleteChecklistUseCase deleteChecklistUseCase;
-  final UpdateTaskNameUseCase updateTaskNameUseCase;
-  final UpdateFileUseCase updateFileUseCase;
-  final UpdateTaskTimelineUseCase updateTaskTimelineUseCase;
-  final UpdateMembersUsecases UpdateMembersUseCase;
-  final DeleteFileUseCases deleteFileUseCase;
-  final AddCommentUseCase addCommentUseCase;
-  final UpdateChecklistNameUseCase updateChecklistNameUseCase;
-  final GetFileUseCase getFileUseCase;
-  GetTaskBloc({ required this.getTasksOfTeamUseCase, required this.getTasksByIdUseCase,
-    required this.addTaskUseCase,required this.addChecklistUseCase,
-    required this.updateTaskNameUseCase,
-    required this.updateTaskTimelineUseCase,
-    required this.UpdateMembersUseCase,
-    required this.updateFileUseCase,
-    required this.updateChecklistNameUseCase,
-    required this.deleteFileUseCase,
-    required this.addCommentUseCase,
-    required this.getFileUseCase,
+  final GetTaskByIdUseCase getTasksByIdUseCase;
+  final AddTaskUseCase addTaskUseCase;
 
-    required this.updateIsCompletedUseCases, required this.deleteTaskUseCase,
-    required this.deleteChecklistUseCase, required this.updateChecklistStatusUseCase,}) : super(const GetTaskInitial()) {
+  final DeleteTaskUseCase deleteTaskUseCase;
+
+  final updateTaskNameUseCase UpdateTaskNameUseCase;
+ // final UpdateFileUseCase updateFileUseCase;
+  final UpdateTaskTimeline updateTaskTimelineUseCase;
+  final UpdateMembersUseCase updateMembersUseCase;
+ // final DeleteFileUseCases deleteFileUseCase;
+ // final AddCommentUseCase addCommentUseCase;
+  //final GetFileUseCase getFileUseCase;
+  GetTaskBloc({ required this.getTasksOfTeamUseCase, required this.getTasksByIdUseCase,
+    required this.addTaskUseCase,
+    required this.UpdateTaskNameUseCase,
+    required this.updateTaskTimelineUseCase,
+    required this.updateMembersUseCase,
+
+   required this.deleteTaskUseCase,
+
+  })
+
+      : super(const GetTaskInitial()) {
     on<GetTasks>(onGetTasks,);
     on<GetTaskById>(onGetTaskById);
     on<CreateTask>(_CreateTask);
-    on<AddCheckList>(_CreateChecklist);
-    on<GetFileEvent>(GetFile);
+
 
 
     on<UpdateStatus>(taskStatusUpdated);
     on<initTasks>(_initTasks);
-    on<DeleteChecklist>(deleteChecklist);
+
     on<DeleteTask>(deleteTask);
-    on<UpdateChecklistStatus>(_ChecklistStatusUpdated);
+
     on<UpdateTimeline>(_taskUpdateTime);
-    on<UpdateTaskName>(_updatetaskName);
+    on<UpdateTaskNameEvent>(_updatetaskName);
     on<UpdateMember>(_updateMembers);
     on<init_members>(_init_members);
-    on<UpdateFile>(_updateFiles);
-    on<DeleteFileEvent>(_deleteFile);
-    on<UpdateChecklistName>(_updateChecklistName);
+
 
     on<resetevent>(reset);
 
   }
-void GetFile(GetFileEvent event,Emitter<GetTaskState> emit )async{
- try {
- final file=await getFileUseCase(event.id);
-     emit (_GetFile(file));
- } on Exception catch (e) {
-  emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "$e + error occurred"));
- // TODO
- }
+
+void _updatetaskName(UpdateTaskNameEvent event, Emitter<GetTaskState> emit) async {
+    try {
+      final result = await UpdateTaskNameUseCase(event.fields);
+      emit(_mapFailureOrSuccess(result,emit,(task){
+
+      }));
+    } catch (error) {
+      emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "$error + error occurred"));
+    }
   }
 
-  void _updateChecklistName(UpdateChecklistName event, Emitter<GetTaskState> emit)async  {
-    try{
-      final result = await updateChecklistNameUseCase(event.fields);
-      emit(_mapFailureOrUpdatedChecklistStatusToState(result,emit,event.fields.taskid!,event.fields.checkid,
-          event.fields.name ,"name"));
-    }
-    catch(e){
-      log(e.toString());
-      emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "An error occurred"));
-    }
-  }
-  void _deleteFile(DeleteFileEvent event ,Emitter<GetTaskState> emit)async {
+ /*void _deleteFile(DeleteFileEvent event ,Emitter<GetTaskState> emit)async {
     if (event.fields.fileid == null) {
       emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "An error occurred"));
       return;
@@ -104,8 +92,8 @@ void GetFile(GetFileEvent event,Emitter<GetTaskState> emit )async{
     } catch (e) {
       emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "$e + error occurred"));
     }
-  }
-
+  }*/
+/*
   void _eitherdeleteFileorFailure(Either<Failure, Unit> result, Emitter<GetTaskState> emit, DeleteFileEvent event) {
     result.fold((l) {
       emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "$l + error occurred"));
@@ -137,7 +125,7 @@ void GetFile(GetFileEvent event,Emitter<GetTaskState> emit )async{
       }, (r) {
 
         List<Map<String, dynamic>> updatedTasks = AddSousFieldAction(event.fields.taskid,
-            TeamFunction.toMapFile(r), "attachedFile");
+            CheckListUtils.toMapFile(r), "attachedFile");
 
         checkState(emit, updatedTasks);
 
@@ -146,11 +134,11 @@ void GetFile(GetFileEvent event,Emitter<GetTaskState> emit )async{
       emit(state.copyWith(status: TaskStatus.error, errorMessage: "$e"));
     }
   }
-
+*/
 
   void _updateMembers(UpdateMember event, Emitter<GetTaskState> emit) async {
     try {
-      final result = await UpdateMembersUseCase(event.fields);
+      final result = await updateMembersUseCase(event.fields);
 
       _updatedMember(event, emit);
 
@@ -160,24 +148,14 @@ void GetFile(GetFileEvent event,Emitter<GetTaskState> emit )async{
   }
 
   void _updatedMember(UpdateMember event, Emitter<GetTaskState> emit) {
-    if (event.fields.status==true){
+    if (event.fields.memberStatus==true){
 
 
-      List<Map<String, dynamic>> updatedTasks = AddSousFieldAction(event.fields.taskid,
-          TeamFunction.toMapMember(event.fields.member! ), "AssignTo");
 
-      checkState(emit, updatedTasks);
 
     }else{
-      final updatedTasks=[...state.tasks.map((task) {
-        if (task['id'] == event.fields.taskid) {
-          // Remove the checklist with the matching ID
-          task['AssignTo'] = UnmodifiableListView(task['AssignTo'].where((member) => member['id'] != event.fields.memberid && member['_id'] != event.fields.memberid).toList());
 
-        }
-        return task;
-      })];
-      checkState(emit, updatedTasks);
+
     }
   }
 
@@ -186,39 +164,27 @@ void GetFile(GetFileEvent event,Emitter<GetTaskState> emit )async{
   void deleteTask(DeleteTask event, Emitter<GetTaskState> emit) async {
     try {
       final result = await deleteTaskUseCase(event.id);
-      final updatedTasks =UnmodifiableListView( [...state.tasks.where((task) => task['id'] != event.id)]);
+   //   final updatedTasks =UnmodifiableListView( [...state.tasks.where((task) => task.meta.id != event.id.taskId)]);
 
-      checkState(emit, updatedTasks);
+     // checkState(emit, updatedTasks);
     } catch (e) {
       emit(state.copyWith(status: TaskStatus.error, errorMessage: "An error occurred"));
     }
   }
-  void deleteChecklist(DeleteChecklist event, Emitter<GetTaskState> emit) async {
-    try {
-      final result = await deleteChecklistUseCase(event.checklistId);
-      final updatedTasks = [...state.tasks.map((task) {
-        if (task['id'] == event.id) {
-          // Remove the checklist with the matching ID
-          task['CheckLists'] = UnmodifiableListView(task['CheckLists'].where((checklist) => checklist['id'] != event.checklistId).toList());
-        }
-        return task;
-      })];
 
-      checkState(emit, updatedTasks);
-
-    }
-    catch (e) {
-      emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "An error occurred"));
-    }
-  }
   void _initTasks(initTasks event, Emitter<GetTaskState> emit) {
     emit(state.copyWith(clonetasks: event.tasksInit,status: TaskStatus.success,));
   }
   void _init_members(init_members event, Emitter<GetTaskState> emit) {
-    UpdateTaskField(event,emit,'AssignTo',event.members,event.id);
+  //  UpdateTaskField(event,emit,'AssignTo',event.members,event.id);
   }
   void reset(resetevent event, Emitter<GetTaskState> emit) {
-    emit(state.copyWith(status: TaskStatus.initial, tasks: [],clonetasks: []));
+    emit(state.copyWith(status: TaskStatus.initial, Completedtasks: [],
+        Delayedtasks: [],
+        Todotasks: [],
+        InProgresstasks: [],
+
+        clonetasks: []));
   }
   void onGetTasks(GetTasks event, Emitter<GetTaskState> emit) async {
 
@@ -227,13 +193,18 @@ void GetFile(GetFileEvent event,Emitter<GetTaskState> emit )async{
       if (state.status == TaskStatus.initial || state.status == TaskStatus.error|| state.status == TaskStatus.Changed){
         final result = await getTasksOfTeamUseCase(event.id);
         final r= result.getOrElse(() => []);
-        emit(state.copyWith(tasks: r.map((e) => TeamFunction.toMap(e)).toList(),status: TaskStatus.success,
-            clonetasks: r.map((e) => TeamFunction.toMap(e)).toList()
+        final grouped = groupTasksByStatus(r);
 
+        emit(state.copyWith(
 
-
-
+          clonetasks: r,
+          Todotasks: grouped[TaskCompletionStatus.Todo]!,
+          InProgresstasks: grouped[TaskCompletionStatus.InProgress]!,
+          Completedtasks: grouped[TaskCompletionStatus.Completed]!,
+          Delayedtasks: grouped[TaskCompletionStatus.Delayed]!,
+          status: TaskStatus.success,
         ));
+
       }
     } on Exception {
       emit(state.copyWith(status: TaskStatus.error, errorMessage: ""));
@@ -247,18 +218,19 @@ void GetFile(GetFileEvent event,Emitter<GetTaskState> emit )async{
 
         final result = await getTasksByIdUseCase(event.ids);
 
-        emit(_mapFailureOrTaskByIdToState(result));
+        emit(_mapFailureOrSuccess(result,emit,(task){
+          return state.copyWith(task: task, status: TaskStatus.success);
+        }));
 
       }
     } catch (error) {
-      emit(const GetTaskError(message: 'An error occurred'));
     }
   }
   void taskStatusUpdated(UpdateStatus event, Emitter<GetTaskState> emit) async {
     try{
-      final result = await updateIsCompletedUseCases(event.isCompleted);
+ //     final result =  UpdateTaskStatusUseCase(event.isCompleted);
 
-      UpdateTaskField(event, emit,"isCompleted",event.isCompleted.isCompleted ,event.isCompleted.taskid);
+   //   UpdateTaskField(event, emit,"isCompleted",event.isCompleted.isCompleted ,event.isCompleted.taskid);
 
     }
     catch(e){
@@ -282,155 +254,60 @@ void GetFile(GetFileEvent event,Emitter<GetTaskState> emit )async{
 
   }
 
-  void UpdateTaskField(GetTaskEvent event, Emitter<GetTaskState> emit,String field,dynamic value,String id) {
-    final act =TeamFunction. findTaskById(state.tasks, id);
-    act[field] = value;
-    List<Map<String, dynamic>> updatedTasks = List.from(state.tasks);
-    updatedTasks[updatedTasks.indexOf(act)] = act;
-    checkState(emit, updatedTasks);
-  }
 
 
   void                        UpdateTimelineFun(UpdateTimeline event, Emitter<GetTaskState> emit,) {
-    final act =TeamFunction. findTaskById(state.tasks, event.timeline.taskid);
-    act["StartDate"] = event.timeline.StartDate;
-    act["Deadline"] = event.timeline.Deadline;
-    List<Map<String, dynamic>> updatedTasks = List.from(state.tasks);
-    updatedTasks[updatedTasks.indexOf(act)] = act;
-    checkState(emit, updatedTasks);
-  }
 
-  void checkState(Emitter<GetTaskState> emit, List<Map<String, dynamic>> updatedTasks) {
-    if (state.status == TaskStatus.success){
-      emit (    state.copyWith(tasks: updatedTasks,status: TaskStatus.Changed ));
-
-    }
-    else {
-      emit (    state.copyWith(tasks: updatedTasks,status: TaskStatus.success,clonetasks: updatedTasks ));
-      log(state.status.toString());}
-  }
-
-  void _ChecklistStatusUpdated(UpdateChecklistStatus event, Emitter<GetTaskState> emit) async {
-    try{
-      final result = await updateChecklistStatusUseCase(event.checklist);
-      emit(_mapFailureOrUpdatedChecklistStatusToState(result,emit,event.checklist.taskid!,event.checklist.checkid,event.checklist.IsCompleted ,"isCompleted"));
-    }
-    catch(e){
-      log(e.toString());
-      emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "An error occurred"));
-    }
-  }
-  void _updatetaskName (UpdateTaskName event, Emitter<GetTaskState> emit) async {
-    try{
-      final result = await updateTaskNameUseCase(event.fields);
-      UpdateTaskField(event, emit,"name",event.fields.name ,event.fields.taskid);
-    }
-    catch(e){
-      log(e.toString());
-      emit(state.copyWith(status: TaskStatus.error, errorMessage: "An error occurred"));
-    }
   }
 
 
 
-  GetTaskState _mapFailureOrTaskByIdToState(Either<Failure, Tasks> either) {
-    return either.fold(
-          (failure) =>         state.copyWith(status: TaskStatus.error, errorMessage: mapFailureToMessage(failure))
-      ,
-          (act) =>
-          GetTaskByIdLoaded(
-            task:act,
-          ),
-    );
-  }
+
+
+
+
+
   void _CreateTask(CreateTask event, Emitter <GetTaskState> emit) async {
     try {
 
-      final result = await addTaskUseCase(event.task);
-      emit(_mapFailureOrAddedToState(result,emit));
+
 
     } catch (error) {
       emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "$error + error occurred"));
 
     }
   }
+  GetTaskState _mapFailureOrSuccess<T>(
+      Either<Failure, T> failureOrChecklist, Emitter<GetTaskState> emit, Function(T) onSuccess) {
+    return failureOrChecklist.fold(
+          (failure) => state.copyWith(status: TaskStatus.error, ),
+          (task) {
+        return onSuccess(task);
+      },
+    );
+  }
 
-  void _CreateChecklist(AddCheckList event, Emitter <GetTaskState> emit) async {
-    try {
 
-      final result = await addChecklistUseCase(event.checklist);
-      emit(_mapFailureOrAddedChecklistToState(result,emit,event.checklist.taskid!));
+  Map<TaskCompletionStatus, List<Tasks>> groupTasksByStatus(List<Tasks> tasks) {
+    final Map<TaskCompletionStatus, List<Tasks>> groupedTasks = {
+      TaskCompletionStatus.Todo: [],
+      TaskCompletionStatus.InProgress: [],
+      TaskCompletionStatus.Completed: [],
+      TaskCompletionStatus.Delayed: [],
+    };
 
-    } catch (error) {
-      emit(state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: "$error + error occurred"));
-
+    for (final task in tasks) {
+      groupedTasks[task.meta.status]?.add(task);
     }
+
+    return groupedTasks;
   }
 
 
-  GetTaskState _mapFailureOrAddedToState(Either<Failure, Tasks> either,Emitter<GetTaskState> emit) {
-    return either.fold(
-            (failure) => state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: mapFailureToMessage(failure))
-        ,
-            (act) {
-          final updated=UnmodifiableListView(
-            [
-              TeamFunction.      toMap(act),...state.tasks
-            ],);
-          return      state.copyWith(tasks: updated,
-              status: TaskStatus.success,clonetasks: updated
-
-          );
 
 
 
-        }
-    );
-  }
-  GetTaskState _mapFailureOrAddedChecklistToState(Either<Failure, CheckList> either,Emitter<GetTaskState> emit,String id) {
-    return either.fold(
-            (failure) =>         state.copyWith(status: TaskStatus.ErrorUpdate, errorMessage: mapFailureToMessage(failure))
-        ,
-            (act) {
-          List<Map<String, dynamic>> updatedTasks = AddSousFieldAction(id, TeamFunction.toMapChecklist(act),"CheckLists");
-
-          return state.copyWith(tasks: updatedTasks, status: TaskStatus.Changed,clonetasks: updatedTasks);
-        }
-    );
-  }
-
-  List<Map<String, dynamic>> AddSousFieldAction(String id, dynamic act,String field) {
-    Map<String, dynamic> updatedTask = TeamFunction.findTaskById(state.tasks, id);
-
-    List<Map<String, dynamic>> updatedCheckLists = List.from(updatedTask[field]);
-    updatedCheckLists.insert(0, act);
-
-    updatedTask[field] = updatedCheckLists;
-
-    List<Map<String, dynamic>> updatedTasks = List.from(state.tasks);
-    updatedTasks[updatedTasks.indexOf(updatedTask)] = updatedTask;
-    return updatedTasks;
-  }
-  GetTaskState _mapFailureOrUpdatedChecklistStatusToState(Either<Failure, Unit> either, Emitter<GetTaskState> emit, String id, String checkid, dynamic newche,String updatedField) {
-    return either.fold(
-            (failure) {
-          log(failure.toString());
-          return state.copyWith(status: TaskStatus.ErrorUpdate,errorMessage: mapFailureToMessage(failure),);
-        },
-            (act) {
-          Map<String, dynamic> updatedTask = TeamFunction.findTaskById(state.tasks, id);
-          List<Map<String, dynamic>> updatedCheckLists = List.from(updatedTask['CheckLists']);
-          int index = updatedCheckLists.indexWhere((checklist) => checklist['id'] == checkid);
-
-          List<Map<String, dynamic>> updatedTasks = changeChecklist(
-              updatedCheckLists, index, newche, updatedTask, updatedField, "CheckLists");
-          return state.copyWith(tasks: updatedTasks, status: state.status==TaskStatus.Changed?
-          TaskStatus.success: TaskStatus.Changed , clonetasks: updatedTasks);
-        }
-    );
-  }
-
-  List<Map<String, dynamic>> changeChecklist(List<Map<String, dynamic>> updatedCheckLists,
+/*  List<Map<String, dynamic>> changeChecklist(List<Map<String, dynamic>> updatedCheckLists,
       int index, dynamic newche, Map<String, dynamic> updatedTask,String sousfield,String field) {
     updatedCheckLists[index][sousfield] = newche;
     log(updatedCheckLists[index][sousfield].toString());
@@ -450,5 +327,5 @@ void GetFile(GetFileEvent event,Emitter<GetTaskState> emit )async{
           return state.copyWith(status: TaskStatus.success, image: act);
         }
     );
-  }
+  }*/
 }

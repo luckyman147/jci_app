@@ -61,7 +61,7 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
       // Log the beginning of the addMeeting process
       logger.i("Starting the process to add a new event.");
       final images =
-          await firebaseImageUploader.uploadImagesToFirebase(event.CoverImages);
+          await firebaseImageUploader.uploadImagesToFirebase(event.activityBasics.coverImages);
       logger.i("Images uploaded successfully");
       // Create the main activity document
       DocumentReference activityDocRef = await activitiesCollection
@@ -70,7 +70,7 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
       logger.i("Activity document created successfully with ID: $documentId");
 
       // Update the document with the generated document ID
-      await activityDocRef.update({'id': documentId});
+      await activityDocRef.update({'activityBasics.id': documentId});
       logger.i("Activity document updated with the generated ID.");
 
       // return the document event
@@ -116,7 +116,7 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
       QuerySnapshot snapshot = await firabaseFireStore
           .collection('activities')
           .where('type', isEqualTo: 'Event')
-          .orderBy('ActivityEndDate', descending: true)
+          .orderBy('activityBasics.activityEndDate', descending: true)
           .get();
 
       List<EventModel> events = snapshot.docs.map((doc) {
@@ -164,9 +164,9 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
     try {
       QuerySnapshot snapshot = await firabaseFireStore
           .collection('activities')
-          .where('ActivityBeginDate',
+          .where('activityBasics.activityBeginDate',
               isLessThan: firstDayOfNextMonth) // Starts before next month
-          .where('ActivityEndDate', isGreaterThanOrEqualTo: firstDayOfMonth)
+          .where('activityBasics.activityEndDate', isGreaterThanOrEqualTo: firstDayOfMonth)
           .where('type', isEqualTo: 'Event')
           // Ends after or on the first day of the month
           .get();
@@ -200,17 +200,17 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
   @override
   Future<Unit> updateEvent(EventModel event) async {
     try {
-      logger.i("Updating event with ID: ${event.id}");
+      logger.i("Updating event with ID: ");
       final images =
-          await firebaseImageUploader.uploadImagesToFirebase(event.CoverImages);
+          await firebaseImageUploader.uploadImagesToFirebase(event.activityBasics.coverImages);
       logger.i("Images uploaded successfully");
       // Create the main activity document
 
       await firabaseFireStore
           .collection('activities')
-          .doc(event.id)
+          .doc(event.activityBasics.id)
           .update(EventModel.setImages(event: event, images: images).toJson());
-      logger.i("Event updated successfully with ID: ${event.id}");
+      logger.i("Event updated successfully with ID: ");
       return Future.value(unit);
     } on FirebaseException catch (e) {
       logger.e("An error occurred while updating the event: $e");
@@ -228,8 +228,8 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
       logger.i("Fetching events by name: $name");
       QuerySnapshot snapshot = await firabaseFireStore
           .collection('activities')
-          .where('name', isEqualTo: name)
-          .where("name", isLessThan: '$name\uf8ff')
+          .where('activityBasics.name', isEqualTo: name)
+          .where("activityBasics.name", isLessThan: '$name\uf8ff')
           // .where('type',isEqualTo: act.name.replaceAll('s', ''))
           .get();
 

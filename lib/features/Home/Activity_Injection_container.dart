@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:jci_app/core/PrimitiveUser/User.dart';
+import 'package:jci_app/core/config/services/EventStore.dart';
 import 'package:jci_app/core/config/services/MeetingStore.dart';
 import 'package:jci_app/core/config/services/uploadImage.dart';
 import 'package:jci_app/features/Home/data/datasources/Category/CategoryLocalDataSource.dart';
@@ -104,7 +105,7 @@ Future<void> initActivities() async {
       () => CategoryRemoteDataSourceImpl(sl()));
 
   sl.registerLazySingleton<EventLocalDataSource>(
-      () => EventLocalDataSourceImpl(store: sl()));
+      () => EventLocalDataSourceImpl(sl(),store: sl()));
   sl.registerLazySingleton<GuestRemoteDataSources>(
       () => GuestRemoteDataSourcesImpl(firabaseFireStore: sl(), logger: sl()));
   sl.registerLazySingleton<CommentRemoteDataSources>(
@@ -233,6 +234,8 @@ Future<void> initActivities() async {
       categoryRemoteDataSource: sl(), categoryLocalDataSource: sl()));
   sl.registerFactory(() => FirebaseImageUploader());
   sl.registerFactory(() => MeetingStore());
+  final eventStore = await EventStore.create();
+  sl.registerSingleton<EventStore>(eventStore);
   sl.registerFactory(() => FirebaseDatabase.instance);
   sl.registerFactory(() => Handler<List<User>>(sl(), networkInfo: sl()));
   sl.registerFactory(

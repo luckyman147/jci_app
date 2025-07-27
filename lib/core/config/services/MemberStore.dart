@@ -88,7 +88,7 @@ static const String _cachedMembersRank = 'CachedMembersWIthRanks';
   }
    Future<UserModel> getPrimitiveModel()async{
 
-    final value = await  storage.getString(_UserPrimInfo);
+    final value = storage.getString(_UserPrimInfo);
 
     if (value == null) {
       throw Exception('No user found');

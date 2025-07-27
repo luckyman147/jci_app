@@ -1,11 +1,12 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:formz/formz.dart';
 
-import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/core/route/app_router.dart';
 
 
 
@@ -71,7 +72,7 @@ void _resetform(){
       mainAxisAlignment: MainAxisAlignment.center,
 
       children: [
-      const Backbutton(text:  '/login'),
+      const Backbutton(text:  LoginRoute()),
         Align(
           alignment: Alignment.center,
           child: Padding(
@@ -139,7 +140,7 @@ context.read<SignUpBloc>().add(ConfirmPasswordChanged(String));
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
               onTap: (){
-                context.go('/login');
+                context.navigateTo(LoginRoute());
                 context.read<InputsCubit>().resetInputs();
               },
               child: LinkedText(text: "Sign In".tr(context), size:  mediaquery.size.width/30.5,

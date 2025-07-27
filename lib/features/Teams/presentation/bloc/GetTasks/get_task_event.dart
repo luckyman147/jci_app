@@ -11,20 +11,15 @@ class GetTasks extends GetTaskEvent {
   @override
   List<Object> get props => [id,filter];
 }
-class AddCommentEvent extends GetTaskEvent {
-  final CommentInput comment;
-  const AddCommentEvent(this.comment);
-  @override
-  List<Object> get props => [comment];
-}
+
 class GetTaskById extends GetTaskEvent {
- final inputFields ids;
+ final TaskIdParams ids;
   const GetTaskById({required this.ids,});
   @override
   List<Object> get props => [ids];
 }
 class CreateTask extends GetTaskEvent {
-  final inputFields task;
+  final AddTaskParams task;
   const CreateTask(this.task);
   @override
   List<Object> get props => [task];
@@ -36,13 +31,7 @@ class GetChecklist  extends GetTaskEvent {
   List<Object> get props => [checklist];
 }
 
-class AddCheckList extends GetTaskEvent {
-  final  CheckInputFields checklist;
 
-  const AddCheckList(this.checklist,);
-  @override
-  List<Object> get props => [checklist];
-}
 class resetevent extends GetTaskEvent {
   @override
   List<Object> get props => [];
@@ -53,7 +42,7 @@ class resetevent extends GetTaskEvent {
 
 
 class UpdateTimeline extends GetTaskEvent {
-  final inputFields timeline;
+  final UpdateTaskParams timeline;
 
   const UpdateTimeline(this.timeline, );
   @override
@@ -66,16 +55,8 @@ class UpdateTimeline extends GetTaskEvent {
 
 
 
-class UpdateChecklistStatus extends GetTaskEvent {
-  final CheckInputFields checklist;
-
-
-  const UpdateChecklistStatus(this.checklist);
-  @override
-  List<Object> get props => [checklist];
-}
 class UpdateStatus extends GetTaskEvent {
-  final inputFields isCompleted;
+  final UpdateTaskParams isCompleted;
   final int index;
   const UpdateStatus(this.isCompleted, this.index);
   @override
@@ -90,35 +71,30 @@ class initCompletedList extends GetTaskEvent {
   List<Object> get props => [IsCompleted];
 }
 class initTasks extends GetTaskEvent {
-  final List<Map<String, dynamic>>tasksInit;
+  final List<Tasks>tasksInit;
   const initTasks(this.tasksInit);
   @override
   List<Object> get props => [tasksInit];
 }
 class DeleteTask extends GetTaskEvent {
-  final String id;
+  final AddTaskParams id;
   const DeleteTask(this.id);
   @override
   List<Object> get props => [id];
 }
-class DeleteChecklist extends GetTaskEvent {
-  final String id;
-  final String checklistId;
-  const DeleteChecklist(this.id, this.checklistId);
-  @override
-  List<Object> get props => [id,checklistId];
-}
-class UpdateTaskName extends GetTaskEvent {
-final inputFields fields;
-  const UpdateTaskName(this.fields);
+
+class UpdateTaskNameEvent extends GetTaskEvent {
+final UpdateTaskParams fields;
+  const UpdateTaskNameEvent(this.fields);
   @override
   List<Object> get props => [fields];
 }
 class UpdateMember extends GetTaskEvent {
-  final inputFields fields;
-  const UpdateMember(this.fields);
+  final UpdateTaskParams fields;
+  final User Member;
+  const UpdateMember(this.fields, this.Member);
   @override
-  List<Object> get props => [fields];
+  List<Object> get props => [fields, Member];
 }
 class init_members extends GetTaskEvent {
   final List<Map<String,dynamic>> members;
@@ -126,31 +102,4 @@ class init_members extends GetTaskEvent {
   const init_members(this.members, this.id);
   @override
   List<Object> get props => [members,id];
-}
-class UpdateFile extends GetTaskEvent {
-  final inputFields fields;
-
-  const UpdateFile(this.fields, );
-  @override
-  List<Object> get props => [fields];
-}
-class DeleteFileEvent extends GetTaskEvent {
-  final inputFields fields;
-
-  const DeleteFileEvent(this.fields, );
-  @override
-  List<Object> get props => [fields];
-}
-class UpdateChecklistName extends GetTaskEvent {
-  final CheckInputFields fields;
-
-  const UpdateChecklistName(this.fields, );
-  @override
-  List<Object> get props => [fields];
-}
-class GetFileEvent extends GetTaskEvent {
-  final String id;
-  const GetFileEvent(this.id);
-  @override
-  List<Object> get props => [id];
 }

@@ -1,3 +1,4 @@
+import 'package:auto_route/annotations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jci_app/features/MemberSection/domain/dto/UpdateObjectiveProgressDTO.dart';
@@ -13,7 +14,7 @@ import '../../bloc/objectifs/ObjectifForm/objectif_form_cubit.dart';
 import '../../bloc/objectifs/ObjectifUserProgress/user_objectif_progress_cubit.dart';
 import '../../bloc/objectifs/objectif_bloc.dart';
 import '../../components/buttonsComponents.dart';
-
+@RoutePage()
 class Objectifformpage extends StatelessWidget {
   const Objectifformpage({super.key, required this.MemberId, required this.event, this.obj,});
   final String MemberId;

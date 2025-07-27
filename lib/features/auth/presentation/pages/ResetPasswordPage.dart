@@ -1,3 +1,4 @@
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,7 +14,7 @@ import '../widgets/Functions/Listeners.dart';
 import '../widgets/Inputs/InputsWithLabels.dart';
 import '../widgets/Text.dart';
 
-
+@RoutePage()
 class ResetPassword extends StatefulWidget {
 
    const ResetPassword({Key? key, required this.email}) : super(key: key);

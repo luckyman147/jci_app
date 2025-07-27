@@ -20,18 +20,18 @@ import 'package:provider/single_child_widget.dart';
 
 List<SingleChildWidget> homeProviders = [
   BlocProvider(
-      create: (_) => di.sl<AcivityFBloc>()
+      create: (_) => di.sll<AcivityFBloc>()
         ..add(const GetActivitiesOfMonthEvent(act: activity.Events))),
-  BlocProvider(create: (_) => di.sl<VisibleBloc>()),
-  BlocProvider(create: (_) => di.sl<TextFieldBloc>()),
-  BlocProvider(create: (_) => di.sl<ParticpantsBloc>()),
-  BlocProvider(create: (_) => di.sl<CategoryBloc>()),
-  BlocProvider(create: (_) => di.sl<GuestsBloc>()),
-  BlocProvider(create: (_) => di.sl<PollBloc>()),
-  BlocProvider(create: (_) => di.sl<ActivityCommentBloc>()),
-  BlocProvider(create: (_) => di.sl<PvBloc>()),
-  BlocProvider(create: (_) => di.sl<FormzBloc>()),
-  BlocProvider(create: (_) => di.sl<AddDeleteUpdateBloc>()),
+  BlocProvider(create: (_) => di.sll<VisibleBloc>()),
+  BlocProvider(create: (_) => di.sll<TextFieldBloc>()),
+  BlocProvider(create: (_) => di.sll<ParticpantsBloc>()),
+  BlocProvider(create: (_) => di.sll<CategoryBloc>()),
+  BlocProvider(create: (_) => di.sll<GuestsBloc>()),
+  BlocProvider(create: (_) => di.sll<PollBloc>()),
+  BlocProvider(create: (_) => di.sll<ActivityCommentBloc>()),
+  BlocProvider(create: (_) => di.sll<PvBloc>()),
+  BlocProvider(create: (_) => di.sll<FormzBloc>()),
+  BlocProvider(create: (_) => di.sll<AddDeleteUpdateBloc>()),
   BlocProvider(create: (_) => CalendarCubit()),
   BlocProvider(create: (_) => ActivityCubit()),
   BlocProvider(create: (_) => DescriptionBoolBloc()),

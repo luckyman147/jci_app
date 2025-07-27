@@ -1,3 +1,4 @@
+import 'package:auto_route/annotations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
@@ -15,7 +16,7 @@ import '../../components/buttonsComponents.dart';
 import '../../widgets/achivements/BuildObjectifWidget.dart';
 
 
-
+@RoutePage()
 class ObjectifsPage extends StatelessWidget {
   final Member member;
   final MemberManagementState state;

@@ -10,7 +10,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Activity/ActivityDetailsComponents.dart';
-import 'package:jci_app/features/Home/presentation/widgets/components/Compoenents.dart';
+import 'package:jci_app/features/Home/presentation/widgets/components/stuff/Compoenents.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
 import '../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/Bloc/permissions/permissions_bloc.dart';
 

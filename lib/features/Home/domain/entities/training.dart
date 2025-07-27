@@ -1,44 +1,42 @@
 import 'package:jci_app/features/Home/data/model/TrainingModel/TrainingModel.dart';
-import 'package:jci_app/features/Home/domain/entities/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/ActivityBasics.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/ActivitySettings.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/OnlineSettings.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/ParicipationStatus.dart';
 
-class Training extends Activity{
+class Training extends Activity {
+  final String professeurName;
+  final int duration;
+  final String type = "Training";
 
-  final String ProfesseurName;
-  final int Duration;
-  final type="Training";
+  Training({
+    required this.professeurName,
+    required this.duration,
+    required super.activityBasics,
+    required super.settings,
+    required super.online,
+    required super.participation,
+  });
 
-factory Training.fromModel(TrainingModel train) {
+  factory Training.fromModel(TrainingModel train) {
+    return Training(
+      professeurName: train.professeurName,
+      duration: train.duration,
+      activityBasics: train.activityBasics,
+      settings: train.settings,
+      online: train.online,
+      participation: train.participation,
+    );
+  }
 
-  return Training(
-    id: train.id,
-    name: train.name,
-    description: train.description,
-    ActivityBeginDate: train.ActivityBeginDate,
-    ActivityEndDate: train.ActivityEndDate,
-    ActivityAdress: train.ActivityAdress,
-    ActivityPoints: train.ActivityPoints,
-    categorieId: train.categorieId,
-    IsPaid: train.IsPaid,
-    price: train.price,
-    Participants: train.Participants,
-    CoverImages: train.CoverImages,
-    Duration: train.Duration,
-    ProfesseurName: train.ProfesseurName,
-    IsPart: train.IsPart,
-    IsPublic: train.IsPublic,
-    isOnline: train.isOnline,
-    googleMeetLink: train.googleMeetLink,
-  );
+  @override
+  List<Object?> get props => [
+    professeurName,
+    duration,
+    activityBasics,
+    settings,
+    online,
+    participation,
+  ];
 }
-
-  Training
-      ({
-    required super.id,
-
-    required this.ProfesseurName, required this.Duration,
-    required super.name,
-
-
-    required super.description, required super.ActivityBeginDate, required super.ActivityEndDate, required super.ActivityAdress,
-    required super.ActivityPoints, required super.categorieId, required super.IsPaid, required super.price, required super.Participants,
-    required super.CoverImages, required super.IsPart, required super.IsPublic, required super.isOnline, required super.googleMeetLink,});}

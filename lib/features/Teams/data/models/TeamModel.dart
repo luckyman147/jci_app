@@ -1,90 +1,86 @@
-import 'package:jci_app/features/Teams/domain/entities/Task.dart';
+import 'package:jci_app/features/Teams/domain/entities/task/Task.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../domain/entities/Team.dart';
+import '../../../../core/PrimitiveUser/User.dart';
+import '../../../../core/PrimitiveUser/UserModel.dart';
+import '../../../Home/data/model/events/EventModel.dart';
+import '../../../Home/domain/entities/Activity/event/Event.dart';
+import '../../domain/entities/Team/Team.dart';
+import '../../domain/entities/Team/TeamMembers.dart';
+import '../../domain/entities/Team/TeamMeta.dart';
+import '../../domain/entities/Team/TeamStats.dart';
 import 'TaskModel.dart';
 
-@JsonSerializable()
-class TeamModel extends Team{
-  TeamModel({required super.name, required super.description, required super.event, required super.Members, required super.CoverImage, required super.tasks, required super.id, required super.TeamLeader, required super.status});
+class TeamModel extends Team {
+  TeamModel({
+    required super.meta,
+    required super.stats,
+    required super.members,
+  });
 
-  factory TeamModel.fromJson(Map<String, dynamic> json) =>
-      TeamModel(
-        name: json['name']??"",
-        description: json['description'] != null ? json['description'] as String : "",
-        event: json['event'] ?? json["Event"],
-        Members: json['Members'] == null ? [] : json['Members'] as List<dynamic>,
-
-        CoverImage: json['CoverImage'] ?? "",
-        tasks:  json['tasks'] == null ? [] : (json['tasks'] as List<dynamic>)
-            .map((e) => TaskModel.fromJson(e as Map<String, dynamic>))
-            .toList(),
-        id: json['id'] ?? json['_id']??"" ,
-        TeamLeader: json['TeamLeader'] ?? "",
-        status: json['status'] != null ? json['status'] as bool : false
-      );
-
-
-  @override
-  Map<String, dynamic> toJson() =>
-
-      {
-        'name': name,
-        'description': description,
-        'event': event,
-        'Members': Members,
-        'CoverImage': CoverImage,
-        'tasks': tasks,
-        'id': id,
-        'TeamLeader': TeamLeader,
-        'status': status,
-      };
-  Map<String, dynamic> toUpdatejson() =>
-
-      {
-        'name': name,
-        'description': description,
-        'event': event,
-        'Members': Members,
-        'CoverImage': CoverImage,
-        'tasks': getidsObTasks(tasks),
-        'id': id,
-        'TeamLeader': TeamLeader,
-        'status': status,
-      };
-
-  Team toEntity() {
-    return Team(
-      name: name,
-      id: id,
-      TeamLeader: TeamLeader,
-      description: description,
-      status: status,
-      event: event,
-      Members: Members,
-      CoverImage: CoverImage,
-      tasks: tasks,
-    );
-  }
- static TeamModel fromEntity(Team entity,bool add) {
+  factory TeamModel.fromJson(Map<String, dynamic> json) {
     return TeamModel(
-      name: entity.name,
-      id:add?"": entity.id,
-      TeamLeader:add?"": entity.TeamLeader,
-      description: entity.description,
-      status: entity.status,
-      event: entity.event,
-      Members: entity.Members,
-      CoverImage: entity.CoverImage,
-      tasks: entity.tasks,
+      meta: TeamMeta.fromJson(json['meta'] as Map<String, dynamic>),
+      stats: TeamStats.fromJson(json['stats'] as Map<String, dynamic>),
+      members:  TeamMembers.fromJson(
+        json['members'] as Map<String, dynamic>,
+      ),
     );
   }
-factory TeamModel.empty(){
-    return TeamModel(name: "",description: "",event: {},Members: [],CoverImage: "",tasks: [],id: "",TeamLeader: "",status: false);}
-  getidsObTasks(List<Tasks> objects) {
-    if (objects.isEmpty  ) {
-      return [];
-    }
-    return objects.map((obj) => obj.id ).toList();
+
+  Map<String, dynamic> toJson() {
+    return {
+
+      'meta': meta.toJson(),
+      'stats': stats.toJson(),
+      'members': members.toJson()
+    };
   }
+
+  TeamModel copyWith({
+    TeamMeta? meta,
+    TeamStats? stats,
+    TeamMembers? members,
+  }) {
+    return TeamModel(
+      meta: meta ?? this.meta,
+      stats: stats ?? this.stats,
+      members: members ?? this.members,
+    );
+  }
+
+  static TeamModel fromEntity(Team entity, bool generateNewId) {
+    return TeamModel(
+      meta: generateNewId
+          ? entity.meta.copyWith(id: "")
+          : entity.meta,
+      stats: entity.stats,
+      members: entity.members.copyWith(
+        teamLeader: generateNewId ? null : entity.members.teamLeader,
+      ),
+    );
+  }
+
+  factory TeamModel.empty() {
+    return TeamModel(
+      meta: TeamMeta(
+        id: '',
+        name: '',
+        description: '',
+        projectId: '',
+        event: null,
+        status: false,
+        coverImage: '',
+
+      ),
+      stats: TeamStats(
+        numberOfMembers: 0,
+        numberOfTasksCompleted: 0,
+        numberOfTasksTotal: 0,
+      ),
+      members: TeamMembers(members: [], teamLeader: null),
+    );
+  }
+
+  
 }

@@ -10,6 +10,7 @@ import 'package:jci_app/features/MemberSection/presentation/bloc/objectifs/Objec
 import '../../../../../core/app_theme.dart';
 import '../../../../../core/strings/objectifsIcon.dart';
 import '../../../../../core/util/snackbar_message.dart';
+import '../../../../common/enums/PrivacyType.dart';
 import '../../../domain/entity/ActionDetails.dart';
 import '../../../domain/entity/Objectif.dart';
 

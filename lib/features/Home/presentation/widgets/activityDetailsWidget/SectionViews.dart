@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jci_app/features/Home/data/model/meetingModel/MeetingModel.dart';
 import 'package:jci_app/features/Home/presentation/widgets/activityDetailsWidget/CommentComponent.dart';
@@ -26,87 +27,117 @@ class SectionViewer extends StatefulWidget {
 }
 
 class _SectionViewerState extends State<SectionViewer> {
-  late PageController _pageController;
+  final PageController _pageController = PageController();
+  int selectedPageIndex = 0;
+
+  void onTabSelected(int index) {
+    setState(() => selectedPageIndex = index);
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
 
   @override
-  void initState() {
-    super.initState();
-    _pageController = PageController();
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final mediaquery = MediaQuery.of(context);
-    return BlocBuilder<PageIndexBloc, PageIndexState>(
-      builder: (context, state) {
-        return Column(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeaderTab(0, 'About', mediaquery, Viewsection.About),
-                _buildAboutSection(mediaquery, state),
-                Visibility(
-                    visible: state.viewsection == Viewsection.About,
-                    child: ActivityDetailsComponent.Description(mediaquery,
-                        context.read<AcivityFBloc>().state.activityById!)),
-              ],
-            ),
-            NoImageCard(ColorsApp.BackWidgetColor, 10),
 
-            NoImageCard(ColorsApp.BackWidgetColor, 10),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                widget.act == activity.Meetings
-                    ? _buildHeaderTab(
-                        1, "Agenda", mediaquery, Viewsection.Agenda)
-                    : Container(),
-                widget.act == activity.Meetings
-                    ? _buildAgendaSection(mediaquery, state)
-                    : Container(),
-                widget.act == activity.Meetings
-                    ? NoImageCard(ColorsApp.BackWidgetColor, 10)
-                    : Container(),
-              ],
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                widget.act == activity.Meetings
-                    ? _buildHeaderTab(1, "PV", mediaquery, Viewsection.PV)
-                    : Container(),
-                widget.act == activity.Meetings
-                    ? Visibility(
-                        visible: state.viewsection == Viewsection.PV,
-                        child: SizedBox(
-                          width: mediaquery.size.width,
-                          child: PVImpl(
-                              activityId: context
-                                  .read<AcivityFBloc>()
-                                  .state
-                                  .activityById!
-                                  .id),
-                        ))
-                    : Container(),
-                widget.act == activity.Meetings
-                    ? NoImageCard(ColorsApp.BackWidgetColor, 10)
-                    : Container(),
-              ],
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeaderTab(2, "Comments", mediaquery, Viewsection.Comment),
-                Visibility(
-                  visible: state.viewsection == Viewsection.Comment,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
+
+    final tabs = [
+      'About',
+      if (widget.act == activity.Meetings) 'Agenda',
+      if (widget.act == activity.Meetings) 'PV',
+      'Comments',
+      'Votes',
+    ];
+
+    return Column(
+      children: [
+        // 🔹 Header Tabs Row
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: List.generate(tabs.length, (index) {
+            return _buildHeaderTab(
+           index:    index,
+            selectedIndex:selectedPageIndex,
+              text: tabs[index],
+
+
+              onTap: () => onTabSelected(index),
+            );
+          }),
+        ),
+        const SizedBox(height: 8),
+
+        // 🔹 Content Area
+        SizedBox(
+          height: mediaquery.size.height * 0.7,
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() => selectedPageIndex = index);
+            },
+            children: [
+              // Page 0 - About
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildAboutSection(mediaquery),
+
+                  ActivityDetailsComponent.Description(
+                      mediaquery,
+                      context.read<AcivityFBloc>().state.activityById!,
+
+                  ),
+                ],
+              ),
+
+              // Page 1 - Agenda
+              if (widget.act == activity.Meetings)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildAgendaSection(mediaquery,),
+                  ],
+                ),
+
+              // Page 2 - PV
+              if (widget.act == activity.Meetings)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                       SizedBox(
+                        width: mediaquery.size.width,
+                        child: PVImpl(
+                          activityId: context
+                              .read<AcivityFBloc>()
+                              .state
+                              .activityById!
+                              .activityBasics
+                              .id,
+                        ),
+                      ),
+
+                  ],
+                ),
+
+              // Page 3 - Comments
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+
+                     Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
                         height: 500,
                         width: mediaquery.size.width,
                         child: CommentsScreen(
@@ -114,138 +145,83 @@ class _SectionViewerState extends State<SectionViewer> {
                               .read<AcivityFBloc>()
                               .state
                               .activityById!
+                              .activityBasics
                               .id,
                           id: widget.id,
-                        )),
-                  ),
-                )
-              ],
-            ),
-            NoImageCard(ColorsApp.BackWidgetColor, 10),
-            // Header with three containers
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeaderTab(2, "Votes", mediaquery, Viewsection.Poll,
-                    icon: Icons.add, onPressed: () {
-                  context.read<PollBloc>().add(CancelPollEvent());
-                  context.read<PollBloc>().add(GetPollsAsTemplates());
+                        ),
+                      ),
+                    ),
 
-                  showDialog(
-                      context: context,
-                      builder: (ctx) => AddPollDialog(
-                            ActivityId: context
-                                .read<AcivityFBloc>()
-                                .state
-                                .activityById!
-                                .id,
-                          ));
-                }),
-                Visibility(
-                    visible: state.viewsection == Viewsection.Poll,
-                    child: SizedBox(
-                        child: PollImpl(
-                      activityId:
-                          context.read<AcivityFBloc>().state.activityById!.id,
-                    ))),
-              ],
-            ),
-            // PageView for content
-            NoImageCard(ColorsApp.BackWidgetColor, 10),
-          ],
-        );
-      },
+                ],
+              ),
+
+              // Page 4 - Poll
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                 PollImpl(
+                      activityId: context
+                          .read<AcivityFBloc>()
+                          .state
+                          .activityById!
+                          .activityBasics
+                          .id, eventType: widget.act,
+                    ),
+
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildAgendaSection(MediaQueryData mediaQuery, PageIndexState state) {
-    return Visibility(
-        visible: state.viewsection == Viewsection.Agenda,
-        child: AgendaWidget(
+  Widget _buildAgendaSection(MediaQueryData mediaQuery) {
+    return
+         AgendaWidget(
           activity:
               (context.read<AcivityFBloc>().state.activityById) as MeetingModel,
-        ));
+        );
   }
 
   // Build header tabs with bottom border
-  Widget _buildHeaderTab(
-      int index, String text, MediaQueryData med, Viewsection view,
-      {IconData? icon, Function()? onPressed}) {
-    return BlocBuilder<PageIndexBloc, PageIndexState>(
-      builder: (context, state) {
-        return Padding(
-          padding: EdgeInsets.all(3.0.sp),
-          child: InkWell(
-            onTap: () {
-              if (state.viewsection != view) {
-                context
-                    .read<PageIndexBloc>()
-                    .add(ChangeViewSectionEvent(viewsection: view));
-              } else {
-                context.read<PageIndexBloc>().add(
-                    ChangeViewSectionEvent(viewsection: Viewsection.Initial));
-              }
-            },
-            child: Container(
-              width: med.size.width,
-              decoration: const BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(
-                  color: ColorsApp.BackWidgetColor,
-                  width: 2,
-                )),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      text,
-                      style: PoppinsSemiBold(
-                          15.sp, Colors.black, TextDecoration.none),
-                    ),
-                    Row(children: [
-                      IconButton(
-                          onPressed: () {
-                            if (state.viewsection != view) {
-                              context.read<PageIndexBloc>().add(
-                                  ChangeViewSectionEvent(viewsection: view));
-                            } else {
-                              context.read<PageIndexBloc>().add(
-                                  ChangeViewSectionEvent(
-                                      viewsection: Viewsection.Initial));
-                            }
-                          },
-                          icon: Icon(state.viewsection == view
-                              ? Icons.arrow_upward
-                              : Icons.arrow_downward_sharp)),
-                      icon != null
-                          ? IconButton.outlined(
-                              icon: Icon(icon),
-                              onPressed: () {
-                                onPressed!();
-                              },
-                            )
-                          : Container()
-                    ]),
-                  ],
-                ),
-              ),
+  Widget _buildHeaderTab({
+    required int index,
+    required int selectedIndex,
+    required String text,
+    required VoidCallback onTap,
+  }) {
+    final isSelected = index == selectedIndex;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6.0,vertical: 10),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: isSelected ? ColorsApp.PrimaryColor : ColorsApp.BackWidgetColor,
+            borderRadius: BorderRadius.circular(13),
+          ),
+          child: AutoSizeText(
+            text,
+            style: PoppinsSemiBold(14.sp,
+          isSelected ? ColorsApp.textColorWhite : ColorsApp.textColorBlack,
+        TextDecoration.none
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
+
   // Build content for each page
-  Widget _buildAboutSection(MediaQueryData mediaQuery, PageIndexState state) {
-    return Visibility(
-      visible: state.viewsection == Viewsection.About,
-      child: BlocBuilder<AcivityFBloc, AcivityFState>(
+  Widget _buildAboutSection(MediaQueryData mediaQuery,) {
+    return
+       BlocBuilder<AcivityFBloc, AcivityFState>(
         builder: (context, state) {
           return SingleChildScrollView(
             child: Padding(
@@ -255,7 +231,7 @@ class _SectionViewerState extends State<SectionViewer> {
             ),
           );
         },
-      ),
+
     );
   }
 }

@@ -4,7 +4,7 @@ import 'package:jci_app/core/config/locale/app__localizations.dart';
 
 import '../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../bloc/IsVisible/bloc/visible_bloc.dart';
-import 'components/DateWidget.dart';
+import 'components/stuff/DateWidget.dart';
  enum TimeType { begin, end, registration }
 class BeginTimeWidget extends StatefulWidget {
 

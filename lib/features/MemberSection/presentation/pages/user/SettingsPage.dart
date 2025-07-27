@@ -1,17 +1,19 @@
+import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/components/SettingsComponents.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
+import '../../../../../core/route/app_router.dart';
 import '../../../../../core/util/snackbar_message.dart';
 import '../../../../../core/Member.dart';
 import '../../../../auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import '../../../../auth/presentation/bloc/auth/auth_bloc.dart';
 import '../../bloc/Members/members_bloc.dart';
-
+@RoutePage()
 class SettingsPage extends StatefulWidget {
   final Member member;
 
@@ -62,7 +64,7 @@ class _SettingsPageState extends State<SettingsPage> {
         child: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthSuccessState){
-              context.go('/login');
+              context.replaceRoute(LoginRoute());
             }
             // TODO: implement listener}
           },
@@ -71,7 +73,8 @@ class _SettingsPageState extends State<SettingsPage> {
               if (state.status == ResetPasswordStatus.Updated) {
                 SnackBarMessage.showSuccessSnackBar(
                     message: state.message, context: context);
-                context.go('/home');
+                context.navigateTo(HomeRoute());
+
                 context.read<MembersBloc>().add(const GetUserProfileEvent(false));
               }
               else if (state.status == ResetPasswordStatus.error) {

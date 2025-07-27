@@ -5,7 +5,7 @@ import 'package:jci_app/core/strings/app_strings.dart';
 
 import '../../../../../../core/PrimitiveUser/User.dart';
 import '../../../../../../core/app_theme.dart';
-import '../../components/NetworkCachedImageWidget.dart';
+import '../../components/stuff/NetworkCachedImageWidget.dart';
 
 class MemberImageWidget extends StatelessWidget {
   final User item;

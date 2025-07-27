@@ -1,19 +1,20 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:jci_app/core/config/env/providersList.dart';
-import 'package:jci_app/core/routes.dart';
+import 'package:jci_app/core/route/app_router.dart';
 
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
 import 'core/config/locale/app__localizations.dart';
 
 import 'core/config/services/NotificationService/NotificationService.dart';
+import 'core/route/status/status_cubit.dart';
 import 'features/changelanguages/presentation/bloc/locale_cubit.dart';
-
+import 'injection_container.dart' as di;
 import 'core/app_theme.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -51,7 +52,7 @@ class _MyAppState extends State<MyApp> {
     // Handle notifications tapped while the app is in the background
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       if (message.data['route'] != null) {
-        context.go(message.data['route']);
+
       }
     });
     super.initState();
@@ -66,6 +67,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   final _navigatorKey = GlobalKey<NavigatorState>();
+  final appRouter = di.sll<AppRouter>();
 
   // This widget is the root of your application.
   @override
@@ -85,7 +87,12 @@ class _MyAppState extends State<MyApp> {
                   return MaterialApp.router(
                     scaffoldMessengerKey: GlobalKey<ScaffoldMessengerState>(),
                     theme: themeData,
-                    routerConfig: router(_navigatorKey, widget.text),
+                    routerConfig:  appRouter.config(
+                      reevaluateListenable: ReevaluateListenable.stream(
+                        di.sll<StatusCubit>().stream,
+                      ),
+                    ),
+
                     debugShowCheckedModeBanner: false,
                     title: 'JCI OC',
                     supportedLocales: const [

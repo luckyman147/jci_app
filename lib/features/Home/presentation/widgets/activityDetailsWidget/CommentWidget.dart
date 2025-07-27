@@ -4,11 +4,11 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:jci_app/features/Home/Activity_Global.dart';
-import 'package:jci_app/features/Home/presentation/widgets/components/NetworkCachedImageWidget.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import '../../../../auth/AuthWidgetGlobal.dart';
 import '../../bloc/Activity/BLOC/ActivityComment/activity_comment_bloc.dart';
 import '../Functions/ActivityDetailsFunctions.dart';
+import '../components/stuff/NetworkCachedImageWidget.dart';
 
 class CommentWidget extends StatefulWidget {
   final ActivityComment comment;

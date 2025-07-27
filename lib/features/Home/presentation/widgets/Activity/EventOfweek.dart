@@ -2,8 +2,10 @@
 
 import 'dart:convert';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../../core/route/app_router.dart';
 import '../../../Activity_Global.dart';
 
 class ActivityOfWeekListWidget extends StatelessWidget {
@@ -25,8 +27,11 @@ class ActivityOfWeekListWidget extends StatelessWidget {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: (){
-            context.go('/activity/${ activity[index].id}/${state.selectedActivity.name}/$index ');
-
+            context.pushRoute(ActivityDetailsRoute(
+              id: activity[index].activityBasics.id,
+              activityType: state.selectedActivity.name,
+              index: index,
+            ));
           },
           child: Container(
             height:mediaQuery.size.height/9,
@@ -67,11 +72,11 @@ Positioned cardPos(MediaQueryData mediaQuery,List<Activity> activity,int index){
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 5.0),
-              child: Text(activity[index].ActivityBeginDate.day.toString().padLeft(2, '0'),style: PoppinsSemiBold(23, PrimaryColor, TextDecoration.none),),
+              child: Text(activity[index].activityBasics.activityBeginDate.day.toString().padLeft(2, '0'),style: PoppinsSemiBold(23, PrimaryColor, TextDecoration.none),),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 29.0),
-              child: Text(DateFormat('MMM').format(activity[index].ActivityBeginDate),style: PoppinsNorml(20, textColorBlack),),
+              child: Text(DateFormat('MMM').format(activity[index].activityBasics.activityBeginDate),style: PoppinsNorml(20, textColorBlack),),
             ),
           ],
         ),
@@ -81,12 +86,12 @@ Positioned cardPos(MediaQueryData mediaQuery,List<Activity> activity,int index){
 }
 
  ClipRRect Images(MediaQueryData mediaQuery,List<Activity> activity,int index)=>
-     activity[index].CoverImages.isNotEmpty ?
+     activity[index].activityBasics.coverImages.isNotEmpty ?
      ClipRRect(
          borderRadius: ActivityRaduis,
          child: Container(
            color: textColor,
-           child: Image.memory(base64Decode(activity[index].CoverImages[0]),fit: BoxFit.cover, height: mediaQuery.size.height / 4.2,
+           child: Image.memory(base64Decode(activity[index].activityBasics.coverImages[0]),fit: BoxFit.cover, height: mediaQuery.size.height / 4.2,
                width: mediaQuery.size.width*0.87 ,
                ),
          )):
@@ -113,16 +118,16 @@ Positioned Details(MediaQueryData mediaQuery,List<Activity> activity ,int index)
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
 
-          Text(activity[index].name,style: PoppinsSemiBold(mediaQuery.devicePixelRatio*6, textColorBlack, TextDecoration.none),),
+          Text(activity[index].activityBasics.name,style: PoppinsSemiBold(mediaQuery.devicePixelRatio*6, textColorBlack, TextDecoration.none),),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(activity[index].ActivityAdress,style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColor,),),
+              Text(activity[index].activityBasics.activityAdress,style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColor,),),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30.0),
 
-                child: Text("Start At ${DateFormat('h:mm a').format(activity[index].ActivityBeginDate)}",
+                child: Text("Start At ${DateFormat('h:mm a').format(activity[index].activityBasics.activityBeginDate)}",
                   style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColor,),),
               ),
             ],

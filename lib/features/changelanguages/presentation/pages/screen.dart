@@ -1,15 +1,17 @@
 
 
+import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/strings/app_strings.dart';
 
+import '../../../../core/route/app_router.dart';
 import '../bloc/locale_cubit.dart';
-
+@RoutePage()
 class LanguagePage extends StatelessWidget {
   const LanguagePage({super.key});
 
@@ -55,7 +57,7 @@ class LanguagePage extends StatelessWidget {
     return GestureDetector(
       onTap: (){
         context.read<localeCubit>().changeLanguage(languageCode);
-        context.go('/');
+        context.replaceRoute(IntroductionRoute());
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),

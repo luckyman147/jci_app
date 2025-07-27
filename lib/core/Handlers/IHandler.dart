@@ -31,6 +31,8 @@ abstract class IHandler<T,Error>{
     required Future<T> Function() onCallMeetings,
     required Future<T> Function() onCallTrainings,
     required Future<T> Function() onCallAll,
+    Future<T> Function()? onFailConnection,
+
 
     required  Error Function(dynamic param) onError,
     required activity param

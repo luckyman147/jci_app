@@ -4,11 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/core/config/services/store.dart';
 
-import '../../../features/Home/domain/entities/Activity.dart';
+import '../../../features/Home/domain/entities/Activitys/Activity.dart';
 import '../../../features/auth/AuthWidgetGlobal.dart';
 import '../../../features/auth/presentation/bloc/auth/auth_bloc.dart';
 import '../../error/Exception.dart';
@@ -19,33 +18,14 @@ class Verification {
 
   Verification(this.memberStore, {required this.store});
 
-  void check(BuildContext context, bool mounted) async {
-    final authBloc = BlocProvider.of<AuthBloc>(context);
 
-    authBloc.add(const IsLoggedInEvent());
-    await Future.delayed(const Duration(seconds: 2));
-    final authState = authBloc.state;
-    final language = await store.getLocaleLanguage();
 
-    final isfirstEntry = await store.isFirstEntry();
-
-    if (!context.mounted) return;
-    if (language == null) {
-      context.go('/screen');
-    } else if (authState is LoggedInState) {
-      context.go('/home');
-    } else if (isfirstEntry) {
-      context.go('/Intro');
-    } else {
-      context.go('/login');
-    }
-  }
 
   Future<List<bool>> areMembersInParticipants(List<Activity> activities) async {
     final member = await memberStore.getModel();
     final memberId = member!.id;
     return activities
-        .map((activity) => activity.Participants.contains(memberId))
+        .map((activity) => activity.participation.participants.contains(memberId))
         .toList();
   }
 

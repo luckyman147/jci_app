@@ -1,5 +1,6 @@
 import 'package:encrypt_shared_preferences/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:jci_app/core/config/services/MemberStore.dart';
 
@@ -8,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/config/locale/app_localizations_delegate.dart';
 import '../../core/config/services/FCMService/FCmServi.dart';
+import '../../core/route/status/status_cubit.dart';
 import '../changelanguages/presentation/bloc/locale_cubit.dart';
 import 'data/datasources/UserAccountDataSource.dart';
 import 'data/datasources/UserStatusRemoteDataSources.dart';
@@ -17,7 +19,6 @@ final sl = GetIt.instance;
 
 Future<void> initAuth() async {
   sl.registerFactory(() => ResetBloc(sl(), sl(), sl()));
-  sl.registerFactory(() => PermissionsMemberBloc(sl()));
 sl.registerFactory(() => localeCubit(sl()));
   sl.registerFactory(() => AuthBloc(
         sl(),
@@ -98,17 +99,19 @@ sl.registerFactory(() => localeCubit(sl()));
   sl.registerLazySingleton(() => InternetConnectionChecker.createInstance());
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
-  sl.registerLazySingleton(() => Logger());
-  sl.registerLazySingleton(() => Store(sl()));
+
+
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
   sl.registerFactory(() => MemberStore(sl()));
-  final key = "dzdregghtyuteder";
-  await EncryptedSharedPreferences.initialize(
-    key,
-  );
-  var sharedPref = EncryptedSharedPreferences.getInstance();
-  sl.registerFactory(() => sharedPref);
-  sl.registerFactory(() => FSMToken(store: sl()));
+  final key = dotenv.env['ENCRYPTION_KEY'];
+  if (key == null) {
+    throw Exception("ENCRYPTION_KEY not found in .env");
+  }
+
+  await EncryptedSharedPreferences.initialize(key);
+  final sharedPref =  EncryptedSharedPreferences.getInstance();
+  sl.registerLazySingleton<EncryptedSharedPreferences>(() => sharedPref);
+
   sl.registerFactory(() => LanguageCacheHelper(store: sl()));
 
   // Register SignUpRemoteDataSource with http.Client as a parameter

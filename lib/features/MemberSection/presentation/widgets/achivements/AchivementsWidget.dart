@@ -14,6 +14,7 @@ import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart
 import '../../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/Bloc/permissions/permissions_bloc.dart';
 import '../../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
 import '../../../../../core/config/env/Constants.dart';
+import '../../../../common/enums/PrivacyType.dart';
 import '../../../domain/entity/ActionDetails.dart';
 import 'BottomSheetFilterBy.dart';
 

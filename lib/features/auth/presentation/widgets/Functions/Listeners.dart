@@ -1,3 +1,6 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:jci_app/core/route/app_router.dart';
+
 import '../../../../../core/config/services/store.dart';
 import '../../../../../core/util/snackbar_message.dart';
 import '../../../../Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
@@ -25,7 +28,7 @@ class ListenerSignUpFunctionsBlocs{
 
       case SignUpStatus.RegisterGoogle:
         SnackBarMessage.showSuccessSnackBar(message: state.message, context: context);
-        context.go('/login');
+        context.pushRoute(LoginRoute());
         break;
 
       case SignUpStatus.ErrorSignUp:
@@ -56,7 +59,7 @@ class ListenerRestFunction{
     }
 
     else if (state.status == ResetPasswordStatus.verified) {
-      context.go('/reset/$email');
+      context.navigateTo(ResetPasswordRoute(email: email!));
       context.read<ResetBloc>().add(const ResetErrorEvent());
 
     }
@@ -66,7 +69,7 @@ class ListenerRestFunction{
 
 
 
-        context.go('/home');
+        context.replaceRoute(HomeRoute());
 
       context.read<ResetBloc>().add(const ResetErrorEvent());
 
@@ -89,7 +92,7 @@ class ListenerLoginFunctions{
           message: state.message, context: context);
 
 
-      context.go('/home');
+      context.replaceRoute(HomeRoute());
 
       context.read<PageIndexBloc>().add(SetIndexEvent(index:0));
 
@@ -102,7 +105,7 @@ class ListenerLoginFunctions{
       //    context.read<SignUpBloc>().add(SignUpEmailnameChanged(state.user.email!));
       context.read<SignUpBloc>().add(FirstNameChanged(name[0]));
       context.read<SignUpBloc>().add(LastNameChanged(name[1]));
-      context.go('/home');       }
+      context.replaceRoute(HomeRoute());       }
     else if (state is ErrorLogin) {
       SnackBarMessage.showErrorSnackBar(
           message: state.message, context: context);

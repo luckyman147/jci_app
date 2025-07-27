@@ -83,3 +83,10 @@ final bool isUpdated;
   @override
   List<Object?> get props => [isUpdated];
 }
+class GetMyUserEvent extends MembersEvent {
+
+  const GetMyUserEvent();
+
+  @override
+  List<Object?> get props => [];
+}

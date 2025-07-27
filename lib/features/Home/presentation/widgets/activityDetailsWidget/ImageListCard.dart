@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jci_app/features/Home/presentation/bloc/ChangeString/change_string_bloc.dart';
-import 'package:jci_app/features/Home/presentation/widgets/components/NetworkCachedImageWidget.dart';
 
 import '../../../../../core/app_theme.dart';
 import '../../../../auth/AuthWidgetGlobal.dart';
+import '../components/stuff/NetworkCachedImageWidget.dart';
 
 class ImageListCard extends StatelessWidget {
   final List<String> images; // List of image URLs or asset paths

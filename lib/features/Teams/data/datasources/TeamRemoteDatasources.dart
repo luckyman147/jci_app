@@ -6,15 +6,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:jci_app/core/config/env/urls.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/features/Teams/data/models/TeamModel.dart';
+import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 
 import '../../../../../core/config/services/store.dart';
 import '../../../../../core/config/services/uploadImage.dart';
 import '../../../../../core/error/Exception.dart';
 
 abstract class TeamRemoteDataSource {
-  Future<List<TeamModel>> getAllTeams(
-      String page, String limit, bool isPrivate);
+  Future<({List<TeamModel> Teams, DocumentSnapshot? lastDoc})> getAllTeams({
+      required int limit,
+      required bool isPrivate,
+      DocumentSnapshot? lastDocument,});
   Future<TeamModel> getTeamById(String id);
 
   Future<TeamModel> createTeam(TeamModel Team);
@@ -29,227 +33,189 @@ abstract class TeamRemoteDataSource {
 }
 
 class TeamRemoteDataSourceImpl implements TeamRemoteDataSource {
-  final http.Client client;
+  final FirebaseFirestore firestore ;
+  final Logger logger;
   final Store store;
+  final MemberStore memberStore ;
+  final FirebaseImageUploader firebaseImageUploader;
 
-  TeamRemoteDataSourceImpl(this.store, {required this.client});
+  TeamRemoteDataSourceImpl(this.firestore, this.logger, this.store, this.firebaseImageUploader, this.memberStore);
   @override
-  Future<TeamModel> createTeam(TeamModel Team) async {
-    final tokens = await store.GetTokens();
-    final body = Team.toJson();
-    debugPrint(body.toString());
+  Future<TeamModel> createTeam(TeamModel team) async {
+    try {
+      final teamRef = firestore.collection('teams').doc();
+      // Upload cover image if it exists
+      final image=await firebaseImageUploader.uploadImagesToFirebase([team.meta.coverImage]);
+final teamLeader= await memberStore.getPrimitiveModel();
 
-    return client
-        .post(
-      Uri.parse(TeamUrl),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer ${tokens[1]}"
-      },
-      body: json.encode(body),
-    )
-        .then((response) async {
-      debugPrint(response.statusCode.toString());
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> decodedJson = json.decode(response.body);
+      final teamWithId = team.copyWith(meta:team.meta.copyWith(id:  teamRef.id,
+          coverImage:image[0] ),
+         members: team.members.copyWith(teamLeader: teamLeader ));
+      logger.i('Team created: ${teamWithId.toJson()}');
+      // Set Firestore doc ID
+      await teamRef.set(teamWithId.toJson());
 
-        return TeamModel.fromJson(decodedJson);
-      } else if (response.statusCode == 400) {
-        throw WrongCredentialsException();
-      } else if (response.statusCode == 401) {
-        throw UnauthorizedException();
-      } else {
-        throw ServerException();
-      }
-    });
+      logger.i('Team created: ${teamWithId.toJson()}');
+      return teamWithId;
+    } on FirebaseException catch (e) {
+      logger.e("Firebase error: $e");
+      throw ServerException(); // You can customize this
+    } catch (e) {
+      logger.e("Unknown error: $e");
+      throw ServerException();
+    }
+
+}
+
+@override
+Future<Unit> deleteTeam(String id) async {
+  try {
+    await firestore.collection('teams').doc(id).delete();
+    return unit;
+  } on FirebaseException catch (e) {
+    logger.e("Failed to delete team: $e");
+    throw ServerException();
+  } catch (e) {
+    logger.e("Unexpected error: $e");
+    throw ServerException();
   }
-
+}
   @override
-  Future<Unit> deleteTeam(String id) async {
-    final response = await client.delete(
-      Uri.parse("$TeamUrl$id"),
-      headers: {"Content-Type": "application/json"},
-    );
-    if (response.statusCode == 204) {
-      return Future.value(unit);
-    } else {
+  Future<({List<TeamModel> Teams, DocumentSnapshot? lastDoc})> getAllTeams({
+    required int limit,
+    required bool isPrivate,
+    DocumentSnapshot? lastDocument,
+  }) async {
+    try {
+      logger.i("Fetching teams | Limit: $limit | isPrivate: $isPrivate | lastDocument: ${lastDocument?.id}");
+      Query query = firestore
+          .collection('teams')
+          .where('status', isEqualTo: isPrivate ? true : false)
+
+          .limit(limit);
+
+      if (lastDocument != null) {
+        query = query.startAfterDocument(lastDocument);
+        logger.i("Starting after document: ${lastDocument.id}");
+      }
+
+      final snapshot = await query.get();
+      logger.i("Fetched ${snapshot.docs.length} team documents");
+      final teams = snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+
+        return TeamModel.fromJson(data);
+      }).toList();
+
+      final lastDoc = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
+      logger.i("Returning ${teams.length} teams. Last doc ID: ${lastDoc?.id}");
+      return (Teams: teams, lastDoc: lastDoc);
+    } catch (e) {
+      logger.e("Error fetching teams: $e");
       throw ServerException();
     }
   }
 
-  @override
-  Future<List<TeamModel>> getAllTeams(
-      String page, String limit, bool isPrivate) async {
-    final tokens = await store.GetTokens();
-    final response = await client.get(
-      Uri.parse("${TeamUrl}All?start=$page&limit=$limit&isPrivate=$isPrivate"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer ${tokens[1]}"
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> decodedJson = json.decode(response.body);
-      if (decodedJson.containsKey('results')) {
-        final List<TeamModel> TeamModels = (decodedJson['results'] as List)
-            .map<TeamModel>(
-                (jsonEventModel) => TeamModel.fromJson(jsonEventModel))
-            .toList();
-        return TeamModels;
-      } else {
-        throw EmptyDataException();
-      }
-    } else if (response.statusCode == 400) {
-      throw EmptyDataException();
-    } else {
-      throw ServerException();
-    }
-  }
 
   @override
   Future<TeamModel> getTeamById(String id) async {
-    final response = await client.get(
-      Uri.parse('${TeamUrl}get/$id'),
-      headers: {"Content-Type": "application/json"},
-    );
+    try {
+      final doc = await firestore.collection('teams').doc(id).get();
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> decodedJson = json.decode(response.body);
+      if (!doc.exists) {
+        throw EmptyDataException(); // Team not found
+      }
 
-      final TeamModel teamModel = TeamModel.fromJson(decodedJson);
-
-      return teamModel;
-    } else if (response.statusCode == 400) {
-      throw EmptyDataException();
-    } else {
+      final data = doc.data() as Map<String, dynamic>;
+      return TeamModel.fromJson(data);
+    } on FirebaseException catch (e) {
+      logger.e("Firebase error while fetching team by ID: $e");
+      throw ServerException();
+    } catch (e) {
+      logger.e("Unknown error while fetching team: $e");
       throw ServerException();
     }
   }
 
   @override
-  Future<Unit> updateTeam(TeamModel Team) {
-    final body = Team.toUpdatejson();
+  Future<Unit> updateTeam(TeamModel team) async {
+    try {
+      final teamRef = firestore.collection('teams').doc(team.meta.id);
 
-    debugPrint(body.toString());
-    return client
-        .put(
-      Uri.parse(TeamUrl + Team.id),
-      headers: {"Content-Type": "application/json"},
-      body: json.encode(body),
-    )
-        .then((response) async {
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> decodedJson = json.decode(response.body);
+      // 1. Update team fields (excluding image URL for now)
+      await teamRef.update(team.toJson());
+      logger.i("Team updated: ${team.toJson()}");
 
-        final updateResponse =
-            await UpdateImage(decodedJson['_id'], Team.CoverImage, TeamUrl);
-        if (updateResponse.statusCode == 200) {
-          return Future.value(unit);
-        } else if (updateResponse.statusCode == 400) {
-          throw EmptyDataException();
-        } else {
-          throw ServerException();
+      // 2. Check and update image if it's a local path
+      final coverImage = team.meta.coverImage;
+      final isLocalPath = coverImage != null &&
+          coverImage.isNotEmpty &&
+          !(coverImage.startsWith('http://') || coverImage.startsWith('https://'));
+
+      if (isLocalPath) {
+        final imageUrl = await firebaseImageUploader.uploadImagesToFirebase([coverImage]);
+        if (imageUrl == null) {
+          throw ServerException(); // or ImageUploadException
         }
-      } else if (response.statusCode == 400) {
-        throw WrongCredentialsException();
-      } else {
-        throw ServerException();
+
+        // Update only the image URL field in Firestore
+        await teamRef.update({'CoverImage': imageUrl});
+        logger.i("Cover image updated: $imageUrl");
       }
-    });
+
+      return unit;
+    } on FirebaseException catch (e) {
+      logger.e("Firestore update failed: $e");
+      throw ServerException();
+    } catch (e) {
+      logger.e("Unexpected error: $e");
+      throw ServerException();
+    }
   }
+
 
   @override
   Future<List<TeamModel>> getTeamByName(String name) async {
-    final tokens = await store.GetTokens();
-    final response = client.get(
-      Uri.parse('${TeamUrl}get?name=$name'),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer ${tokens[1]}"
-      },
-    );
+    try {
+      final snapshot = await firestore
+          .collection('teams')
+          .where('name', isEqualTo: name)
+          .get();
 
-    return response.then((response) async {
-      if (response.statusCode == 200) {
-        final List<dynamic> decodedJson = json.decode(response.body);
-
-        final List<TeamModel> teams =
-            decodedJson.map((e) => TeamModel.fromJson(e)).toList();
-
-        return teams;
-      } else if (response.statusCode == 400) {
-        throw EmptyDataException();
-      } else {
-        throw ServerException();
-      }
-    });
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id; // ensure ID is included
+        return TeamModel.fromJson(data);
+      }).toList();
+    } on FirebaseException catch (e) {
+      logger.e("Firestore error while searching for team by name: $e");
+      throw ServerException();
+    } catch (e) {
+      logger.e("Unknown error: $e");
+      throw ServerException();
+    }
   }
 
   @override
-  Future<Unit> updateMembers(
-      String teamid, String memberid, String Status) async {
-    final tokens = await store.GetTokens();
-    final response = client.put(
-      Uri.parse(Urls.TeamMember(teamid)),
-      body: json.encode({"Member": memberid, "Status": Status}),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer ${tokens[1]}"
-      },
-    );
-
-    return response.then((response) async {
-      log(response.statusCode.toString());
-      if (response.statusCode == 200) {
-        return Future.value(unit);
-      } else if (response.statusCode == 400) {
-        throw EmptyDataException();
-      } else {
-        throw ServerException();
-      }
-    });
+  Future<Unit> inviteMember(String id, String memberid) {
+    // TODO: implement inviteMember
+    throw UnimplementedError();
   }
 
   @override
-  Future<Unit> inviteMember(String id, String memberid) async {
-    final tokens = await store.GetTokens();
-    return client.post(
-      Uri.parse(Urls.InviteMemberUrl(id, memberid)),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer ${tokens[1]}"
-      },
-    ).then((response) async {
-      if (response.statusCode == 201) {
-        return Future.value(unit);
-      } else if (response.statusCode == 400) {
-        throw EmptyDataException();
-      } else {
-        throw ServerException();
-      }
-    });
+  Future<Unit> joinTeam(String id) {
+    // TODO: implement joinTeam
+    throw UnimplementedError();
   }
 
   @override
-  Future<Unit> joinTeam(String id) async {
-    final tokens = await store.GetTokens();
-    return client.post(
-      Uri.parse(Urls.JoinTeam(id)),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer ${tokens[1]}"
-      },
-    ).then((response) async {
-      if (response.statusCode == 200) {
-        return Future.value(unit);
-      } else if (response.statusCode == 400) {
-        throw EmptyDataException();
-      } else if (response.statusCode == 404) {
-        throw EmptyDataException();
-      } else {
-        throw ServerException();
-      }
-    });
+  Future<Unit> updateMembers(String teamid, String memberid, String Status) {
+    // TODO: implement updateMembers
+    throw UnimplementedError();
   }
+
+
+
+
+
 }

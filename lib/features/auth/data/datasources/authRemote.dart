@@ -232,8 +232,12 @@ class AuthRemoteImpl implements AuthRemote {
     if (userJson.role != null) {
       await store.setRole(userJson.role!);
       fsmToken.getFcmToken(FirebaseMessaging.instance);
+
       // logger.i('User saved to cache',userJson.role!.path); // Log the end of the function
       await store.setLoggedIn(true);
+      await store.setFirstEntry();
+      logger.w("helklol");
+
       await store.setUserId(user.uid);
       await memberStore.savePrimitiveModel(UserModel.fromEntity(userJson));
       // Log setting logged in flag

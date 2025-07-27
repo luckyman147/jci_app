@@ -6,6 +6,7 @@ import 'package:jci_app/features/Home/domain/entities/Note.dart';
 import 'package:jci_app/features/Home/domain/repsotories/NotesRepo.dart';
 
 
+import '../../../auth/AuthWidgetGlobal.dart';
 import '../../../auth/domain/usecases/USesCasesGlobal.dart';
 import '../Dtos/NoteInput.dart';
 
@@ -27,6 +28,7 @@ class AddCommentToActivityUseCase extends UseCase<Unit,NoteInput> {
 
   @override
   Future<Either<Failure,Unit>> call(NoteInput noteInput) async {
+    Logger().i(noteInput.comment?.user ==null);
     return await commentRepository.addActivityComments(noteInput.activityId, noteInput.comment!);
   }
 }

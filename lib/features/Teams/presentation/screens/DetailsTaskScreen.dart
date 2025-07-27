@@ -1,16 +1,17 @@
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/Teams/domain/usecases/TaskUseCase.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 
-import 'package:jci_app/features/Teams/presentation/widgets/TaskImpl.dart';
-import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
+import 'package:jci_app/features/Teams/presentation/widgets/Task/Implementation/TaskImpl.dart';
 
 
 import '../../../Home/domain/enums/Privacy.dart';
-import '../../domain/entities/Team.dart';
-
+import '../../domain/entities/Team/Team.dart';
+import '../utils/TaskUtils.dart';
+@RoutePage()
 class CreateTaskScreen extends StatefulWidget {
   final Team team;
   final String taskId;
@@ -29,9 +30,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
   @override
   void initState() {
-    final inputFields input=inputFields(taskid: widget.taskId, teamid: widget.team.id, file: null, memberid: null, status: null, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: null, fileid: null, );
-    context.read<GetTaskBloc>().add(
-        GetTaskById(ids: input));
+
+
     context.read<TaskVisibleBloc>().add(const ToggleTaskVisible(true));
     context.read<TaskVisibleBloc>().add(const ChangeTextFieldsTitle(TextFieldsTitle.Inactive));
 
@@ -46,11 +46,14 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
     return  BlocBuilder<GetTaskBloc, GetTaskState>(
         builder: (context, state) {
-          return SingleChildScrollView(
+   /*       return SingleChildScrollView(
             child: GetTaskByidWidget(
                 widget.team, widget.taskId, _taskNameController,
-                TeamFunction.  getIndexById(widget.taskId, state.tasks)),
+                TaskUtils.  getIndexById(widget.taskId, state.tasks)),
           );
+
+     */
+          return SizedBox();
         },
       
     );

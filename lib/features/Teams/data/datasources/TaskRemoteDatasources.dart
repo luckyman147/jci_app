@@ -1,468 +1,171 @@
-import 'dart:convert';
-import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
-
-import 'package:jci_app/core/config/env/urls.dart';
-
-
-
-import 'package:http/http.dart' as http;
-import 'package:jci_app/core/config/services/uploadImage.dart';
-
-
-import 'package:jci_app/features/Teams/data/models/CheckListModel.dart';
-import 'package:jci_app/features/Teams/data/models/FileModel.dart';
 
 import '../../../../../core/error/Exception.dart';
+import '../../domain/entities/task/Task.dart';
 import '../models/TaskModel.dart';
 
-
 abstract class TaskRemoteDataSource {
-  
-  Future<List<TaskModel>> getTasksOfTeam(String id);
-  Future<TaskModel> getTasksById(String id,String taskid);
-  Future<Unit> DeleteFiles(String taskId, String file);
- Future<Unit> UpdateChecklistName(String taskId,String checkListId,String name);
-  Future<TaskModel> AddTask(String id,String name);
-Future<CheckListModel> addCheckList(String taskId,String name);
-
-
-  Future<Unit> updateCheckList(String id,String taskId,String checkListId,CheckListModel checkList);
-Future <Unit> updateIscompleted(String taskId,bool isCompleted);
-Future <Unit> updateChecklistStatus(String taskId,String checkid,bool isCompleted);
-Future <Unit> updateTaskName(String taskId,String name);
-Future <Unit> UpdateMembers(String taskId,bool name,String MemberId);
-Future <Unit> UpdateTimeline(String taskId,DateTime startdate,DateTime enddate);
-
-
-
-Future<Unit> deleteCheckList(String checkListId);
-Future<Unit> deleteTask(String taskid);
-Future<FileModel> UpdateFiles(String taskId, FileModel file );
-Future<Uint8List> getFile(String fileid);
-
-  Future<Unit> AddComment(String taskid, String comment) ;
-
-  Future<Unit> DeleteComment(String taskid, String commentId) ;
-
-  Future<Unit> UpdateComment(String taskid, String commentId, String comment);
-
+  Future<List<TaskModel>> getTasksOfTeam(String teamId);
+  Future<TaskModel> getTasksById(String teamId, String taskId);
+  Future<TaskModel> addTask(String teamId, String name);
+  Future<Unit> deleteTask(String teamId, String taskId);
+  Future<Unit> updateIsCompleted(String teamId, String taskId, TaskCompletionStatus status);
+  Future<Unit> updateTaskName(String teamId, String taskId, String name);
+  Future<Unit> updateTimeline(String teamId, String taskId, DateTime startDate, DateTime deadline);
+  Future<Unit> updateMembers(String teamId, String taskId, bool status, String memberId);
 }
 
-class TaskRemoteDataSourceImpl implements TaskRemoteDataSource{
-  final http.Client client;
+class TaskFirestoreRemote implements TaskRemoteDataSource {
+  final FirebaseFirestore _firestore;
 
-  TaskRemoteDataSourceImpl({required this.client});
-
-
-
+  TaskFirestoreRemote(this._firestore);
 
   @override
-  Future<TaskModel> AddTask(String id,String name ) async {
-    return client.post(
-      Uri.parse("$TeamUrl$id/tasks"),
-      headers: {"Content-Type": "application/json",
+  Future<List<TaskModel>> getTasksOfTeam(String teamId) async {
+  try {
+    final snapshot = await _firestore
+        .collection('teams')
+        .doc(teamId)
+        .collection('tasks')
+        .get();
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      data['id'] = doc.id;
+      return TaskModel.fromJson(data);
+    }).toList();
+  }
+  catch (e) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<TaskModel> getTasksById(String teamId, String taskId) async {
+try {
+    final doc = await _firestore
+        .collection('teams')
+        .doc(teamId)
+        .collection('tasks')
+        .doc(taskId)
+        .get();
+    if (!doc.exists) throw EmptyDataException();
+    final data = doc.data()!;
+    data['id'] = doc.id;
+    return TaskModel.fromJson(data);
+  }
+  catch (e) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<TaskModel> addTask(String teamId, String name) async {
+ try {
+    final ref = await _firestore
+        .collection('teams')
+        .doc(teamId)
+        .collection('tasks')
+        .add(TaskModel.toJsonWithNameAndId(name));
+
+    final doc = await ref.get();
+    final data = doc.data()!..['id'] = doc.id;
+    return TaskModel.fromJson(data);
+  } catch (e) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<Unit> deleteTask(String teamId, String taskId) async {
+ try {
+      await _firestore
+          .collection('teams')
+          .doc(teamId)
+          .collection('tasks')
+          .doc(taskId)
+          .delete();
+      return unit;
+    } catch (e) {
+      throw ServerException();
+    }
+
+  }
+
+  @override
+  Future<Unit> updateIsCompleted(String teamId, String taskId, TaskCompletionStatus status) async {
+  try {
+      await _firestore
+          .collection('teams')
+          .doc(teamId)
+          .collection('tasks')
+          .doc(taskId)
+          .update({'meta.isCompleted': status.index});
+      return unit;
+    } catch (e) {
+      throw ServerException();
+    }
+
+  }
+
+  @override
+  Future<Unit> updateTaskName(String teamId, String taskId, String name) async {
+   try {
+      await _firestore
+          .collection('teams')
+          .doc(teamId)
+          .collection('tasks')
+          .doc(taskId)
+          .update({'meta.name': name});    return unit;
+    } catch (e) {
+      throw ServerException();
+    }
 
 
-      },
+  }
 
-      body: json.encode({"name":name}),
-    ).then((response) async {
-
-      if (response.statusCode == 201) {
-        final Map<String, dynamic> decodedJson = json.decode(response.body) ;
-        final TaskModel taskModel = TaskModel.fromJson(decodedJson);
-
-        return taskModel;
-
-      }
-      else if (response.statusCode == 400) {
-        throw WrongCredentialsException();
-      }
-      else {
-        throw ServerException();
-      }
+  @override
+  Future<Unit> updateTimeline(String teamId, String taskId, DateTime startDate, DateTime deadline) async {
+  try {
+    await _firestore
+        .collection('teams')
+        .doc(teamId)
+        .collection('tasks')
+        .doc(taskId)
+        .update({
+      'meta.startDate': Timestamp.fromDate(startDate),
+      'meta.deadline': Timestamp.fromDate(deadline),
     });
+    return unit;
   }
-  @override
-  Future<CheckListModel> addCheckList( String taskId, String name) async {
-
-
-
-    return client.post(
-      Uri.parse("$TeamUrl$taskId/Checklist"),
-      headers: {"Content-Type": "application/json",
-
-
-      },
-
-      body: json.encode({"name":name}),
-    ).then((response) async {
-      debugPrint(response.statusCode.toString());
-      if (response.statusCode == 201) {
-        final Map<String, dynamic> decodedJson = json.decode(response.body) ;
-        final CheckListModel checkListModel = CheckListModel.fromJson(decodedJson);
-
-        return checkListModel;
-
-      }
-      else if (response.statusCode == 400) {
-        throw WrongCredentialsException();
-      }
-      else {
-        throw ServerException();
-      }
-    });
+  catch (e) {
+    throw ServerException();}
 
   }
-
 
   @override
-  Future<Unit> deleteCheckList( String checkListId)async {
+  Future<Unit> updateMembers(String teamId, String taskId, bool status, String memberId) async {
+   try {
+    final taskRef = _firestore
+        .collection('teams')
+        .doc(teamId)
+        .collection('tasks')
+        .doc(taskId);
 
-    final response=await  client.delete(
-      Uri.parse("$TeamUrl/checklist/$checkListId"),
-      headers: {"Content-Type": "application/json",
-  }
-    );
-    if (response.statusCode == 204) {
-      return Future.value(unit);
-    } else if (response.statusCode == 404) {
-      throw WrongCredentialsException();
+    if (status) {
+      await taskRef.update({
+        'meta.assignToImages': FieldValue.arrayUnion([memberId])
+      });
+    } else {
+      await taskRef.update({
+        'meta.assignToImages': FieldValue.arrayRemove([memberId])
+      });
     }
-    else {
-      throw ServerException();
-    }
-
-
+    return unit;
   }
-
-
-  @override
-  Future<TaskModel> getTasksById(String id, String taskid)async  {
-
-
-    final response =  await client.get(
-      Uri.parse( '$TeamUrl$id/tasks/$taskid'),
-
-      headers: {"Content-Type": "application/json"},
-
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> decodedJson = json.decode(response.body) ;
-
-      final TaskModel taskModel = TaskModel.fromJson(decodedJson);
-      return taskModel;
-
-    } else if (response.statusCode == 400) {
-      throw EmptyDataException();
-    }else{
+  catch (e) {
       throw ServerException();
     }
   }
-
-
-  @override
-  Future<Unit> updateCheckList(String id, String taskId, String checkListId, CheckListModel checkList) {
-    // TODO: implement updateCheckList
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Unit> deleteTask( String taskid)async  {
-
-    final response= await client.delete(
-      Uri.parse("$TeamUrl/tasks/$taskid"),
-      headers: {"Content-Type": "application/json",
-
-  },);
-    if (response.statusCode == 204) {
-      return Future.value(unit);
-    } else if (response.statusCode == 404) {
-      throw WrongCredentialsException();
-
-    }
-    else {
-      throw ServerException();
-    }}
-
-  @override
-  Future<List<TaskModel>> getTasksOfTeam(String id)async {
-
-    final response = await client.get(
-
-      Uri.parse("$TeamUrl/$id/tasks"),
-      headers: {"Content-Type": "application/json"},
-
-    );
-log(response.statusCode.toString());
-log(response.body);
-    if (response.statusCode == 200) {
-      final List<dynamic> decodedJson = json.decode(response.body) ;
-
-
-      log("message");
-      final List<TaskModel> tasks = decodedJson.map((e) => TaskModel.fromJson(e)).toList();
-
-      return tasks;
-    } else if (response.statusCode == 404) {
-      throw EmptyDataException();
-    }else{
-      throw ServerException();
-    }
-  }
-
-  @override
-  Future<Unit> updateIscompleted(String taskId, bool isCompleted)async  {
-    final response = await client.put(
-
-      Uri.parse("$TeamUrl/$taskId/UpdateStatus"),
-      headers: {"Content-Type": "application/json"},
-body: jsonEncode({"IsCompleted":"$isCompleted"})
-    );
-    log(response.statusCode.toString());
-    log(response.body);
-    if (response.statusCode == 200) {
-
-      return Future.value(unit);
-    } else if (response.statusCode == 404) {
-      throw WrongCredentialsException();
-    }else{
-      throw ServerException();
-    }
-
-  }
-
-  @override
-  Future<Unit> updateChecklistStatus(String taskId, String checkid, bool isCompleted)async  {
-    log("taskid $taskId    checkid $checkid  iscompleted $isCompleted");
-    final response = await client.put(
-
-        Uri.parse("$TeamUrl$taskId/UpdateCheckStatus/$checkid"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"IsCompleted":"$isCompleted"})
-    );
-    log(response.statusCode.toString());
-    log(response.body);
-    if (response.statusCode == 200) {
-
-      return Future.value(unit);
-    } else if (response.statusCode == 404) {
-      throw WrongCredentialsException();
-    }else{
-      throw ServerException();
-    }
-
-
-
-}
-
-
-
-  @override
-  Future<Unit> UpdateMembers(String taskId, bool status, String MemberId)async  {
-    final response = await client.put(
-
-        Uri.parse("$TeamUrl$taskId/UpdateMembers"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"Member":MemberId,"Status":"$status"})
-    );
-    log(response.statusCode.toString());
-    log(response.body);
-    if (response.statusCode == 200) {
-
-
-      return Future.value(unit);
-    }
-    else if (response.statusCode == 404) {
-      throw EmptyDataException();}
-    else if (response.statusCode == 400) {
-      throw WrongCredentialsException();
-    }else{
-      throw ServerException();
-    }
-  }
-
-  @override
-  Future<Unit> UpdateTimeline(String taskId, DateTime startdate, DateTime enddate)async {
-    final response = await client.put(
-
-        Uri.parse("$TeamUrl$taskId/UpdateDeadline"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"StartDate":"$startdate","Deadline":"$enddate"})
-    );
-    log(response.statusCode.toString());
-    log(response.body);
-    if (response.statusCode == 200) {
-
-      return Future.value(unit);
-    }
-    else if (response.statusCode == 404) {
-      throw EmptyDataException();}
-    else if (response.statusCode == 400) {
-      throw WrongCredentialsException();
-    }else{
-      throw ServerException();
-    }
-
-
-
-  }
-
-  @override
-  Future<Unit> updateTaskName(String taskId, String name) async {
-
-    final response = await client.put(
-
-        Uri.parse("$TeamUrl/tasks/$taskId/UpdateName"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"name":name})
-    );
-    log(response.statusCode.toString());
-    log(response.body);
-    if (response.statusCode == 200) {
-
-      return Future.value(unit);
-    } else if (response.statusCode == 404) {
-      throw WrongCredentialsException();
-    }else{
-      throw ServerException();
-    }
-
-
-  }
-
-  @override
-  Future<Unit> DeleteFiles(String taskId, String file)async  {
-    final response= await client.delete(
-      Uri.parse("$TeamUrl/tasks/$taskId/File/$file"),
-      headers: {"Content-Type": "application/json",
-
-      },);
-    if (response.statusCode == 204) {
-      return Future.value(unit);
-    } else if (response.statusCode == 404) {
-      throw WrongCredentialsException();
-
-    }
-    else {
-      throw ServerException();
-    }}
-
-
-
-  @override
-  Future<FileModel> UpdateFiles(String taskId, FileModel file) async {
-    final updatedFile = await uploadFile(taskId, file.path, TeamUrl, "File");
-
-    // Read the response body as a stream and decode it
-    final responseBody = await updatedFile.stream.bytesToString();
-
-    if (updatedFile.statusCode == 200) {
-      final decodedJson = json.decode(responseBody);
-      log(decodedJson.toString());
-      final FileModel fileModel = FileModel.fromJson(decodedJson);
-      return fileModel;
-    }
-    else if (updatedFile.statusCode == 404) {
-      throw EmptyDataException();
-    }
-   else if  (updatedFile.statusCode == 400) {
-      throw WrongCredentialsException();
-    }
-
-    else {
-      // Handle other status codes if needed
-      throw Exception('Failed to update file: ${updatedFile.reasonPhrase}');
-    }
-  }
-
-  @override
-  Future<Unit> UpdateChecklistName(String taskId, String checkListId, String name)async  {
-    final response = await client.put(
-
-        Uri.parse("$TeamUrl$taskId/UpdateCheckName/$checkListId"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"name":name})
-    );
-    log(response.statusCode.toString());
-    log(response.body);
-    if (response.statusCode == 200) {
-
-      return Future.value(unit);
-    }
-    else if (response.statusCode == 404) {
-      throw EmptyDataException();}
-    else if (response.statusCode == 400) {
-      throw WrongCredentialsException();
-    }else{
-      throw ServerException();
-    }
-
-
-
-  }
-
-  @override
-  Future<Unit> AddComment(String taskid, String comment) async {
-final response = await client.post(
-      Uri.parse(Urls.AddCommentUrl(taskid)),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"comment": comment}),
-    );
-    log(response.statusCode.toString());
-    log(response.body);
-    if (response.statusCode == 201) {
-      return Future.value(unit);
-    } else if (response.statusCode == 404) {
-      throw EmptyDataException();
-    }
-    else if (response.statusCode == 400) {
-      throw WrongCredentialsException();
-    }
-
-    else {
-      throw ServerException();
-    }
-
-
-  }
-
-  @override
-  Future<Unit> DeleteComment(String taskid, String commentId) {
-    // TODO: implement DeleteComment
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Unit> UpdateComment(String taskid, String commentId, String comment) {
-    // TODO: implement UpdateComment
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Uint8List> getFile(String fileid) async{
-    final response = await client.get(
-      Uri.parse("$TeamUrl/File/$fileid"),
-      headers: {"Content-Type": "application/json"},
-    );
-
-    if (response.statusCode == 200) {
-      return response.bodyBytes;
-    } else if (response.statusCode == 404) {
-      throw EmptyDataException();
-    }
-    else if (response.statusCode == 400) {
-      throw WrongCredentialsException();
-    }
-
-    else {
-      throw ServerException();
-    }
-  }
-
-
 }

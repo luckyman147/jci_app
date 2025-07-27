@@ -58,7 +58,7 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource {
       // Log the beginning of the addMeeting process
       logger.i("Starting the process to add a new event.");
       final images = await firebaseImageUploader
-          .uploadImagesToFirebase(Training.CoverImages);
+          .uploadImagesToFirebase(Training.activityBasics.coverImages);
       logger.i("Images uploaded successfully");
       // Create the main activity document
       DocumentReference activityDocRef = await activitiesCollection
@@ -186,14 +186,14 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource {
   Future<Unit> updateTraining(TrainingModel Training) async {
     try {
       final images = await firebaseImageUploader
-          .uploadImagesToFirebase(Training.CoverImages);
+          .uploadImagesToFirebase(Training.activityBasics.coverImages);
       logger.i("Images uploaded successfully");
 
       await firabaseFireStore
           .collection('activities')
-          .doc(Training.id)
+          .doc(Training.activityBasics.id)
           .update(TrainingModel.SetImages(Training, images).toJson());
-      logger.i("Event updated successfully with ID: ${Training.id}");
+      logger.i("Event updated successfully with ID: ${Training}");
       return Future.value(unit);
     } on FirebaseException catch (e) {
       logger.e("An error occurred while updating the event: $e");

@@ -12,7 +12,7 @@ import 'package:jci_app/features/Home/data/datasources/activities/trainings/Trai
 import 'package:jci_app/features/Home/data/model/TrainingModel/TrainingModel.dart';
 import 'package:jci_app/features/Home/data/model/meetingModel/MeetingModel.dart';
 
-import 'package:jci_app/features/Home/domain/entities/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/Activity.dart';
 
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
@@ -20,7 +20,7 @@ import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 
 import '../../../../core/error/Exception.dart';
 
-import '../../domain/entities/Event.dart';
+import '../../domain/entities/Activity/event/Event.dart';
 import '../../domain/entities/Meeting.dart';
 import '../../domain/entities/training.dart';
 import '../../domain/repsotories/ActivitiesRepo.dart';
@@ -86,7 +86,9 @@ await meetingLocalDataSource.cacheMeeting(newMeet);
       await eventLocalDataSource.cacheEvent(newevfe);
       return Future.value(unit);
     },
+
     onError:(e){
+
       if (e is Exception){
         return e.get_failure;
       }
@@ -234,7 +236,11 @@ await meetingLocalDataSource.cacheMeeting(newMeet);
           }
 
           final result=await eventRemoteDataSource.getEventById(id);
+
           await eventLocalDataSource.cacheEvent(result);
+          await eventLocalDataSource.CacheEventById(result);
+
+          log("event cached");
           return Future.value(result);
 
         },

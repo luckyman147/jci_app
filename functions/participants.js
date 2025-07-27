@@ -65,7 +65,7 @@ async function addParticipantToEvent(eventId, memberId) {
   const MData = await getMember(memberId);
   console.log(MData);
 
-  const participants = eventData.Participants || [];
+  const participants = eventData.participation.participants || [];
 
   // Check if the member is already a participant
   if (participants.some((participant) =>
@@ -78,7 +78,7 @@ async function addParticipantToEvent(eventId, memberId) {
 
   // Save the updated participants list
   await admin.firestore().collection("activities").doc(eventId)
-      .update({Participants: participants});
+      .update({"participation.participants": participants});
 
 
   // Update the member's activities
@@ -107,7 +107,7 @@ async function removeParticipantFromEvent(eventId, memberId) {
   const eventData = await getEvent(eventId);
   const MData = await getMember(memberId);
 
-  const participants = eventData.Participants || [];
+  const participants = eventData.participation.participants || [];
   const updatedParticipants = participants.filter(
       (participant) => participant!== memberId);
 
@@ -117,7 +117,7 @@ async function removeParticipantFromEvent(eventId, memberId) {
   }
   // Save
   await admin.firestore().collection("activities").doc(eventId)
-      .update({Participants: updatedParticipants});
+      .update({"participation.participants": updatedParticipants});
   const activities = MData.Activities || [];
   const updatedActivities = activities.filter(
       (activityId) => activityId !== eventId);

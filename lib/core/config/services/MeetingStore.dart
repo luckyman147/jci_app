@@ -67,7 +67,7 @@ Logger().d(MeetingsModelToJson);
 
 
     final  meetings=await getCachedMeetings();
-    final index=meetings.indexWhere((element) => element.id==id);
+    final index=meetings.indexWhere((element) => element.activityBasics.id==id);
     if(index!=-1){
       meetings.removeAt(index);
       await cacheMeetings(meetings);
@@ -87,7 +87,7 @@ Logger().d(MeetingsModelToJson);
  static Future<void> cacheMeetingById(MeetingModel result)async {
     final pref = await SharedPreferences.getInstance();
 
-    pref.setString(_MeetById(result.id), jsonEncode(result.toJson(isDecode: true)));
+    pref.setString(_MeetById(result.activityBasics.id), jsonEncode(result.toJson(isDecode: true)));
 
   }
 

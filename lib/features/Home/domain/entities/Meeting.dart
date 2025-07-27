@@ -1,25 +1,43 @@
-import 'package:jci_app/features/Home/domain/entities/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/Activity.dart';
 import 'package:jci_app/features/Home/domain/entities/Agenda.dart';
 
 import '../../../../core/PrimitiveUser/User.dart';
 
-class Meeting extends Activity{
+import 'package:jci_app/features/Home/domain/entities/Activitys/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/ActivityBasics.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/ActivitySettings.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/OnlineSettings.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/ParicipationStatus.dart';
+import 'package:jci_app/core/PrimitiveUser/User.dart';
+import 'package:equatable/equatable.dart';
 
- final User Director;
- final List<Agenda> agenda;
+class Meeting extends Activity {
+  final User director;
+  final List<Agenda> agenda;
+  final String type = "Meeting";
+  final String status;
+  final int currentIndex;
 
- final type="Meeting";
- final String status;
- final int CurrentIndex;
+  Meeting({
+    required this.director,
+    required this.agenda,
+    this.status = "Not Started",
+    this.currentIndex = -1,
+    required super.activityBasics,
+    required super.settings,
+    required super.online,
+    required super.participation,
+  });
 
-
-
-  Meeting( {required super.name, required super.description,required  this.Director,required  this.agenda
-   ,required super.id,
-    this.CurrentIndex=-1,
-
-this.status="Not Started",
-   required super.isOnline,required super.googleMeetLink,
-   required super.ActivityBeginDate, required super.ActivityEndDate, required super.ActivityAdress, required super.ActivityPoints,
-   required super.categorieId, required super.IsPaid, required super.price, required super.Participants, required super.CoverImages, required super.IsPart, required super.IsPublic, });
+  @override
+  List<Object?> get props => [
+    director,
+    agenda,
+    status,
+    currentIndex,
+    activityBasics,
+    settings,
+    online,
+    participation,
+  ];
 }

@@ -6,7 +6,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
@@ -19,8 +18,8 @@ import 'package:jci_app/core/widgets/StandardTextFieldWidget.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Formz.dart';
 import 'package:jci_app/features/Home/presentation/widgets/buttons/ButtonsComponent.dart';
 import 'package:jci_app/features/Home/presentation/widgets/buttons/SaveButton.dart';
-import 'package:jci_app/features/Home/presentation/widgets/components/DateWidget.dart';
-import 'package:jci_app/features/Teams/presentation/widgets/CreateTeamWIdgets.dart';
+import 'package:jci_app/features/Home/presentation/widgets/components/stuff/DateWidget.dart';
+import 'package:jci_app/features/Teams/presentation/widgets/Team/CreateTeam/CreateTeamWIdgets.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import '../../../../../core/PrimitiveUser/User.dart';
@@ -38,10 +37,10 @@ import '../Fields/ImagePicker.dart';
 import '../Fields/TextFieldgenerator.dart';
 import '../Functions/ActivityFunctions.dart';
 import '../Functions/AddUpdateFunctions.dart';
-import '../components/Compoenents.dart';
+import '../components/stuff/Compoenents.dart';
 import '../Functions/Functions.dart';
 import '../Members/component/MemberSelection.dart';
-import '../components/ErrorDisplayMessage.dart';
+import '../components/stuff/ErrorDisplayMessage.dart';
 
 
 class AddWidgetComponents {

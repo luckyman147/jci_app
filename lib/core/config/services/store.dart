@@ -96,32 +96,32 @@ class Store {
   }
 
   Future<String?> getLocaleLanguage() async {
-    final pref = await SharedPreferences.getInstance();
-    return pref.getString('LOCALE');
+
+    return await  pref.getString('LOCALE');
   }
 
   Future<void> setLocaleLanguage(String locale) async {
-    final pref = await SharedPreferences.getInstance();
+
     pref.setString('LOCALE', locale);
   }
 
   Future<void> setFirstEntry() async {
-    final pref = await SharedPreferences.getInstance();
+
     pref.setBool(_FirstEntryKey, true);
   }
 
   Future<bool> isFirstEntry() async {
-    final pref = await SharedPreferences.getInstance();
+
     return pref.getBool(_FirstEntryKey) ?? false;
   }
 
   Future<void> setLoggedIn(bool isLogged) async {
-    final pref = await SharedPreferences.getInstance();
+
     pref.setBool(_isLogged, isLogged);
   }
 
   Future<bool> isLoggedIn() async {
-    final pref = await SharedPreferences.getInstance();
+
     return pref.getBool(_isLogged) ?? false;
   }
 }

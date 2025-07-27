@@ -1,6 +1,6 @@
 import 'package:formz/formz.dart';
 
-import '../Event.dart';
+import '../Activity/event/Event.dart';
 
 enum EventFormzValidationError { empty }
 

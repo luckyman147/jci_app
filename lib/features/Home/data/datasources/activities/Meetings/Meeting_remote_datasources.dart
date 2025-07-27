@@ -160,13 +160,13 @@ class MeetingRemoteDataSourceImpl implements MeetingRemoteDataSource {
     final activitiesCollection = firabaseFireStore.collection('activities');
 
     try {
-      logger.i("Starting the process to update meeting with ID: ${Meeting.id}");
+      logger.i("Starting the process to update meeting with ID: ${Meeting.activityBasics.id}");
       // Update the meeting document with new data
-      await activitiesCollection.doc(Meeting.id).update(Meeting.toJson());
-      logger.i("Successfully updated meeting with ID: ${Meeting.id}");
+      await activitiesCollection.doc(Meeting.activityBasics.id).update(Meeting.toJson());
+      logger.i("Successfully updated meeting with ID: ");
       return Future.value(unit);
     } catch (e) {
-      logger.e("Error updating meeting with ID ${Meeting.id}: $e");
+      logger.e("Error updating meeting with ID : $e");
       throw ServerException();
     }
   }

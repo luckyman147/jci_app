@@ -33,13 +33,13 @@ class GetAllMembersUseCase extends UseCase<List<User>, bool>{
     return await authRepository.GetMembers(param);
   }
 
-}class GetMemberByname extends UseCase<List<Member>, String >{
+}class GetMemberByname extends UseCase<List<User>, String >{
   final MemberRepo authRepository;
 
   GetMemberByname({required this.authRepository});
 
   @override
-  Future<Either<Failure, List<Member>>> call(String params) async {
+  Future<Either<Failure, List<User>>> call(String params) async {
     return await authRepository.GetMemberByName(params);
   }
 

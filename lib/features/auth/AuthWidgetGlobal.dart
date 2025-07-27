@@ -11,7 +11,6 @@ export  'package:flutter_animate/flutter_animate.dart';
 export '../../../../core/error/Failure.dart';
 
 export 'package:formz/formz.dart';
-export 'package:go_router/go_router.dart';
 export 'package:cloud_firestore/cloud_firestore.dart';
 export 'package:firebase_auth/firebase_auth.dart';
 export 'package:get_it/get_it.dart';
@@ -24,7 +23,6 @@ export 'package:jci_app/features/auth/data/repositories/UserStatusRepoImpl.dart'
 export 'package:jci_app/features/auth/domain/repositories/AuthRepo.dart';
 export 'package:jci_app/features/auth/domain/repositories/UserAccountRepo.dart';
 export 'package:jci_app/features/auth/domain/repositories/UserStatusRepo.dart';
-export 'package:jci_app/features/auth/presentation/bloc/Permissions/permissions_bloc.dart';
 
 export 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 export 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';

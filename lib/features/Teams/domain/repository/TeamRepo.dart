@@ -1,11 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/Failure.dart';
-import '../entities/Team.dart';
+import '../entities/Team/Team.dart';
 
 abstract class TeamRepo{
 
-  Future<Either<Failure,List<Team>>> getTeams(String page,String limit,bool isPrivate,bool isUpdated);
+  Future<Either<Failure,({List<Team> Teams, DocumentSnapshot? lastDoc})>> getTeams(int limit,bool isPrivate,DocumentSnapshot? doc);
   Future<Either<Failure,List<Team>>> getTeamByName(String name);
   Future<Either<Failure,Team>> getTeamById(String id,bool isUpdated );
   Future<Either<Failure,Team>> addTeam(Team team);

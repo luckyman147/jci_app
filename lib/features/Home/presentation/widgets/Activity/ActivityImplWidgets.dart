@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 
 
-import '../../../domain/entities/Activity.dart';
+import '../../../domain/entities/Activitys/Activity.dart';
 import '../../bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import '../../bloc/Activity/activity_cubit.dart';
 

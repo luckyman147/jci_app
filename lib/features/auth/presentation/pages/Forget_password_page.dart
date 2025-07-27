@@ -1,7 +1,9 @@
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/core/route/app_router.dart';
 import 'package:jci_app/features/auth/presentation/bloc/ResetPassword/reset_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/bool/INPUTS/inputs_cubit.dart';
@@ -18,7 +20,7 @@ import '../widgets/Inputs/formText.dart';
 import '../widgets/Inputs/inputs.dart';
 import '../widgets/Text.dart';
 
-
+@RoutePage()
 class ForgetPasswordPage extends StatefulWidget {
   const ForgetPasswordPage({Key? key}) : super(key: key);
 
@@ -39,7 +41,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
             key: _key,
             child: Column(
               children: [
-                const Backbutton( text: '/login', ),
+                const Backbutton( text: LoginRoute(), ),
                 BuldForgetHeader(mediaquery: mediaquery),
                 BuildEmailForgetPassword(mediaquery),
                 const SizedBox(height: 30,),

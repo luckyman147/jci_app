@@ -4,7 +4,9 @@
 
 import 'dart:math';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jci_app/core/route/app_router.dart';
 import 'package:jci_app/features/auth/presentation/bloc/bool/INPUTS/inputs_cubit.dart';
 
 import '../../../../core/strings/Images.string.dart';
@@ -48,7 +50,7 @@ final mediaquery = MediaQuery.of(context);
 
 
       children: [
-        Backbutton(text:  "/Intro",onTap: (){
+        Backbutton(text: IntroductionRoute(),onTap: (){
           context.read<InputsCubit>().resetInputs();
         },),
         BlocBuilder<InputsCubit, InputsState>(
@@ -133,7 +135,7 @@ final mediaquery = MediaQuery.of(context);
       radius: 10.0,
       borderRadius: BorderRadius.circular(10.0),
       onTap: (){
-        context.go('/SignUp/${null}/${null}');
+        context.navigateTo(SignUpRoute());
         context.read<InputsCubit>().ActivateEmail();
       },
       child: LinkedText(text: "SignUp".tr(context), size: mediaquery.size.width/30.5

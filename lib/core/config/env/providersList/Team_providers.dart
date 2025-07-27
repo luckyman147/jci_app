@@ -10,11 +10,11 @@ import 'package:jci_app/injection_container.dart' as di;
 import 'package:provider/single_child_widget.dart';
 
 List<SingleChildWidget> teamProviders = [
-  BlocProvider(create: (_) => di.sl<GetTeamsBloc>()),
-  BlocProvider(create: (_) => di.sl<GetTaskBloc>()),
-  BlocProvider(create: (_) => di.sl<NumPagesBloc>()),
-  BlocProvider(create: (_) => di.sl<TaskVisibleBloc>()),
-  BlocProvider(create: (_) => di.sl<TimelineBloc>()),
-  BlocProvider(create: (_) => di.sl<MembersTeamCubit>()),
-  BlocProvider(create: (_) => di.sl<TaskfilterBloc>()),
+  BlocProvider(create: (_) => di.sll<GetTeamsBloc>()),
+  BlocProvider(create: (_) => di.sll<GetTaskBloc>()),
+  BlocProvider(create: (_) => di.sll<NumPagesBloc>()),
+  BlocProvider(create: (_) => di.sll<TaskVisibleBloc>()),
+  BlocProvider(create: (_) => di.sll<TimelineBloc>()),
+  BlocProvider(create: (_) => di.sll<MembersTeamCubit>()),
+  BlocProvider(create: (_) => di.sll<TaskfilterBloc>()),
 ];

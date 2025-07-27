@@ -101,10 +101,46 @@ onFailConnection:  ()async{
        });
   }
   @override
-  Future<Either<Failure, List<Member>>> GetMemberByName(String name)async {
-  return await membersListHandler.handle(onCall: ()=>memberRemote.GetmMemberByName(name),
-      onError: (error){       if (error is Exception) throw error;
-      });
+  Future<Either<Failure, List<User>>> GetMemberByName(String name) async {
+    List<User> cachedMembers = [];
+    try {
+      // Try to get members from the local cache
+      cachedMembers = await membersLocalDataSource.GetMembers();
+    } catch (e) {
+      // Log the error for debugging purposes if needed
+      // Logger().e("Error fetching members from local cache: $e");
+      // If there's an error getting cached members, proceed to remote
+      return await membersListHandler.handle(
+        onCall: () => memberRemote.GetmMemberByName(name),
+        onError: (error) {
+          if (error is Exception) throw error;
+          return ServerFailure(); // Or a more specific failure
+        },
+      );
+    }
+
+    // If cached members are available and not empty
+    if (cachedMembers.isNotEmpty) {
+      // Search in cache by first name or last name (case-insensitive)
+      final foundMembers = cachedMembers.where((member) {
+        final lowerCaseName = name.toLowerCase();
+        return (member.firstName?.toLowerCase().contains(lowerCaseName) ?? false) ||
+            (member.lastName?.toLowerCase().contains(lowerCaseName) ?? false);
+      }).toList();
+
+      if (foundMembers.isNotEmpty) {
+        return Right(foundMembers); // Found in cache
+      }
+    }
+
+    // If cache is empty, or member not found in cache, call remote
+    return await membersListHandler.handle(
+      onCall: () => memberRemote.GetmMemberByName(name),
+      onError: (error) {
+        if (error is Exception) throw error;
+        return ServerFailure(); // Or a more specific failure
+      },
+    );
   }
   @override
   Future<Either<Failure, List<User>>> GetMembers(bool isUpdated) async {

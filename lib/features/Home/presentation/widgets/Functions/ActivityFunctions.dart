@@ -1,7 +1,12 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/ActivityBasics.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/ActivitySettings.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/OnlineSettings.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/ParicipationStatus.dart';
 import 'package:jci_app/features/Home/domain/entities/ParticipantDetailsParam.dart';
-import 'package:jci_app/features/Home/domain/entities/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/Activity.dart';
 import 'package:jci_app/features/Home/domain/enums/Privacy.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
@@ -12,7 +17,7 @@ import '../../../Activity_Global.dart';
 import '../../../data/model/events/EventModel.dart';
 import '../../../data/model/meetingModel/MeetingModel.dart';
 import '../../../domain/Dtos/ActivityParam.dart';
-import '../../../domain/entities/Event.dart';
+import '../../../domain/entities/Activity/event/Event.dart';
 import '../../../domain/entities/Meeting.dart';
 import '../../../domain/entities/training.dart';
 import '../../pages/CreateUpdateActivityPage.dart';
@@ -182,54 +187,66 @@ class ActivityFunctions{
       VisibleState vis
       ) {
 
-    return  Meeting(
-        name: namecontroller.text,
-        description: descriptionController.text,
-        ActivityBeginDate: ste.beginTimeInput
-            .value ??
-            DateTime.now(),
-        ActivityEndDate: ste.endTimeInput.value ??
-            dur,
-        ActivityAdress: LocationController.text,
-        ActivityPoints: int.parse(Points.text),
-        categorieId: context.read<CategoryBloc>().state.SelectedCategories.map((e) => e.CategoryName).toList(),
-        IsPaid: false,
-        price: 0,
-        Participants:         ste.PrivateParticipants.map((e) => e.id??'').toList(),
+    return
 
-        CoverImages: const [],
-        id: id,
-        Director: ste.memberFormz.value!,
-        agenda:ActivityAction. combineTextFields(
-            statef.textFieldControllers),
-        IsPart: false, isOnline: vis.IsOnline, googleMeetLink: '', IsPublic: !vis.isPrivate);
+      Meeting(
+          director: ste.memberFormz.value!,
+          agenda: ActivityAction. combineTextFields(
+              statef.textFieldControllers),
 
+          activityBasics:fillActivityBasics(id, namecontroller, descriptionController, ste, dur, LocationController),
+          settings: fillActivitySettings(Points, context, vis)  ,
+          online: fillOnlineSettings(vis),
+          participation: fillpartipationsSettings(ste));
+
+
+
+
+
+
+
+  }
+
+  static ParticipationStatus fillpartipationsSettings(FormzState ste) {
+    return ParticipationStatus(
+            participants:   ste.PrivateParticipants.map((e) => e.id??'').toList(), isPart: false);
+  }
+
+  static OnlineSettings fillOnlineSettings(VisibleState vis) => OnlineSettings(isOnline:  vis.IsOnline, googleMeetLink: '');
+
+  static ActivitySettings fillActivitySettings(TextEditingController Points, BuildContext context, VisibleState vis) {
+    return ActivitySettings(activityPoints:
+        int.parse(Points.text),
+            categoryIds:  context.read<CategoryBloc>().state.SelectedCategories.map((e) => e.CategoryName).toList(),
+            isPaid: false,
+            price:  0, isPublic: !vis.isPrivate);
+  }
+
+  static ActivityBasics fillActivityBasics(String id, TextEditingController namecontroller, TextEditingController descriptionController, FormzState ste, DateTime dur, TextEditingController LocationController) {
+    return ActivityBasics(id: id,
+            name: namecontroller.text,
+            description: descriptionController.text,
+            activityBeginDate:  ste.beginTimeInput
+                .value ??
+                DateTime.now(),
+            activityEndDate: ste.endTimeInput.value ??
+                dur,
+            activityAdress: LocationController.text,
+            coverImages: const []);
   }
 
   static Activity TrainingAction(GlobalKey<FormState> formKey, FormzState ste, String id, TextEditingController ProfesseurName, TextEditingController namecontroller, TextEditingController descriptionController, DateTime dur, TextEditingController LocationController, TextEditingController Points, VisibleState vis, TextEditingController Price,
       List<String> part, String action, BuildContext context,TaskVisibleState taskS) {
 
-    return Training(id: id,
-        ProfesseurName: ProfesseurName.text,
-        Duration: 0,
-        name: namecontroller.text,
-        description: descriptionController.text,
-        ActivityBeginDate: ste.beginTimeInput
-            .value ?? DateTime.now(),
-        ActivityEndDate: ste.endTimeInput.value ??
-            dur,
-        ActivityAdress: LocationController.text,
-        ActivityPoints: int.parse(Points.text),
-        categorieId: context.read<CategoryBloc>().state.SelectedCategories.map((e) => e.CategoryName).toList(),
+    return
+      Training(
+          professeurName: ProfesseurName.text,
+          duration: 0,
+          activityBasics:fillActivityBasics(id, namecontroller, descriptionController, ste, dur, LocationController) ,
+          settings: fillActivitySettings(Points, context, vis),
+          online: fillOnlineSettings(vis), participation: fillpartipationsSettings(ste));
 
-        IsPaid: vis.isPaid,
-        price: int.parse(Price.text),
-        Participants:         ste.PrivateParticipants.map((e) => e.id??'').toList(),
 
-        CoverImages:
-          taskS.images
-        ,
-        IsPart: false, IsPublic: !vis.isPrivate, isOnline: vis.IsOnline, googleMeetLink: "");
 
 
   }
@@ -237,36 +254,21 @@ class ActivityFunctions{
   static Activity EventAction(TextEditingController Price, FormzState ste, DateTime dur, TextEditingController namecontroller, TextEditingController descriptionController, TextEditingController LocationController, TextEditingController Points, VisibleState vis, List<String> part, String action, String id,
       BuildContext context,TaskVisibleState taskS) {
 
-    return Event(
-        registrationDeadline: ste
-            .registrationTimeInput
-            .value ?? dur,
-        LeaderName: ste.memberFormz.value!,
-        name: namecontroller.text,
-        description: descriptionController.text,
-        ActivityBeginDate: ste.beginTimeInput
-            .value ??
-            DateTime.now(),
-        ActivityEndDate: ste.endTimeInput.value ??
-            dur,
-        ActivityAdress: !vis.IsOnline?LocationController.text:"",
-        ActivityPoints: int.parse(Points.text),
-        categorieId: context.read<CategoryBloc>().state.SelectedCategories.map((e) => e.CategoryName).toList(),
+    return
+      Event(
+          leaderName:  ste.memberFormz.value!,
+          registrationDeadline: ste
+              .registrationTimeInput
+              .value ?? dur,
+          activityBasics: fillActivityBasics(id, namecontroller, descriptionController, ste, dur, LocationController),
+          settings: fillActivitySettings(Points, context, vis),
+          online: fillOnlineSettings(vis),
+          participation: fillpartipationsSettings(ste));
 
-        IsPaid: vis.isPaid,
-        price: int.parse(Price.text),
-        Participants:
-
-        ste.PrivateParticipants.map((e) => e.id??'').toList(),
-        CoverImages:
-          taskS.images
-        ,
-        id: id,
-        IsPart: false, IsPublic:! vis.isPrivate, isOnline: vis.IsOnline, googleMeetLink: vis.IsOnline?LocationController.text:"");
 
   }
   static void DeleteAction(BuildContext context, Activity activitys,ActivityState state) {
-    final result=activityParams(type: state.selectedActivity, act: activitys,Eventid: activitys.id, name: '');
+    final result=activityParams(type: state.selectedActivity, act: activitys,Eventid: activitys.activityBasics.id, name: '');
 
     context.read<AddDeleteUpdateBloc>().add(DeleteActivityEvent(params: result
     ));
@@ -278,11 +280,11 @@ class ActivityFunctions{
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) {
-          return  CreateUpdateActivityPage(id: activitys.id, activity: activitys.runtimeType == EventModel ?
+          return  CreateUpdateActivityPage(id: activitys.activityBasics.id, activity: activitys.runtimeType == EventModel ?
           activity.Events.name :
           activitys.runtimeType == MeetingModel ?
           activity.Meetings.name :
-          activity.Trainings.name, work: actionType.edit.name, particpants:activitys.Participants,);
+          activity.Trainings.name, work: actionType.edit.name, particpants:activitys.participation.participants,);
         },
       ),
     );

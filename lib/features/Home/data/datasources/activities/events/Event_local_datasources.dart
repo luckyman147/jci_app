@@ -27,18 +27,19 @@ abstract class EventLocalDataSource {
 
 class EventLocalDataSourceImpl implements EventLocalDataSource {
   final Store store;
+  final EventStore eventStore;
 
-  EventLocalDataSourceImpl({required this.store});
+  EventLocalDataSourceImpl(this.eventStore, {required this.store});
   @override
   Future<Unit> cacheEvents(List<EventModel> event) async {
-    await EventStore.cacheEvents(event);
+    await eventStore.cacheEvents(event);
 
     return Future.value(unit);
   }
 
   @override
   Future<Unit> cacheEventsOfTheMonth(List<EventModel> event) async {
-    await EventStore.cacheEvents(event);
+    await eventStore.cacheEvents(event);
     return Future.value(unit);
   }
 
@@ -49,7 +50,7 @@ class EventLocalDataSourceImpl implements EventLocalDataSource {
 
   @override
   Future<List<EventModel>> getAllCachedEvents() async {
-    final events = await EventStore.getCachedEvents();
+    final events = await eventStore.getCachedEvents();
     if (events.isNotEmpty) {
       //remove duplicates
       final uniqueEvents = events.toSet().toList();
@@ -61,7 +62,7 @@ class EventLocalDataSourceImpl implements EventLocalDataSource {
 
   @override
   Future<List<EventModel>> getCachedEventsOfTheMonth() async {
-    final events = await EventStore.getCachedEvents();
+    final events = await eventStore.getCachedEvents();
     if (events.isNotEmpty) {
       return events;
     } else {
@@ -76,7 +77,7 @@ class EventLocalDataSourceImpl implements EventLocalDataSource {
 
   @override
   Future<List<String>> getPermissions() async {
-    final permissions = await EventStore.getEventPermissions();
+    final permissions = await eventStore.getEventPermissions();
     if (permissions.isNotEmpty) {
       return permissions;
     } else {
@@ -86,13 +87,13 @@ class EventLocalDataSourceImpl implements EventLocalDataSource {
 
   @override
   Future<Unit> CacheEventById(EventModel result) async {
-    await EventStore.cacheEventById(result);
+    await eventStore.cacheEventById(result);
     return Future.value(unit);
   }
 
   @override
   Future<EventModel?> getEventById(String id) async {
-    final event = await EventStore.getEventById(id);
+    final event = await eventStore.getEventById(id);
     if (event != null) {
       return event;
     } else {
@@ -113,11 +114,11 @@ class EventLocalDataSourceImpl implements EventLocalDataSource {
 
   @override
   Future<void> deleteEvent(String id) async {
-    await EventStore.deleteEvent(id);
+    await eventStore.deleteEvent(id);
   }
 
   @override
   Future<void> cacheEvent(EventModel event) async {
-    await EventStore.cacheEvent(event);
+    await eventStore.cacheEvent(event);
   }
 }

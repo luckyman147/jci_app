@@ -1,11 +1,9 @@
 export 'package:flutter/material.dart';
 export 'package:flutter_bloc/flutter_bloc.dart';
-export 'package:go_router/go_router.dart';
 
 export 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 export 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 export 'package:jci_app/features/MemberSection/presentation/bloc/Members/members_bloc.dart';
-export 'package:jci_app/features/auth/presentation/bloc/Permissions/permissions_bloc.dart';
 
 export 'package:get_it/get_it.dart';
 
@@ -37,8 +35,8 @@ export 'package:jci_app/features/Home/presentation/bloc/textfield/textfield_bloc
 export '../Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 export 'package:flutter_svg/flutter_svg.dart';
 
-export 'package:jci_app/features/Home/domain/entities/Activity.dart';
-export 'package:jci_app/features/Home/presentation/widgets/components/Compoenents.dart';
+export 'package:jci_app/features/Home/domain/entities/Activitys/Activity.dart';
+export 'package:jci_app/features/Home/presentation/widgets/components/stuff/Compoenents.dart';
 
 
 export 'package:jci_app/core/config/locale/app__localizations.dart';
@@ -46,8 +44,8 @@ export 'package:jci_app/core/strings/app_strings.dart';
 export 'package:jci_app/core/widgets/loading_widget.dart';
 export 'package:jci_app/features/Home/presentation/widgets/Functions/Functions.dart';
 export 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
-export 'package:jci_app/features/Teams/domain/entities/Team.dart';
-export 'package:jci_app/features/Teams/presentation/widgets/TeamWidget.dart';
+export 'package:jci_app/features/Teams/domain/entities/Team/Team.dart';
+export 'package:jci_app/features/Teams/presentation/widgets/Team/%20component/TeamWidget.dart';
 export 'package:jci_app/features/about_jci/Presentations/screens/BoardPage.dart';
 export 'package:jci_app/features/about_jci/Presentations/screens/JCIPresnPage.dart';
 export 'package:jci_app/features/about_jci/Presentations/screens/PastPresidentsPage.dart';
@@ -59,8 +57,8 @@ export 'package:jci_app/core/util/snackbar_message.dart';
 export 'package:jci_app/features/Home/domain/entities/Note.dart';
 export 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
 export 'package:jci_app/features/MemberSection/presentation/functions/functionMember.dart';
-export 'package:jci_app/features/Teams/presentation/widgets/MembersTeamSelection.dart';
-export 'package:jci_app/features/Teams/presentation/widgets/TaskComponents.dart';
+export 'package:jci_app/features/Teams/presentation/widgets/member/MembersTeamSelection.dart';
+export 'package:jci_app/features/Teams/presentation/widgets/Task/components/TaskComponents.dart';
 export 'domain/usercases/ActivityUseCases.dart';
 
 export   '../../../../../core/app_theme.dart';

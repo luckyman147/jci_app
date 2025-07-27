@@ -94,7 +94,7 @@ static const String _CachedTrainingsOfTheMonthKey='CachedTrainingsOfThemonth';
   static Future<void> deleteTraining(String id)async {
 
     final Trainings = await getCachedTrainings();
-    final newTrainings = Trainings.where((element) => element.id != id).toList();
+    final newTrainings = Trainings.where((element) => element.activityBasics.id != id).toList();
     await cacheTrainings(newTrainings);
   }
 
@@ -106,7 +106,7 @@ static const String _CachedTrainingsOfTheMonthKey='CachedTrainingsOfThemonth';
   }
   static   Future<void> cacheTrainingBYId(TrainingModel result) async{
     final pref=await SharedPreferences.getInstance();
-    await pref.setString(_CachedTrainingKey(result.id), jsonEncode(result.toJson(isDecode: true)));
+    await pref.setString(_CachedTrainingKey(result.activityBasics.id), jsonEncode(result.toJson(isDecode: true)));
 
   }
 

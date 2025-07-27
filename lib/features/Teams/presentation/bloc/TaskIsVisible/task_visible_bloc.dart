@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:jci_app/features/Home/domain/enums/ActionImage.dart';
 
 import '../../../../Home/domain/enums/Privacy.dart';
-import '../../../domain/entities/Task.dart';
+import '../../../domain/entities/task/Task.dart';
 
 part 'task_visible_event.dart';
 part 'task_visible_state.dart';

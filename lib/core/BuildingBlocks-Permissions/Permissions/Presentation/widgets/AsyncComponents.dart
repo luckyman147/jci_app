@@ -6,11 +6,11 @@ import '../../../../../features/MemberSection/presentation/widgets/utils/Shimmer
 
 class AsyncComponents {
 
-  static  Widget buildFutureBuilder(Widget body,PermissionType type,String featureId){
+  static  Widget buildFutureBuilder(Widget body,PermissionType type,String featureId,{Widget? loadingWidget}){
     return TypePermissionStrategy(
        hasPermissionsWidget: body,
       noPermissionsWidget: SizedBox(),
-      loadingWidget:ShimmerGridView.padding(20 , 20),
+      loadingWidget:loadingWidget??ShimmerGridView.padding(20 , 20),
       type: type, feature: featureId ,
     );
   }

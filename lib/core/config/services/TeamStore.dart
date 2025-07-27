@@ -67,7 +67,7 @@ static Future<void> clearCache() async {
 }
 static Future<void> cacheTeamByid(TeamModel team) async {
   final pref = await SharedPreferences.getInstance();
-  pref.setString(_cachedTeamByid(team.id), jsonEncode(team.toJson()));
+  pref.setString(_cachedTeamByid(team.meta.id), jsonEncode(team.toJson()));
 }
 
 static Future<void> cacheUpdated(bool IsUpdated) async {

@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/util/snackbar_message.dart';
 import 'package:jci_app/features/intro/presentation/widgets.global.dart';
 

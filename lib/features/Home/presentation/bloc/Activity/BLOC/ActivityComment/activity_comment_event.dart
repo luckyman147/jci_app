@@ -11,10 +11,10 @@ class GetActivitysComment extends ActivityCommentEvent {
   List<Object> get props => [activityId];
 }
 class AddActivityComment extends ActivityCommentEvent {
-  final NoteInput comment;
-  const AddActivityComment(this.comment);
+  final NoteInput noteInput;
+  const AddActivityComment(this.noteInput);
   @override
-  List<Object> get props => [comment];
+  List<Object> get props => [noteInput];
 }
 
 class ToggleExpandForItemEvent extends ActivityCommentEvent {

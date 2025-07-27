@@ -10,7 +10,7 @@ import 'package:jci_app/features/Home/presentation/bloc/PageIndex/page_index_blo
 import 'package:logger/logger.dart';
 
 import '../../../../../core/app_theme.dart';
-import '../../../domain/entities/Activity.dart';
+import '../../../domain/entities/Activitys/Activity.dart';
 import '../../bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import '../../bloc/Activity/BLOC/guests/guests_bloc.dart';
 import '../Activity/ActivityDetailsComponents.dart';
@@ -65,7 +65,7 @@ class PartcipantsMainwidget extends StatelessWidget {
                         PaticipantsButton( "Absents ( ${sata.AbsentList.length} )",2,state,context),
                         const  SizedBox(width: 7,),
 
-                        PaticipantsButton( "Joined(${activity.Participants.length})",3,state,context),
+                        PaticipantsButton( "Joined(${activity.participation. participants.length})",3,state,context),
 
                       ],
                     ),
@@ -84,14 +84,14 @@ class PartcipantsMainwidget extends StatelessWidget {
                         );
                   },
                   children: [
-                              ShowPartipants(activity.id,activity.Participants),
+                              ShowPartipants(activity.activityBasics.id,activity.participation.participants),
                 PartcipantListWidget(status: Attendance.Present,onAbsent: (){
                   _pageController.animateToPage(
                     0,
                     duration: const Duration(milliseconds: 400),
                     curve: Curves.easeInOut,
                   );
-                }, activityId: activity.id,),
+                }, activityId: activity.activityBasics.id,),
                 PartcipantListWidget(status: Attendance.Absent,
                 onAbsent: (){
                   _pageController.animateToPage(
@@ -99,7 +99,7 @@ class PartcipantsMainwidget extends StatelessWidget {
                     duration: const Duration(milliseconds: 400),
                     curve: Curves.easeInOut,
                   );
-                }, activityId: activity.id,
+                }, activityId: activity.activityBasics.id,
                 ),    PartcipantListWidget(status: Attendance.joined,
                 onAbsent: (){
                   _pageController.animateToPage(
@@ -107,7 +107,7 @@ class PartcipantsMainwidget extends StatelessWidget {
                     duration: const Duration(milliseconds: 400),
                     curve: Curves.easeInOut,
                   );
-                }, activityId: activity.id,
+                }, activityId: activity.activityBasics.id,
                 ),
 
 
@@ -218,7 +218,7 @@ class PartcipantsMainwidget extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "${activity.Participants.length} ${"Member".tr(context)}",
+                          "${activity.participation.participants.length} ${"Member".tr(context)}",
                           style: PoppinsNorml(
                             mediaQuery.devicePixelRatio * 4,
                             textColorBlack,
@@ -229,7 +229,7 @@ class PartcipantsMainwidget extends StatelessWidget {
                         onPressed: () {
                           context.read<ParticpantsBloc>().add(
                             DownloadAndSaveExcelEvent(
-                              activityId: activity.id,
+                              activityId: activity.activityBasics.id,
                             ),
                           );
                         },

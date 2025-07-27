@@ -156,15 +156,23 @@ class ActivityCommentBloc
 
   FutureOr<void> _AddComment(
       AddActivityComment event, Emitter<ActivityCommentState> emit) async {
+    emit(state.copyWith(activityCommentEnum: ActivityCommentEnum.LOADING));
+
     final user = await memberStore.getPrimitiveModel();
-    ActivityComment? comment = event.comment.comment;
+Logger().i("User: ${user.toJson(true)}");
+NoteInput noteInput = event.noteInput;
+    ActivityComment? comment = noteInput.comment;
+    Logger().i("Comment: ${comment.toString()}");
     if (comment != null && comment.user == null) {
-      comment = event.comment.comment!.copyWith(
-        user: user,
-      );
-      return;
+      comment = comment.copyWith(user: user);
+      Logger().i("Updated Comment: ${comment.user}");
+
     }
-    final result = await addCommentToActivityUseCase.call(event.comment);
+    noteInput = noteInput.copyWith(comment: comment);
+  Logger().i(noteInput.comment?.user==null?"User is null":"User is not null");
+
+    final result = await addCommentToActivityUseCase.call(noteInput);
+
     emit(_eitherSuccessOrFailure(
         result,
         (r) => state.copyWith(

@@ -1,16 +1,17 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
 
 import '../../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
 import '../../../../../core/Member.dart';
 import '../../../../../core/app_theme.dart';
+import '../../../../../core/route/app_router.dart';
 import '../../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 import '../../../../Teams/data/models/TeamModel.dart';
 import '../../../../Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
-import '../../../../Teams/presentation/widgets/DetailTeamComponents.dart';
-import '../../../../Teams/presentation/widgets/TeamWidget.dart';
+import '../../../../Teams/presentation/widgets/Team/Detail/DetailTeamComponents.dart';
+import '../../../../Teams/presentation/widgets/Team/ component/TeamWidget.dart';
 import '../../functions/functionMember.dart';
 
 class TeamsComponent extends StatelessWidget {
@@ -51,8 +52,8 @@ class TeamsComponent extends StatelessWidget {
       children: [
         IconButton.outlined(icon:const Icon(Icons.add,size: 30,), onPressed: () {
           context.read<PageIndexBloc>().add(SetIndexEvent(index: 2));
-          context.go('/home');
-          context.read<GetTeamsBloc>().add(const GetTeams(isPrivate: false));
+          context.navigateTo(HomeRoute());
+        //  context.read<GetTeamsBloc>().add(const GetTeams(isPrivate: false));
         },),
         const SizedBox(height: 10,),
         Text('Join Your first Team ',style: PoppinsRegular(17, textColorBlack),),
@@ -93,7 +94,7 @@ class TeamsComponent extends StatelessWidget {
       children: [
         DeatailsTeamComponent.ImageCard(
           mediaQuery,
-          TeamModel.fromJson(member.teams[index]).CoverImage,
+          TeamModel.fromJson(member.teams[index]).meta.coverImage,
           40,
         ),
         Padding(

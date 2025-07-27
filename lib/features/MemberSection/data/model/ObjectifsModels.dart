@@ -1,5 +1,6 @@
 
 import '../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Role.dart';
+import '../../../common/enums/PrivacyType.dart';
 import '../../domain/entity/ActionDetails.dart';
 import '../../domain/entity/Objectif.dart';
 

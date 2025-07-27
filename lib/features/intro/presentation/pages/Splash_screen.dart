@@ -1,3 +1,4 @@
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 
 import 'package:jci_app/core/app_theme.dart';
@@ -9,6 +10,7 @@ import '../../../../core/config/services/MemberStore.dart';
 import '../../../../core/config/services/store.dart';
 import '../../../../core/strings/Images.string.dart';
 import '/injection_container.dart' as di;
+@RoutePage()
 class SplashScreen extends StatefulWidget {
   const SplashScreen({
     super.key,
@@ -19,19 +21,15 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final st = di.sl<Store>();
-  final member = di.sl<MemberStore>();
+  final st = di.sll<Store>();
+  final member = di.sll<MemberStore>();
  late  Verification verification;
   @override
   void initState() {
     super.initState();
-    verification = di.sl<Verification>();
-    _navigateAfterDelay();
+
   }
 
-  void _navigateAfterDelay() async {
-    verification.check(context,mounted);
-  }
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();

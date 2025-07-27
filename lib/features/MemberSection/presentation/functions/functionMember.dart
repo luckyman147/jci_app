@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
-import 'package:jci_app/features/Teams/presentation/widgets/funct.dart';
 import 'package:jci_app/core/Member.dart';
 
 import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/config/services/MemberStore.dart';
 import '../../../../core/config/services/store.dart';
-import '../../../Teams/domain/entities/Team.dart';
+import '../../../Teams/domain/entities/Team/Team.dart';
 import '../../domain/repositories/MemberRepo.dart';
 import '../../domain/usecases/AdminMembersUsesCase.dart';
 import '../../domain/usecases/MemberUseCases.dart';
@@ -114,17 +113,11 @@ class FunctionMember {
     }
   }
 
-  static Future<bool> isSuperAdmin(Member other) async {
-    return other.role == 'superadmin';
-  }
 
-  static Future<bool> isReAdmin(Member other) async {
-    return other.role == 'admin';
-  }
 
   static bool isChef(Team team, int index) =>
-      Member.toMember(team.Members[index]).id !=
-      Member.toMember(team.TeamLeader[0]).id;
+      team.members.members[index].id !=
+      team.members.teamLeader!.id;
 
   static bool checkIfIdExists(List<Member> list, String idToCheck) {
     if (list.isEmpty) {

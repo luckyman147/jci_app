@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 
 
 import '../../../../core/error/Failure.dart';
-import '../../domain/entities/Activity.dart';
+import '../entities/Activitys/Activity.dart';
 import '../../presentation/bloc/Activity/activity_cubit.dart';
 
 

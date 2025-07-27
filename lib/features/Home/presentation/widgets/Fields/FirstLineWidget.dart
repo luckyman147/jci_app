@@ -6,7 +6,7 @@ import '../../../../../core/app_theme.dart';
 import '../../bloc/PageIndex/page_index_bloc.dart';
 import '../Functions/AddUpdateFunctions.dart';
 import '../buttons/SaveButton.dart';
-import '../components/Compoenents.dart';
+import '../components/stuff/Compoenents.dart';
 
 class FirstLineWidget extends StatelessWidget {
   final String work;

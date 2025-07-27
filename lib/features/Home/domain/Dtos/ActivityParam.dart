@@ -1,6 +1,6 @@
 
 
-import 'package:jci_app/features/Home/domain/entities/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/Activity.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 
 class activityParams {

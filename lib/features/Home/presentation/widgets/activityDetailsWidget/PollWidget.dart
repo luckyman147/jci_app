@@ -3,7 +3,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jci_app/features/Home/domain/Dtos/PollDto.dart';
 import 'package:jci_app/features/Home/domain/entities/poll/Poll.dart';
-import 'package:jci_app/features/Home/presentation/widgets/components/NetworkCachedImageWidget.dart';
 import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 import '../../../Activity_Global.dart';
 import '../../../domain/entities/poll/PollOption.dart';
@@ -11,6 +10,7 @@ import '../../../domain/entities/poll/PollOption.dart';
 
 import '../../bloc/Poll/poll_bloc.dart';
 import '../Functions/ActivityDetailsFunctions.dart';
+import '../components/stuff/NetworkCachedImageWidget.dart';
 
 class PollWidget extends StatelessWidget {
   const PollWidget({super.key, required this.poll});
@@ -57,7 +57,8 @@ ActivityDetailsFunctions.showDeleteDialog(context: context, onDelete: (){
               // Poll Options
               Column(
                 children: poll.options.take(3).map((option) {
-                  double votePercentage = _calculateVotePercentage(option.votes.length,context.read<AcivityFBloc>().state.activityById!.Participants.length );
+                  double votePercentage = _calculateVotePercentage(option.votes.length,
+                      context.read<AcivityFBloc>().state.activityById!.participation. participants.length );
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Column(

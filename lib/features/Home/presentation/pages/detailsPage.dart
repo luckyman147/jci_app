@@ -1,25 +1,26 @@
+import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/Home/Activity_Global.dart';
 import 'package:jci_app/features/Home/domain/Dtos/ActivityParam.dart';
-import 'package:jci_app/features/Home/domain/entities/poll/Poll.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityComment/activity_comment_bloc.dart';
-import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/PV/pv_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Poll/poll_bloc.dart';
 import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 import 'package:logger/logger.dart';
 
+import '../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/Bloc/permissions/permissions_bloc.dart';
 import '../../../../core/util/ObjectifProgressTopSnackBar.dart';
-import '../../../MemberSection/domain/dto/UpdateObjectiveProgressDTO.dart';
-import '../../../MemberSection/domain/entity/ActionDetails.dart';
-import '../../../MemberSection/domain/entity/Objectif.dart';
+
 import '../../../MemberSection/presentation/bloc/objectifs/ObjectifUserProgress/user_objectif_progress_cubit.dart';
-import '../../domain/enums/ActivityCommentEnum.dart';
+
 import '../../domain/enums/ActivityEnum.dart';
 import '../../domain/enums/ParticipantWithEvents.dart';
 import '../widgets/Functions/Listeners.dart';
+import 'package:jci_app/core/config/env/Constants.dart';
 
+@RoutePage()
 class ActivityDetailsPage extends StatefulWidget {
   final String activityType;
   final String id;
@@ -37,7 +38,7 @@ class ActivityDetailsPage extends StatefulWidget {
 }
 
 class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
-  late activity act;
+
 
   @override
   void initState() {
@@ -46,15 +47,21 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
   }
 
   void _initializePage() {
-    _refreshData();
+    final ActivityType=activity.values.firstWhere((te) => te.name == widget.activityType);
+    context.read<PermissionsBloc>().add(LoadPermissionOfMasterEvent(featuresId: [
+
+    if (ActivityType==activity.Events) Constants.MANAGE_EVENTS,
+      if (ActivityType==activity.Meetings)  Constants.MANAGE_MEETINGS,
+      if (ActivityType==activity.Trainings) Constants.MANAGE_TRAININGS]));
+    _refreshData(ActivityType);
     context.read<ActivityCommentBloc>().add(GetActivitysComment(widget.id));
     context.read<PollBloc>().add(FetchPolls(ActivityId: widget.id));
     context.read<PvBloc>().add(GetPvList(widget.id));
   }
 
-  void _refreshData() {
+  void _refreshData(activity act) {
     final result = activityParams(
-      type: activity.values.firstWhere((te) => te.name == widget.activityType),
+      type: act,
       act: null,
       Eventid: widget.id,
       name: '',
@@ -70,7 +77,7 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
           body: RefreshIndicator(
             color: ColorsApp.SecondaryColor,
             onRefresh: () async {
-              _refreshData();
+              _refreshData(activity.values.firstWhere((te) => te.name == widget.activityType));
             },
             child: SingleChildScrollView(
               child: _buildBlocListeners(),
@@ -93,6 +100,9 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
     }),
         BlocListener<AcivityFBloc, AcivityFState>(
           listener: (context, state) {
+            if (state.activityfetchState==ActivityFetchState.Error){
+              context.back();
+            }
 
             Listeners.ListentoJoinButton(state, context, widget.activityType);
           },

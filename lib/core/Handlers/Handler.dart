@@ -5,6 +5,8 @@ import 'package:jci_app/features/Home/Activity_Global.dart';
 import 'package:logger/logger.dart';
 import '../network/network_info.dart';
 
+
+
 class Handler<T> implements IHandler<T, Failure> {
   final NetworkInfo networkInfo;
   final Logger logger ;
@@ -43,6 +45,8 @@ class Handler<T> implements IHandler<T, Failure> {
     required Future<T> Function() onCallTrainings
     , required Future<T> Function() onCallAll,
     required Failure Function(dynamic param) onError,
+     Future<T> Function()? onFailConnection,
+
   required activity param
   })async {
     if (await networkInfo.isConnected) {
@@ -67,8 +71,18 @@ class Handler<T> implements IHandler<T, Failure> {
         return Left(onError(e));
       }
     } else {
-      return Left(OfflineFailure());
+
+      if (onFailConnection != null) {
+
+
+
+        T result = await onFailConnection(); // Await the result from onFailConnection
+        return Right(result); // Return the successful result
+      }
+      return Left(OfflineFailure()); // Return OfflineFailure if no network
     }
+
+
 
   }
 

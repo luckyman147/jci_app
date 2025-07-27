@@ -1,4 +1,7 @@
 
+import 'package:auto_route/auto_route.dart';
+import 'package:jci_app/core/route/app_router.dart';
+
 import '../../../AuthWidgetGlobal.dart';
 
 class Checkbutton extends StatelessWidget {
@@ -26,7 +29,7 @@ class Checkbutton extends StatelessWidget {
                    if (keyConr.currentState!.validate()) {
                      context.read<ResetBloc>().add(
                          sendResetPasswordEmailEvent(email: state.email.value));
-context.go("/passwordInfo/${state.email.value}");
+context.navigateTo(PasswordResetSentRoute(email: state.email.value));
                    }
                  },
 

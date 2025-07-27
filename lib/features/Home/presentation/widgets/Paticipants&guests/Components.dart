@@ -10,7 +10,7 @@ import '../../../Activity_Global.dart';
 import '../../../domain/Dtos/PArticipantParam.dart';
 import '../../../domain/enums/AttendeceEmum.dart';
 import '../Activity/ActivityDetailsComponents.dart';
-import '../components/NetworkCachedImageWidget.dart';
+import '../components/stuff/NetworkCachedImageWidget.dart';
 
 class ParticpantsComponents{
 

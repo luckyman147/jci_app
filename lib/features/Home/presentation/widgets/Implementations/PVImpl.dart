@@ -1,5 +1,5 @@
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/PV/pv_bloc.dart';
-import 'package:jci_app/features/Home/presentation/widgets/components/PVWidget.dart';
+import 'package:jci_app/features/Home/presentation/widgets/components/pv&notes/PVWidget.dart';
 
 import '../../../../MemberSection/domain/dto/UpdateObjectiveProgressDTO.dart';
 import '../../../../MemberSection/domain/entity/ActionDetails.dart';

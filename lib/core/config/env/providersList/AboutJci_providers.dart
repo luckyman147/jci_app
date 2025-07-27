@@ -7,8 +7,8 @@ import 'package:jci_app/features/about_jci/Presentations/bloc/ActionJci/action_j
 import 'package:jci_app/injection_container.dart' as di;
 
 List<SingleChildWidget> aboutJciProviders = [
-  BlocProvider(create: (_) => di.sl<BoordBloc>()),
-  BlocProvider(create: (_) => di.sl<YearsBloc>()),
-  BlocProvider(create: (_) => di.sl<PresidentsBloc>()),
-  BlocProvider(create: (_) => di.sl<ActionJciCubit>()),
+  BlocProvider(create: (_) => di.sll<BoordBloc>()),
+  BlocProvider(create: (_) => di.sll<YearsBloc>()),
+  BlocProvider(create: (_) => di.sll<PresidentsBloc>()),
+  BlocProvider(create: (_) => di.sll<ActionJciCubit>()),
 ];

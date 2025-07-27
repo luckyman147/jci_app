@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:jci_app/app.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/core/route/app_router.dart';
 import 'package:jci_app/core/strings/Images.string.dart';
 import 'package:jci_app/features/auth/presentation/widgets/Functions/Listeners.dart';
 
@@ -13,7 +15,7 @@ import '../../../../core/app_theme.dart';
 import '../../../intro/presentation/widgets.global.dart';
 import '../bloc/ResetPassword/reset_bloc.dart';
 import '../bloc/bool/toggle_bool_bloc.dart';
-
+@RoutePage()
 class PasswordResetSentPage extends StatefulWidget {
   final String email;
 
@@ -119,7 +121,7 @@ class _PasswordResetSentPageState extends State<PasswordResetSentPage> {
                     child: InkWell(
                         onTap: () {
                           // Navigate back to login screen or another desired screen
-                          context.go('/login');
+                          context.navigateTo(LoginRoute());
                         },
                         child: Center(
                           child: Text('Return'.tr(context),

@@ -15,16 +15,16 @@ import 'package:jci_app/injection_container.dart' as di;
 import '../../../../features/MemberSection/presentation/bloc/ rolesManagement/role_management__cubit.dart';
 
 List<SingleChildWidget> memberProviders = [
-  BlocProvider(create: (_) => di.sl<MembersBloc>()),
-  BlocProvider(create: (_) => di.sl<UserObjectifProgressCubit>()),
-  BlocProvider(create: (_) => di.sl<ChangeSboolsCubit>()),
-  BlocProvider(create: (_) => di.sl<NotificationBloc>()),
-  BlocProvider(create: (_) => di.sl<MemberManagementBloc>()),
-  BlocProvider(create: (_) => di.sl<MemberPermissionBloc>()),
+  BlocProvider(create: (_) => di.sll<MembersBloc>()),
+  BlocProvider(create: (_) => di.sll<UserObjectifProgressCubit>()),
+  BlocProvider(create: (_) => di.sll<ChangeSboolsCubit>()),
+  BlocProvider(create: (_) => di.sll<NotificationBloc>()),
+  BlocProvider(create: (_) => di.sll<MemberManagementBloc>()),
+  BlocProvider(create: (_) => di.sll<MemberPermissionBloc>()),
   BlocProvider(create: (_) => ObjectifFormCubit()),
-  BlocProvider(create: (_) => di.sl<ObjectifBloc>()),
-  BlocProvider(create: (_) => di.sl<RoleBloc>()),
-  BlocProvider(create: (_) => di.sl<FeaturesCubit>()),
+  BlocProvider(create: (_) => di.sll<ObjectifBloc>()),
+  BlocProvider(create: (_) => di.sll<RoleBloc>()),
+  BlocProvider(create: (_) => di.sll<FeaturesCubit>()),
   BlocProvider(create: (_) => RoleManagementCubit()),
 
 ];

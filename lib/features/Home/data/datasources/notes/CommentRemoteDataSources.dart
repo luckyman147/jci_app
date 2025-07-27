@@ -1,11 +1,9 @@
-import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:googleapis/shared.dart';
+
 import 'package:jci_app/core/error/Exception.dart';
-import 'package:jci_app/core/strings/Images.string.dart';
+
 import 'package:jci_app/features/Home/data/model/ReactioNModel.dart';
 import 'package:jci_app/features/Home/data/model/ReplyCommentModel.dart';
 import 'package:jci_app/features/Home/domain/entities/Note.dart';
@@ -81,8 +79,10 @@ class CommentRemoteDataSourcesImpl implements CommentRemoteDataSources {
   Future<Unit> CreateComment(
       ActivityCommentModel comment, String ActivityId) async {
     try {
-      Logger().d(ActivityId);
-      Logger().d(comment.toJson());
+     logger.d(ActivityId);
+      logger.d(comment.user);
+
+    logger.d(comment.toJson());
       await databaseReference
           .ref("Comments")
           .child(ActivityId)

@@ -219,7 +219,7 @@ final id=await store.getUserId();
     }
 
     final result = await getMemberByNameUseCase.call(event.name);
-    emit(_handleEitherResult<List<Member>>(
+    emit(_handleEitherResult<List<User>>(
       result: result,
       onSuccess: (members) => state.copyWith(memberByName: members,
       userStatus: UserStatus.MemberByname

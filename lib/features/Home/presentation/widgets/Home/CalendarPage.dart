@@ -1,20 +1,19 @@
 import 'dart:developer';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
-import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
-import 'package:jci_app/features/MemberSection/presentation/functions/functionMember.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
 import '../../../../../core/app_theme.dart';
+import '../../../../../core/route/app_router.dart';
 import '../../../../changelanguages/presentation/bloc/locale_cubit.dart';
 import '../../../domain/Dtos/ActivityParam.dart';
-import '../../../domain/entities/Activity.dart';
+import '../../../domain/entities/Activitys/Activity.dart';
 import '../../bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import '../../bloc/calendar/calendar_cubit.dart';
 
@@ -100,15 +99,17 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   ListTile listTileCalendar(BuildContext context, List<Activity> value, int index, ActivityState state,LocaleState lste) {
-    String formattedDate = DateFormat('dd MMM yyyy', lste.locale == const Locale("en") ? "en_US" : "fr_FR").format(value[index].ActivityBeginDate);
-    String formattedTime = DateFormat('HH:mm').format(value[index].ActivityBeginDate);
+    String formattedDate = DateFormat('dd MMM yyyy', lste.locale == const Locale("en") ? "en_US" : "fr_FR").format(value[index].activityBasics.activityBeginDate);
+    String formattedTime = DateFormat('HH:mm').format(value[index].activityBasics.activityBeginDate);
     String formattedDateTime = lste.locale == const Locale("en") ? "$formattedDate At $formattedTime" : "$formattedDate A $formattedTime";
 
     return ListTile(
                           onTap: (){
-                            context.go(
-                                '/activity/${ value[index].id}/${state
-                                    .selectedActivity.name}/$index');
+                            context.pushRoute(ActivityDetailsRoute(
+                              id: value[index].activityBasics.id,
+                              activityType: state.selectedActivity.name,
+                              index: index,
+                            ));
                           },
 
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),side: const BorderSide(color: textColorBlack)),
@@ -129,7 +130,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text(value[index].name,  overflow: TextOverflow.ellipsis,   style: PoppinsSemiBold(16, textColorWhite,TextDecoration.none),),
+                                      child: Text(value[index].activityBasics.name,  overflow: TextOverflow.ellipsis,   style: PoppinsSemiBold(16, textColorWhite,TextDecoration.none),),
                                     ),
                                     Row(
                                       children: [
@@ -140,7 +141,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
                                         SizedBox(
                                             width: MediaQuery.of(context).size.width/2.5,
-                                            child: Text(value[index].ActivityAdress,overflow: TextOverflow.ellipsis,style: PoppinsRegular(16, textColorWhite,),)),
+                                            child: Text(value[index].activityBasics.activityAdress,overflow: TextOverflow.ellipsis,style: PoppinsRegular(16, textColorWhite,),)),
 
 
                                       ],
@@ -170,7 +171,8 @@ class _CalendarPageState extends State<CalendarPage> {
   IconButton ReminderButton(BuildContext context, List<Activity> value, int index) {
     return IconButton(icon:
       const Icon(Icons.alarm_on_outlined,color: textColorWhite,), onPressed: () {
-      context.read<ParticpantsBloc>().add(SendReminderEvent(reminderParams: ReminderParams(value[index].ActivityAdress,ActivityName: value[index].name, ActivityBeginDate: value[index].ActivityBeginDate.toIso8601String())));
+      context.read<ParticpantsBloc>().add(SendReminderEvent(reminderParams: ReminderParams(value[index].activityBasics.activityAdress,ActivityName: value[index].activityBasics.name,
+          ActivityBeginDate: value[index].activityBasics.activityBeginDate.toIso8601String())));
 
     }
       ,);
@@ -260,6 +262,6 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   List<Activity> _getEventsForDay(DateTime dateTime) {
-    return widget.activities.where((element) => isSameDay(element.ActivityBeginDate, dateTime)).toList();
+    return widget.activities.where((element) => isSameDay(element.activityBasics.activityBeginDate, dateTime)).toList();
   }
 }

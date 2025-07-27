@@ -1,4 +1,5 @@
 
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,7 +14,7 @@ import '../../../../core/widgets/loading_widget.dart';
 import '../bloc/bool/toggle_bool_bloc.dart';
 import '../widgets/Functions/Listeners.dart';
 
-
+@RoutePage()
 class SignUpPage extends StatefulWidget {
 
 final String? email;

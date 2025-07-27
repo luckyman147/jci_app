@@ -1,4 +1,6 @@
+import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:jci_app/features/Teams/domain/entities/Checklist.dart';
 
 abstract class Failure extends Equatable {
   final List properties = const <dynamic>[];
@@ -6,7 +8,14 @@ abstract class Failure extends Equatable {
 const Failure([properties]);
 
 @override
-List<dynamic> get props => properties;}
+List<dynamic> get props => properties;
+
+  static Future<Either<Failure, CheckList>> fromException(e) {
+    if (e is Exception){
+      throw e;
+    }
+    throw Exception('Unknown error occurred');
+  }}
 
 class OfflineFailure extends Failure {
 

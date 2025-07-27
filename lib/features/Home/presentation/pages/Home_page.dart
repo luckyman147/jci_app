@@ -1,10 +1,19 @@
+import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
+import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/env/Constants.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/core/route/app_router.dart';
+import 'package:jci_app/core/strings/Images.string.dart';
 import 'package:jci_app/core/strings/app_strings.dart';
+import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/pages/ActivityPage.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Home/HomeWidget.dart';
@@ -12,15 +21,21 @@ import 'package:jci_app/features/MemberSection/presentation/bloc/objectifs/Objec
 import 'package:jci_app/features/MemberSection/presentation/pages/user/memberProfilPage.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/screens/AllTeamsScreen.dart';
-import 'package:jci_app/features/auth/presentation/bloc/Permissions/permissions_bloc.dart';
 import 'package:logger/logger.dart';
 
+import '../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/Bloc/permissions/permissions_bloc.dart';
+import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/config/services/MemberStore.dart';
 import '../../../../core/util/ObjectifProgressTopSnackBar.dart';
 import '../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../MemberSection/presentation/bloc/memberPermissions/member_permission_bloc.dart';
+import '../../../MemberSection/presentation/bloc/objectifs/objectif_bloc.dart';
+import '../../../Teams/data/models/TeamModel.dart';
+import '../../../Teams/domain/entities/Team/Team.dart';
 import '../bloc/PageIndex/page_index_bloc.dart';
-
+import '../widgets/Activity/ActivityDetailsComponents.dart';
+import '../widgets/components/stuff/CreateOptionButton.dart';
+@RoutePage()
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -31,7 +46,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
+    context.read<PermissionsBloc>().add(LoadPermissionOfMasterEvent(featuresId: [
 
+      Constants.MANAGE_PROJECTS,
+      Constants.MANAGE_EVENTS,
+      Constants.MANAGE_OBJECTIFS,
+      Constants.MANAGE_TEAMS,
+
+      Constants.MANAGE_MEETINGS,Constants.MANAGE_TRAININGS]));
+
+    context.read<MembersBloc>().add(GetUserProfileEvent(false));
     super.initState();
   }
 
@@ -79,7 +103,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildBottomNavigationBar(BuildContext context) {
-    return BlocBuilder<PermissionsMemberBloc, PermissionsState>(
+    return BlocBuilder<PermissionsBloc, PermissionsState>(
       builder: (context, permState) {
         return BlocBuilder<PageIndexBloc, PageIndexState>(
           builder: (context, pageIndexState) {
@@ -101,8 +125,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  List<BottomNavigationBarItem> _getBottomNavItems(
-      PageIndexState state, BuildContext context, PermissionsState perm) {
+  List<BottomNavigationBarItem> _getBottomNavItems(PageIndexState state,
+      BuildContext context, PermissionsState perm) {
     return [
       BottomNavigationBarItem(
         icon: _buildIconWithBorder(Icons.home, state.index == 0, null),
@@ -155,33 +179,56 @@ class _HomePageState extends State<HomePage> {
         label: "Teams".tr(context),
       ),
       BottomNavigationBarItem(
-        icon: _buildIconWithBorder(Icons.person, state.index == 4, null),
-        label: "Profile".tr(context),
+        icon:
+
+        BlocSelector<MembersBloc, MembersState, MembersState>(
+          selector: (state) => state,
+          builder: (context, states) {
+            if (states.userStatus == UserStatus.Loading) {
+              return LoadingWidget();
+            }
+            else if (states.user == null) {
+              return _buildIconWithBorder(Icons.person, state.index == 4, null);
+            } else if (states.user!.Images.isEmpty) {
+              return CircleAvatar(
+                radius: 15,
+                backgroundImage: AssetImage(images.jci),
+                backgroundColor: Colors.transparent,
+              );
+            } else {
+              return CircleAvatar(
+                radius: 15,
+                backgroundImage: NetworkImage(states.user!.Images[0]),
+                backgroundColor: Colors.transparent,
+              );
+            }
+          },
+        ), label: "Profile".tr(context),
       ),
     ];
   }
 
-  Widget _buildIconWithBorder(
-      IconData? icon, bool isSelected, Widget? svgPicture) {
+  Widget _buildIconWithBorder(IconData? icon, bool isSelected,
+      Widget? svgPicture) {
     return Container(
       width: 30.w,
       padding: const EdgeInsets.only(top: 8), // Add padding to avoid overlap
       decoration: BoxDecoration(
         border: isSelected
             ? const Border(
-                top: BorderSide(
-                  color: PrimaryColor, // Top border color
-                  width: 3, // Border width
-                ),
-              )
+          top: BorderSide(
+            color: PrimaryColor, // Top border color
+            width: 3, // Border width
+          ),
+        )
             : null, // No border for unselected items
       ),
       child: icon != null
           ? Icon(
-              icon,
-              color: isSelected ? PrimaryColor : ThirdColor,
-              size: 26,
-            )
+        icon,
+        color: isSelected ? PrimaryColor : ThirdColor,
+        size: 26,
+      )
           : svgPicture, // Use the provided icon (Icon or SvgPicture)
     );
   }
@@ -194,35 +241,96 @@ class _HomePageState extends State<HomePage> {
     context.read<PageIndexBloc>().add(SetIndexEvent(index: index));
 
     if (index == 0) {
-      context.read<GetTeamsBloc>().add(const GetTeams(isPrivate: true));
+      //    context.read<GetTeamsBloc>().add(const GetTeams(isPrivate: true));
     } else if (index == 4) {
       context.read<MembersBloc>().add(const GetUserProfileEvent(true));
     }
   }
-
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
       builder: (context) {
         return Container(
           padding: const EdgeInsets.all(16),
+          width: MediaQuery.of(context).size.width ,
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Bottom Sheet Content",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: PrimaryColor,
-                ),
+                "Create",
+                style: PoppinBold(17, ColorsApp.textColorBlack, TextDecoration.none),
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context); // Close the bottom sheet
-                },
-                child: const Text("Close"),
+              GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                childAspectRatio: 3,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+            CreateOptionButton(
+                    label: "Create an Event",
+                    color: Colors.blue,
+                    onTap: () {
+                    NavigateActivity(context,activity.Events);                      // Navigate to Create Event
+                    }, permissionName: Constants.MANAGE_EVENTS,
+                  ),
+                  CreateOptionButton(
+                    label: "Create a Meeting",
+                    color: Colors.orange,
+                    onTap: () {
+                   NavigateActivity(context,activity.Meetings);
+                      // Navigate to Create Meeting
+                    }, permissionName: Constants.MANAGE_MEETINGS,
+                  ),
+                  CreateOptionButton(
+                    label: "Create a Training",
+                    color: Colors.green,
+                    onTap: () {
+
+                    NavigateActivity(context,activity.Trainings);
+                      // Navigate to Create Training
+                    }, permissionName: Constants.MANAGE_TRAININGS,
+                  ),
+                  CreateOptionButton(
+                    label: "Create a Team",
+                    color: Colors.purple,
+                    onTap: () {
+                      context.pushRoute(CreateTeamRoute(team: TeamModel.empty()));
+
+                      // Navigate to Create Team
+                    }, permissionName: Constants.MANAGE_TEAMS,
+                  ),
+                  CreateOptionButton(
+                    label: "Create a Project",
+                    color: Colors.teal,
+                    permissionName:  Constants.MANAGE_PROJECTS,
+                    onTap: () {
+                      Navigator.pop(context);
+                      // Navigate to Create Project
+                    },
+                  ),
+                  CreateOptionButton(
+                    permissionName: Constants.MANAGE_OBJECTIFS,
+                    label: "Create an Objective",
+                    color: Colors.red,
+                    onTap: () {
+                      context.pushRoute(
+                        ObjectifformpageRoute(
+                          MemberId: context.read<MembersBloc>().state.user?.id??"",
+                          event:  ObjectiveEvent.Create,
+                          // or null
+                        ),
+                      );
+                      // Navigate to Create Objective
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -230,4 +338,15 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
+
+  void NavigateActivity(BuildContext context,activity Activity) {
+       context.read<ActivityCubit>().selectActivity(Activity);
+      context.navigateTo(CreateUpdateActivityRoute(
+        id: 'id',
+        activity:Activity.name,
+        work:actionType.Add.name,
+        particpants: const [],
+      ));
+  }
+
 }

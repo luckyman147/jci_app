@@ -1,28 +1,29 @@
 import 'dart:math';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:go_router/go_router.dart';
+
 import 'package:intl/intl.dart';
 import 'package:jci_app/core/app_theme.dart';
 
-import 'package:jci_app/features/Home/domain/entities/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/Activity.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
-import 'package:jci_app/features/Home/presentation/widgets/Functions/Functions.dart';
-import 'package:jci_app/features/Home/presentation/widgets/components/NetworkCachedImageWidget.dart';
-import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
+import 'package:jci_app/features/Home/presentation/widgets/Functions/Functions.dart';import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
+import '../../../../../core/route/app_router.dart';
 import '../../../domain/enums/ActivityEnum.dart';
 import '../buttons/ParticpatedButton.dart';
 import '../buttons/PinnedButton.dart';
-import '../components/Compoenents.dart';
+import '../components/stuff/Compoenents.dart';
+import '../components/stuff/NetworkCachedImageWidget.dart';
 import '../shimmer/ShimmerButton.dart';
 
 class ActivityWidget extends StatefulWidget {
@@ -48,15 +49,18 @@ class _ActivityWidgetState extends State<ActivityWidget> {
         return ListView.separated(
             itemBuilder: (ctx, index) {
               bool isBefore = ActivityAction.isActivityBeforeToday(
-                  widget.Activities[index].ActivityBeginDate,
-                  widget.Activities[index].ActivityEndDate);
+                  widget.Activities[index].activityBasics.activityBeginDate,
+                  widget.Activities[index].activityBasics.activityEndDate);
               bool isBetween = ActivityAction.isBetween(
-                  widget.Activities[index].ActivityBeginDate,
-                  widget.Activities[index].ActivityEndDate);
+                  widget.Activities[index].activityBasics.activityBeginDate,
+                  widget.Activities[index].activityBasics.activityEndDate);
               return InkWell(
                 onTap: () {
-                  context.go(
-                      '/activity/${widget.Activities[index].id}/${state.selectedActivity.name}/$index');
+                  context.pushRoute(ActivityDetailsRoute(
+                    id: widget.Activities[index].activityBasics.id,
+                    activityType: state.selectedActivity.name,
+                    index: index,
+                  ));
                 },
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -74,19 +78,22 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              widget.Activities[index].CoverImages.isNotEmpty
+                              widget.Activities[index].activityBasics.coverImages.isNotEmpty
                                   ? InkWell(
                                       highlightColor: Colors.transparent,
                                       onTap: () {
-                                        context.go(
-                                            '/activity/${widget.Activities[index].id}/${state.selectedActivity.name}/$index');
+                                        context.pushRoute(ActivityDetailsRoute(
+                                          id: widget.Activities[index].activityBasics.id,
+                                          activityType: state.selectedActivity.name,
+                                          index: index,
+                                        ));
                                       },
                                       child: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           child: CachedNetworkImageWidget(
                                             item: widget.Activities[index]
-                                                .CoverImages[0],
+                                                .activityBasics.coverImages[0],
                                             height: mediaQuery.size.height / 6,
                                             width: 130.w,
                                           )),
@@ -94,8 +101,11 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                                   : InkWell(
                                       highlightColor: Colors.transparent,
                                       onLongPress: () {
-                                        context.go(
-                                            '/activity/${widget.Activities[index].id}/${state.selectedActivity.name}/$index');
+                                        context.pushRoute(ActivityDetailsRoute(
+                                          id: widget.Activities[index].activityBasics.id,
+                                          activityType: state.selectedActivity.name,
+                                          index: index,
+                                        ));
                                       },
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(10),
@@ -125,11 +135,11 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                                         SizedBox(
                                             width: mediaQuery.size.width / 3,
                                             child: Text(
-                                              widget.Activities[index].name
+                                              widget.Activities[index].activityBasics.name
                                                   .toUpperCase(),
                                               overflow: TextOverflow.ellipsis,
                                               style: PoppinsSemiBold(
-                                                  widget.Activities[index].name
+                                                  widget.Activities[index].activityBasics.name
                                                               .length <
                                                           10
                                                       ? mediaQuery
@@ -141,10 +151,10 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                                                   textColorBlack,
                                                   TextDecoration.none),
                                             )),
-                                        SizedBox(
+                                          SizedBox(
                                           width: mediaQuery.size.width / 2.5,
                                           child: Text(
-                                            "${DateFormat('EEEE MMM d  h:mm', state.locale == const Locale('en') ? 'en_US' : 'fr_FR').format(widget.Activities[index].ActivityBeginDate)} ",
+                                            "${DateFormat('EEEE MMM d  h:mm', state.locale == const Locale('en') ? 'en_US' : 'fr_FR').format(widget.Activities[index].activityBasics.activityBeginDate)} ",
                                             style: PoppinsSemiBold(
                                                 mediaQuery.devicePixelRatio * 6,
                                                 isBefore
@@ -169,14 +179,14 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                                                     mediaQuery.size.width / 2,
                                                 child: Text(
                                                   widget.Activities[index]
-                                                      .ActivityAdress,
+                                                      .activityBasics.activityAdress,
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style: PoppinsLight(
                                                     widget
                                                                 .Activities[
                                                                     index]
-                                                                .ActivityAdress
+                                                                .activityBasics.activityAdress
                                                                 .length <
                                                             20
                                                         ? mediaQuery
@@ -251,7 +261,7 @@ class _ActivityWidgetState extends State<ActivityWidget> {
       required BuildContext context}) {
     return BlocBuilder<AcivityFBloc, AcivityFState>(
       builder: (context, state) {
-        Logger().w(state.activitiesSearch[index].Participants);
+        Logger().w(state.activitiesSearch[index].participation.participants);
         return
               // Show the ParticipateButton with data when data is available
              ParticipateButton(
@@ -260,7 +270,7 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                 acti: Activities[index],
                 index: index,
                 isPartFromState: ActivityAction.checkifMemberExist(
-                    state.activitiesSearch[index].Participants,
+                    state.activitiesSearch[index].participation.participants,
                     context),
                 act: act,
                 textSize: mediaQuery.devicePixelRatio * 4.5,
@@ -271,16 +281,16 @@ class _ActivityWidgetState extends State<ActivityWidget> {
     );
   }
 }
-
 class ActivityOfMonthListWidget extends StatelessWidget {
-  final List<Activity> Activities;
-
+  final List<Activity> activities;
   final activity act;
+
   const ActivityOfMonthListWidget({
     Key? key,
-    required this.Activities,
+    required this.activities,
     required this.act,
   }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -288,47 +298,55 @@ class ActivityOfMonthListWidget extends StatelessWidget {
     return BlocBuilder<ActivityCubit, ActivityState>(
       builder: (context, state) {
         return ListView.separated(
-scrollDirection: Axis.horizontal,
-          itemCount: min(3, Activities.length),
+          scrollDirection: Axis.vertical, // Make it vertical
+          itemCount: activities.length,
+          padding: const EdgeInsets.symmetric(vertical: 12),
           itemBuilder: (context, index) {
+            final currentActivity = activities[index];
+
             return GestureDetector(
               onTap: () {
-                context.go(
-                    '/activity/${Activities[index].id}/${state.selectedActivity.name}/$index');
+                context.pushRoute(ActivityDetailsRoute(
+                  id: currentActivity.activityBasics.id,
+                  activityType: state.selectedActivity.name,
+                  index: index,
+                ));
               },
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 48.0),
-                child: Container(
-                  height: mediaQuery.size.height / 7,
-                  width: mediaQuery.size.width / 1.3,
-                  decoration: ActivityDecoration,
-                  child: Stack(children: [
-                    images(
-                        mediaQuery,
-                        Activities,
-                        index,
-                        mediaQuery.size.height / 5.2,
-                        mediaQuery.size.width / 1.1),
-                    // Widget above the background
-                    PosCard(mediaQuery, Activities, index),
+              child: Container(
+padding: paddingSemetricVerticalHorizontal(),
 
-                    details(mediaQuery, Activities, index, context),
+                decoration: ActivityDecoration,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  spacing: 10,
+                  children: [
+                    images(
+                      mediaQuery,
+                      activities,
+                      index,
+                      mediaQuery.size.height / 5.2,
+                      mediaQuery.size.width,
+                    ),
+                    const SizedBox(height: 8),
+
+                    details(mediaQuery, activities, index, context),
+                    const SizedBox(height: 12),
                     ButtonComponent(
-                        Activities: Activities,
-                        index: index,
-                        top: mediaQuery.size.height / 3.1,
-                        left: mediaQuery.size.width / 14,
-                        mediaQuery: mediaQuery,
-                        act: act)
-                  ]),
+                      Activities: activities,
+                      index: index,
+                      top: 0, // Not used in Column layout
+                      left: 0, // Not used in Column layout
+                      mediaQuery: mediaQuery,
+                      act: act,
+                    ),
+                  ],
                 ),
               ),
             );
           },
           separatorBuilder: (BuildContext context, int index) {
-            return const SizedBox(
-              height: 20,
-            );
+            return const SizedBox(height: 20);
           },
         );
       },
@@ -336,9 +354,10 @@ scrollDirection: Axis.horizontal,
   }
 }
 
+
 ClipRRect images(mediaQuery, List<Activity> activity, int index, double height,
         double width) =>
-    activity[index].CoverImages.isNotEmpty
+    activity[index].activityBasics.coverImages.isNotEmpty
         ? ClipRRect(
             borderRadius: ActivityRaduis,
             child: Container(
@@ -346,7 +365,7 @@ ClipRRect images(mediaQuery, List<Activity> activity, int index, double height,
                 width: width,
                 color: Colors.grey,
                 child: CachedNetworkImageWidget(
-                  item: activity[index].CoverImages[0],
+                  item: activity[index].activityBasics.coverImages[0],
                   height: height,
                   width: height,
                 )))
@@ -362,30 +381,29 @@ ClipRRect images(mediaQuery, List<Activity> activity, int index, double height,
             ),
           );
 
-Positioned details(MediaQueryData mediaQuery, List<Activity> activity,
+Widget details(MediaQueryData mediaQuery, List<Activity> activity,
         int index, BuildContext context) =>
-    Positioned(
-      top: mediaQuery.size.height / 4.9,
-      child: Padding(
+ Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30.0),
         child: BlocBuilder<localeCubit, LocaleState>(
           builder: (context, state) {
-            return Center(
-              child: Column(
+            return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
                     child: Text(
-                      "${DateFormat('dd MMMM yyyy', state.locale == const Locale("en") ? 'en_US' : 'fr_FR').format(activity[index].ActivityBeginDate)} à ${DateFormat('HH:mm').format(activity[index].ActivityBeginDate)}",
-                      style: PoppinsNorml(
-                          mediaQuery.devicePixelRatio * 4.5, textColorBlack),
+                      "${DateFormat('dd MMMM yyyy',
+                          state.locale == const Locale("en") ? 'en_US' : 'fr_FR').format(activity[index].activityBasics.activityBeginDate)} à"
+                          " ${DateFormat('HH:mm').format(activity[index].activityBasics.activityBeginDate)}",
+                      style: PoppinsRegular(
+                          mediaQuery.devicePixelRatio * 5.5, textColorBlack),
                     ),
                   ),
                   SizedBox(
                       width: mediaQuery.size.width,
                       child: Text(
-                        activity[index].name,
+                        activity[index].activityBasics.name,
                         overflow: TextOverflow.ellipsis,
                         style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 5,
                             textColorBlack, TextDecoration.none),
@@ -393,10 +411,10 @@ Positioned details(MediaQueryData mediaQuery, List<Activity> activity,
                   SizedBox(
                       width: mediaQuery.size.width,
                       child: Text(
-                        activity[index].ActivityAdress,
+                        activity[index].activityBasics.activityAdress,
                         overflow: TextOverflow.ellipsis,
                         style: PoppinsLight(
-                          activity[index].ActivityAdress.length < 20
+                          activity[index].activityBasics.activityAdress.length < 20
                               ? mediaQuery.devicePixelRatio * 5
                               : mediaQuery.devicePixelRatio * 4,
                           textColorBlack,
@@ -404,19 +422,19 @@ Positioned details(MediaQueryData mediaQuery, List<Activity> activity,
                       )),
                   SizedBox(
                       child: Text(
-                    "${activity[index].Participants.length}  Participants",
+                    "${activity[index].participation.participants.length}  Participants",
                     style: PoppinsNorml(
                       mediaQuery.devicePixelRatio * 4,
                       textColorBlack,
                     ),
                   )),
                 ],
-              ),
+
             );
           },
         ),
-      ),
-    );
+      );
+
 
 Positioned PosCard(mediaQuery, List<Activity> activity, int index) =>
     Positioned(
@@ -432,8 +450,8 @@ Positioned PosCard(mediaQuery, List<Activity> activity, int index) =>
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5.0),
                 child: Text(
-                  activity[index]
-                      .ActivityBeginDate
+                  activity[index].activityBasics
+                      .activityBeginDate
                       .day
                       .toString()
                       .padLeft(2, '0'),
@@ -443,7 +461,8 @@ Positioned PosCard(mediaQuery, List<Activity> activity, int index) =>
               Padding(
                 padding: const EdgeInsets.only(top: 20.0),
                 child: Text(
-                  DateFormat('MMM').format(activity[index].ActivityBeginDate),
+                  DateFormat('MMM').format(activity[index].
+                  activityBasics.activityBeginDate),
                   style: PoppinsNorml(15, textColorBlack),
                 ),
               ),

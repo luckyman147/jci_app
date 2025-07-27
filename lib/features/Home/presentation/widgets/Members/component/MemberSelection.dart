@@ -18,8 +18,8 @@ import '../../../../../../core/Member.dart';
 //import '../../../auth/presentation/bloc/Members/members_bloc.dart';
 import '../../../../domain/enums/Privacy.dart';
 import '../../../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
-import '../../components/ErrorDisplayMessage.dart';
-import '../../components/SearchWidget.dart';
+import '../../components/stuff/ErrorDisplayMessage.dart';
+import '../../components/search/SearchWidget.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 

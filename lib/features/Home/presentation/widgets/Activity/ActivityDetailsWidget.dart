@@ -9,7 +9,7 @@ import 'package:jci_app/features/Home/presentation/widgets/Activity/ActivityImpl
 import 'package:jci_app/features/Home/presentation/widgets/Functions/Functions.dart';
 
 import '../../../../../core/app_theme.dart';
-import '../../../domain/entities/Activity.dart';
+import '../../../domain/entities/Activitys/Activity.dart';
 
 import '../../bloc/ChangeString/change_string_bloc.dart';
 import '../Implementations/ActivtysImplementations.dart';
@@ -44,7 +44,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
     if (widget.act != activity.Meetings) {
       context
           .read<ChangeStringBloc>()
-          .add(initImageEvent(image: widget.activitys.CoverImages));
+          .add(initImageEvent(image: widget.activitys.activityBasics.coverImages));
     }
   }
 
@@ -86,6 +86,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
     return BlocBuilder<ChangeStringBloc, ChangeStringState>(
       builder: (context, state) {
         return Stack(children: [
+
           widget.act != activity.Meetings
               ? ActivityDetailsComponent.ImageCard(
                   mediaQuery, state.image, context)
@@ -93,10 +94,10 @@ class _ActivityDetailState extends State<ActivityDetail> {
           ActivityDetailsComponent.Back(mediaQuery, context),
           ActivityDetailsComponent.header(
               mediaQuery, context, widget.act == activity.Meetings),
-          AddDots(widget.activitys, mediaQuery),
-          widget.activitys.CoverImages.isNotEmpty
+          AddDots(widget.activitys, mediaQuery,widget.act),
+          widget.activitys.activityBasics.coverImages.isNotEmpty
               ? ImageListCard(
-                  images: widget.activitys.CoverImages
+                  images: widget.activitys.activityBasics.coverImages
                       .map((e) => e.toString())
                       .toList(),
                 )

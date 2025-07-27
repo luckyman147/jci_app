@@ -86,7 +86,7 @@ bottomRight: Radius.circular(20),
 topLeft: Radius.circular(15),
 topRight: Radius.circular(15),
 ),
-border: Border.all(color: BackWidgetColor, width: 1.0),
+border: Border.all(color: ColorsApp.textColorBlack, width: 2.0),
 color: textColorWhite,
 
 );
@@ -107,11 +107,11 @@ ButtonStyle styleFrom(bool isActive) {
 
     shadowColor: SecondaryColor.withOpacity(.3),
     splashFactory: InkRipple.splashFactory,
-    surfaceTintColor: isActive?PrimaryColor:ThirdColor,
+    surfaceTintColor: isActive?PrimaryColor:ColorsApp.BackWidgetColor,
     side: const BorderSide(color: BackWidgetColor, width: 2),
     fixedSize: const Size(120, 40),
     elevation: 0,
-    backgroundColor: isActive?PrimaryColor:ThirdColor,
+    backgroundColor: isActive?PrimaryColor:ColorsApp.BackWidgetColor,
 
     shape: RoundedRectangleBorder(
 

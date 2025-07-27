@@ -1,7 +1,8 @@
+import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/util/DialogWidget.dart';
@@ -13,11 +14,12 @@ import 'package:jci_app/features/MemberSection/presentation/functions/functionMe
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/core/Member.dart';
 
+import '../../../../../core/route/app_router.dart';
 import '../../../../../core/util/snackbar_message.dart';
 import '../../../../../core/widgets/CommonTextField.dart';
 import '../../../../Home/presentation/widgets/Activity/AddActivityWidgets.dart';
 import '../../components/AboutMemberComponent.dart';
-
+@RoutePage()
 class ModifyUser extends StatefulWidget {
   final Member member;
   const ModifyUser({Key? key, required this.member}) : super(key: key);
@@ -68,7 +70,8 @@ class _ModifyUserState extends State<ModifyUser> {
           children: [
             BackButton(
               onPressed: () {
-               context.go('/home');
+                context.navigateTo(HomeRoute());
+
               },
             ),
             Text(
@@ -89,7 +92,8 @@ if (state.userStatus == UserStatus.Loading) {
      if(state .userStatus==UserStatus.Updated){
       SnackBarMessage.showSuccessSnackBar(message: "Updated Succefully", context: context);
 
-      context.go('/home');
+      context.navigateTo(HomeRoute());
+
       context.read<MembersBloc>().add(const GetUserProfileEvent(true));
     }
     else if(state.userStatus ==UserStatus.Error){

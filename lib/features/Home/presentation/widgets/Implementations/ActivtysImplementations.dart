@@ -1,4 +1,6 @@
 
+import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
+import 'package:jci_app/core/config/env/Constants.dart';
 import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 
 import '../../../Activity_Global.dart';
@@ -10,8 +12,10 @@ import '../Activity/ActivityDetailsWidget.dart';
 import '../Activity/ActivityImplWidgets.dart';
 import '../Activity/EventListWidget.dart';
 import '../Home/CalendarPage.dart';
+import '../buttons/PinnedButton.dart';
 import '../shimmer/Shimmer_list.dart';
 import '../shimmer/reload_details.dart';
+import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
 
 Widget BlocMonthlyWeeklyActivity(activity act, MediaQueryData mediaQuery) =>
     BlocBuilder<ActivityCubit, ActivityState>(
@@ -21,6 +25,7 @@ Widget BlocMonthlyWeeklyActivity(activity act, MediaQueryData mediaQuery) =>
 
             switch (state.activityfetchState) {
               case ActivityFetchState.Error:
+                 return SizedBox();
               case ActivityFetchState.Empty:
               case ActivityFetchState.Loading:
 
@@ -60,11 +65,8 @@ Widget ActivityDetails(activity Act, String id, index) {
       return BlocBuilder<AcivityFBloc, AcivityFState>(
           builder: (context, state) {
             switch (state.activityfetchState) {
-              case ActivityFetchState.Error:
-                context.read<AcivityFBloc>().add(
-                    GetActivitiesByid(params: activityParams(
-                        type: Act, act: null, Eventid: id, name: '')));
-                return const ReloadDetailsPage();
+
+
               case ActivityFetchState.ActivityLoaded:
               case ActivityFetchState.ActivityChanged:
               case ActivityFetchState.LoadingButton:
@@ -161,19 +163,40 @@ Widget AddButtonWi(Color color, Color IconColor, IconData ICON,
   );
 }
 
-Widget AddDots(Activity activitys, MediaQueryData mediaQuery) {
+Widget AddDots(
+    Activity activitys,
+    MediaQueryData mediaQuery,
+    activity Act,
+    ) {
   return BlocBuilder<AddDeleteUpdateBloc, AddDeleteUpdateState>(
     builder: (context, state) {
+      return
+        Positioned(
+          top: mediaQuery.size.height / 34,
+          right: 10,
+          child:
+        Row(
+        spacing: 10,
 
-      //if (state.hasPermission) {
+        children: [  Pinnedbutton(
+          onTap: (Activity act) {
+            // Handle your logic here (pin/unpin)
+          },
+          isPinned: false, // You can bind this to a value from a Bloc or State
+          activity: activitys,
+        ),
 
-      return ActivityDetailsComponent.dots(context, mediaQuery, activitys);
+          // Dots with async permission check
+          AsyncComponents.buildFutureBuilder(
+            ActivityDetailsComponent.dots(context, mediaQuery, activitys),
+            PermissionType.canUpdate,
+            ActivityAction.findConstantType(Act),
+          ),
 
-      // }
+          // Pinned button (always shown for now — you can wrap it with conditions if needed)
 
-
-
-
+        ],
+      ));
     },
   );
 }

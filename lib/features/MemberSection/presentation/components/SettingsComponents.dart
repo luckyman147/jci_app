@@ -1,13 +1,15 @@
 import 'dart:convert';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/core/config/env/Constants.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/core/route/app_router.dart';
 import 'package:jci_app/core/widgets/loading_widget.dart';
 
 import 'package:jci_app/features/MemberSection/presentation/bloc/bools/change_sbools_cubit.dart';
@@ -16,7 +18,6 @@ import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/memb
 import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/components/TextFieldsComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/components/buttonsComponents.dart';
-import 'package:jci_app/features/MemberSection/presentation/functions/functionMember.dart';
 
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
@@ -203,7 +204,7 @@ static isMode(SettingsBools state) {
                 context.read<AuthBloc>().add(const SignoutEvent());
                 context.read<PermissionsBloc>().add(ResetListEvent());
 
-                context.go("/login");
+                context.replaceRoute(LoginRoute());
               },
 
               child: Padding(
@@ -236,7 +237,7 @@ static isMode(SettingsBools state) {
           child: InkWell(
               onTap: () async {
 
-                context.go('/modifyUser?user=${jsonEncode(MemberModel.fromEntity(member).toJson())}');
+              //  context.go('/modifyUser?user=${jsonEncode(MemberModel.fromEntity(member).toJson())}');
                 // Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfile()));
               },
               child: IconAndTextInfo(Icons.edit, " Edit Profile")

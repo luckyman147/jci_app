@@ -100,7 +100,8 @@ async function processUsers(usersSnapshot, objectifId, objectifData, db) {
         userId,
         "Objectifs",
         `New objective:
-         ${objectifData.objectifActionType} ${objectifData.points || ""} ${objectifData.feature}!`,
+         ${objectifData.objectifActionType} ${objectifData.points || ""} 
+         ${objectifData.feature}!`,
         "New Objective Available",
         db,
         batch,

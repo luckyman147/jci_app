@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
@@ -9,7 +7,7 @@ import 'package:jci_app/features/Home/data/model/TrainingModel/TrainingModel.dar
 import 'package:jci_app/features/Home/data/model/events/EventModel.dart';
 import 'package:jci_app/features/Home/data/model/meetingModel/MeetingModel.dart';
 import 'package:jci_app/features/Home/domain/Dtos/ActivityParam.dart';
-import 'package:jci_app/features/Home/domain/entities/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/Activity.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Functions/Functions.dart';
@@ -22,7 +20,6 @@ import '../../../../../domain/entities/Category.dart';
 import '../../../../../domain/enums/ActivityEnum.dart';
 import '../../../../../domain/usercases/ActivityUseCases.dart';
 
-import '../formzBloc/formz_bloc.dart';
 part 'acivity_f_event.dart';
 
 part 'acivity_f_state.dart';
@@ -101,16 +98,25 @@ class AcivityFBloc extends Bloc<AcivityFEvent, AcivityFState> {
 
   void _getActivityOfMonth(
       GetActivitiesOfMonthEvent event, Emitter<AcivityFState> emit) async {
+    if (
+        [ActivityFetchState.ACtivityLoadedMonth,ActivityFetchState.ActivityLoaded,].contains(state.activityfetchState ) && state.activities.isNotEmpty) {
+      emit(state.copyWith(
+          activityfetchState: ActivityFetchState.ACtivityLoadedMonth));
+      return;
+    }
+    else {
     emit(state.copyWith(activityfetchState: ActivityFetchState.Loading));
 
     final failureOrEvents = await getEventsOfTheMonthUseCase(event.act);
     emit(_mapSuccessFailureActivity(
         failureOrEvents,
-        (act) => state.copyWith(
+        (act) {
+          Logger ().i("Activity of the month loaded: ${act.length}");
+         return  state.copyWith(
             activities: act,
             activityfetchState: ActivityFetchState.ACtivityLoadedMonth,
-            activitiesSearch: act)));
-  }
+            activitiesSearch: act);}));
+  }}
 
   void _AddParticipent(
       AddParticipantEvent event, Emitter<AcivityFState> emit) async {
@@ -122,10 +128,10 @@ class AcivityFBloc extends Bloc<AcivityFEvent, AcivityFState> {
     final user = await store.getUserId();
     emit(_mapSuccessFailureActivity(result, (act) {
       final activitys = state.activities
-          .firstWhere((element) => element.id == event.act.Eventid);
+          .firstWhere((element) => element.activityBasics.id == event.act.Eventid);
       final index = state.activities
-          .indexWhere((element) => element.id == event.act.Eventid);
-      final activitiesPartcipants = activitys.Participants;
+          .indexWhere((element) => element.activityBasics.id == event.act.Eventid);
+      final activitiesPartcipants = activitys.participation.participants;
       activitiesPartcipants.add(user ?? "");
       return CopyActivity(event.act.type, activitys, activitiesPartcipants,
           index, ActivityFetchState.Participate);
@@ -155,7 +161,7 @@ class AcivityFBloc extends Bloc<AcivityFEvent, AcivityFState> {
       int index,
       ActivityFetchState status) {
     EventModel eventModel = (activitys as EventModel).fromActivity(activitys);
-    EventModel event = eventModel.copywith(activitiesPartcipants);
+    EventModel event = eventModel.copyWith(activitiesPartcipants);
     state.activities[index] = event;
     final cState = status;
     return state.copyWith(
@@ -210,10 +216,10 @@ class AcivityFBloc extends Bloc<AcivityFEvent, AcivityFState> {
     final user = await store.getUserId();
     emit(_mapSuccessFailureActivity(result, (act) {
       final activitys = state.activities
-          .firstWhere((element) => element.id == event.act.Eventid);
+          .firstWhere((element) => element.activityBasics.id == event.act.Eventid);
       final index = state.activities
-          .indexWhere((element) => element.id == event.act.Eventid);
-      final activitiesPartcipants = activitys.Participants;
+          .indexWhere((element) => element.activityBasics.id == event.act.Eventid);
+      final activitiesPartcipants = activitys.participation.participants;
       activitiesPartcipants.remove(user);
 
       return CopyActivity(event.act.type, activitys, activitiesPartcipants,

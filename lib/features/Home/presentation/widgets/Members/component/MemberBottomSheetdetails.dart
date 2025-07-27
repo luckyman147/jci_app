@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
-import '../../components/Header.dart';
-import '../../components/SearchTextField.dart';
+import '../../components/stuff/Header.dart';
+import '../../components/search/SearchTextField.dart';
 import 'MemberList.dart';
 
 class MembersBottomSheetDetails extends StatelessWidget {
@@ -41,7 +41,7 @@ class MembersBottomSheetDetails extends StatelessWidget {
                 SearchTextField(
                   onChanged: (String ) {
                        context.read<FormzBloc>().add(MembernameChanged(name: String));
-                     if (state.memberName.value.length > 1) {
+                     if (state.memberName.value.isNotEmpty) {
                      context.read<MembersBloc>().add(GetMemberByNameEvent(name: state.memberName.value));
                     } else if (state.memberName.value.isEmpty || state.memberName.displayError != null) {
                     context.read<MembersBloc>().add(const GetAllMembersEvent(false));

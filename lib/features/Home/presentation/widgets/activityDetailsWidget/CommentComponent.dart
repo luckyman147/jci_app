@@ -11,7 +11,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityCo
 import '../Activity/ActivityImplWidgets.dart';
 import '../Functions/ActivityDetailsFunctions.dart';
 import '../Implementations/CommentsImpl.dart';
-import '../components/SendingTextField.dart';
+import '../components/pv&notes/SendingTextField.dart';
 import 'CommentWidget.dart';
 
 class CommentsScreen extends StatelessWidget {

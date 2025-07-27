@@ -5,14 +5,26 @@ abstract class GetTeamsEvent extends Equatable {
 }
 class GetTeams extends GetTeamsEvent {
 
+  final bool isRefreshed;
 
 final bool isPrivate;
-final bool isUpdated;
-  const GetTeams({required this.isPrivate,this.isUpdated=true});
+final DocumentSnapshot? lastDocument;
+  const GetTeams(this.lastDocument, this.isRefreshed, {required this.isPrivate});
 
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [isPrivate,isRefreshed];
+}
+class GetMoreTeams extends GetTeamsEvent {
+
+
+final bool isPrivate;
+final DocumentSnapshot? lastDocument;
+  const GetMoreTeams(this.lastDocument, {required this.isPrivate});
+
+
+  @override
+  List<Object> get props => [isPrivate];
 }
 class GetTeamById extends GetTeamsEvent {
   final Map<String,dynamic> fields;

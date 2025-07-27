@@ -1,7 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
-
 import '../strings/app_strings.dart';
 
 
@@ -9,7 +8,7 @@ class Backbutton extends StatelessWidget {
   const Backbutton({
     super.key, required this.text,  this.onTap,
   });
-final String text ;
+final PageRouteInfo text ;
 final Function()? onTap;
   @override
   Widget build(BuildContext context) {
@@ -21,7 +20,7 @@ final Function()? onTap;
           padding: EdgeInsets.only(top:mediaquery.size.height/23),
           child: InkWell(
               onTap: (){
-                context.go(text);
+                context.pushRoute(text);
 
                if (onTap != null) {
                  onTap!();

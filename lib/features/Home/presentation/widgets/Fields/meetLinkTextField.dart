@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../Activity_Global.dart';
-import '../components/WebViewScreen.dart';
+import '../components/stuff/WebViewScreen.dart';
 
 class TextFieldWithIcons extends StatelessWidget {
   const TextFieldWithIcons({

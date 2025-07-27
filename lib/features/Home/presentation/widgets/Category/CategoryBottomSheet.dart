@@ -7,7 +7,7 @@ import 'package:jci_app/features/Home/presentation/bloc/category/category_bloc.d
 import '../../../Activity_Global.dart';
 import '../../../domain/entities/Category.dart';
 import '../../../../../core/widgets/StandardTextFieldWidget.dart';
-import '../components/SearchTextField.dart';
+import '../components/search/SearchTextField.dart';
 import 'CategoryButton.dart';
 
 class CategoryBottomSheet extends StatelessWidget {
@@ -167,7 +167,7 @@ class FetchCategories extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                height: 50.h,
+              height: 66.h,
                 width: 50.w,
 
                   decoration: BoxDecoration(
@@ -180,7 +180,7 @@ class FetchCategories extends StatelessWidget {
 
                     },
                       splashColor: ColorsApp.PrimaryColor,
-                      child: const Icon( Icons.add,))),
+                      child: const Icon( Icons.add,color: ColorsApp.ThirdColor,))),
             )
           ],
         ),

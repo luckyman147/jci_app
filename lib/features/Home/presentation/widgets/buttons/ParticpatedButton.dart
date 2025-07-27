@@ -4,7 +4,7 @@ import '../../../../MemberSection/domain/entity/Objectif.dart';
 import '../../../../MemberSection/presentation/bloc/objectifs/ObjectifUserProgress/user_objectif_progress_cubit.dart';
 import '../../../../auth/AuthWidgetGlobal.dart';
 import '../../../domain/Dtos/ActivityParam.dart';
-import '../../../domain/entities/Activity.dart';
+import '../../../domain/entities/Activitys/Activity.dart';
 import '../../bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import '../../bloc/Activity/activity_cubit.dart';
 
@@ -36,7 +36,7 @@ class _ParticipateButtonState extends State<ParticipateButton> {
 
     return InkWell(
       onTap: () {
-        final result=activityParams(act:  widget.acti, type: widget.act, Eventid:  widget.acti.id, name: '');
+        final result=activityParams(act:  widget.acti, type: widget.act, Eventid:  widget.acti.activityBasics.id, name: '');
         if (widget.isPartFromState) {
 
           context.read<AcivityFBloc>().add(RemoveParticipantEvent( act: result));

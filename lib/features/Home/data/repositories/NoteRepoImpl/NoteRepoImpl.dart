@@ -108,6 +108,7 @@ class ActivityCommentRepoImpl extends ActivityCommentRepo{
 
       onCall: () {
         final comment = ActivityCommentModel.fromEntity(ActivityComment);
+        Logger ().i("Adding comment: ${comment.toJson()}");
         commentRemoteDataSource.CreateComment(comment, activityId);
         return Future.value(unit);
         },

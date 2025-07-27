@@ -12,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/env/Constants.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/config/services/MemberStore.dart';
 import 'package:jci_app/features/Home/domain/Dtos/GuestParam.dart';
@@ -33,11 +34,11 @@ import '../../../../../core/config/services/TeamStore.dart';
 
 import '../../../../../core/config/services/store.dart';
 import '../../../../MemberSection/presentation/functions/functionMember.dart';
-import '../../../../Teams/domain/entities/Team.dart';
+import '../../../../Teams/domain/entities/Team/Team.dart';
 import '../../../../Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import '../../../../../core/Member.dart';
 
-import '../../../domain/entities/Activity.dart';
+import '../../../domain/entities/Activitys/Activity.dart';
 import '../../../domain/entities/Agenda.dart';
 import '../../../domain/entities/guest/ActivityGuest.dart';
 import '../../../domain/entities/guest/Guest.dart';
@@ -51,7 +52,7 @@ import '../../bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../../bloc/Activity/BLOC/guests/guests_bloc.dart';
 
 import '../../bloc/Activity/activity_cubit.dart';
-import '../components/NotesWidget.dart';
+import '../components/pv&notes/NotesWidget.dart';
 
 class ActivityAction {
   final FunctionMember functionMember;
@@ -433,7 +434,7 @@ class ActivityAction {
 
   static List<Map<String, dynamic>> mapObjects(List<Activity> objects) {
     return objects
-        .map((object) => {'id': object.id, 'participants': object.Participants})
+        .map((object) => {'id': object.activityBasics.id, 'participants': object.participation.participants})
         .toList();
   }
 
@@ -446,8 +447,8 @@ class ActivityAction {
 
     return inputList
         .where((obj) =>
-            obj.ActivityBeginDate.isAfter(startOfWeekend) &&
-            obj.ActivityBeginDate.isBefore(endOfWeekend))
+            obj.activityBasics.activityBeginDate.isAfter(startOfWeekend) &&
+            obj.activityBasics.activityBeginDate.isBefore(endOfWeekend))
         .toList();
   }
 
@@ -519,15 +520,15 @@ class ActivityAction {
 
     return objects
         .where((activity) =>
-            activity.ActivityBeginDate.isAfter(now) ||
-            activity.ActivityBeginDate.isAtSameMomentAs(now))
+            activity.activityBasics.activityBeginDate.isAfter(now) ||
+            activity.activityBasics.activityBeginDate.isAtSameMomentAs(now))
         .toList();
   }
 
   static Future<List<Team>> fetchData(BuildContext context) async {
     final teams = await TeamStore.getCachedTeams(CacheStatus.Private);
     if (teams.isEmpty) {
-      context.read<GetTeamsBloc>().add(const GetTeams(isPrivate: true));
+ //     context.read<GetTeamsBloc>().add(const GetTeams(isPrivate: true));
     }
 
     return teams;
@@ -542,10 +543,25 @@ class ActivityAction {
     return Future.value(true);
   }
 
+  static String findConstantType
+      (activity act){
+    switch (act){
+      case activity.Trainings:
+        return Constants.MANAGE_TRAININGS;
+      case activity.Meetings:
+        return Constants.MANAGE_MEETINGS;
+      case activity.Events:
+        return Constants.MANAGE_EVENTS;
+
+      default:
+        return Constants.MANAGE_EVENTS;
+    }
+  }
+
+
   static bool checkifMemberExist(
       List<String> lists, BuildContext context)  {
     final member = context.read<ParticpantsBloc>().state.userId;
-    Logger().w("Member ID: $member");
     return lists.contains(member);
   }
 

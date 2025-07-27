@@ -4,6 +4,7 @@ import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/Bloc/roles/role__bloc.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/role/RoleImplemtation.dart';
+import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 
 import '../../../../../core/Member.dart';
 import '../../../../../core/config/env/Constants.dart';
@@ -42,6 +43,7 @@ class _RolePageState extends State<RolePage> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorsApp.textColorWhite,
       appBar: AppBar(
         title: const Text('Role Management'),
 

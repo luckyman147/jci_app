@@ -1,3 +1,4 @@
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/widgets/member/MemberImpl.dart';
@@ -5,7 +6,7 @@ import 'package:jci_app/features/MemberSection/presentation/widgets/member/Membe
 import '../../bloc/Members/members_bloc.dart';
 import '../../widgets/notifications/NotificationDrawer.dart';
 
-
+@RoutePage()
 class MemberSectionPage extends StatefulWidget {
   final String id;
 

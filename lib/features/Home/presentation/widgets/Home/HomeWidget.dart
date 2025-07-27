@@ -1,8 +1,9 @@
-import 'package:go_router/go_router.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:jci_app/core/route/app_router.dart';
 import 'package:jci_app/features/Home/Activity_Global.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Functions/Listeners.dart';
-import 'package:jci_app/features/Home/presentation/widgets/components/Compoenents.dart';
+import 'package:jci_app/features/Home/presentation/widgets/components/stuff/Compoenents.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Home/HomeComp.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
@@ -10,6 +11,7 @@ import '../../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/
 import '../../../../MemberSection/presentation/widgets/member/MemberImpl.dart';
 import '../../../../intro/presentation/widgets.global.dart';
 import '../../bloc/Activity/activity_cubit.dart';
+import '../Implementations/ActivtysImplementations.dart';
 
 
 class HomeWidget extends StatefulWidget {
@@ -68,7 +70,7 @@ context.read<ParticpantsBloc>().add(LoadParticipantIdEvent());
             IconButton(
               onPressed: () {
                 context.read<AuthBloc>().add(const SignoutEvent());
-                context.go('/login');
+                context.replaceRoute(LoginRoute());
                 context.read<PermissionsBloc>().add(ResetListEvent());
               },
               icon: const Icon(
@@ -83,8 +85,8 @@ context.read<ParticpantsBloc>().add(LoadParticipantIdEvent());
         body: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthSuccessState) {
-              context.go('/login');
-              context.go('/login');
+              context.replaceRoute(LoginRoute());
+
             }
             // TODO: implement listener}
           },
@@ -115,8 +117,8 @@ context.read<ParticpantsBloc>().add(LoadParticipantIdEvent());
                                 ),
 
 
-                                buildBody(
-                                    context, state.selectedActivity,
+                                BlocMonthlyWeeklyActivity(
+                                    state.selectedActivity,
                                     mediaQuery),
 
 

@@ -1,3 +1,4 @@
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
@@ -10,7 +11,7 @@ import '../widgets/Activity/BodyAddActivity.dart';
 import '../widgets/Functions/AddUpdateFunctions.dart';
 import '../widgets/Functions/Listeners.dart';
 
-
+@RoutePage()
 class CreateUpdateActivityPage extends StatefulWidget {
   final String id;
   final String work;
@@ -68,7 +69,6 @@ class _CreateUpdateActivityPageState extends State<CreateUpdateActivityPage> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
 
 
     return Scaffold(

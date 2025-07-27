@@ -1,3 +1,6 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:jci_app/core/route/app_router.dart';
+
 import '../../../AuthWidgetGlobal.dart';
 import '../../bloc/bool/INPUTS/inputs_cubit.dart';
 
@@ -22,7 +25,7 @@ final InputsState state;
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onTap: (){
-                  context.go('/forget');
+                  context.navigateTo(ForgetPasswordRoute());
                   context.read<InputsCubit>().ActivateEmail();
                   
                 },

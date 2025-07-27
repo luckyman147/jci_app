@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:jci_app/features/Home/domain/entities/poll/Poll.dart';
 import 'package:jci_app/features/Home/domain/enums/ActionImage.dart';
 
@@ -241,7 +242,7 @@ static   void ListentoJoinButton(AcivityFState state, BuildContext context,Strin
             progress: -1
         ),
       );
-      context.pop();
+      context.back();
     }
     if (ste is DeletedActivityMessage) {
       SnackBarMessage.showSuccessSnackBar(
@@ -262,7 +263,7 @@ static   void ListentoJoinButton(AcivityFState state, BuildContext context,Strin
             progress: 1
         ),
       );
-      context.pop();
+      context.back();
     }
     if (ste is LoadingAddDeleteUpdateState) {
       const LoadingWidget();

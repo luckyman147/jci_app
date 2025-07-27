@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/core/usescases/usecase.dart';
 import 'package:jci_app/features/Home/domain/Dtos/ActivityParam.dart';
-import 'package:jci_app/features/Home/domain/entities/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/Activity.dart';
 import 'package:jci_app/features/Home/domain/repsotories/ActivitiesRepo.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 

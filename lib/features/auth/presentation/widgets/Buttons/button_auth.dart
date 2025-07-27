@@ -1,6 +1,9 @@
 
 
 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jci_app/core/widgets/loading_widget.dart';
+
 import '../../../AuthWidgetGlobal.dart';
 class authButton extends StatelessWidget {
   const authButton({Key? key, required this.onPressed, required this.text, required this.icon, required this.isLoading, required this.isoogl})
@@ -16,9 +19,9 @@ class authButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     return Container(
-      height: mediaQuery.size.height / 15,
+      height : isLoading?  mediaQuery.size.height / 10:  mediaQuery.size.height / 15,
       decoration: BoxDecoration(
-        color:!isoogl? PrimaryColor: ColorsApp.SecondaryColor,
+        color:ColorsApp.textColorWhite,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: textColorBlack
@@ -37,22 +40,19 @@ class authButton extends StatelessWidget {
           children: [
         Padding(
           padding: paddingSemetricHorizontal(h: mediaQuery.size.width/20)
-            ,            child:  FaIcon(
+            ,            child:
+      isLoading ?
+        LoadingWidget()
+
+      :
+      FaIcon(
           icon,
-          color: ColorsApp.textColorWhite,
+
           size: mediaQuery.size.width/15,
         ),
         ),
-            isLoading ? Center(
-              child: Padding(
-                padding: paddingSemetricHorizontal(h: mediaQuery.size.width/20),
-                child: const CircularProgressIndicator(
-                  color: ColorsApp.textColorWhite,
-                ),
-              ),
-            ) :
 
-            Text(text,style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColorWhite),),
+            Text(text,style: PoppinsRegular(18.sp, ColorsApp.textColorBlack),),
           ],
         ),
       ),

@@ -4,6 +4,7 @@ import 'package:jci_app/features/MemberSection/domain/entity/Objectif.dart';
 
 import '../../../../core/strings/objectifsIcon.dart';
 import '../../../Home/Activity_Global.dart';
+import '../../../common/enums/PrivacyType.dart';
 import '../../domain/entity/ActionDetails.dart';
 class FormNormal extends StatelessWidget {
   final TextInputType keyboard;

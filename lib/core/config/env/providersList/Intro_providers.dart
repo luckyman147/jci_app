@@ -8,7 +8,7 @@ import 'package:jci_app/injection_container.dart' as di;
 
 List<SingleChildWidget> introProviders = [
   BlocProvider(create: (_) => InternetCubit()..CheckConnection()),
-  BlocProvider(create: (_) => di.sl<localeCubit>()..getSavedLanguage()),
+  BlocProvider(create: (_) => di.sll<localeCubit>()..getSavedLanguage()),
   BlocProvider(create: (_) => BoolBloc()..add(resetEvent())),
   BlocProvider(create: (_) => IndexBloc(0)),
 ];

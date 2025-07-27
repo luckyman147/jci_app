@@ -1,4 +1,5 @@
 import '../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Role.dart';
+import '../../../common/enums/PrivacyType.dart';
 import 'ActionDetails.dart';
 
 enum ObjectifDifficulty{ Extreme,Hard,Meduim,Basic }

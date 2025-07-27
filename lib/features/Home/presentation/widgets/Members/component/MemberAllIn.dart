@@ -4,7 +4,7 @@ import '../../../../../../core/widgets/loading_widget.dart';
 import '../../../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../../domain/enums/SearchType.dart';
 
-import '../../components/ErrorDisplayMessage.dart';
+import '../../components/stuff/ErrorDisplayMessage.dart';
 import '../MembersFunctions.dart';
 import 'MemberDetails.dart';
 

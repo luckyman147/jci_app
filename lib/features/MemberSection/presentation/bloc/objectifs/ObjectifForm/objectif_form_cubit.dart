@@ -4,6 +4,7 @@ import 'package:jci_app/features/MemberSection/domain/entity/ActionDetails.dart'
 import 'package:jci_app/features/MemberSection/domain/entity/Objectif.dart';
 
 import '../../../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Role.dart';
+import '../../../../../common/enums/PrivacyType.dart';
 
 part 'objectif_form_state.dart';
 
