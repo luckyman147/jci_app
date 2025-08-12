@@ -17,6 +17,7 @@ import 'package:jci_app/features/Teams/presentation/widgets/Team/CreateTeam/Crea
 import '../../../../core/app_theme.dart';
 import '../../../../core/widgets/CommonTextField.dart';
 import '../../../Home/domain/entities/Activity/event/Event.dart';
+import '../../../Home/domain/entities/Activitys/ActivityBasics.dart';
 import '../../../Home/domain/enums/ActionImage.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import '../../../Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
@@ -47,7 +48,7 @@ if (!widget.team .isEmpty) {
 else{
   context.read<MembersBloc>().add(const GetAllMembersEvent(false));
   context.read<AcivityFBloc>().add(const GetAllActivitiesEvent(act: activity.Events));
-  context.read<FormzBloc>().add(EventChanged( eventChanged: Event.eventTest));
+  context.read<FormzBloc>().add(EventChanged( eventChanged: null));
   context.read<MembersTeamCubit>().initMembers([]);
 }
 
@@ -128,7 +129,7 @@ else{
             ),
           ),
           bottomEventSheet(context ,mediaQuery,
-              state.eventFormz.value??Event.eventTest),
+              state.eventFormz.value?? ActivityBasics.empty()),
         ],
       );
     },

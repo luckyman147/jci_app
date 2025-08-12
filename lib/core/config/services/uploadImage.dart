@@ -5,6 +5,8 @@ import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'package:flutter/services.dart' show rootBundle;
+
+import '../../../features/Teams/domain/entities/TaskFile.dart';
 class FirebaseImageUploader {
   final _uploadStreamController = StreamController<List<String>>.broadcast();
   final List<String> _uploadedUrls = [];
@@ -72,26 +74,59 @@ class FirebaseImageUploader {
   /// Close the stream controller
   void dispose() {
     _uploadStreamController.close();
-  }Future<String> uploadFile({
+  }
+  Stream<UploadProgress> uploadFileWithProgress({
     required String teamId,
     required String taskId,
     required File file,
-    required String fieldName, // Not strictly used for Firebase, but kept for naming if needed
-  }) async {
-    try {
-      final fileName = basename(file.path);
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('tasks/$teamId/$taskId/$fileName');
+    required Function(String progress) onDone,
+  }) async* {
+    final fileName = basename(file.path);
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('tasks/$teamId/$taskId/$fileName');
 
-      final uploadTask = await ref.putFile(file);
+    final uploadTask = ref.putFile(file);
 
-      final downloadUrl = await uploadTask.ref.getDownloadURL();
-      return downloadUrl;
-    } catch (error) {
-      print('Firebase Storage uploadFile error: $error');
-      throw Exception('Upload failed: $error');
-    }
+    final streamController = StreamController<UploadProgress>();
+
+    uploadTask.snapshotEvents.listen(
+          (TaskSnapshot snapshot) {
+        final total = snapshot.totalBytes;
+        final transferred = snapshot.bytesTransferred;
+
+        final progress = total > 0 ? transferred / total : 0.0;
+
+        streamController.add(
+          UploadProgress(
+            totalBytes: total,
+            bytesTransferred: transferred,
+            progress: progress,
+          ),
+        );
+      },
+      onError: (error) {
+        streamController.addError(error);
+        streamController.close();
+      },
+      onDone: () async {
+        final downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
+        streamController.add(
+          UploadProgress(
+            totalBytes: uploadTask.snapshot.totalBytes,
+            bytesTransferred: uploadTask.snapshot.bytesTransferred,
+            progress: 1.0,
+
+          ),
+
+
+        );
+        onDone(downloadUrl);
+      },
+      cancelOnError: true,
+    );
+
+    yield* streamController.stream;
   }
 
   refFromURL(fileUrl) async{
@@ -104,13 +139,59 @@ class FirebaseImageUploader {
       throw Exception('Reference creation failed: $error');
     }
   }
-}
+  Stream<DownloadProgress> downloadFileWithUrl({
+    required String url,
+    required String filePath,
+  }) async* {
+    final streamController = StreamController<DownloadProgress>();
 
+    try {
+      final request = http.Request('GET', Uri.parse(url));
+      final response = await request.send();
+
+      final total = response.contentLength ?? 0;
+      int received = 0;
+
+      final file = File(filePath);
+      final sink = file.openWrite();
+
+      response.stream.listen(
+            (chunk) {
+          sink.add(chunk);
+          received += chunk.length;
+
+          final progress = total > 0 ? received / total : 0.0;
+          streamController.add(DownloadProgress(
+            totalBytes: total,
+            receivedBytes: received,
+            progress: progress,
+          ));
+        },
+        onDone: () async {
+          await sink.close();
+          print('Download complete: $filePath');
+          await streamController.close();
+        },
+        onError: (error) async {
+          await sink.close();
+          streamController.addError(error);
+          await streamController.close();
+        },
+        cancelOnError: true,
+      );
+    } catch (error) {
+      streamController.addError(error);
+      await streamController.close();
+    }
+
+    yield* streamController.stream;
+  }
 
 Future<http.StreamedResponse> UpdateImage(String id, String? imagePath,String getUrl) async {
   try {
     // Create a MultipartRequest object
-    var request = http.MultipartRequest('PATCH', Uri.parse('$getUrl$id/UpdateImage'));
+    var request = http.MultipartRequest(
+        'PATCH', Uri.parse('$getUrl$id/UpdateImage'));
 
     // Add the images to the request
 
@@ -122,7 +203,9 @@ Future<http.StreamedResponse> UpdateImage(String id, String? imagePath,String ge
         'CoverImages',
         image.readAsBytes().asStream(),
         image.lengthSync(),
-        filename: image.path.split('/').last
+        filename: image.path
+            .split('/')
+            .last
     );
 
     request.files.add(multiport);
@@ -131,9 +214,7 @@ Future<http.StreamedResponse> UpdateImage(String id, String? imagePath,String ge
     var response = await request.send();
     return response;
   } catch (error) {
-
-
     // Handle or rethrow the error as needed
     rethrow;
   }
-}
+}}

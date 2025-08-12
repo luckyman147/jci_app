@@ -102,15 +102,7 @@ sl.registerFactory(() => localeCubit(sl()));
 
 
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
-  sl.registerFactory(() => MemberStore(sl()));
-  final key = dotenv.env['ENCRYPTION_KEY'];
-  if (key == null) {
-    throw Exception("ENCRYPTION_KEY not found in .env");
-  }
-
-  await EncryptedSharedPreferences.initialize(key);
-  final sharedPref =  EncryptedSharedPreferences.getInstance();
-  sl.registerLazySingleton<EncryptedSharedPreferences>(() => sharedPref);
+  sl.registerFactory(() => MemberStore());
 
   sl.registerFactory(() => LanguageCacheHelper(store: sl()));
 

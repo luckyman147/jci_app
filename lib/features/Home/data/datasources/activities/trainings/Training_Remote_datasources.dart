@@ -102,7 +102,7 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource {
       QuerySnapshot snapshot = await firabaseFireStore
           .collection('activities')
           .where('type', isEqualTo: 'Training')
-          .orderBy('ActivityEndDate', descending: true)
+          .orderBy('ActivityBasics.activityEndDate', descending: true)
           .get();
 
       List<TrainingModel> events = snapshot.docs.map((doc) {

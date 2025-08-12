@@ -1,13 +1,17 @@
 
 import 'dart:convert';
 import 'package:circle_progress_bar/circle_progress_bar.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:intl/intl.dart';
+import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
+import 'package:jci_app/core/config/env/Constants.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
+import 'package:jci_app/core/strings/Images.string.dart';
 import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/functions/functionMember.dart';
 import 'package:jci_app/features/Teams/domain/usecases/TeamUseCases.dart';
@@ -27,6 +31,7 @@ import '../../../../../MemberSection/presentation/bloc/bools/change_sbools_cubit
 
 
 import '../../../../domain/entities/Team/Team.dart';
+import '../../../../domain/entities/TeamUser.dart';
 import '../../../bloc/GetTasks/get_task_bloc.dart';
 import '../../../bloc/GetTeam/get_teams_bloc.dart';
 import '../../../bloc/TaskIsVisible/task_visible_bloc.dart';
@@ -38,57 +43,17 @@ import '../../Task/details/TaskWidget.dart';
 import '../ component/TeamComponent.dart';
 import '../implementation/TeamImpl.dart';
 import '../ component/TeamWidget.dart';
+import 'AddmoreMembersButton.dart';
 
 class DeatailsTeamComponent{
-  static
-  Align buildProgressText(GetTaskState state) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Padding(
-        padding:paddingSemetricHorizontal(h: 12),
-        child:   Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            state.tasks.isNotEmpty?   const    Icon(Icons.check_circle_outline, color: PrimaryColor, size: 20,):const SizedBox()
-            ,Text("${calculateSumCompletedTasks(state.tasks)}/${state.tasks.length} ",
-              style: PoppinsRegular(16, textColorBlack),),
-          ],
-        ),
-      ),
-    );
-  }
 
 
 
 
 
 
-  static BlocBuilder<GetTaskBloc, GetTaskState> buillLinkedtext(
-      MediaQueryData mediaQuery,Team team) {
-    return BlocBuilder<GetTaskBloc, GetTaskState>(
-      builder: (context, state) {
-        return TextButton(onPressed: () {
-          ShowAllTasks(context, mediaQuery, state, team);
-        },
-            child: Text("Show More".tr(context),
-              style: PoppinsSemiBold(
-                  mediaQuery.devicePixelRatio*5, PrimaryColor, TextDecoration.underline),));
-      },
-    );
-  }
-
-  static void ShowAllTasks(BuildContext context, MediaQueryData mediaQuery, GetTaskState state, Team team) {
-    showModalBottomSheet(
-
-        showDragHandle: true,
-        backgroundColor: textColorWhite,
-        context: context, builder: (context) {
-      return SingleChildScrollView(
 
 
-          child: BottomTaskSheet(mediaQuery, state.tasks,team));
-    });
-  }
 
   static SizedBox description(mediaQuery, BuildContext context,Team team ,bool mounted) {
 
@@ -197,9 +162,10 @@ class DeatailsTeamComponent{
                     children:[
                       Padding(
                         padding:paddingSemetricHorizontal(),
-                        child: Text(" ${"Members".tr (context)} ${team.members.members.length} )",style: PoppinsSemiBold(17, textColorBlack, TextDecoration.none),),
+                        child: Text(" ${team.members.members.length} ${"Members".tr (context)} ",style: PoppinsSemiBold(17, textColorBlack, TextDecoration.none),),
                       ),
 
+                      addMoreMembersButton(context),
                       Padding(
                         padding: paddingSemetricVertical(),
                         child: SizedBox(
@@ -230,7 +196,7 @@ class DeatailsTeamComponent{
                   child: InkWell(
                     onLongPress:()async {
 
-                      await MemberUtils.ToMembersSection(team, context, member, state,mounted);
+                      await MemberUtils.ToMembersSection(team, context, member.user, state,mounted);
                     },
                     child: Row(
 
@@ -243,7 +209,7 @@ class DeatailsTeamComponent{
                             child: Row(
 
                               children: [
-                                MemberTeamSelection.  imageWidget(members[members.length-index-1]),
+                                MemberTeamSelection.  imageWidget(members[members.length-index-1].user),
                         //        AsyncComponents.buildFutureBuilder(const Icon(Icons.person_sharp,),  true, Member.toMember(team.Members[team.Members.length-index-1]).id!, (p0) => FunctionMember.isOwner(Member.toMember(team.Members[team.Members.length-index-1]).id??""))
                               ],
                             ),
@@ -267,7 +233,7 @@ class DeatailsTeamComponent{
   static Widget KickButton(BuildContext context, Team team, int index) {
     return TextButton(onPressed: () {
       var members = team.members.members;
-      final TeamInput tam=TeamInput(team.meta.id, members[members.length-index-1].id.toString(), "kick",members[members.length-index-1]);
+      final TeamInput tam=TeamInput(team.meta.id, members[members.length-index-1].user.id.toString(), "kick",members[members.length-index-1]);
       context.read<GetTeamsBloc>().add(UpdateTeamMember(fields: tam));
       Navigator.pop(context);
     }, child: const Icon( Icons.remove_circle,color: Colors.red,),);
@@ -280,7 +246,7 @@ class DeatailsTeamComponent{
 
     return BlocBuilder<GetTaskBloc, GetTaskState>(
 
-      builder: (context, state) {    final  sasks = state.tasks.where((element) => !element['isCompleted']);
+      builder: (context, state) {    final  sasks = state.Completedtasks;
       double containerWidth = MediaQuery
           .of(context)
           .size
@@ -294,7 +260,7 @@ class DeatailsTeamComponent{
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Display containers for true values with red color
-              ...state.tasks.where((element) => element['isCompleted']).toList().asMap().entries.map((entry) {
+              ...state.tasks.toList().asMap().entries.map((entry) {
                 if (entry.key == 0) {
                   // Apply border radius to the first container
                   return AnimatedContainer(
@@ -321,7 +287,7 @@ class DeatailsTeamComponent{
                 }
               }).toList(),
               // Display containers for false values with blue color
-              ...state.tasks.where((element) => !element['isCompleted']).toList().asMap().entries.map((entry) {
+              ...state.tasks.toList().asMap().entries.map((entry) {
 
                 if (entry.key == sasks.length - 1) {
                   // Apply border radius to the last container
@@ -385,25 +351,7 @@ class DeatailsTeamComponent{
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                            child: ste.WillAdded
-                                ? Text(
-                              "${"Add".tr(context)} ${"Task".tr(context)}",
-                              style: PoppinsSemiBold(
-                                mediaQuery.devicePixelRatio * 5,
-                                textColorBlack,
-                                TextDecoration.none,
-                              ),
-                            )
-                                : ste.WillDeleted
-                                ? Text(
-                              "${"Delete".tr(context)} ${"Task".tr(context)}",
-                              style: PoppinsSemiBold(
-                                mediaQuery.devicePixelRatio * 5,
-                                textColorBlack,
-                                TextDecoration.none,
-                              ),
-                            )
-                                : Row(
+                            child: Row(
                               children: [
                                 /// 🖼️ Team Image
                                 ImageCard(
@@ -422,6 +370,9 @@ class DeatailsTeamComponent{
                                     textColorBlack,
                                   ),
                                 ),
+
+                                AsyncComponents.buildFutureBuilder(IconButton(onPressed: (){}, icon:Icon(Icons.edit) ), PermissionType.canUpdate, Constants.MANAGE_TEAMS)
+
                               ],
                             ),
                           ),
@@ -469,7 +420,7 @@ class DeatailsTeamComponent{
 
             if (!mounted) return;
         //    context.go('/CreateTeam?team=${jsonEncode(team.toJson())}&&image=$image');
-            context.read<MembersTeamCubit>().initMembers( team.members.members.map((e) => e).cast<Member>().toList());
+            context.read<MembersTeamCubit>().initMembers( team.members.members);
 
             context.read<TaskVisibleBloc>().add(ChangeImageEvent(
                 image!=null?
@@ -516,70 +467,56 @@ class DeatailsTeamComponent{
       );
 
 
-  static Widget ImageCard(mediaQuery, String image,double height) =>
-      image.isNotEmpty
-          ? ClipRRect(
-          borderRadius: BorderRadius.circular(100),
+  static Widget ImageCard(
+      mediaQuery,
+      String image,
+      double height,
+      ) =>
+      Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(
 
+            color: ColorsApp.BackWidgetColor, // Border color
+            width: 2, // Border width
+          ),
 
-          child: Image.network(
-              image,
-              fit: BoxFit.cover,
-              height:height,
-              width: height
-
-
-          ))
-          : ClipRRect(
-
-        borderRadius: BorderRadius.circular(100),
-
-        child: Container(
-            height: height,
-            width: height,
-            color: backgroundColored,
-            child: Image.asset("assets/images/jci.png", fit: BoxFit.contain,)
         ),
-      );
-
-
-  Widget Progress(Team team, MediaQueryData mediaQuery,
-      List<Map<String, dynamic>> tasks) {
-    double value = team.stats.numberOfTasksTotal==0
-              ? 0
-              :  team.stats.numberOfTasksCompleted/ team.stats.numberOfTasksTotal;
-
-    return SizedBox(
-        height: mediaQuery.size.height / 5.5,
-        child: CircleProgressBar(
-          foregroundColor: PrimaryColor,
-          backgroundColor: textColor,
-          strokeWidth: 10,
-          value: value,
-          child: Align(
-            alignment: Alignment.center,
-            child: AnimatedCount(
-              style: PoppinsSemiBold(17, textColorBlack,
-                  TextDecoration.none),
-              count: value * 100,
-              unit: '%',
-              duration: const Duration(milliseconds: 500),
+        child: ClipRRect(
+borderRadius: BorderRadius.circular(15),
+          child: image.isNotEmpty
+              ? Image.network(
+            image,
+            fit: BoxFit.contain,
+            height: height*1.5,
+            width: height*1.5,
+          )
+              : Container(
+            height: height*1.5,
+            width: height*1.5,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Image.asset(
+              images.jcihammem,
+              fit: BoxFit.cover,
             ),
           ),
         ),
       );
-  }
+
+
 
 
   static Widget membersTeamImage(BuildContext context, MediaQueryData mediaQuery,
-      int length, List<User> items,double photoheight,double contHeight) =>
+      int length, List<TeamUser> items,double photoheight,double contHeight,{int  limit=3 }) =>
       Row(
 
         children: [
-          for (var i = 0; i < (length > 3 ? 2 : length); i++)
+          for (var i = 0; i < (length > limit ? limit-1 : length); i++)
 
-            PhotoContainer(items, i,photoheight),
-          if (length > 3)
+            PhotoContainer(items.map((e)=>e.user).toList(), i,photoheight),
+          if (length > limit)
             alignPhoto(length,contHeight),
 
         ],
@@ -598,9 +535,9 @@ class DeatailsTeamComponent{
               shape: BoxShape.circle,
             ),
             child: MemberTeamSelection. photo(
-                item[i].Images[0].isNotEmpty
+                item[i].Images.isNotEmpty
                     ? item[i].Images[0]
-                    : "assets/images/jci.png",
+                    : "",
                 height, 15)),
       ),
     );

@@ -2,15 +2,24 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
+import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 
 import '../../../../core/config/services/uploadImage.dart';
 import '../../domain/entities/TaskFile.dart';
 import 'package:path/path.dart' as p;
+
+import '../models/CommentsModel.dart';
 abstract class CommentFileRemoteDataSource {
-  Future<Unit> addComment(String teamId, String taskId, String comment);
+  Future<String> addComment(CommentModel model);
+  // get comments
+  Future<List<CommentModel>> getComments(String teamId, String taskId);
   Future<Unit> updateComment(String teamId, String taskId, String commentId, String comment);
   Future<Unit> deleteComment(String teamId, String taskId, String commentId);
-  Future<TaskFile> uploadFile(String teamId, String taskId, File bytes, String fileName);
+  Stream<UploadProgress> uploadFile({
+    required String teamId,
+    required String taskId,
+    required List<File> files,
+  });
   Future<Unit> deleteFile(String teamId, String taskId, String fileId);
   Future<List<TaskFile>> getFiles(String teamId, String taskId);
 }
@@ -25,24 +34,24 @@ class CommentFileRemoteDataSourceImpl implements CommentFileRemoteDataSource {
   });
 
   @override
-  Future<Unit> addComment(String teamId, String taskId, String comment) async {
+  Future<String> addComment(CommentModel model) async {
     try {
-      await firestore
+      final ref = await firestore
           .collection('teams')
-          .doc(teamId)
+          .doc(model.TeamId)
           .collection('tasks')
-          .doc(taskId)
+          .doc(model.TaskId)
           .collection('comments')
-          .add({
-        'comment': comment,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-      return unit;
+          .add(model.toJson());
+
+      await ref.update({'Id': ref.id}); // Update the document with its own ID
+
+      return ref.id;
     } catch (e) {
-      print('addComment error: $e');
       rethrow;
     }
   }
+
 
   @override
   Future<Unit> updateComment(String teamId, String taskId, String commentId, String comment) async {
@@ -55,8 +64,8 @@ class CommentFileRemoteDataSourceImpl implements CommentFileRemoteDataSource {
           .collection('comments')
           .doc(commentId)
           .update({
-        'comment': comment,
-        'updatedAt': FieldValue.serverTimestamp(),
+        'content': comment,
+        'CreatedAt': DateTime.now().toIso8601String(),
       });
       return unit;
     } catch (e) {
@@ -82,48 +91,73 @@ class CommentFileRemoteDataSourceImpl implements CommentFileRemoteDataSource {
       rethrow;
     }
   }
-
   @override
-  Future<TaskFile> uploadFile(String teamId, String taskId,File file, String fileName) async {
+  Stream<UploadProgress> uploadFile({
+    required String teamId,
+    required String taskId,
+    required List<File> files,
+  }) async* {
     try {
-      final fileRef =await storage.uploadFile(teamId: teamId, taskId: taskId, file: file, fieldName: fileName);
+      // Start a separate stream for each file
+      for (var file in files) {
+        // Yield progress for each file
+        await for (var progress in storage. uploadFileWithProgress(
+          teamId: teamId,
+          taskId: taskId,
+          file: file,
+          onDone: (String downloadUrl) async {
+            // Once upload is done for a file, save the metadata to Firestore
+            var taskFile = TaskFile.fromParameters(
+              url: downloadUrl,
+              extension: p.extension(file.path),
+            );
 
-      var taskFile = TaskFile.fromParameters(url: fileRef, extension:p.extension(file.path)  );
-      final docRef = await firestore
-          .collection('teams')
-          .doc(teamId)
-          .collection('tasks')
-          .doc(taskId)
-          .collection('files')
-          .add(taskFile.toJson());
-
-      return  taskFile;
+            // Save the task file to Firestore
+            await firestore
+                .collection('teams')
+                .doc(teamId)
+                .collection('tasks')
+                .doc(taskId)
+                .collection('files')
+                .add(taskFile.toJson());
+          },
+        )) {
+          Logger().i('File upload progress: ${progress.progress}%');
+          yield progress; // Yield progress for each file's upload
+        }
+      }
     } catch (e) {
       print('uploadFile error: $e');
       rethrow;
     }
   }
 
+
   @override
-  Future<Unit> deleteFile(String teamId, String taskId, String fileId) async {
+  Future<Unit> deleteFile(String teamId, String taskId, String fileddUrl) async {
     try {
-      final fileDoc = firestore
+      final fileDocs = await firestore
           .collection('teams')
           .doc(teamId)
           .collection('tasks')
           .doc(taskId)
           .collection('files')
-          .doc(fileId);
+          .where('url', isEqualTo: fileddUrl)
+          .limit(1)
+          .get();
 
-      final snapshot = await fileDoc.get();
-      final fileUrl = snapshot.data()?['url'];
-
-      if (fileUrl != null) {
-        final ref = storage.refFromURL(fileUrl);
-        await ref.delete();
+      if (fileDocs.docs.isEmpty) {
+        throw Exception('File not found');
       }
 
-      await fileDoc.delete();
+      final doc = fileDocs.docs.first;
+
+      // Delete the file from Firebase Storage
+      final ref = storage.refFromURL(fileddUrl);
+      await ref.delete();
+
+      // Delete the Firestore document
+      await doc.reference.delete();
       return unit;
     } catch (e) {
       print('deleteFile error: $e');
@@ -149,5 +183,11 @@ class CommentFileRemoteDataSourceImpl implements CommentFileRemoteDataSource {
       print('getFiles error: $e');
       rethrow;
     }
+  }
+
+  @override
+  Future<List<CommentModel>> getComments(String teamId, String taskId) {
+    // TODO: implement getComments
+    throw UnimplementedError();
   }
 }

@@ -20,15 +20,15 @@ import '../../../../../core/widgets/CommonTextField.dart';
 import '../../../../Home/presentation/widgets/Activity/AddActivityWidgets.dart';
 import '../../components/AboutMemberComponent.dart';
 @RoutePage()
-class ModifyUser extends StatefulWidget {
+class ModifyUserPage extends StatefulWidget {
   final Member member;
-  const ModifyUser({Key? key, required this.member}) : super(key: key);
+  const ModifyUserPage({Key? key, required this.member}) : super(key: key);
 
   @override
-  State<ModifyUser> createState() => _ModifyUserState();
+  State<ModifyUserPage> createState() => _ModifyUserPageState();
 }
 
-class _ModifyUserState extends State<ModifyUser> {
+class _ModifyUserPageState extends State<ModifyUserPage> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController firstNameController = TextEditingController();

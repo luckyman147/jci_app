@@ -79,7 +79,7 @@ class AcivityFBloc extends Bloc<AcivityFEvent, AcivityFState> {
     emit(_mapSuccessFailureActivity(failureOrEvents, (act) {
       return state.copyWith(
           activities: act,
-          activityfetchState: ActivityFetchState.ActivityLoaded,
+          activityfetchState:act.isEmpty? ActivityFetchState.Empty : ActivityFetchState.ActivityLoaded,
           activitiesSearch: act);
     }));
   }
@@ -114,7 +114,7 @@ class AcivityFBloc extends Bloc<AcivityFEvent, AcivityFState> {
           Logger ().i("Activity of the month loaded: ${act.length}");
          return  state.copyWith(
             activities: act,
-            activityfetchState: ActivityFetchState.ACtivityLoadedMonth,
+            activityfetchState:  ActivityFetchState.ACtivityLoadedMonth,
             activitiesSearch: act);}));
   }}
 

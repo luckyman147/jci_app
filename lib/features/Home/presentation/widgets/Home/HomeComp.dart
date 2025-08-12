@@ -1,12 +1,17 @@
 
 
 
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/about_jci/Presentations/bloc/presidents_bloc.dart';
 
+import '../../../../auth/presentation/widgets/Text.dart';
 import '../../../Activity_Global.dart';
 import '../../../domain/enums/Privacy.dart';
 import '../../bloc/PageIndex/page_index_bloc.dart';
+import '../components/stuff/GradientText.dart';
+import '../shimmer/ShimmerRow.dart';
 
 
 
@@ -273,66 +278,112 @@ static   Widget buildTeamWidget(MediaQueryData mediaQuery, BuildContext context,
   }
 
 static   Widget buildteam(MediaQueryData mediaQuery, BuildContext context) {
-    return Padding(
-      padding: paddingSemetricVertical(),
-      child: Row(
-        children: [
-          Text("My Tasks".tr(context), style: PoppinsSemiBold(
-              mediaQuery.devicePixelRatio * 6, Colors.black,
-              TextDecoration.none),),
-          const Spacer(), InkWell(
-            onTap: () {
-              context.read<PageIndexBloc>().add(SetIndexEvent(index: 2));
-              context.read<TaskVisibleBloc>().add(
-                  const changePrivacyEvent(Privacy.Private));
-            },
-            child: Text("See more".tr(context), style: PoppinsSemiBold(
-                mediaQuery.devicePixelRatio * 4.5, PrimaryColor,
-                TextDecoration.underline),),
-          ),
-        ],
+  return Padding(
+    padding: paddingSemetricVertical(),
+    child: Row(
+      children: [
+        Text("My Teams".tr(context), style: PoppinsSemiBold(
+            16.sp, Colors.black,
+            TextDecoration.none),),
+        const Spacer(), InkWell(
+          onTap: () {
+            context.read<PageIndexBloc>().add(SetIndexEvent(index: 2));
+            context.read<TaskVisibleBloc>().add(
+                const changePrivacyEvent(Privacy.Private));
+          },
+          child: LinkedText(
+              text: "See more".tr(context),
+              size: mediaQuery.devicePixelRatio * 5.5),
+        ),
+      ],
 
-      ),
-    );
-  }
+    ),
+  );
+}
 
  static  Widget buildHeader(MediaQueryData mediaQuery) {
     return Padding(
       padding: paddingSemetricVertical(v: 30),
 
-      child: SizedBox(
-        height: mediaQuery.size.height / 12,
-        width: mediaQuery.size.width / 3,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 12.0),
-          child: Image.asset("assets/images/jci.png",
-            alignment: Alignment.bottomCenter,
-            filterQuality: FilterQuality.high,
-            fit: BoxFit.contain
-            ,
-            bundle: null,
-            scale: 2.0,
+      child:
+      BlocSelector<MembersBloc, MembersState, MembersState>(
+        selector: (state) => state,
+        builder: (ctx, state) {
+          if (state.userStatus == UserStatus.Loading) {
+            // Show shimmer loading row
+            return ShimmerRow(); // Replace with your actual shimmer widget
+          } else if (state.user != null) {
+            // Show user info row
+            return Row(
 
-          ),
+              spacing:5,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GradientText(
+                  text: "Hello,  ${state.user!.firstName} ",
+                  style: PoppinsSemiBold(25.sp, ColorsApp.textColorWhite, TextDecoration.none), // your existing style
+                  gradient: const LinearGradient(
+                    colors: [
+                     PrimaryColor,
+
+                     ColorsApp.SecondaryColor
+                    ],
+                  ),
+                )
+                // Add other widgets here if needed
+              ],
+            );
+          } else {
+            // User is null
+            return Text("Hi"); // or any fallback
+          }
+        },
+      )
+    );
+  }
+
+ static SizedBox buioldLogo(MediaQueryData mediaQuery) {
+   return SizedBox(
+      height: mediaQuery.size.height / 12,
+      width: mediaQuery.size.width / 3,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 12.0),
+        child: Image.asset("assets/images/jci.png",
+          alignment: Alignment.bottomCenter,
+          filterQuality: FilterQuality.high,
+          fit: BoxFit.contain
+          ,
+          bundle: null,
+          scale: 2.0,
+
         ),
       ),
     );
-  }
+ }
 
 
 static   Widget TeamsWidget(MediaQueryData mediaQuery,BuildContext context) =>
 BlocBuilder<GetTeamsBloc,GetTeamsState>(builder: (ctx,state){
-  switch(state.status){
-    case TeamStatus.Loading:
-      return const LoadingWidget();
-    case TeamStatus.error:return const SizedBox();
-    case TeamStatus.success:
-    case TeamStatus.IsRefresh:
-    case TeamStatus.DeletedError:
-    case TeamStatus.Deleted:
-    return buildTeamWidget(mediaQuery, context, state.teams);
-    default:return const SizedBox();
+  if (state.status==TeamStatus.LoadedTeams&& state.homeTeams .isNotEmpty) {
+    return buildTeamWidget(mediaQuery, context, state.homeTeams);
+  }
+  else if (state.homeTeams .isEmpty){
+    return Padding(
+      padding: paddingSemetricVertical(),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AutoSizeText(
+            "No Teams Found".tr(context),
+            style: PoppinsSemiBold(16.sp, Colors.black, TextDecoration.none),
+          ),
+        ],
+      ),
+    );
+  }
+  return const SizedBox();
   }
 
-});
+);
 }

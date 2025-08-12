@@ -13,6 +13,8 @@ import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 import '../../../../../core/config/services/store.dart';
 import '../../../../../core/config/services/uploadImage.dart';
 import '../../../../../core/error/Exception.dart';
+import '../../../../core/PrimitiveUser/UserModel.dart';
+import '../../domain/entities/TeamUser.dart';
 
 abstract class TeamRemoteDataSource {
   Future<({List<TeamModel> Teams, DocumentSnapshot? lastDoc})> getAllTeams({
@@ -25,11 +27,12 @@ abstract class TeamRemoteDataSource {
   Future<Unit> updateTeam(TeamModel Team);
   Future<Unit> deleteTeam(String id);
   Future<List<TeamModel>> getTeamByName(String name);
+  Future<List<TeamModel>> getTeamsOfUser();
   Future<Unit> updateMembers(String teamid, String memberid, String Status);
 
   Future<Unit> inviteMember(String id, String memberid);
 
-  Future<Unit> joinTeam(String id);
+  Future<Unit> joinTeam(TeamUser user,String id);
 }
 
 class TeamRemoteDataSourceImpl implements TeamRemoteDataSource {
@@ -90,7 +93,7 @@ Future<Unit> deleteTeam(String id) async {
       logger.i("Fetching teams | Limit: $limit | isPrivate: $isPrivate | lastDocument: ${lastDocument?.id}");
       Query query = firestore
           .collection('teams')
-          .where('status', isEqualTo: isPrivate ? true : false)
+          .where('meta.status', isEqualTo: isPrivate ? true : false)
 
           .limit(limit);
 
@@ -201,11 +204,45 @@ Future<Unit> deleteTeam(String id) async {
     // TODO: implement inviteMember
     throw UnimplementedError();
   }
-
   @override
-  Future<Unit> joinTeam(String id) {
-    // TODO: implement joinTeam
-    throw UnimplementedError();
+  Future<Unit> joinTeam(TeamUser user, String teamId) async {
+    try {
+      final teamDocRef = FirebaseFirestore.instance.collection('teams').doc(teamId);
+
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final teamSnapshot = await transaction.get(teamDocRef);
+
+        if (!teamSnapshot.exists) {
+          throw Exception("Team not found");
+        }
+
+        final currentMembers = List<Map<String, dynamic>>.from(
+          teamSnapshot.data()?['members']['members'] ?? [],
+        );  final currentMembersIds = List<String>.from(
+          teamSnapshot.data()?['members']['membersIds'] ?? [],
+        );
+
+        // Check if user already exists in the members list
+        final alreadyMember = currentMembersIds.any((member) => member== user.user.id);
+        if (alreadyMember) {
+          Logger( ).e("already exists");
+          // Optionally throw or just return early
+          return;
+        }
+
+        // Add user to members
+        currentMembers.add(user.toJson());
+        currentMembersIds.add(user.user.id!);
+
+        // Update the members field
+        transaction.update(teamDocRef, {'members.members': currentMembers, 'members.membersIds': currentMembersIds});
+      });
+
+      return unit;
+    } catch (e) {
+      // You can also log or handle the error more gracefully
+      throw ServerException();
+    }
   }
 
   @override
@@ -214,7 +251,27 @@ Future<Unit> deleteTeam(String id) async {
     throw UnimplementedError();
   }
 
+  @override
+  Future<List<TeamModel>> getTeamsOfUser() async {
+    try {
+      final userId = await memberStore.getPrimitiveModel().then((value) => value.id);
+      final querySnapshot = await firestore
+          .collection('teams')
+          .where('members.membersIds', arrayContains: userId)
+     .limit(3)     .get();
 
+      final teams = querySnapshot.docs.map((doc) {
+        final data = doc.data();
+        return TeamModel.fromJson(data); // adapt depending on your model
+      }).toList();
+
+      return teams;
+    } catch (e) {
+      Logger().e("Error fetching teams for user: $e");
+      // handle error, log or rethrow
+      throw Exception('Failed to get teams for user : $e');
+    }
+  }
 
 
 

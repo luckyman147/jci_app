@@ -34,10 +34,11 @@ class TaskModel extends Tasks{
       communication: communication,
     );
   }
+
   // to json with only name and id
- static Map<String, dynamic> toJsonWithNameAndId(String name) {
+ static Map<String, dynamic> toJsonWithNameAndId(String name,TaskCompletionStatus status) {
     return {
-      'meta': TaskMeta.empty(name).toJson(),
+      'meta': TaskMeta.empty(name,status).toJson(),
       'content':  TaskContent.empty().toJson(),
       'communication': TaskCommunication.empty().toJson(),
     };

@@ -15,16 +15,16 @@ import '../widgets/Inputs/InputsWithLabels.dart';
 import '../widgets/Text.dart';
 
 @RoutePage()
-class ResetPassword extends StatefulWidget {
+class ResetPasswordPage extends StatefulWidget {
 
-   const ResetPassword({Key? key, required this.email}) : super(key: key);
+   const ResetPasswordPage({Key? key, required this.email}) : super(key: key);
 final String email;
 
   @override
-  State<ResetPassword> createState() => _ResetPasswordState();
+  State<ResetPasswordPage> createState() => _ResetPasswordState();
 }
 
-class _ResetPasswordState extends State<ResetPassword> {
+class _ResetPasswordState extends State<ResetPasswordPage> {
   @override
   void initState() {
     ToggleBooleanBloc toggleBooleanBloc = BlocProvider.of<ToggleBooleanBloc>(context);

@@ -26,6 +26,7 @@ import '../../features/MemberSection/presentation/bloc/memberBloc/member_managem
 import '../../features/MemberSection/presentation/bloc/objectifs/objectif_bloc.dart';
 import '../../features/MemberSection/presentation/pages/objectif/ObjectifFormPage.dart';
 import '../../features/MemberSection/presentation/pages/objectif/ObjectifPage.dart';
+import '../../features/Teams/domain/entities/task/Task.dart';
 import '../../features/auth/AuthWidgetGlobal.dart';
 import '../Member.dart';
 import 'RedirectGuard.dart';
@@ -45,15 +46,15 @@ class AppRouter extends RootStackRouter {
   List<AutoRoute> get routes => [
     AutoRoute(page: SplashRoute.page, initial: true,guards: [statusGuard]
     ),
-    AutoRoute(page: ObjectifformpageRoute.page),
+    AutoRoute(page: ObjectifformPageRoute.page),
     AutoRoute(page: ObjectifsRoute.page),
+
 
     AutoRoute(page: ForgetPasswordRoute.page),
     AutoRoute(page: PasswordResetSentRoute.page),
     AutoRoute(page: SettingsRoute.page),
     AutoRoute(page: SearchRoute.page),
  //   AutoRoute(page: CreateTeamRoute.page),
-    AutoRoute(page: CreateTaskRoute.page),
     AutoRoute(page: MemberSectionRoute.page),
     AutoRoute(page: ActivityDetailsRoute.page,
       path: '/activity/:id/:activity/:index',

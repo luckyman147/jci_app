@@ -9,6 +9,7 @@ import 'package:jci_app/features/Home/presentation/widgets/Activity/ActivityImpl
 import 'package:jci_app/features/Home/presentation/widgets/Functions/Functions.dart';
 
 import '../../../../../core/app_theme.dart';
+import '../../../../auth/AuthWidgetGlobal.dart';
 import '../../../domain/entities/Activitys/Activity.dart';
 
 import '../../bloc/ChangeString/change_string_bloc.dart';
@@ -38,6 +39,7 @@ class ActivityDetail extends StatefulWidget {
 class _ActivityDetailState extends State<ActivityDetail> {
   @override
   void initState() {
+    Logger().e(widget!.act);
     context.read<ParticpantsBloc>().add(LoadParticipantIdEvent());
     // TODO: implement initState
     super.initState();
@@ -58,10 +60,10 @@ class _ActivityDetailState extends State<ActivityDetail> {
           Padding(
             padding: widget.act != activity.Meetings
                 ? EdgeInsets.symmetric(vertical: mediaQuery.size.height / 2.5)
-                : EdgeInsets.symmetric(vertical: 70.h),
+                : EdgeInsets.symmetric(vertical: 40.h),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 ActivityDetailsComponent.rowName(mediaQuery, context,
                     widget.activitys, widget.act, widget.index),

@@ -1,127 +1,116 @@
-import 'package:encrypt_shared_preferences/provider.dart';
-import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hive/hive.dart';
 
 class Store {
-  final EncryptedSharedPreferences pref;
-  Store(this.pref);
-  final String _RefreshTokenKey = "refreshToken";
-  final String _AccessTokenKey = "accessToken";
-  final _PermissionsKey = "permissions";
-  final String _FirstEntryKey = "firstEntry";
-  final String _isLogged = "isLoggedIn";
-  final String Otp = "Otp";
-  final String status = "status";
-  final String _email = "EmAiL";
+  final Box box = Hive.box('secureBox');
+
+  final String _refreshTokenKey = "refreshToken";
+  final String _accessTokenKey = "accessToken";
+  final String _permissionsKey = "permissions";
+  final String _firstEntryKey = "firstEntry";
+  final String _isLoggedKey = "isLoggedIn";
+  final String _otpKey = "Otp";
+  final String _statusKey = "status";
+  final String _emailKey = "email";
   final String _roleKey = "role";
-  final String UserId = "UserId";
+  final String _userIdKey = "UserId";
+  final String _localeKey = "LOCALE";
 
-  Future<void> setUserId(String id) async {
-    await pref.setString(UserId, id);
+  // Tokens
+  Future<void> setTokens(String refreshToken, String accessToken) async {
+    await box.put(_refreshTokenKey, refreshToken);
+    await box.put(_accessTokenKey, accessToken);
   }
 
-  Future<String?> getUserId() async {
-    return pref.getString(UserId);
-  }
-
-  Future<void> setRole(DocumentReference role) async {
-    await pref.setString(_roleKey, role.path);
-  }
-
-  Future<DocumentReference?> getRole() async {
-    final path = await pref.getString(_roleKey);
-    if (path == null) {
-      return null;
-    }
-    return FirebaseFirestore.instance.doc(path);
-  }
-
-  Future<void> setRoleName(String role) async {
-    await pref.setString(_roleKey, role);
-  }
-
-  Future<String?> getRoleName() async {
-    return pref.getString(_roleKey);
-  }
-
-  Future<void> setTokens(String RefreshToke, String AccessToken) async {
-    await pref.setString(_RefreshTokenKey, RefreshToke);
-    await pref.setString(_AccessTokenKey, AccessToken);
-  }
-
-  Future<void> SetEmail(String email) async {
-    await pref.setString(_email, email);
-  }
-
-  Future<String?> getPreviousEmail() async {
-    return pref.getString(_email);
-  }
-
-  Future<void> setStatus(bool isLogged) async {
-    await pref.setBool(status, isLogged);
-  }
-
-  Future<bool> getStatus() async {
-    return pref.getBool(status) ?? false;
-  }
-
-  Future<void> setPermissions(List<String> permissions) async {
-    await pref.setStringList(_PermissionsKey, permissions);
-  }
-
-  List<String>? getPermissions() {
-    return pref.getStringList(_PermissionsKey);
-  }
-
-  Future<List<String?>> GetTokens() async {
-    final refresh = await pref.getString(_RefreshTokenKey);
-
-    final access = await pref.getString(_AccessTokenKey);
-
+  List<String?> getTokens() {
+    final refresh = box.get(_refreshTokenKey);
+    final access = box.get(_accessTokenKey);
     return [refresh, access];
   }
 
+  // Email
+  Future<void> setEmail(String email) async {
+    await box.put(_emailKey, email);
+  }
+
+  String? getEmail() => box.get(_emailKey);
+
+  // OTP
   Future<void> setOtp(String otp) async {
-    await pref.setString(Otp, otp);
+    await box.put(_otpKey, otp);
   }
 
-  Future<String?> getOtp() async {
-    return pref.getString(Otp);
+  String? getOtp() => box.get(_otpKey);
+
+  // User ID
+  Future<void> setUserId(String id) async {
+    await box.put(_userIdKey, id);
   }
 
-  Future<void> clear() async {
-    await pref.setString(_RefreshTokenKey, "");
-    await pref.setString(_AccessTokenKey, "");
-    await pref.setStringList(_PermissionsKey, []);
+  String? getUserId() => box.get(_userIdKey);
+
+  // Role (store path as string)
+  Future<void> setRole(DocumentReference role) async {
+    await box.put(_roleKey, role.path);
   }
 
-  Future<String?> getLocaleLanguage() async {
-
-    return await  pref.getString('LOCALE');
+  DocumentReference? getRole() {
+    final path = box.get(_roleKey);
+    if (path == null) return null;
+    return FirebaseFirestore.instance.doc(path);
   }
 
-  Future<void> setLocaleLanguage(String locale) async {
-
-    pref.setString('LOCALE', locale);
+  Future<void> setRoleName(String roleName) async {
+    await box.put(_roleKey, roleName);
   }
 
+  String? getRoleName() => box.get(_roleKey);
+
+  // Permissions
+  Future<void> setPermissions(List<String> permissions) async {
+    await box.put(_permissionsKey, permissions);
+  }
+
+  List<String> getPermissions() {
+    return (box.get(_permissionsKey) as List?)?.cast<String>() ?? [];
+  }
+
+  // First Entry
   Future<void> setFirstEntry() async {
-
-    pref.setBool(_FirstEntryKey, true);
+    await box.put(_firstEntryKey, true);
   }
 
-  Future<bool> isFirstEntry() async {
-
-    return pref.getBool(_FirstEntryKey) ?? false;
+  bool isFirstEntry() {
+    return box.get(_firstEntryKey, defaultValue: false);
   }
 
+  // Logged In
   Future<void> setLoggedIn(bool isLogged) async {
-
-    pref.setBool(_isLogged, isLogged);
+    await box.put(_isLoggedKey, isLogged);
   }
 
-  Future<bool> isLoggedIn() async {
+  bool isLoggedIn() {
+    return box.get(_isLoggedKey, defaultValue: false);
+  }
 
-    return pref.getBool(_isLogged) ?? false;
+  // Status
+  Future<void> setStatus(bool status) async {
+    await box.put(_statusKey, status);
+  }
+
+  bool getStatus() {
+    return box.get(_statusKey, defaultValue: false);
+  }
+
+  // Locale
+  Future<void> setLocaleLanguage(String locale) async {
+    await box.put(_localeKey, locale);
+  }
+
+  String? getLocaleLanguage() => box.get(_localeKey);
+
+  // Clear all
+  Future<void> clear() async {
+    await box.clear();
   }
 }

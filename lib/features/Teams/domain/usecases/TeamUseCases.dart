@@ -6,6 +6,7 @@ import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/error/Failure.dart';
 import '../../../../core/usescases/usecase.dart';
 import '../entities/Team/Team.dart';
+import '../entities/TeamUser.dart';
 
 class GetAllTeamsUseCase {
   final TeamRepo _teamRepository;
@@ -71,6 +72,15 @@ class getTeamByNameUseCase  extends UseCase<List<Team>, Map<String,dynamic>>{
   Future<Either<Failure, List<Team>>> call(Map<String,dynamic> params) {
     return _teamRepository.getTeamByName(params['name']);
   }
+}class  GetTeamsOfUserUseCase  extends UseCase<List<Team>, NoParams>{
+  final TeamRepo _teamRepository;
+
+  GetTeamsOfUserUseCase(this._teamRepository);
+
+  @override
+  Future<Either<Failure, List<Team>>> call( params) {
+    return _teamRepository.getTeamsOfUser();
+  }
 }
 class UpdateTeamMembersUseCase  extends UseCase<Unit, TeamInput>{
   final TeamRepo _teamRepository;
@@ -92,21 +102,21 @@ class InviteMemberUseCase  extends UseCase<Unit, TeamInput>{
     return _teamRepository.InviteMember(params.id,params.memberid!);
   }
 }
-class JoinTeamUseCase  extends UseCase<Unit, String>{
+class JoinTeamUseCase  extends UseCase<Unit, TeamInput>{
   final TeamRepo _teamRepository;
 
   JoinTeamUseCase(this._teamRepository);
 
   @override
   Future<Either<Failure, Unit>> call( params) {
-    return _teamRepository.JoinTeam(params);
+    return _teamRepository.JoinTeam(params.member!, params.id);
   }
 }
 class TeamInput{
   final String id;
   final String? memberid;
   final String? Status;
-  final User? member;
+  final TeamUser? member;
 
 
   TeamInput(this.id, this.memberid, this.Status, this.member);

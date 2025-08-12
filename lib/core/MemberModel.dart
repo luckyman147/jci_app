@@ -64,10 +64,11 @@ factory MemberModel.fromEntity(Member member) {
   return    MemberModel(
     roleName: json["roleName"]??"",
 
-    PreviousPoints: json['PreviousPoints']!=null  ?    double.parse(json['PreviousPoints'].toString()) :       0.0,
+      PreviousPoints: (json['PreviousPoints'] ?? 0).toInt(),
+      points: (json['points'] ?? 0).toInt(),
+
 
     userObjectifs: json['userObjectifs'] == null ? [] : (json['userObjectifs'] ).map((e) => UserObjectifsModel.fromJson(e) ).toList(),
-        points:  json['points'] ?? 0.0,
         id:  json['id'] ?? '',
         role: json['role'] != null
             ? (json['role'] is String
@@ -148,14 +149,14 @@ MemberModel copyWith({
   bool? IsSelected,
   List<dynamic>? Activities,
   List<dynamic>? teams,
-  double? points,
+  int? points,
   int? notificationCount,
   int? unreadNotificationCount,
   String? language,
   int? rank,
   String? description,
   String? board,
-  double? PreviousPoints,
+  int? PreviousPoints,
   bool? isEmailVerified,
   List<UserObjectif>? userObjectifs,
   String? roleName,

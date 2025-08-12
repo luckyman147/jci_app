@@ -116,7 +116,7 @@ class FunctionMember {
 
 
   static bool isChef(Team team, int index) =>
-      team.members.members[index].id !=
+      team.members.members[index].user.id !=
       team.members.teamLeader!.id;
 
   static bool checkIfIdExists(List<Member> list, String idToCheck) {

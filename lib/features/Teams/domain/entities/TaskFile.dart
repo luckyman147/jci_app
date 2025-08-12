@@ -1,6 +1,7 @@
 class TaskFile {
 
   final String url;
+  String get fileName => url.split('/').last;
 
   final String extension;
 factory TaskFile.empty() {
@@ -45,3 +46,26 @@ factory TaskFile.empty() {
 
 
   }
+class DownloadProgress {
+  final int totalBytes;
+  final int receivedBytes;
+  final double progress;
+
+  DownloadProgress({
+    required this.totalBytes,
+    required this.receivedBytes,
+    required this.progress,
+  });
+}
+class UploadProgress {
+  final int totalBytes;
+  final int bytesTransferred;
+  final double progress;
+
+  UploadProgress({
+    required this.totalBytes,
+    required this.bytesTransferred,
+    required this.progress,
+  });
+}
+

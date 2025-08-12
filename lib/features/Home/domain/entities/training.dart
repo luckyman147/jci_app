@@ -8,7 +8,7 @@ import 'package:jci_app/features/Home/domain/entities/Activitys/ParicipationStat
 class Training extends Activity {
   final String professeurName;
   final int duration;
-  final String type = "Training";
+
 
   Training({
     required this.professeurName,
@@ -16,6 +16,7 @@ class Training extends Activity {
     required super.activityBasics,
     required super.settings,
     required super.online,
+    super. type,
     required super.participation,
   });
 

@@ -15,6 +15,14 @@ final DocumentSnapshot? lastDocument;
   @override
   List<Object> get props => [isPrivate,isRefreshed];
 }
+
+class GetTeamsOfuser extends GetTeamsEvent {
+
+  const GetTeamsOfuser();
+
+  @override
+  List<Object> get props => [];
+}
 class GetMoreTeams extends GetTeamsEvent {
 
 
@@ -105,13 +113,13 @@ final TeamInput teamfi;
   List<Object?> get props => [teamfi];
 }
 class JoinTeam extends GetTeamsEvent{
-  final String Teamid ;
+  final TeamInput inputs ;
 
-  const JoinTeam({required this.Teamid});
+  const JoinTeam({required this.inputs});
 
   @override
   // TODO: implement props
-  List<Object?> get props => [Teamid];
+  List<Object?> get props => [inputs];
 
 }
 

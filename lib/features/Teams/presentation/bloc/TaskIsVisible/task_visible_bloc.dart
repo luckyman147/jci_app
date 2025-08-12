@@ -13,12 +13,25 @@ class TaskVisibleBloc extends Bloc<TaskVisibleEvent, TaskVisibleState> {
   TaskVisibleBloc() : super(const TaskVisibleInitial()) {
     on<TaskVisibleEvent>((event, emit) {
     });
+    on<ChangeWillAdded> ((event, emit) {
+      emit(state.copyWith(WillAdded: event.willAdded));
+    });
     on<ChangeStatusEvent>((event, emit) {
       emit(state.copyWith(status: event.status));
     });
     on<ToggleTaskVisible>(_onToggleTaskVisible);
     on<DeletedTaskedEvent>(ondeleted);
     on<ChangeSectionEvent>(_ChangeSectionEvent);
+    on<ChangeIsColumn>((event, emit) {
+      emit(state.copyWith(isColumn: event.isColumn));
+    });
+    on<ToggleTaskVisibleById>(
+        (event, emit) {
+      emit(state.copyWith(
+
+        SelectedTaskId: event.taskId,
+      ));
+    });
     on<ChangeTextFieldsTitle>(_changeTextFieldsTitle);
     on<ChangeTextFieldsDescription>(_changeTextFieldsDescription);
     on<ChangeImageEvent>(_ChangeImageEvent);

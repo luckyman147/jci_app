@@ -46,4 +46,44 @@ final String permissionName;
       ),
     ),PermissionType.canCreate,permissionName);
   }
+
+  static Widget CreateRowOption(
+      BuildContext context, {
+        required String label,
+         Color color=PrimaryColor,
+        required IconData icon,
+        required VoidCallback onTap,
+        required String permissionName,
+      }) {
+    return  AsyncComponents.buildFutureBuilder( Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 10),
+        child:
+
+        Column(
+          children: [
+            GestureDetector(
+              onTap: onTap,
+              child: Container(
+                height: 60,
+                width: 60,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: color.withOpacity(0.1),
+                  border: Border.all(color: color,width: 2)
+
+                ),
+                child: Icon(icon, color: color),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: PoppinsRegular(14, ColorsApp.textColorBlack),
+            ),
+          ],
+        ),
+      ),PermissionType.canCreate,permissionName
+    );
+  }
+
 }

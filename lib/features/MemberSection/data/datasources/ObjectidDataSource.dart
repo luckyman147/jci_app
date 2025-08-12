@@ -5,6 +5,7 @@ import 'package:jci_app/features/MemberSection/data/model/ObjectifsModels.dart';
 
 import '../../../auth/AuthWidgetGlobal.dart';
 import '../../domain/dto/UpdateObjectiveProgressDTO.dart';
+import '../../domain/entity/ActionDetails.dart';
 import '../../presentation/functions/ObjectifCreationService.dart';
 import '../Services/ObjectifLogicService.dart';
 import '../model/UserObjectifsInfosModel.dart';
@@ -15,7 +16,7 @@ abstract class ObjectifDataSource {
   Future<Unit> UpdateObjectif(ObjectifModel obj);
   Future<({List<userObjectifsInfosModel> userObjectifInfos, DocumentSnapshot? lastDoc})> fetchUserWithHisObjectifsProgress({required String userId, DocumentSnapshot<Object?>? lastDocument, required int limit});
 Future<List<userObjectifsInfosModel>> updateUserProgress(UpdateObjectiveProgressDTO update) ;
-
+  Future<List<userObjectifsInfosModel>> fetchObjectifsInProgress()  ;
 
 
 }
@@ -23,8 +24,8 @@ Future<List<userObjectifsInfosModel>> updateUserProgress(UpdateObjectiveProgress
 class ObjectifDataSourcesImpl implements ObjectifDataSource {
   final FirebaseFirestore firestore ;
   final ObjectifService objectiveService;
-
-  ObjectifDataSourcesImpl({required this.firestore,required this.objectiveService});
+final Store store;
+  ObjectifDataSourcesImpl(this.store, {required this.firestore,required this.objectiveService});
 
   @override
   Future<Unit> AddObjectif(ObjectifModel obj) async {
@@ -151,6 +152,67 @@ class ObjectifDataSourcesImpl implements ObjectifDataSource {
   Future<List<userObjectifsInfosModel>> updateUserProgress(UpdateObjectiveProgressDTO updateDto)async {
       return await objectiveService.updateUserObjectiveProgress(updateDto: updateDto);
 
+  }
+  @override
+  Future<List<userObjectifsInfosModel>> fetchObjectifsInProgress() async {
+
+    try {
+      final userId=store .getUserId() ;
+      final querySnapshot = await firestore
+          .collection("users")
+          .doc(userId)
+          .collection("line_objectifs")
+          .where("isCompleted", isEqualTo: false)
+          .where("currentProgress", isGreaterThanOrEqualTo: 0)
+          .orderBy('currentProgress', descending: true)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) return [];
+
+      List<String> objectifIds = querySnapshot.docs
+          .map((doc) => doc['objectifId'] as String)
+          .toList();
+
+      List<userObjectifsInfosModel> allUserObjectifInfos = [];
+
+      for (var objectifId in objectifIds) {
+        final objectifDoc = await firestore.collection("objectifs").doc(objectifId).get();
+
+        if (!objectifDoc.exists) continue;
+
+        final objectifData = objectifDoc.data() as Map<String, dynamic>;
+        final objectif = ObjectifModel.fromJson(objectifData);
+
+        final userObjectifDoc = querySnapshot.docs.firstWhere((doc) => doc['objectifId'] == objectifId);
+
+        final userObjectif = UserObjectifsModel.fromJson(
+          userObjectifDoc.data() as Map<String, dynamic>,
+        );
+
+        allUserObjectifInfos.add(userObjectifsInfosModel(objectif: objectif, userObjectif: userObjectif));
+      }
+
+// Now filter to 3 unique groupObjectif
+      List<userObjectifsInfosModel> uniqueGroupObjectifs = [];
+      Set<GroupObjectif> seenGroups = {};
+
+      for (var info in allUserObjectifInfos) {
+        final group = info.objectif.groupObjectif; // assuming this field exists on ObjectifModel
+
+        if (!seenGroups.contains(group)) {
+          uniqueGroupObjectifs.add(info);
+          seenGroups.add(group);
+        }
+
+        if (uniqueGroupObjectifs.length == 3) break;
+      }
+
+      return uniqueGroupObjectifs;
+
+    } catch (e) {
+      Logger().e(e);
+      throw ServerException();
+    }
   }
 
 }

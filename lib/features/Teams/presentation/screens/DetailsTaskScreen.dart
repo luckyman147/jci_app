@@ -10,23 +10,50 @@ import 'package:jci_app/features/Teams/presentation/widgets/Task/Implementation/
 
 import '../../../Home/domain/enums/Privacy.dart';
 import '../../domain/entities/Team/Team.dart';
+import '../../domain/entities/task/Task.dart';
 import '../utils/TaskUtils.dart';
-@RoutePage()
-class CreateTaskScreen extends StatefulWidget {
-  final Team team;
-  final String taskId;
+
+class TaskDetailsScreen extends StatefulWidget {
+  final String teamId;
+  final Team  team;
+  final Tasks task;
 
 
-  const CreateTaskScreen({Key? key, required this.team, required this.taskId})
+  const TaskDetailsScreen({Key? key, required this.team, required this.task, required this.teamId})
       : super(key: key);
+  static void openTaskDetailsBottomSheet(BuildContext context, Team team, Tasks task) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      useSafeArea: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return
+        SizedBox(
+              height: MediaQuery.of(context).size.height*2
+        ,
+         child:
+         SingleChildScrollView(
 
+              child: TaskDetailsScreen(team: team, task: task, teamId: team.meta.id,),
+         ));
+          },
+
+
+    );
+  }
   @override
-  State<CreateTaskScreen> createState() => _CreateTaskScreenState();
+  State<TaskDetailsScreen> createState() => _TaskDetailsScreenState();
 }
 
-class _CreateTaskScreenState extends State<CreateTaskScreen> {
+class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   final TextEditingController _taskNameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
+
 
   @override
   void initState() {
@@ -42,20 +69,24 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
 
-    return  BlocBuilder<GetTaskBloc, GetTaskState>(
+    return
+
+      Scaffold(
+
+      body:
+      BlocBuilder<GetTaskBloc, GetTaskState>(
         builder: (context, state) {
-   /*       return SingleChildScrollView(
+        return SingleChildScrollView(
             child: GetTaskByidWidget(
-                widget.team, widget.taskId, _taskNameController,
-                TaskUtils.  getIndexById(widget.taskId, state.tasks)),
+                widget.team,  _taskNameController,widget.task
+               ),
           );
 
-     */
-          return SizedBox();
+
+
         },
       
-    );
+    ));
   }
 }

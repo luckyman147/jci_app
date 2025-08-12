@@ -1,4 +1,8 @@
 import 'package:dartz/dartz.dart';
+import 'package:encrypt_shared_preferences/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/PermissionsDependecyInjection.dart';
 import 'package:jci_app/core/config/services/verification.dart';
 import 'package:jci_app/core/route/app_router.dart';
@@ -6,6 +10,8 @@ import 'package:jci_app/features/Home/Activity_Global.dart';
 import 'package:jci_app/features/Home/Activity_Injection_container.dart';
 import 'package:jci_app/features/MemberSection/member_di_container.dart';
 import 'package:jci_app/features/Teams/Team_injection_Container.dart';
+import 'package:jci_app/features/Teams/domain/entities/Checklist.dart';
+import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 import 'package:jci_app/features/about_jci/Jci_injection_Container.dart';
 
 import 'package:jci_app/features/auth/auth%20_injection_container.dart';
@@ -21,6 +27,7 @@ import 'core/mixins/Loggable.dart';
 import 'core/route/StatusGuard.dart';
 import 'core/route/status/status_cubit.dart';
 import 'features/Home/domain/entities/Category.dart';
+import 'features/Teams/domain/entities/task/Task.dart';
 import 'features/auth/AuthWidgetGlobal.dart';
 
 
@@ -31,11 +38,17 @@ final sll = GetIt.instance;
 
 Future<void> init() async {
   // Replace with your implementation
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+  await Hive.initFlutter();
+  await Hive.openBox('secureBox');
+  await Hive.openBox('memberBox');
 
+  sll.registerFactory(() => Store());
 
   sll.registerLazySingleton(() => FirebaseService());
+  sll.registerLazySingleton<StatusCubit>(() => StatusCubit( sll()));
   sll.registerLazySingleton(() => StatusGuard());
-  sll.registerLazySingleton(() => Store(sll()));
   sll.registerLazySingleton(() => AppRouter(
     sll()
   ));
@@ -58,10 +71,9 @@ Future<void> init() async {
     sll<FCMService>(),
     sll<AppCheckService>(),
   ));
-  sll.registerLazySingleton<StatusCubit>(() => StatusCubit( sll()));
 
 await initAuth();
-  initTeams();
+ await  initTeams();
 initActivities();
 initJci();
 await initMembers();
@@ -83,5 +95,11 @@ void registerAllHandlers() {
   registerHandler<Category>();
   registerHandler<List<Team>>();
   registerHandler<Team>();
+  registerHandler<List<Tasks>>();
+  registerHandler<Tasks>();
+  registerHandler<UploadProgress>();
+  registerHandler<TaskFile>();
+  registerHandler<CheckList>();
+  registerHandler<List<CheckList>>();
   registerHandler<({List<Team> Teams, DocumentSnapshot? lastDoc})>();
 }

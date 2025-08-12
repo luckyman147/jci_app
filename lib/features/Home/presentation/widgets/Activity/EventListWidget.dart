@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -66,7 +67,7 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                   scrollDirection: Axis.horizontal,
                   child: Container(
                     margin: paddingSemetricHorizontal(),
-                    height: 250,
+                    height: 150,
                     width: mediaQuery.size.width * 1.1,
                     decoration: BoxDecoration(
                       border: Border.all(color: textColor),
@@ -134,35 +135,27 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                                         // Text("${"Start At".tr(context)} ${DateFormat('h:mm').format(widget.Activities[index].ActivityBeginDate)}",style: PoppinsRegular(mediaQuery.devicePixelRatio*5, isBefore?Colors.red:isBetween?Colors.green:textColorBlack),),
                                         SizedBox(
                                             width: mediaQuery.size.width / 3,
-                                            child: Text(
+                                            child: AutoSizeText(
                                               widget.Activities[index].activityBasics.name
                                                   .toUpperCase(),
                                               overflow: TextOverflow.ellipsis,
                                               style: PoppinsSemiBold(
-                                                  widget.Activities[index].activityBasics.name
-                                                              .length <
-                                                          10
-                                                      ? mediaQuery
-                                                              .devicePixelRatio *
-                                                          7
-                                                      : mediaQuery
-                                                              .devicePixelRatio *
-                                                          6,
+                                                 16.sp,
                                                   textColorBlack,
                                                   TextDecoration.none),
                                             )),
                                           SizedBox(
-                                          width: mediaQuery.size.width / 2.5,
-                                          child: Text(
+
+                                          child: AutoSizeText(
                                             "${DateFormat('EEEE MMM d  h:mm', state.locale == const Locale('en') ? 'en_US' : 'fr_FR').format(widget.Activities[index].activityBasics.activityBeginDate)} ",
-                                            style: PoppinsSemiBold(
-                                                mediaQuery.devicePixelRatio * 6,
+                                            style: PoppinsRegular(
+                                                14.sp,
                                                 isBefore
                                                     ? Colors.red
                                                     : isBetween
                                                         ? Colors.green
                                                         : textColorBlack,
-                                                TextDecoration.none),
+                                                ),
                                           ),
                                         ),
 
@@ -177,24 +170,12 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                                               SizedBox(
                                                 width:
                                                     mediaQuery.size.width / 2,
-                                                child: Text(
+                                                child: AutoSizeText(
                                                   widget.Activities[index]
                                                       .activityBasics.activityAdress,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+
                                                   style: PoppinsLight(
-                                                    widget
-                                                                .Activities[
-                                                                    index]
-                                                                .activityBasics.activityAdress
-                                                                .length <
-                                                            20
-                                                        ? mediaQuery
-                                                                .devicePixelRatio *
-                                                            4.5
-                                                        : mediaQuery
-                                                                .devicePixelRatio *
-                                                            4,
+                                                    14.sp,
                                                     textColorBlack,
                                                   ),
                                                 ),

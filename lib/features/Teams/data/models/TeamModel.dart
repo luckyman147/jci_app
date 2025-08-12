@@ -56,7 +56,7 @@ class TeamModel extends Team {
           : entity.meta,
       stats: entity.stats,
       members: entity.members.copyWith(
-        teamLeader: generateNewId ? null : entity.members.teamLeader,
+        teamLeader:  entity.members.teamLeader,
       ),
     );
   }
@@ -78,7 +78,7 @@ class TeamModel extends Team {
         numberOfTasksCompleted: 0,
         numberOfTasksTotal: 0,
       ),
-      members: TeamMembers(members: [], teamLeader: null),
+      members: TeamMembers(members: [], teamLeader: null, membersIds: []),
     );
   }
 

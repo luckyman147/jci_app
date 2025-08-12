@@ -3,6 +3,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:jci_app/core/usescases/usecase.dart';
 import 'package:jci_app/features/MemberSection/domain/entity/Objectif.dart';
 import 'package:jci_app/features/MemberSection/domain/entity/UserObjectifInfos.dart';
 import 'package:jci_app/features/MemberSection/presentation/functions/FunctionObjectif.dart';
@@ -27,15 +28,15 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 class ObjectifBloc extends Bloc<ObjectifEvent, ObjectifState> {
   final fetchUserWithHisObjectifsProgressUsesCase fetch;
   final AddObjectifUsesCase addObjectif;
-
+final fetchTop3bjectivesProgressUsesCase fetchTop3bjectivesProgress;
   final DeleteObjectifUsesCase deleteObjectif;
 final UpdateObjectifUsesCase updateObjectif;
-  ObjectifBloc(this.fetch, this.addObjectif, this.deleteObjectif, this.updateObjectif, ) : super(ObjectifInitial()) {
+  ObjectifBloc(this.fetch, this.addObjectif, this.deleteObjectif, this.updateObjectif, this.fetchTop3bjectivesProgress, ) : super(ObjectifInitial()) {
     on<ObjectifEvent>((event, emit) {
       // TODO: implement event handler
     });
     on<ChangeStatus>(( event,emit)=>emit(state.copyWith(status: event.status)));
-
+on<FetchTop3UserobjectifsEvent>(_fetchTop3bjectivesProgress);
     on<LoadObjectifs>(_loadObjectifs, transformer: throttleDroppable(throttleDuration));
     on<LoadMoreObjectifs>(_loadMoreObjectifs, transformer: throttleDroppable(throttleDuration));
   on<CreateObjectifEvent>(_CreateObjetifs);
@@ -62,7 +63,28 @@ final UpdateObjectifUsesCase updateObjectif;
 
 
 
-
+_fetchTop3bjectivesProgress(FetchTop3UserobjectifsEvent event,Emitter<ObjectifState>emit) async {
+  if (state.objectifsHome.isNotEmpty){
+    emit(state.copyWith(
+      objectifsHome: state.objectifsHome,
+      status: ObjectifStatus.Success,
+    ));}
+  else {
+    try {
+    emit(state.copyWith(status: ObjectifStatus.Loading));
+      final top3Objectives = await fetchTop3bjectivesProgress (NoParams());
+      emit(EitherObjectifsOrSucces(top3Objectives, (objs) {
+        return state.copyWith(
+          objectifsHome: objs,
+          status: ObjectifStatus.Success,
+        );
+      }));
+    } catch (e) {
+      Logger().w(e);
+      emit(state.copyWith(status: ObjectifStatus.Failure));
+    }
+  }
+}
 
   ///Create Objectif event
   ///

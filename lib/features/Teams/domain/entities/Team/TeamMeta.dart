@@ -1,5 +1,6 @@
 import '../../../../Home/data/model/events/EventModel.dart';
 import '../../../../Home/domain/entities/Activity/event/Event.dart';
+import '../../../../Home/domain/entities/Activitys/ActivityBasics.dart';
 
 class TeamMeta {
   final String id;
@@ -7,7 +8,7 @@ class TeamMeta {
   final String description;
   final String? projectId;
   final String coverImage;
-  final Event? event;
+  final ActivityBasics? event;
   final bool status;
 
   const TeamMeta({
@@ -26,7 +27,7 @@ class TeamMeta {
     String? description,
     String? projectId,
     String? coverImage,
-    Event? event,
+    ActivityBasics? event,
     bool? status,
   }) {
     return TeamMeta(
@@ -57,9 +58,9 @@ class TeamMeta {
       id: json['id'] ?? '',
       name: json['name'] ?? '',
       description: json['description'] ?? '',
-      projectId: json['projectId'],
+      projectId: json['projectId']?? '',
       coverImage: json['coverImage'] ?? '',
-      event: json['event'] != null ? EventModel.fromJson(json['event']).toEvent() : null,
+      event: json['event'] != null ? ActivityBasics.fromJson(json['event']) : null,
       status: json['status'] ?? false,
     );
   }

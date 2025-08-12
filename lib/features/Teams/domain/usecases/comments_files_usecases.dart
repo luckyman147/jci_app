@@ -4,16 +4,17 @@ import '../../../../core/error/Failure.dart';
 import '../../../../core/usescases/usecase.dart';
 import '../dto/TaskIdParams.dart';
 import '../entities/TaskFile.dart';
+import '../entities/task/Comment.dart';
 import '../repository/Tasks/CheckListRepository.dart';
 import '../repository/Tasks/TaskInteractionRepository.dart';
 
-class AddCommentUseCase extends UseCase<Unit, CommentParams> {
+class AddCommentUseCase extends UseCase<String, TaskComment> {
   final TaskInteractionRepository repo;
   AddCommentUseCase(this.repo);
 
   @override
-  Future<Either<Failure, Unit>> call(CommentParams params) {
-    return repo.addComment(params.teamId,params.taskId, params.comment);
+  Future<Either<Failure, String>> call(TaskComment params) {
+    return repo.addComment(params);
   }
 }
 
@@ -39,13 +40,14 @@ class DeleteCommentUseCase extends UseCase<Unit, CommentParams> {
 
 
 
+
 class UpdateFileUseCase extends UseCase<TaskFile, FileParams> {
   final TaskInteractionRepository repo;
   UpdateFileUseCase(this.repo);
 
   @override
   Future<Either<Failure, TaskFile>> call(FileParams params) {
-    return repo.updateFiles(params.teamId,params.taskId, params.file);
+    return repo.updateFiles(params.teamId,params.taskId, params.file!);
   }
 }
 
@@ -55,6 +57,15 @@ class DeleteFileUseCase extends UseCase<Unit, FileParams> {
 
   @override
   Future<Either<Failure, Unit>> call(FileParams params) {
-    return repo.deleteFiles(params.teamId,params.taskId, params.fileId);
+    return repo.deleteFiles(params.teamId,params.taskId, params.fileId!);
+  }
+}
+class UploadFilesUseCase  {
+  final TaskInteractionRepository repo;
+  UploadFilesUseCase(this.repo);
+
+
+  Stream<Either<Failure, UploadProgress>> call(FileParams params) {
+    return repo.uploadFiles(params.teamId,params.taskId, params.files);
   }
 }

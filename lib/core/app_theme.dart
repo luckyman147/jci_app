@@ -80,13 +80,8 @@ final memberdeco= BoxDecoration(
     ));
 final ActivityDecoration=  BoxDecoration(
 
-borderRadius:  const BorderRadius.only(
-bottomLeft: Radius.circular(23),
-bottomRight: Radius.circular(20),
-topLeft: Radius.circular(15),
-topRight: Radius.circular(15),
-),
-border: Border.all(color: ColorsApp.textColorBlack, width: 2.0),
+
+border: Border.all(color: ColorsApp.BackWidgetColor, width: 2.0),
 color: textColorWhite,
 
 );

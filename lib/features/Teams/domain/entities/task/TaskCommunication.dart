@@ -3,7 +3,7 @@ import 'package:jci_app/features/Teams/data/models/CommentsModel.dart';
 import 'Comment.dart';
 
 class TaskCommunication {
-  final List<Comment> comments;
+  final List<TaskComment> comments;
 
   factory TaskCommunication.empty() {
     return TaskCommunication(
@@ -14,7 +14,7 @@ class TaskCommunication {
     required this.comments,
   });
   TaskCommunication copyWith({
-    List<Comment>? comments,
+    List<TaskComment>? comments,
   }) {
     return TaskCommunication(
       comments: comments ?? this.comments,

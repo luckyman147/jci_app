@@ -4,6 +4,7 @@ import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.
 import 'package:jci_app/features/Teams/presentation/bloc/TaskFilter/taskfilter_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/Timeline/timeline_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/commentsdFile/comment_file_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/NumPages/num_pages_bloc.dart';
 import 'package:jci_app/injection_container.dart' as di;
@@ -17,4 +18,5 @@ List<SingleChildWidget> teamProviders = [
   BlocProvider(create: (_) => di.sll<TimelineBloc>()),
   BlocProvider(create: (_) => di.sll<MembersTeamCubit>()),
   BlocProvider(create: (_) => di.sll<TaskfilterBloc>()),
+  BlocProvider(create: (_) => di.sll<CommentFileBloc>()),
 ];

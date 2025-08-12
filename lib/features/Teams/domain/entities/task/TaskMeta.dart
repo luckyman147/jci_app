@@ -1,29 +1,32 @@
+import 'package:jci_app/core/PrimitiveUser/UserModel.dart';
 import 'package:jci_app/features/Teams/domain/entities/task/Task.dart';
 
+import '../../../../../core/PrimitiveUser/User.dart';
 import '../../../presentation/bloc/GetTasks/get_task_bloc.dart';
+import '../TeamUser.dart';
 
 class TaskMeta {
   final String id;
   final String name;
-  final List<String> assignToImages;
+  final List<TeamUser> assignToMembers;
   final DateTime startDate;
   final DateTime deadline;
   final TaskCompletionStatus status;
-  factory TaskMeta.empty(String? name) {
+  factory TaskMeta.empty(String? name, TaskCompletionStatus status ) {
     return TaskMeta(
       id: '',
       name: name ?? '',
-      assignToImages: [],
+      assignToMembers: [],
       startDate: DateTime.now(),
       deadline: DateTime.now(),
-      status: TaskCompletionStatus.Todo,
+      status: status,
     );
   }
 
   TaskMeta({
     required this.id,
     required this.name,
-    required this.assignToImages,
+    required this.assignToMembers,
     required this.startDate,
     required this.deadline,
     required this.status,
@@ -31,7 +34,7 @@ class TaskMeta {
   TaskMeta copyWith({
     String? id,
     String? name,
-    List<String>? assignToImages,
+    List<TeamUser>? assignToImages,
     DateTime? startDate,
     DateTime? deadline,
     TaskCompletionStatus? status,
@@ -39,7 +42,7 @@ class TaskMeta {
     return TaskMeta(
       id: id ?? this.id,
       name: name ?? this.name,
-      assignToImages: assignToImages ?? this.assignToImages,
+      assignToMembers: assignToImages ?? assignToMembers,
       startDate: startDate ?? this.startDate,
       deadline: deadline ?? this.deadline,
       status: status ?? this.status,
@@ -49,7 +52,7 @@ class TaskMeta {
     return {
       'id': id,
       'name': name,
-      'assignToImages': assignToImages,
+      'assignToMembers': assignToMembers.map((e) =>e.toJson()).toList(),
       'startDate': startDate.toIso8601String(),
       'deadline': deadline.toIso8601String(),
       'status': status.name,
@@ -59,7 +62,10 @@ class TaskMeta {
     return TaskMeta(
       id: json['id'] ?? '',
       name: json['name'] ?? '',
-      assignToImages: List<String>.from(json['assignToImages'] ?? []),
+      assignToMembers: (json['assignToMembers'] as List<dynamic>?)
+          ?.map((e) => TeamUser.fromJson(e, ))
+          .toList() ?? [],
+
       startDate: DateTime.parse(json['startDate'] ?? DateTime.now().toIso8601String()),
       deadline: DateTime.parse(json['deadline'] ?? DateTime.now().toIso8601String()),
       status: TaskCompletionStatus.values.firstWhere(

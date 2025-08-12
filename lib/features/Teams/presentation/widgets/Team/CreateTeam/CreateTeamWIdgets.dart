@@ -10,6 +10,7 @@ import 'package:jci_app/core/widgets/loading_widget.dart';
 import 'package:jci_app/features/Teams/domain/entities/Team/TeamMembers.dart';
 import 'package:jci_app/features/Teams/domain/entities/Team/TeamMeta.dart';
 import 'package:jci_app/features/Teams/domain/entities/Team/TeamStats.dart';
+import 'package:jci_app/features/Teams/domain/entities/TeamUser.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
@@ -20,6 +21,7 @@ import '../../../../../../core/PrimitiveUser/User.dart';
 import '../../../../../../core/app_theme.dart';
 import '../../../../../../core/widgets/CommonTextField.dart';
 import '../../../../../Home/domain/entities/Activity/event/Event.dart';
+import '../../../../../Home/domain/entities/Activitys/ActivityBasics.dart';
 import '../../../../../Home/domain/enums/ActionImage.dart';
 import '../../../../../Home/domain/enums/Privacy.dart';
 import '../../../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
@@ -137,7 +139,7 @@ void addOrUpdateTeam({
         event:formzState.eventFormz.value ,
         status:visibleState.isPaid ),
     members: TeamMembers(teamLeader: currentTeam.isEmpty ? null :
-    currentTeam.members.teamLeader, members: membersState.members),
+    currentTeam.members.teamLeader, members: membersState.members, membersIds: membersState.members.map((e) => e.user.id??"").toList()),
     stats: TeamStats(
       numberOfTasksCompleted:  currentTeam.isEmpty ? 0 : currentTeam.stats.numberOfTasksCompleted,
       numberOfMembers: membersState.members.length,
@@ -240,7 +242,7 @@ Widget TextTeamfieldDescription(String name, String HintText,
 
 
 Widget bottomMembersSheet(BuildContext context, MediaQueryData mediaQuery,
-    List<User> members,assignType assign,Team team
+    List<TeamUser> members,assignType assign,Team team
 
 
 
@@ -268,7 +270,7 @@ Widget bottomMembersSheet(BuildContext context, MediaQueryData mediaQuery,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child:
-              members.isNotEmpty?membersImage(context, mediaQuery, members):
+              members.isNotEmpty?membersImage(context, mediaQuery, members.map((e)=>e.user).toList()):
               Text("${"Select".tr(context)}  ${"Members".tr(context)}",style: PoppinsRegular(18, ThirdColor),),
             ),
           )),
@@ -328,7 +330,7 @@ Widget membersImage(BuildContext context, MediaQueryData mediaQuery,
   ),
 );
 Widget bottomEventSheet(BuildContext context, MediaQueryData mediaQuery,
-    Event event,
+    ActivityBasics event,
 
 
     ) {
@@ -355,7 +357,7 @@ Widget bottomEventSheet(BuildContext context, MediaQueryData mediaQuery,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child:
-              event.activityBasics.name.isNotEmpty&& event.activityBasics.name!='Choose the Event'?imageEventWidget(event,mediaQuery):
+              event.name.isNotEmpty&& event.name!='Choose the Event'?imageEventWidget(event,mediaQuery):
               Text("Select an event".tr(context),style: PoppinsRegular(18, ThirdColor),),
             ),
           )),

@@ -15,6 +15,7 @@ import 'package:jci_app/features/Teams/presentation/widgets/Task/details/TaskWid
 
 import '../../../../../../core/widgets/loading_widget.dart';
 import '../../../../domain/entities/Team/Team.dart';
+import '../../../../domain/entities/task/Task.dart';
 import '../../../../domain/usecases/TaskUseCase.dart';
 import '../../../bloc/TaskFilter/taskfilter_bloc.dart';
 import '../../../Loadings/ShimmerEffects.dart';
@@ -31,30 +32,19 @@ Widget GetTasksWidget(Team team, MediaQueryData mediaQuery,
 
             switch (state.status) {
               case TaskStatus.initial:
-                return const TaskShimmer();
+
               case TaskStatus.error:
-                return Center(
-                    child :Column(
-                      children: [
-                        Image.asset("assets/images/task.jpg", height: mediaQuery.size.height * 0.2, width: mediaQuery.size.width * 0.5,),
+              context.read<GetTaskBloc>().add(GetTasks(id:team.meta.id,filter: TaskCompletionStatus.Todo));
 
-                        Text("Add your first Task".tr(context),style:PoppinsSemiBold(20, textColorBlack,TextDecoration.none),),
-
-                      ],
-                    )
-                );
+              return const TaskShimmer();
               case TaskStatus.success:
               case TaskStatus.Changed:
               case TaskStatus.ErrorUpdate:
-                if (st.selectedFilter==TaskFilter.All) {
-                  return TaskWidget(tasks: state.tasks, team: team,);
-                }
-                else if (st.selectedFilter==TaskFilter.Completed) {
-                  return TaskWidget(tasks: TaskUtils.filterCompletedTasks(state.tasks), team: team,);
-                }
-                else  {
-                  return TaskWidget(tasks:TaskUtils.filterPendingTasks(state.tasks), team: team,);
-                }
+
+                  return    TaskStatusBoard(tasks: state.tasks, teamId: team.meta.id,
+                    team: team,
+                    isVertical: context.watch<TaskVisibleBloc>().state.isColumn,);
+
 
               default:
                 return  const TaskShimmer();
@@ -64,32 +54,33 @@ Widget GetTasksWidget(Team team, MediaQueryData mediaQuery,
   );
 }
 
-Widget GetTaskByidWidget(Team team, String taskId,
-    TextEditingController TaskName, int index) {
+Widget GetTaskByidWidget(Team team ,
+    TextEditingController TaskName,Tasks task) {
   return BlocBuilder<GetTaskBloc, GetTaskState>(
     builder: (context, state) {
-      if (state is GetTaskInitial || state is GetTaskLoading ||
-          state.status == TaskStatus.Loading) {
-        return const LoadingWidget();
-      } else if (state is GetTaskByIdLoaded) {
-        return RefreshIndicator(
-          onRefresh: () async {
-            final inputFields input=inputFields(taskid: taskId, teamid: team.meta.id, file: null, memberid: null, status: false, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: null, fileid: null, );
 
-            context.read<GetTaskBloc>().add(
-                GetTaskById(ids: input));
-          },
+      switch (state.status) {
+        case TaskStatus.initial:
 
-          child: TaskDetailsWidget(
-            task: state.tasks[index], index: index, team: team,),
-        );
-      } else if (state is GetTaskError) {
-        return const LoadingWidget();
+        case TaskStatus.error:
+          return const LoadingWidget();
+        case TaskStatus.success:
+        case TaskStatus.Changed:
+        case TaskStatus.ErrorUpdate:
+
+          return  TaskDetailsWidget(
+          task: state.task!,  team: team,);
+
+
+
+        default:
+          return  const LoadingWidget();
       }
-      return const LoadingWidget();
     },
   );
 }
+
+
 
 Widget AddTask(mediaQuery,) =>
     BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
@@ -125,71 +116,3 @@ Widget AddTask(mediaQuery,) =>
       },
     );
 
-Widget TaskAddField(TextEditingController controller, String id) =>
-    BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
-      builder: (context, state) {
-        return Padding(
-          padding: paddingSemetricVerticalHorizontal(h: 18),
-          child: InkWell(
-            onTap: () {
-              if (state.WillDeleted == false) {
-                context.read<TaskVisibleBloc>().add(const ToggleTaskVisible(false));
-              }
-            },
-            child: Container(
-              decoration: taskDecoration,
-              child: TextField(
-
-                controller: controller,
-
-                style: PoppinsRegular(18, textColorBlack),
-                onChanged: (value) {
-
-                },
-                decoration: InputDecoration(
-
-
-                  enabled: state.WillAdded,
-
-                  prefixIcon: GestureDetector(
-                      onTap: () {
-                        context.read<TaskVisibleBloc>().add(
-                            const ToggleTaskVisible(true));
-                      },
-                      child: state.WillAdded ? const  Icon(
-                        Icons.cancel, color: Colors.red,) :const SizedBox()
-                  ),
-                  suffixIcon: GestureDetector(
-                      onTap: () {
-                        if (controller.text.isEmpty) {
-                          SnackBarMessage.showErrorSnackBar(
-                              message: "Empty Field".tr(context), context: context);
-                        }
-                        else {
-                          final inputFields input=inputFields(taskid: '', teamid: id, file: null, memberid: null, status: false, Deadline: null, StartDate: null, name: controller.text, task: null, isCompleted: null, member: null, fileid: null, );
-
-                          context.read<GetTaskBloc>().add(CreateTask(
-                              input
-                          ));
-
-                          controller.clear();
-                          context.read<TaskVisibleBloc>().add(
-                              const ToggleTaskVisible(true));
-                          context.read<TaskVisibleBloc>().add(
-                              const ChangeIsUpdatedEvent(true));
-                        }
-                      },
-                      child: state.WillAdded ?const  Icon(
-                        Icons.check_circle, color: PrimaryColor,) :const SizedBox()
-                  ),
-                  hintText: '${"Add".tr(context)} ${"Task".tr(context)}',
-                  border: InputBorder.none,
-                  contentPadding:const  EdgeInsets.all(18),
-                ),
-              ),
-
-            ),
-          ),
-        );
-      },
-    );

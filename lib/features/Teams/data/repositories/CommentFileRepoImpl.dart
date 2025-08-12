@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/core/Handlers/Handler.dart';
 
 import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/features/Teams/data/datasources/CommentFileRemoteDatasource.dart';
+import 'package:jci_app/features/Teams/data/models/CommentsModel.dart';
 
 import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
+import 'package:jci_app/features/Teams/domain/entities/task/Comment.dart';
 
 import '../../domain/repository/Tasks/TaskInteractionRepository.dart';
 
@@ -13,12 +17,13 @@ class CommentFileRepoImpl extends TaskInteractionRepository {
   final Handler <Unit> handler;
   final Handler <String> Stringhandler;
   final Handler <TaskFile> taskhandler;
-  CommentFileRepoImpl(this.handler, this.Stringhandler, this.taskhandler, {required this.remoteDataSource});
+  final Handler <UploadProgress> filehandler;
+  CommentFileRepoImpl(this.handler, this.Stringhandler, this.taskhandler, this.filehandler, {required this.remoteDataSource});
   @override
-  Future<Either<Failure, Unit>> addComment(String teamId, String taskId, String comment)async {
+  Future<Either<Failure, String>> addComment(TaskComment comment)async {
 
-    return await handler.handle(
-  onCall:    () => remoteDataSource.addComment(teamId, taskId, comment),
+    return await Stringhandler.handle(
+  onCall:    () => remoteDataSource.addComment(CommentModel.fromEntity(comment)),
   onError:     (result) {
     Failure.fromException(result);
   }
@@ -67,6 +72,16 @@ class CommentFileRepoImpl extends TaskInteractionRepository {
   Future<Either<Failure, TaskFile>> updateFiles(String teamId, String taskId, TaskFile file) {
     // TODO: implement updateFiles
     throw UnimplementedError();
+  }
+
+  @override
+  Stream<Either<Failure, UploadProgress>> uploadFiles(String teamId, String taskId, List<File> bytes ) async*{
+      yield* filehandler.handleSTream(
+      onCall: () async*{ yield* remoteDataSource.uploadFile(teamId:  teamId,taskId:  taskId,files: bytes);},
+      onError: (result) {
+     throw   Failure.fromException(result);
+      },
+    );
   }
   // This class is currently empty, but it can be extended in the future
   // to implement methods related to comment file operations.

@@ -101,7 +101,7 @@ class MeetingRemoteDataSourceImpl implements MeetingRemoteDataSource {
       // Get all meetings in the activities collection
       final snapshot = await activitiesCollection
           .where('type', isEqualTo: "Meeting")
-          .orderBy('ActivityEndDate', descending: true)
+          .orderBy('activityBasics.activityEndDate', descending: true)
           .get();
       Logger().i(snapshot);
       final meetings = snapshot.docs.map((doc) {

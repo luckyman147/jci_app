@@ -193,31 +193,7 @@ context.navigateTo(CreateUpdateActivityRoute(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SizedBox(
-                  width: mediaQuery.size.width,
-                  height: 30.h,
-                  child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return Text(
-                          "#${activitys.settings.categoryIds[index]}",
-                          style: PoppinsSemiBold(
-                              14.sp, PrimaryColor, TextDecoration.none),
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const SizedBox(
-                          width: 3,
-                        );
-                      },
-                      itemCount: activitys.settings.categoryIds.length),
-                ),
-              ),
-            ),
+
             //  PriceWidget(mediaQuery, activitys, context),
             ScrollingTextAnimation(
               address: activitys.activityBasics.activityAdress,
@@ -231,6 +207,33 @@ context.navigateTo(CreateUpdateActivityRoute(
           ],
         ),
       );
+
+  static Padding buildCategories(MediaQueryData mediaQuery, Activity activity) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: SizedBox(
+        width: mediaQuery.size.width,
+        child: Wrap(
+          spacing: 8.w,
+          runSpacing: 8.h,
+          children: activity.settings.categoryIds.map((category) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+              decoration: BoxDecoration(
+                color: BackWidgetColor,
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: AutoSizeText(
+                "#$category",
+                style: PoppinsSemiBold(14.sp, ColorsApp.BackWidgetColor, TextDecoration.none),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
 
   static Container PriceWidget(
       mediaQuery, Activity activitys, BuildContext context) {

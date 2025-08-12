@@ -74,12 +74,7 @@ class _ScrollingTextAnimationState extends State<ScrollingTextAnimation>
                   style: PoppinBold(23.sp,
                       textColorBlack, TextDecoration.none),
                 ),
-                Text(
 
-                  widget.address,
-
-                  style: PoppinsNorml(13.sp, ThirdColor, ),
-                ),
               ],
             ),
           );

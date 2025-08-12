@@ -12,14 +12,15 @@ import '../../../../core/app_theme.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../Home/domain/entities/Activitys/Activity.dart';
 import '../../../Home/domain/entities/Activity/event/Event.dart';
+import '../../../Home/domain/entities/Activitys/ActivityBasics.dart';
 import '../../../Home/domain/enums/ActivityEnum.dart';
 import '../../../Home/domain/enums/SearchType.dart';
 import '../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 
-Widget EventsTeamContainer(mediaQuery,Event item)=>BlocBuilder<FormzBloc, FormzState>(
+Widget EventsTeamContainer(mediaQuery,ActivityBasics item)=>BlocBuilder<FormzBloc, FormzState>(
 
     builder: (context, state) {
-final ff=state.eventFormz.value??Event.eventTest;
+final ff=state.eventFormz.value?? ActivityBasics.empty();
 return  Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -33,7 +34,7 @@ return  Row(
               width: mediaQuery.size.width / 3,
               duration: const Duration(milliseconds: 500),
               decoration: BoxDecoration(
-                  color: ff.activityBasics.id == item.activityBasics.id?PrimaryColor:BackWidgetColor,
+                  color: ff.id == item.id?PrimaryColor:BackWidgetColor,
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
@@ -47,9 +48,9 @@ return  Row(
                 padding: const EdgeInsets.all(12.0),
                 child: Text(
 
-                ff.activityBasics.id == item.activityBasics.id?"Selected".tr(context):"Select".tr(context)
+                ff.id == item.id?"Selected".tr(context):"Select".tr(context)
                   ,style:PoppinsSemiBold(14,
-                               ff.activityBasics.id == item.activityBasics.id?textColorWhite:textColorBlack
+                               ff.id == item.id?textColorWhite:textColorBlack
 
                 , TextDecoration.none) ,),
               ),
@@ -162,13 +163,13 @@ Widget EventsDetails(List<Event> Events,mediaQuery)=>ListView.separated(
   itemCount: Events.length,
   itemBuilder: (context, index) {
 
-    return EventsTeamContainer(mediaQuery, Events[index]);
+    return EventsTeamContainer(mediaQuery, Events[index].activityBasics);
   },
   separatorBuilder: (BuildContext context, int index) { return const SizedBox(height: 10,);  },
 
-);Widget imageEventWidget(Activity item,mediaQuery){ return Row(
+);Widget imageEventWidget(ActivityBasics item,mediaQuery){ return Row(
     children: [
-      item.activityBasics.coverImages.isEmpty
+      item.coverImages.isEmpty
           ?  ClipRRect(
         borderRadius: BorderRadius.circular(100),
         child: Container(
@@ -184,7 +185,7 @@ Widget EventsDetails(List<Event> Events,mediaQuery)=>ListView.separated(
 
         borderRadius: BorderRadius.circular(100),
         child: Image.memory(
-          base64Decode(item.activityBasics.coverImages.first??""),
+          base64Decode(item.coverImages.first??""),
           width: 50,
           height: 40,
           fit: BoxFit.cover,
@@ -194,7 +195,7 @@ Widget EventsDetails(List<Event> Events,mediaQuery)=>ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: SizedBox(
             width: mediaQuery.size.width/3,
-            child: Text(item.activityBasics.name,
+            child: Text(item.name,
               overflow: TextOverflow.ellipsis,
               style: PoppinsSemiBold(18, textColorBlack,TextDecoration.none),)),
       ),

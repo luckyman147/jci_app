@@ -1,4 +1,5 @@
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
 import 'package:jci_app/core/config/env/Constants.dart';
 import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
@@ -24,11 +25,12 @@ Widget BlocMonthlyWeeklyActivity(activity act, MediaQueryData mediaQuery) =>
           builder: (context, state) {
 
             switch (state.activityfetchState) {
-              case ActivityFetchState.Error:
-                 return SizedBox();
-              case ActivityFetchState.Empty:
-              case ActivityFetchState.Loading:
 
+                case ActivityFetchState.Error:
+                 return AutoSizeText('No Activities Please create One');
+
+              case ActivityFetchState.Loading:
+              case ActivityFetchState.Empty:
                 return const ActivityMonth();
               case ActivityFetchState.ActivityLoaded:
               case ActivityFetchState.ActivityChanged:

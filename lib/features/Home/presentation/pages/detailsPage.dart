@@ -95,7 +95,7 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
         BlocListener<UserObjectifProgressCubit,UserObjectifProgressState>(
         listener: (context,objState){
     Logger().wtf(objState.progresStatus);
-    TopSnackbar.show(objState.userProgresUpdates, context);
+   // TopSnackbar.show(objState.userProgresUpdates, context);
 
     }),
         BlocListener<AcivityFBloc, AcivityFState>(

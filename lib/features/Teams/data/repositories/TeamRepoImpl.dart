@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/core/Handlers/Handler.dart';
+import 'package:jci_app/core/PrimitiveUser/UserModel.dart';
 import 'package:jci_app/core/config/services/TeamStore.dart';
 
 import 'package:jci_app/core/error/Failure.dart';
@@ -10,6 +11,8 @@ import 'package:jci_app/features/Teams/domain/entities/Team/Team.dart';
 
 
 import '../../../../../core/error/Exception.dart';
+import '../../../../core/PrimitiveUser/User.dart';
+import '../../domain/entities/TeamUser.dart';
 import '../../domain/repository/TeamRepo.dart';
 import '../datasources/TeamLocalDataSources.dart';
 import '../datasources/TeamRemoteDatasources.dart';
@@ -175,7 +178,7 @@ return
   }
 
   @override
-  Future<Either<Failure, Unit>> JoinTeam(String id) async{
+  Future<Either<Failure, Unit>> JoinTeam(TeamUser user,String id) async{
     return
       await   unithandle.handle(onError: (e) {
       if (e is Exception) {
@@ -183,8 +186,20 @@ return
       } else {
         throw e;
       }
-    }, onCall: ()async => await teamRemoteDataSource.joinTeam(id));
+    }, onCall: ()async => await teamRemoteDataSource.joinTeam(user, id));
 
+  }
+
+  @override
+  Future<Either<Failure, List<Team>>> getTeamsOfUser() async{
+    return
+      await   Teamshandle.handle(onError: (e) {
+        if (e is Exception) {
+          return e.get_failure;
+        } else {
+          throw e;
+        }
+      }, onCall: ()async => await teamRemoteDataSource.getTeamsOfUser());
   }
 
 

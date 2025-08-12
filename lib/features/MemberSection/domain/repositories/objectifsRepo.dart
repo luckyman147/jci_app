@@ -13,8 +13,9 @@ abstract class ObjectifRepo{
   Future<Either<Failure,({List<UserObjectifInfos> userObjectifInfos, DocumentSnapshot? lastDoc})>> fetchUserWithHisObjectifsProgress({
     required String userId,
     DocumentSnapshot? lastDocument,
+
     required int limit,
   });
-
+  Future<Either<Failure,List<UserObjectifInfos>>>  fetchObjectifsInProgress();
   Future<Either<Failure,List<UserObjectifInfos>>> updateUserObjectivesProgress(UpdateObjectiveProgressDTO update);
 }

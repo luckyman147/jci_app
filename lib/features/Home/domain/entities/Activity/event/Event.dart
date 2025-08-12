@@ -10,7 +10,7 @@ import '../../Activitys/ParicipationStatus.dart';
 class Event extends Activity {
   final User leaderName;
   final DateTime registrationDeadline;
-  final String type = "Event";
+
 
   const Event({
     required this.leaderName,

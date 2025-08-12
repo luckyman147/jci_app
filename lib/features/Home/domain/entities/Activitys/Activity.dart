@@ -9,8 +9,9 @@ class Activity extends Equatable {
   final ActivitySettings settings;
   final OnlineSettings online;
   final ParticipationStatus participation;
-
+  final String type ;
   const Activity({
+    this.type = "Event",
     required this.activityBasics,
     required this.settings,
     required this.online,
@@ -39,6 +40,7 @@ class Activity extends Equatable {
       ...settings.toJson(),
       ...online.toJson(),
       ...participation.toJson(),
+      'type': type, // Include type in JSON
     };
   }
 

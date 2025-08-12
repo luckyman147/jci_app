@@ -30,12 +30,12 @@ class StatusCubit extends Cubit<StatusState> {
 
 
 
-    try {
-      if (language == null) {
+    try {  if (isLoggedIn) {
+    setAuthenticated();
+    }
+  else    if (language == null) {
         emit(state.copyWith(status: RouteStatus.Language));
-      }  else if (isLoggedIn) {
-        setAuthenticated();
-      }else if (isFirstEntry) {
+      } else if (isFirstEntry) {
         setFirstEntry();
       } else if (!isLoggedIn) { // This condition covers the token expired scenario
 setTokenExpired();      } else {

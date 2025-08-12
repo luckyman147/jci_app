@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/core/Handlers/Handler.dart';
+import 'package:jci_app/core/PrimitiveUser/UserModel.dart';
 import 'package:jci_app/core/error/Failure.dart';
 import 'package:jci_app/features/Teams/data/models/CheckListModel.dart';
 import 'package:jci_app/features/Teams/domain/entities/Checklist.dart';
@@ -9,8 +10,10 @@ import 'package:jci_app/features/Teams/domain/entities/task/Task.dart';
 import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 import 'package:jci_app/features/Teams/domain/repository/Tasks/TaskRepo.dart';
 
+import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/error/Exception.dart';
 import '../../../../core/network/network_info.dart';
+import '../../domain/entities/TeamUser.dart';
 import '../datasources/TaskLocalDataSources.dart';
 import '../datasources/TaskRemoteDatasources.dart';
 
@@ -50,13 +53,13 @@ final Handler<Unit> unitHandler;
   }
 
   @override
-  Future<Either<Failure, Tasks>> addTask(String teamId, String name) {
-    return _handleData(remote.addTask(teamId, name));
+  Future<Either<Failure, Tasks>> addTask(String teamId, String name,TaskCompletionStatus status) async  {
+    return _handleData(remote.addTask(teamId, name,status));
   }
 
   @override
-  Future<Either<Failure, Unit>> deleteTask(String teamId,String taskId) {
-    return _handleUnit(remote.deleteTask(teamId,taskId));
+  Future<Either<Failure, Unit>> deleteTask(String teamId,String taskId)async {
+    return await _handleUnit(remote.deleteTask(teamId,taskId));
   }
 
 
@@ -73,7 +76,7 @@ final Handler<Unit> unitHandler;
   }
 
   @override
-  Future<Either<Failure, Unit>> updateMembers(String teamId,String taskId, bool status, String memberId) {
+  Future<Either<Failure, Unit>> updateMembers(String teamId,String taskId, bool status, TeamUser memberId) {
     return _handleUnit(remote.updateMembers(teamId,taskId, status, memberId));
   }
 
@@ -91,8 +94,8 @@ final Handler<Unit> unitHandler;
     return await unitHandler.handle(onCall: () async {
 
 
-          final data = await future;
-          return data;
+          await future;
+          return Future.value(unit);
 
       },
       onError: (e) {
@@ -105,6 +108,12 @@ final Handler<Unit> unitHandler;
   Future<Either<Failure, Unit>> updateTaskStatus(String teamId,String taskId, TaskCompletionStatus isCompleted) {
     return _handleUnit(remote.updateIsCompleted(teamId,taskId, isCompleted));
 
+  }
+
+  @override
+  Future<Either<Failure, Unit>> updateDescription(String teamId, String taskId, String description) async{
+
+    return await _handleUnit(remote.updateTaskDescription(teamId, taskId, description));
   }
 }
 

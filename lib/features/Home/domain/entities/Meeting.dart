@@ -22,6 +22,7 @@ class Meeting extends Activity {
     required this.director,
     required this.agenda,
     this.status = "Not Started",
+    super.type="Meeting",
     this.currentIndex = -1,
     required super.activityBasics,
     required super.settings,

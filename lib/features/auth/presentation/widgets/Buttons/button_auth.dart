@@ -1,6 +1,7 @@
 
 
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jci_app/core/widgets/loading_widget.dart';
 
@@ -52,7 +53,7 @@ class authButton extends StatelessWidget {
         ),
         ),
 
-            Text(text,style: PoppinsRegular(18.sp, ColorsApp.textColorBlack),),
+            AutoSizeText(text,style: PoppinsRegular(15.sp, ColorsApp.textColorBlack),),
           ],
         ),
       ),

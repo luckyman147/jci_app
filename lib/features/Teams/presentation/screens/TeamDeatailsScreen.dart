@@ -28,6 +28,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
 
 TeamListeners.init(widget.id,context);
 
+
     // TODO: implement initState
     super.initState();
   }

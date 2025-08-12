@@ -83,64 +83,6 @@ class ActivityDetailsRouteArgs {
 }
 
 /// generated route for
-/// [CreateTaskScreen]
-class CreateTaskRoute extends PageRouteInfo<CreateTaskRouteArgs> {
-  CreateTaskRoute({
-    Key? key,
-    required Team team,
-    required String taskId,
-    List<PageRouteInfo>? children,
-  }) : super(
-         CreateTaskRoute.name,
-         args: CreateTaskRouteArgs(key: key, team: team, taskId: taskId),
-         initialChildren: children,
-       );
-
-  static const String name = 'CreateTaskRoute';
-
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) {
-      final args = data.argsAs<CreateTaskRouteArgs>();
-      return CreateTaskScreen(
-        key: args.key,
-        team: args.team,
-        taskId: args.taskId,
-      );
-    },
-  );
-}
-
-class CreateTaskRouteArgs {
-  const CreateTaskRouteArgs({
-    this.key,
-    required this.team,
-    required this.taskId,
-  });
-
-  final Key? key;
-
-  final Team team;
-
-  final String taskId;
-
-  @override
-  String toString() {
-    return 'CreateTaskRouteArgs{key: $key, team: $team, taskId: $taskId}';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! CreateTaskRouteArgs) return false;
-    return key == other.key && team == other.team && taskId == other.taskId;
-  }
-
-  @override
-  int get hashCode => key.hashCode ^ team.hashCode ^ taskId.hashCode;
-}
-
-/// generated route for
 /// [CreateTeamScreen]
 class CreateTeamRoute extends PageRouteInfo<CreateTeamRouteArgs> {
   CreateTeamRoute({Key? key, required Team team, List<PageRouteInfo>? children})
@@ -411,7 +353,7 @@ class ModifyUserRoute extends PageRouteInfo<ModifyUserArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<ModifyUserArgs>();
-      return ModifyUser(key: args.key, member: args.member);
+      return ModifyUserPage(key: args.key, member: args.member);
     },
   );
 }
@@ -440,16 +382,16 @@ class ModifyUserArgs {
 }
 
 /// generated route for
-/// [Objectionable]
-class ObjectifformpageRoute extends PageRouteInfo<ObjectifformpageArgs> {
-  ObjectifformpageRoute({
+/// [Objectifformpage]
+class ObjectifformPageRoute extends PageRouteInfo<ObjectifformpageArgs> {
+  ObjectifformPageRoute({
     Key? key,
     required String MemberId,
     required ObjectiveEvent event,
     Objectif? obj,
     List<PageRouteInfo>? children,
   }) : super(
-         ObjectifformpageRoute.name,
+         ObjectifformPageRoute.name,
          args: ObjectifformpageArgs(
            key: key,
            MemberId: MemberId,
@@ -617,7 +559,7 @@ class PasswordResetSentRouteArgs {
 }
 
 /// generated route for
-/// [ResetPasswordRoute]
+/// [ResetPassword]
 class ResetPasswordRoute extends PageRouteInfo<ResetPasswordArgs> {
   ResetPasswordRoute({
     Key? key,
@@ -635,7 +577,7 @@ class ResetPasswordRoute extends PageRouteInfo<ResetPasswordArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<ResetPasswordArgs>();
-      return ResetPassword(key: args.key, email: args.email);
+      return ResetPasswordPage(key: args.key, email: args.email);
     },
   );
 }
@@ -793,6 +735,8 @@ class SplashRoute extends PageRouteInfo<void> {
     },
   );
 }
+
+
 
 /// generated route for
 /// [TeamDetailsScreen]

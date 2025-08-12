@@ -5,6 +5,7 @@ enum ObjectiveEvent{Delete,Create,Edit,NoAction}
   const ObjectifState({
     this.status = ObjectifStatus.initial,
     this.objectifs = const [],
+    this.objectifsHome = const [],
     this.hasReachedMax = false,
     this.lastDocument,
     this.event = ObjectiveEvent.NoAction,
@@ -16,11 +17,13 @@ final Map<String,List<UserObjectifInfos>> groupBYObjectifs;
   final ObjectifStatus status;
   final ObjectiveEvent event;
   final List<UserObjectifInfos> objectifs;
+  final List<UserObjectifInfos> objectifsHome;
 
   final bool hasReachedMax;
   final DocumentSnapshot? lastDocument;
 
 ObjectifState copyWith({
+    List<UserObjectifInfos>? objectifsHome,
 
   Map<String,List<UserObjectifInfos>>? groupBYObjectifs,
     List<UserObjectifInfos>?objectifs,
@@ -33,6 +36,7 @@ ObjectifState copyWith({
  }){
     return ObjectifState(
 
+      objectifsHome: objectifsHome??this.objectifsHome,
       event: event??this.event,
       groupBYObjectifs: groupBYObjectifs??this.groupBYObjectifs,
       lastDocument: lastDocument??this.lastDocument,
@@ -46,6 +50,7 @@ ObjectifState copyWith({
     List<Object> get props => [
       event,
 
+      objectifsHome,
       status,
       objectifs,
       hasReachedMax,

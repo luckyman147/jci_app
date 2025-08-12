@@ -41,7 +41,9 @@ class  LinkedText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Text(text,style:PoppinsSemiBold(size, ColorsApp.PrimaryColor,TextDecoration.underline) ,);
+    return Row (children: [ Text(text,style:PoppinsNorml(size, ColorsApp.textColor) ,),
+    Icon(Icons.arrow_forward_ios_sharp,color: ColorsApp.textColor,size: 10,)
+    ]);
   }
 }
 

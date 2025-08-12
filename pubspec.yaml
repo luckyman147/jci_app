@@ -33,6 +33,8 @@ dependencies:
   url_launcher:
   flutter_countdown_timer:
   dotted_border:
+  hive:
+  hive_flutter:
   bloc_concurrency: ^0.3.0
   stream_transform: ^2.0.0
   font_awesome_flutter:

@@ -1,23 +1,33 @@
 
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/Home/presentation/widgets/components/stuff/DateWidget.dart';
+import 'package:jci_app/features/Teams/domain/dto/TaskIdParams.dart';
+import 'package:jci_app/features/Teams/domain/entities/TaskFile.dart';
 import 'package:jci_app/features/Teams/presentation/utils/DatePickerFiles.dart';
 import 'package:jci_app/features/Teams/presentation/utils/FileStorage.dart';
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
-
+import 'package:open_file/open_file.dart';
 import '../../../../../../core/PrimitiveUser/User.dart';
 import '../../../../../../core/app_theme.dart';
+import '../../../../../../core/config/services/uploadImage.dart';
 import '../../../../../Home/domain/enums/Privacy.dart';
 import '../../../../../../core/Member.dart';
 import '../../../../domain/entities/Team/Team.dart';
+import '../../../../domain/entities/TeamUser.dart';
+import '../../../../domain/entities/task/Task.dart';
 import '../../../../domain/usecases/TaskUseCase.dart';
 import '../../../bloc/GetTasks/get_task_bloc.dart';
 import '../../../bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../../bloc/Timeline/timeline_bloc.dart';
+import '../../common/FilerowWidget.dart';
 import '../../member/MembersTeamSelection.dart';
+import '../Implementation/CommentsImpl.dart';
 
 
 Widget BuildActions(Function( )act1,Function()act2)=>Row(
@@ -28,6 +38,63 @@ Widget BuildActions(Function( )act1,Function()act2)=>Row(
   ],
 );
 
+
+Widget buildComments(BuildContext context,String id,MediaQueryData media,int numComments) {
+  return BlocBuilder<GetTaskBloc, GetTaskState>(
+    builder: (context, state) {
+      return
+      Padding(padding: paddingSemetricVertical(),
+          child:
+
+    SingleChildScrollView(child:
+        Container(
+
+          width: double.infinity,
+            decoration: taskdex,
+            child:  Padding(
+              padding: paddingSemetricVerticalHorizontal(),
+              child: Column(
+
+                spacing: 10,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildText('Comments', media),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                      height: numComments==0?150: 150+ (numComments* 40),
+
+                      child:     Commentsimpl(teamId: id,))
+
+                ],
+              ),
+            ))));
+    },
+  );}
+Widget buildDeleteButton(VoidCallback onPressed,BuildContext context) {
+  return
+    Padding(padding: paddingSemetricVertical() ,child:
+    SizedBox(
+    width: double.infinity,
+    child: Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.red.withOpacity(0.3),
+          width: 2,
+        ),
+        color: Colors.red.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: TextButton.icon(
+        onPressed: onPressed,
+        icon: Icon(Icons.delete, color: Colors.red),
+        label: Text(
+          'Delete'.tr(context),
+          style: PoppinsRegular(16, Colors.red),
+        ),
+      ),
+    ),
+  ));
+}
 Widget buildAddButton(Function() onadd) {
   return SizedBox(
     height: 30,
@@ -46,7 +113,47 @@ Widget buildAddButton(Function() onadd) {
           child: const Center(child: Icon(Icons.add_rounded,color: textColorWhite,))), ),
   );
 }
+Widget AddFileButton(Function() onAdd, {String text = "Attach File"}) {
+  return InkWell(
+    onTap: onAdd,
+    child: DottedBorder(
+      borderType: BorderType.RRect,
+      radius: Radius.circular(10),
+      dashPattern: [6, 3],
+      color: textColor, // Use your theme or preferred color
+      strokeWidth: 2,
+      child: Container(
 
+
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child:
+        Row(
+
+          children: [
+            const Icon(
+              Icons.attach_file,
+              color: textColor,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              text,
+              style: PoppinsRegular(
+                19,
+                ColorsApp.textColor,
+              ),
+            ),
+          ],
+        ),
+
+
+      ),
+    ),
+  );
+}
 Text buildText(String text,MediaQueryData mediaQuery) => Text(text,style: PoppinsRegular(mediaQuery.devicePixelRatio*5, textColor),);
 
 Widget BorderSelection(String text , Section sec) {
@@ -69,7 +176,7 @@ Widget BorderSelection(String text , Section sec) {
                 )
             ),
 
-            child: Text(text,style: PoppinsRegular(18, state.section==sec?textColorBlack:ThirdColor),),),
+            child: Text(text,style: PoppinsRegular(12, state.section==sec?textColorBlack:ThirdColor),),),
         ),
       );
     },
@@ -77,7 +184,11 @@ Widget BorderSelection(String text , Section sec) {
 }
 
 Widget buildTextField(FocusNode tasknode,bool title, TextEditingController TaskName,
-    Function() onTap,String hintText,MediaQueryData mediaQuery, Function() OnPressed) {
+    Function() onTap,String hintText,MediaQueryData mediaQuery,
+
+    Function() OnPressed
+    ,{int minlines = 1}
+    ) {
 
   return
     BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
@@ -90,7 +201,10 @@ Widget buildTextField(FocusNode tasknode,bool title, TextEditingController TaskN
             width: mediaQuery.size.width/1.5,
 
 
-            child: buildtextfield(tasknode,title,TaskName, hintText,OnPressed  ));
+            child: buildtextfield(
+                minlines: minlines,
+
+                tasknode,title,TaskName, hintText,OnPressed  ));
       },
     );
 }
@@ -108,14 +222,17 @@ Padding buildTextName(Function() onTap, TextEditingController TaskName) {
   );
 }
 
-Padding buildtextfield(FocusNode taskNode,bool isTrue,TextEditingController TaskName, String hintText,Function() OnPressed) {
+Padding buildtextfield(FocusNode taskNode,bool isTrue,TextEditingController TaskName,
+
+    String hintText,Function() OnPressed,{int minlines=1}) {
   return Padding(
     padding: paddingSemetricVerticalHorizontal(),
     child: TextField(
       focusNode:taskNode ,
       style: PoppinsRegular(20  , textColorBlack),
       controller:TaskName,
-
+cursorColor: ColorsApp.PrimaryColor,
+      minLines: minlines,
 
       enabled: isTrue,
       decoration: InputDecoration(
@@ -125,7 +242,7 @@ Padding buildtextfield(FocusNode taskNode,bool isTrue,TextEditingController Task
 
           suffixIcon: IconButton(
             onPressed: OnPressed,
-            icon: const Icon(Icons.check_circle,color: PrimaryColor,size: 20,),
+            icon: const Icon(Icons.check_circle,color: Colors.green,size: 20,),
           ),
 
           hintText: hintText
@@ -141,8 +258,10 @@ Widget BottomShetTaskBody(
     DateTime Deadlinedate,
     String hintStartTextDate,
     String hintEndTextDate,
+    Tasks task,
+    String teamid
 
-    String taskid,
+
 
     )=>SizedBox(
   height: mediaQuery.size.height / 2.5,
@@ -212,10 +331,13 @@ todayDate:           Startdate,
           ),
           onPressed: (){
        //     final inputFields input=inputFields(taskid: taskid, teamid:null, file: null, memberid: null, status: null, Deadline: Deadlinedate, StartDate: Startdate, name: null, task: null, isCompleted: null, member: null, fileid: null, );
-
-         //   context.read<GetTaskBloc>().add(UpdateTimeline(input));
-            context.back();
+final param=UpdateTaskParams(taskId: task.meta.id, task: task,teamId: teamid,
+Deadline: Deadlinedate,startDate: Startdate
+);
+          context.read<GetTaskBloc>().add(UpdateTimeline(param));
             context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
+          Navigator.pop(context);
+          Navigator.pop(context);
 
           },
           child: Center(
@@ -237,29 +359,29 @@ todayDate:           Startdate,
 );
 
 void AssignBottomSheetBuilder(BuildContext context, MediaQueryData mediaQuery,
-    Function(User) onRemoveTap, Function(User) onAddTap,Team team,
-    int index,
+    Function(TeamUser) onRemoveTap, Function(TeamUser) onAddTap,
+    Team team,
+
     ) {
 
   showModalBottomSheet(
     context: context,
     builder: (ctx) {
       return
-       /* BlocBuilder<GetTaskBloc, GetTaskState>(
+        BlocBuilder<GetTaskBloc, GetTaskState>(
         builder: (context, state) {
-          List<Map<String, dynamic>> members = List<Map<String, dynamic>>.from(team.members.members);
-          List<Map<String, dynamic>> ff = List<Map<String, dynamic>>.from(state.tasks[index]['AssignTo']);
+          var members = team.members.members;
+          var ff = state.task!.meta.assignToMembers;
 
-          List<Member> membersList = members.map((e) => Member.fromImages(e)).toList();
-          List<Member> ListAssignTo = ff.map((e) => Member.fromImages(e)).toList();
+
           if (state.status== TaskStatus.Loading || state.status== TaskStatus.error ) {
             return const Text("");
           }
           else if  (state.status== TaskStatus.success || state.status== TaskStatus.Changed || state.status== TaskStatus.ErrorUpdate ){
-            return MemberTeamSelection. MembersAssignToBottomSheet(mediaQuery, onRemoveTap, onAddTap,membersList,ListAssignTo,context);}
+            return MemberTeamSelection. MembersAssignToBottomSheet(mediaQuery, onRemoveTap, onAddTap,members,ff,context);}
           else return Container();
-        },*/
-      SizedBox()
+        }
+        )
       ;
     },
 
@@ -276,7 +398,7 @@ void AssignBottomSheetBuilder(BuildContext context, MediaQueryData mediaQuery,
 
 
 class AttachedFileWidget extends StatelessWidget {
-  final List<Map<String, dynamic>> fileList;
+  final List<TaskFile> fileList;
   final String idTask;
 
   const AttachedFileWidget({super.key, required this.fileList, required this.idTask});
@@ -290,88 +412,10 @@ class AttachedFileWidget extends StatelessWidget {
       children: fileList.map((fileData) {
         return Padding(
             padding:paddingSemetricVertical(),
-            child: _buildFileRow(context,fileData,mediaQuery,idTask));
+            child: FileRowWidget (fileData: fileData,mediaQuery: mediaQuery,taskId:  idTask));
       }).toList(),
     );
   }
 
-  Widget _buildFileRow(BuildContext context ,Map<String, dynamic> fileData,MediaQueryData mediaQuery,String idTask ) {
-
-    String fileName = fileData['path'] ?? '';
-    String extension = fileData['extension'] ?? '';
-    IconData iconData = _getIconForExtension(extension);
-
-    return InkWell(
-      onTap: ()async  {
-        await FileStorage.openFile(context, fileData['id'],extension );
-        // Open file
-      },
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-
-              decoration: const BoxDecoration(
-                color: PrimaryColor,
-                shape: BoxShape.circle,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(child: Icon(iconData, size: 20,color: Colors.white,)),
-              )), // Adjust icon size as needed
-          const SizedBox(width: 10), // Adjust as needed for spacing between icon and file name
-          SizedBox(
-              width: mediaQuery.size.width * 0.5,
-              child: Text(fileName,overflow:TextOverflow.ellipsis , style: PoppinsRegular(12,textColorBlack))),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-
-              IconButton(
-
-                  onPressed: (){
-                //    final inputFields input=inputFields(taskid: idTask, teamid:null, file: null, memberid: null, status: null, Deadline: null, StartDate: null, name: null, task: null, isCompleted: null, member: null, fileid: fileData['id'], );
-
-                  //  context.read<GetTaskBloc>().add(DeleteFileEvent(input));
-                    context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
-
-
-                  }, icon: const Icon(Icons. delete,color: textColor,size: 30,)),
-            ],
-          ),
-
-        ],
-      ),
-    );
-  }
-
-
-  IconData _getIconForExtension(String extension) {
-    switch (extension) {
-      case '.docx':
-      case '.pdf':
-        return Icons.picture_as_pdf;
-      case '.jpg':
-      case '.jpeg':
-      case '.png':
-        return Icons.image;
-      case '.mp4':
-      case '.avi':
-      case '.mov':
-      case '.wmv':
-
-        return Icons.video_library; // Video icon
-      case '.mp3':
-      case '.wav':
-      case '.aac':
-      case '.m4a':
-      case '.ogg':
-      case '.flac':
-
-        return Icons.music_note; // Music icon
-      default:
-        return Icons.insert_drive_file; // Default icon for unknown extensions
-    }
-  }
 
 }

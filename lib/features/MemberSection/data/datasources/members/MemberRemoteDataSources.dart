@@ -43,7 +43,7 @@ class MemberRemoteImpl implements MemberRemote {
     try {
       final query = await fire
           .collection('users')
-          .orderBy('rank', descending: true)
+          .orderBy('points', descending: true)
           .get();
 
       return await Future.wait(query.docs.map((doc) async {
@@ -68,7 +68,7 @@ class MemberRemoteImpl implements MemberRemote {
     try {
       final query = await fire
           .collection('users')
-          .orderBy('rank', descending: true)
+          .orderBy('points', descending: true)
           .limit(1)
           .get();
 
@@ -94,6 +94,7 @@ class MemberRemoteImpl implements MemberRemote {
   Future<MemberModel> getUserProfile() async {
     try {
       final userId = await store.getUserId();
+      Logger  ().i('Fetching user profile for ID: $userId');
       // Reference to the Firestore collection
       final collectionRef = fire.collection('users');
 

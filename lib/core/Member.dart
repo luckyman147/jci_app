@@ -20,8 +20,8 @@ class Member extends User {
   final List<dynamic> teams;
   final bool IsSelected;
   final String language;
-  final double points;
-  final double PreviousPoints;
+  final int points;
+  final int PreviousPoints;
 final int notificationCount;
 final int unreadNotificationCount;
   final int rank;

@@ -255,10 +255,19 @@ class _CalendarButtonState extends State<CalendarButton> {
 
         // Navigator.pushNamed(context, Routes.search);
 
-        icon: Icon(
+        icon: Container(
+          padding: paddingSemetricVerticalHorizontal(),
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(offset: Offset(0, 5),color:ColorsApp.ThirdColor.withOpacity(0.2),spreadRadius: 1,blurRadius: 1 ),
+              ],
+              color: ColorsApp.PrimaryColor,
+                  borderRadius: BorderRadius.circular(10)
+            ),
+            child:  Icon(
           Icons.calendar_month_rounded,
-          color: widget.IconColor,
-        ),
+          color: ColorsApp.textColorWhite,
+        )),
       ),
     );
   }
@@ -291,7 +300,7 @@ class MyActivityButtons extends StatelessWidget {
           padding: paddingSemetricHorizontal(),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              side: const BorderSide(color: textColorBlack, width: 2.0),
+              side: const BorderSide(color: ColorsApp.BackWidgetColor, width: 2.0),
               backgroundColor:
                   state.selectedActivity == act ? PrimaryColor : Colors.white,
               foregroundColor:
@@ -544,7 +553,7 @@ Column WidgetMonthActivity(BuildContext context, activity act,
           children: [
             Text(
               "${text.tr(context)} ${act.name.tr(context)}",
-              style: PoppinsSemiBold(mediaQuery.devicePixelRatio * 6,
+              style: PoppinsSemiBold(17.sp,
                   Colors.black, TextDecoration.none),
             ),
             InkWell(

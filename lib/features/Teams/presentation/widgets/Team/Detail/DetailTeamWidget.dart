@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Implementations/ActivtysImplementations.dart';
 
@@ -16,6 +17,11 @@ import '../../../../../../core/app_theme.dart';
 
 import '../../../../domain/entities/Team/Team.dart';
 
+import '../../../../domain/entities/task/Task.dart';
+import '../../../bloc/TaskIsVisible/task_visible_bloc.dart';
+import '../../common/EditableTextField.dart';
+import '../../common/TaskProgressBarWithLegend.dart';
+import '../../common/actionsbuttons.dart';
 import 'DetailTeamComponents.dart';
 
 class TeamDetailWidget extends StatefulWidget {
@@ -31,8 +37,10 @@ class TeamDetailWidget extends StatefulWidget {
 }
 
 class _TeamDetailWidgetState extends State<TeamDetailWidget> {
+  final TextEditingController _taskNameController = TextEditingController();
   @override
   void initState() {
+    context.read<GetTaskBloc>().add(GetTasks(id:widget.team.meta.id,filter: TaskCompletionStatus.Todo));
 
     // TODO: implement initState
     super.initState();
@@ -46,6 +54,9 @@ class _TeamDetailWidgetState extends State<TeamDetailWidget> {
 
         appBar: AppBar(
           automaticallyImplyLeading: false,
+          backgroundColor:ColorsApp.backgroundColored,
+
+
           actions: [
 
               Container(
@@ -75,65 +86,98 @@ class _TeamDetailWidgetState extends State<TeamDetailWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
 
-
-
-                SizedBox(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: mediaQuery.size.width / 20, vertical: 10),
-                    child: DeatailsTeamComponent.description(mediaQuery, context,widget.team,mounted),
-                  ),
-                ),
-
                 state.tasks.isEmpty ? const SizedBox() :
-                Column(
-                  children: [
-                    DeatailsTeamComponent.buildProgressText(state),
 
 
-                    Align(
-                        alignment: Alignment.center,
-                        child: DeatailsTeamComponent.ProgessBar(mediaQuery, context,)),
-                  ],
-                ),
+
+
+
+
+
+
 
 
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: mediaQuery.size.width / 20,),
 
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child
+                      :
+                  BlocSelector<TaskVisibleBloc, TaskVisibleState, bool>(
+                    selector: (state) => state.willSearch,
+                    builder: (context, willSearch) {
+                      if (willSearch) {
+                        return EditableTextField(
+                          hintText: "Search task",
+                          focusedColor: ColorsApp.PrimaryColor,
+                          onChanged: (s){},
+                          onConfirm: (s){},
+                          onCancel: (){
+                            context.read<TaskVisibleBloc>().add(const ChangeWillSearchEvent(false));
+                          },
 
-                    children: [
+                          initialText: "",
 
-                      Text("${"Task".tr(context)}s", style: PoppinsSemiBold(
-                          mediaQuery.devicePixelRatio * 6, textColorBlack,
-                          TextDecoration.none),),
-                    //  state.tasks.isEmpty ? const SizedBox() :
-                     // DeatailsTeamComponent. buillLinkedtext(mediaQuery, widget.team),
 
-                    ],
+
+
+                        ); // Replace with your actual editable widget
+                      } else {
+                        return     Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                          children: [
+
+                            Text("${"Task".tr(context)}s", style: PoppinsSemiBold(
+                                mediaQuery.devicePixelRatio * 6, textColorBlack,
+                                TextDecoration.none),),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Padding(
+                                padding: paddingSemetricVerticalHorizontal(v: 10, h: 0),
+                                child: const MyTaskButtons(),
+                              ),
+                            )
+
+
+                            //  state.tasks.isEmpty ? const SizedBox() :
+                            // DeatailsTeamComponent. buillLinkedtext(mediaQuery, widget.team),
+
+                          ],
+                        );
+                      }
+                    },
                   ),
+
+
+
+
+
+
+
+
+
+
                 ),
                 Column(
 
 
                   children: [
 
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Padding(
-                        padding: paddingSemetricVerticalHorizontal(v: 10, h: 0),
-                        child: const myTaskButtons(),
-                      ),
-                    )
-                    , SizedBox(
 
-                      height: mediaQuery.size.height / 1.5,
+                     SizedBox(
+                  height: mediaQuery.size.height * 0.7,
+
+
                       child: GetTasksWidget(
                           widget.team, mediaQuery, widget.taskController),
                     ),
+SizedBox(height: 10,),
+                    TaskProgressBarWithLegend (
+
+                      tasks: state.tasks,
+                    ),
+
 
                   ],
                 ),

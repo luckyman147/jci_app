@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import '../../../../core/PrimitiveUser/User.dart';
 import '../entities/Checklist.dart';
 import '../entities/TaskFile.dart';
+import '../entities/TeamUser.dart';
 import '../entities/task/Task.dart';
 
 class TaskIdParams {
@@ -13,8 +17,13 @@ class AddTaskParams {
   final String teamId;
   final String name;
   final String? taskId;
+  final TaskCompletionStatus status;
 
-  AddTaskParams(this.taskId, {required this.teamId, required this.name});
+  AddTaskParams(this.taskId, {required this.teamId,
+
+    required this.status,
+
+    required this.name});
 }
 
 class UpdateTaskParams {
@@ -22,14 +31,45 @@ class UpdateTaskParams {
   final Tasks task;
   final String? teamId;
   final String? name;
+  final String? descriptionb;
   final bool? memberStatus;
-  final String? memberId;
+  final TeamUser? member;
   final DateTime? startDate;
   final DateTime? Deadline;
 
   final TaskCompletionStatus? status;
 
-  UpdateTaskParams(this.teamId, this.status, this.name, this.startDate, this.Deadline, this.memberStatus, this.memberId, {required this.taskId, required this.task});
+
+  UpdateTaskParams(
+      {required this.taskId, required this.task,
+        this.teamId,
+        this.descriptionb,
+        this.status, this.name, this.startDate, this.Deadline, this.memberStatus, this.member,
+
+      });
+  factory UpdateTaskParams.fromName(String name, Tasks task) {
+    return UpdateTaskParams(
+      taskId: task.meta.id,
+      task:task,
+      name: name,
+    );
+  } factory UpdateTaskParams.fromDes(String name, Tasks task) {
+    return UpdateTaskParams(
+      taskId: task.meta.id,
+      task:task,
+      descriptionb: name,
+    );
+  }
+  factory UpdateTaskParams.fromStatus(
+      String teamId,
+      TaskCompletionStatus status, Tasks task) {
+    return UpdateTaskParams(
+      teamId: teamId,
+      taskId: task.meta.id,
+      task:task,
+      status: status,
+    );
+  }
 }
 
 class ChecklistParams {
@@ -80,13 +120,15 @@ class CommentParams {
 class FileParams {
   final String taskId;
   final String teamId;
-  final String fileId;
-  final TaskFile file;
+  final String? fileId;
+  final TaskFile? file;
+  final List<File> files ;
 
   FileParams({
+    required this.files,
     required this.teamId,
     required this.taskId,
-    required this.fileId,
-    required this.file,
+     this.fileId,
+     this.file,
   });
 }

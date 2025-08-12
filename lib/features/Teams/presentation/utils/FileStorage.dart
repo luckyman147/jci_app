@@ -13,20 +13,22 @@ import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 class FileStorage {
+  static Future<File> getLocalFile(String fileName) async {
+    final dir = await getApplicationDocumentsDirectory();
+    return File('${dir.path}/$fileName');
+  }
 
 
-
-  static Future<void> openFile(
-      BuildContext context, String fileid, String extension) async {
+  static Future<void> openFile(BuildContext context, String fileid,
+      String extension) async {
     try {
       // Save the base64 string as a file
 
-     // context.read<GetTaskBloc>().add(GetFileEvent(fileid));
-      final state = BlocProvider.of<GetTaskBloc>(context).state;
+      // context.read<GetTaskBloc>().add(GetFileEvent(fileid));
       await Future.delayed(const Duration(seconds: 2));
       final directory = await getTemporaryDirectory();
       final file = File('${directory.path}/temp_file.$extension');
-      await file.writeAsBytes(state.image!);
+
 
       OpenFile.open(
         file.path,
@@ -37,4 +39,27 @@ class FileStorage {
 
     }
   }
+
+  static Future<List<File>> pickFiles() async {
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: [
+        'jpg', 'jpeg', 'png', 'pdf', 'docx', 'xlsx',
+        'doc', 'ppt', 'txt', 'zip', 'rar',
+        'mp4', 'mp3', 'wav', 'mkv', 'avi', 'flv', 'mov', 'webm',
+      ],
+    );
+
+    if (result != null && result.files.isNotEmpty) {
+      return result.files
+          .where((file) => file.path != null)
+          .map((file) => File(file.path!))
+          .toList();
+    } else {
+      return [];
+    }
+  }
+
+
 }

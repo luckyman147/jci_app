@@ -8,6 +8,8 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:jci_app/core/config/services/MemberStore.dart';
+import 'package:jci_app/core/usescases/usecase.dart';
+import 'package:jci_app/features/Teams/domain/entities/TeamUser.dart';
 
 import 'package:jci_app/features/Teams/domain/usecases/TeamUseCases.dart';
 import 'package:stream_transform/stream_transform.dart';
@@ -38,6 +40,7 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
   final GetTeamByIdUseCase getTeamByIdUseCase;
   final AddTeamUseCase addTeamUseCase;
   final UpdateTeamUseCase updateTeamUseCase;
+  final GetTeamsOfUserUseCase getTeamsOfUserUseCase;
   final DeleteTeamUseCase deleteTeamUseCase;
   final InviteMemberUseCase inviteMemberUseCase;
   final getTeamByNameUseCase TeamByNameUseCase;
@@ -48,6 +51,7 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
       this.getAllTeamsUseCase,
       this.getTeamByIdUseCase,
       this.addTeamUseCase,
+      this.getTeamsOfUserUseCase,
       this.updateTeamUseCase,
       this.deleteTeamUseCase,
       this.TeamByNameUseCase,
@@ -60,7 +64,7 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
     on<GetMoreTeams>(onGetMoreTeams, transformer: throttleDroppable(throttleDuration));
     on<GetTeamById>(onGetTeamById);
     on<initStatus>(_initStatus);
-
+on<GetTeamsOfuser> (_getteamsofuser);
     on<AddTeam>(ACtionEvent);
     on<UpdateTeam>(onUpdateTeam);
     on<DeleteTeam>(deleteTeam);
@@ -69,11 +73,20 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
     on<InviteMembers>(_inviteMember);
     on<JoinTeam>(_joinTeam);
   }
-
+void  _getteamsofuser ( GetTeamsOfuser event,Emitter<GetTeamsState> emit) async {
+    try {
+      emit(state.copyWith(status: TeamStatus.Loading));
+      final result = await getTeamsOfUserUseCase(NoParams());
+      emit(_mapFailureOrTeamOfUserToState(result));
+    } catch (error) {
+      emit(state.copyWith(status: TeamStatus.error));
+    }
+  }
   void _joinTeam(JoinTeam event, Emitter<GetTeamsState> emit) async {
     try {
-      final result = await joinTeamUseCase(event.Teamid);
-      emit(_mapFailureOrJoinTeamToState(result));
+      emit (state.copyWith(status: TeamStatus.LoadingJoin));
+      final result = await joinTeamUseCase(event.inputs);
+      emit(_mapFailureOrJoinTeamToState(result,fields: TeamStatus.Created));
     } catch (error) {
       emit(state.copyWith(status: TeamStatus.error));
     }
@@ -116,7 +129,20 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
   void ACtionEvent(AddTeam event, Emitter<GetTeamsState> emit) async {
     try {
       emit(state.copyWith(status: TeamStatus.Loading));
-      final result = await addTeamUseCase(event.team);
+      final store = await memberStore.getModel();
+      var team = event.team;
+      if  (!event.team.members.members.any((element) => element.user.id == store!.id)) {
+      final teamuser=TeamUser(store!,role: UserTeamRole.canModify);
+        team = event.team.copyWith(
+          members: TeamMembers(
+            membersIds: [...event.team.members.membersIds, teamuser.user.id!],
+            teamLeader: store,
+            members: [...event.team.members.members, teamuser],
+          ),
+        );
+
+      }
+      final result = await addTeamUseCase(team);
       emit(_mapFailureOrAddToState(result));
     } catch (error) {
       emit(state.copyWith(status: TeamStatus.error));
@@ -131,6 +157,9 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
       emit(state.copyWith(status: TeamStatus.error));
     }
   }
+
+
+
 
   Future<void> onGetMoreTeams(GetMoreTeams event, Emitter<GetTeamsState> emit) async {
     if (state.hasReachedMax || state.status == TeamStatus.Loading) return;
@@ -206,7 +235,7 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
 
       final isExisted = (members.isEmpty || store == null)
           ? []
-          : members.map((e) => e.any((element) => element.id == store.id)).toList();
+          : members.map((e) => e.any((element) => element.user.id == store.id)).toList();
       emit(state.copyWith(
         status: TeamStatus.LoadedTeams,
         teams: teams,
@@ -268,6 +297,14 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
             errorMessage: mapFailureToMessage(failure)),
         (act) => state.copyWith(teams: act, status: TeamStatus.LoadedTeams));
   }
+  GetTeamsState _mapFailureOrTeamOfUserToState(
+      Either<Failure, List<Team>> either) {
+    return either.fold(
+        (failure) => state.copyWith(
+            status: TeamStatus.error,
+            errorMessage: mapFailureToMessage(failure)),
+        (act) => state.copyWith(homeTeams: act, status: TeamStatus.LoadedTeams ));
+  }
 
   GetTeamsState _mapFailureOrAddToState(Either<Failure, Team> either) {
     return either.fold(
@@ -312,12 +349,12 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
             status: TeamStatus.error,
             errorMessage: mapFailureToMessage(failure)), (act) {
       if (field.Status == "add") {
-        List<User> updatedMember =
+        List<TeamUser> updatedMember =
             List.from(state.teamById!.members.members);
         updatedMember.add(field.member!);
         state.teamById!.members.copyWith(members:updatedMember);
       } else {
-        List<User> updatedMember =
+        List<TeamUser> updatedMember =
             RemoveMember(field.memberid!);
 
         state.teamById!.members.copyWith(members: updatedMember);
@@ -332,10 +369,10 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
     });
   }
 
-  List<User> RemoveMember(String id) {
-    List<User> updatedMember =
+  List<TeamUser> RemoveMember(String id) {
+    List<TeamUser> updatedMember =
         List.from(state.teamById!.members.members);
-    updatedMember.removeWhere((element) => element.id == id);
+    updatedMember.removeWhere((element) => element.user.id == id);
     return updatedMember;
   }
 
@@ -345,7 +382,7 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
         (failure) => state.copyWith(
             status: TeamStatus.error,
             errorMessage: mapFailureToMessage(failure)), (act) {
-      List<User> updatedMember =
+      List<TeamUser> updatedMember =
           List.from(state.teamById!.members.members);
       updatedMember.add(fields.member!);
       state.teamById!.members.copyWith(members: updatedMember);
@@ -356,14 +393,14 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
     });
   }
 
-  GetTeamsState _mapFailureOrJoinTeamToState(Either<Failure, Unit> result) {
+  GetTeamsState _mapFailureOrJoinTeamToState(Either<Failure, Unit> result,{TeamStatus? fields}) {
     return result.fold(
         (failure) => state.copyWith(
             status: TeamStatus.error,
             errorMessage: mapFailureToMessage(failure)),
         (act) => state.copyWith(
-            status: state.status == TeamStatus.IsRefresh
+            status:fields ?? (state.status == TeamStatus.IsRefresh
                 ? TeamStatus.Updated
-                : TeamStatus.IsRefresh));
+                : TeamStatus.IsRefresh)));
   }
 }

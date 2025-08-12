@@ -1,18 +1,18 @@
 part of 'members_cubit.dart';
 enum assignType { Assign, Invite }
  class MembersTeamState extends Equatable {
-   final List<User> members;
+   final List<TeamUser> members;
    final bool isSelected;
    final List<bool> ManySelected;
-   final List<User> clonedMembers;
+   final List<TeamUser> clonedMembers;
    final String name;
   const MembersTeamState( { this.members = const [], this.isSelected = false, this.ManySelected = const [], this.clonedMembers = const [], this.name = ""});
   MembersTeamState copyWith({
     String? name,
-    List<User>? members,
+    List<TeamUser>? members,
     bool? isSelected,
     List<bool>? ManySelected,
-    List<User>? clonedMembers,
+    List<TeamUser>? clonedMembers,
   }) {
     return MembersTeamState(
       name: name ?? this.name,

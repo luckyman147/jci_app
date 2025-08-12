@@ -4,27 +4,35 @@ import 'package:jci_app/features/Teams/domain/entities/task/Comment.dart';
 
 import '../../../../core/PrimitiveUser/UserModel.dart';
 
-class CommentModel extends Comment{
-  CommentModel({required super.TaskId, required super.comment, required super.Member, required super.Id,
-    required super.CreatedAt,});
+class CommentModel extends TaskComment{
+  CommentModel({required super.TaskId,  required super.Id,
+    required super.CreatedAt, required super.avatar, required super.userName, required super.content, required super.TeamId,});
   //from entity to model
-  factory CommentModel.fromEntity(Comment comment) {
+  factory CommentModel.fromEntity(TaskComment comment) {
     return CommentModel(
+      TeamId: comment.TeamId,
+      avatar: comment.avatar,
+
+      userName: comment.userName,
+      content: comment.content,
+
       TaskId: comment.TaskId,
-      comment: comment.comment,
-      Member: comment.Member,
+
       Id: comment.Id,
       CreatedAt: comment.CreatedAt,
     );
   }
 
-
   factory CommentModel.fromJson(Map<String, dynamic> json) {
     log("CommentModel.fromJson: $json");
     return CommentModel(
+      TeamId: json['TeamId'] ?? "",
       TaskId: json['TaskId'] ?? "",
-      comment: json['comment'] ?? "" ,
-      Member:  UserModel.fromJson(json['Member'],false) ,
+      avatar: json['avatar'] ?? "",
+      userName: json['userName'] ?? "",
+      content: json['content'] ?? "",
+
+
 
 
 
@@ -41,9 +49,12 @@ class CommentModel extends Comment{
   }
    Map<String, dynamic> toJson() => {
   'TaskId': TaskId,
-  'comment': comment,
-  'Member':UserModel.fromEntity(Member).toJson(false),
-  'Id': Id,
+  'avatar': avatar,
+  'userName': userName,
+     'TeamId':TeamId,
+  'content': content,
+     "Id":Id,
+
   'CreatedAt': CreatedAt.toIso8601String(),
 };
 }

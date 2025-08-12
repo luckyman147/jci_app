@@ -14,12 +14,12 @@ final sl = GetIt.instance;
 
 void initObjectifDependencies() {
   // Blocs
-  sl.registerFactory(() => ObjectifBloc(sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => ObjectifBloc(sl(), sl(), sl(), sl(),sl()));
   sl.registerFactory(() => UserObjectifProgressCubit(sl(), sl()));
 
   // DataSources
   sl.registerLazySingleton<ObjectifDataSource>(
-          () => ObjectifDataSourcesImpl(firestore: sl(), objectiveService: sl())
+          () => ObjectifDataSourcesImpl(sl(),firestore: sl(), objectiveService: sl())
   );
 
   // Repositories
@@ -32,6 +32,7 @@ void initObjectifDependencies() {
   sl.registerLazySingleton(() => AddObjectifUsesCase(objectifRepo: sl()));
   sl.registerLazySingleton(() => DeleteObjectifUsesCase(objectifRepo: sl()));
   sl.registerLazySingleton(() => UpdateObjectifUsesCase(objectifRepo: sl()));
+  sl.registerLazySingleton(() => fetchTop3bjectivesProgressUsesCase(objectifRepo: sl()));
   sl.registerLazySingleton(() => updateUserObjectivesProgressUsesCase(objectifRepo: sl()));
 
   // Handlers

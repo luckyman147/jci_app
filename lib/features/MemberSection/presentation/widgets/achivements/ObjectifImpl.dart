@@ -9,6 +9,7 @@ import '../../../global-pres.dart';
 import '../../bloc/objectifs/objectif_bloc.dart';
 import 'AchivementsWidget.dart';
 import 'GroupObjectifGroupByListWidget.dart';
+import 'ObjectifCaroussel.dart';
 
 class Objectifimpl extends StatelessWidget {
   const Objectifimpl({super.key, required this.controller, required this.id});
@@ -55,6 +56,40 @@ final String id;
     );;
   }
 }
+
+
+
+class ObjectifsCarouselImpl extends StatelessWidget {
+  const ObjectifsCarouselImpl({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return
+
+      BlocBuilder<ObjectifBloc, ObjectifState>(
+      builder: (context, state) {
+        if (state.status == ObjectifStatus.Loading) {
+          return const Center(child: LoadingWidget());
+        }
+        if (state.status == ObjectifStatus.Success&& state.objectifsHome.isNotEmpty) {
+          return SizedBox(
+              height: 200,child:
+          ObjectifCarouselCard(objectifs: state.objectifsHome,));
+        }
+        return const SizedBox.shrink();
+      },
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
 
 class ObjectifList extends StatelessWidget {
   const ObjectifList({

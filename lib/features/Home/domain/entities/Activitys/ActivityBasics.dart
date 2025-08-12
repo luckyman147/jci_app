@@ -16,7 +16,20 @@ class ActivityBasics {
     required this.activityAdress,
     required this.coverImages,
   });
+//test
+  /// Empty constructor
 
+  factory ActivityBasics.empty() {
+    return ActivityBasics(
+      id: '',
+      name: '',
+      description: '',
+      activityBeginDate: DateTime.now(),
+      activityEndDate: DateTime.now(),
+      activityAdress: '',
+      coverImages: [],
+    );
+  }
   /// Copy with
   ActivityBasics copyWith({
     String? id,

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jci_app/features/Home/domain/entities/Activitys/ActivityBasics.dart';
 import 'package:jci_app/features/Home/domain/entities/Activitys/ActivitySettings.dart';
@@ -13,6 +14,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.
 import 'package:jci_app/features/Home/presentation/bloc/category/category_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../../core/route/app_router.dart';
 import '../../../Activity_Global.dart';
 import '../../../data/model/events/EventModel.dart';
 import '../../../data/model/meetingModel/MeetingModel.dart';
@@ -24,7 +26,15 @@ import '../../pages/CreateUpdateActivityPage.dart';
 import '../Activity/ActivityDetailsComponents.dart';
 
 class ActivityFunctions{
-
+  static void NavigateActivity(BuildContext context,activity Activity) {
+    context.read<ActivityCubit>().selectActivity(Activity);
+    context.navigateTo(CreateUpdateActivityRoute(
+      id: 'id',
+      activity:Activity.name,
+      work:actionType.Add.name,
+      particpants: const [],
+    ));
+  }
   /// This function is used to save the activity
   /// It takes the following parameters
   /// [acti] : The activity state

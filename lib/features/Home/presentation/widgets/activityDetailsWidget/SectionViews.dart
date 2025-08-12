@@ -61,7 +61,15 @@ class _SectionViewerState extends State<SectionViewer> {
     return Column(
       children: [
         // 🔹 Header Tabs Row
-        Row(
+    Container(
+      decoration: BoxDecoration(
+        color: ColorsApp.BackWidgetColor,
+
+
+      ),
+        child:     SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: List.generate(tabs.length, (index) {
             return _buildHeaderTab(
@@ -73,7 +81,7 @@ class _SectionViewerState extends State<SectionViewer> {
               onTap: () => onTabSelected(index),
             );
           }),
-        ),
+        ))),
         const SizedBox(height: 8),
 
         // 🔹 Content Area
@@ -96,6 +104,13 @@ class _SectionViewerState extends State<SectionViewer> {
                       context.read<AcivityFBloc>().state.activityById!,
 
                   ),
+                 Padding(padding: paddingSemetricVerticalHorizontal(),child:  Text(
+                    "Categories",
+                    style: PoppinsSemiBold(
+                        19, ColorsApp.textColorBlack, TextDecoration.none),
+                  )),
+
+                  buildCategories( context.read<AcivityFBloc>().state.activityById!)
                 ],
               ),
 
@@ -138,7 +153,7 @@ class _SectionViewerState extends State<SectionViewer> {
                      Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SizedBox(
-                        height: 500,
+
                         width: mediaquery.size.width,
                         child: CommentsScreen(
                           activityId: context
@@ -177,6 +192,31 @@ class _SectionViewerState extends State<SectionViewer> {
       ],
     );
   }
+   Padding buildCategories( Activity activity) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: Wrap(
+          spacing: 8.w,
+          runSpacing: 8.h,
+          children: activity.settings.categoryIds.map((category) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+              decoration: BoxDecoration(
+           border: Border.all(color: ColorsApp.ThirdColor),
+                borderRadius: BorderRadius.circular(18.r),
+              ),
+              child: AutoSizeText(
+                "#$category",
+                style: PoppinsSemiBold(14.sp, ColorsApp.ThirdColor, TextDecoration.none),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
 
   Widget _buildAgendaSection(MediaQueryData mediaQuery) {
     return
@@ -200,10 +240,10 @@ class _SectionViewerState extends State<SectionViewer> {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
           decoration: BoxDecoration(
-            color: isSelected ? ColorsApp.PrimaryColor : ColorsApp.BackWidgetColor,
-            borderRadius: BorderRadius.circular(13),
+            color: isSelected ? ColorsApp.PrimaryColor : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
           ),
           child: AutoSizeText(
             text,

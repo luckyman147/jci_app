@@ -27,11 +27,12 @@ import '../../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
 import '../../../../MemberSection/presentation/pages/user/memberProfilPage.dart';
 import '../../../../../core/Member.dart';
 import '../../../domain/entities/Team/Team.dart';
+import '../../../domain/entities/TeamUser.dart';
 
 class MemberTeamSelection{
 
- static  Widget MembersTeamContainer(mediaQuery, User item,bool isExisted,
-      Function(User) onRemoveTap, Function(User) onAddTap,
+ static  Widget MembersTeamContainer(mediaQuery, TeamUser item,bool isExisted,
+      Function(TeamUser) onRemoveTap, Function(TeamUser) onAddTap,
       BuildContext context, List<User> ff) =>
      
        BlocBuilder<GetTaskBloc, GetTaskState>(
@@ -39,7 +40,21 @@ class MemberTeamSelection{
                 return   Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    imageWidget(item),
+                    imageWidget(item.user),
+                    DropdownButton<UserTeamRole>(
+                      value: item.role, // Current selected role
+                      items: UserTeamRole.values.map((role) {
+                        return DropdownMenuItem<UserTeamRole>(
+                          value: role,
+                          child: Text(role.name), // role.name gives "canRead", "canModify", etc.
+                        );
+                      }).toList(),
+                      onChanged: (UserTeamRole? newValue) {
+                        if (newValue != null) {
+                  context.read<MembersTeamCubit>().changeMemberRole(item, newValue);
+                        }
+                      },
+                    ),
 
 
                     SelectionButton(
@@ -52,9 +67,9 @@ class MemberTeamSelection{
     
 
 
- static  Widget SelectionButton(mediaQuery, List<User> ff, User item, bool isExisted,
-      BuildContext context, Function(User) onRemoveTap,
-      Function(User) onAddTap) {
+ static  Widget SelectionButton(mediaQuery, List<User> ff, TeamUser item, bool isExisted,
+      BuildContext context, Function(TeamUser) onRemoveTap,
+      Function(TeamUser) onAddTap) {
     return BlocBuilder<MembersTeamCubit, MembersTeamState>(
       builder: (context, state) {
         return BlocBuilder<GetTaskBloc, GetTaskState>(
@@ -90,10 +105,10 @@ class MemberTeamSelection{
 
 
 
-  SizedBox SelectionAssignButton(mediaQuery, List<Member> ff, Member item,
-      BuildContext context, Function(User) onRemoveTap,
-      Function(User) onAddTap) {
-    var doesObjectExistInList = TeamUtils.doesUserExist(ff, item);
+  SizedBox SelectionAssignButton(mediaQuery, List<TeamUser> ff, TeamUser item,
+      BuildContext context, Function(TeamUser) onRemoveTap,
+      Function(TeamUser) onAddTap) {
+    var doesObjectExistInList = TeamUtils.doesUserExist(ff.map((e)=>e.user).toList(), item.user);
     return SizedBox(
       width: mediaQuery.size.width / 3,
       child: ElevatedButton(
@@ -143,9 +158,9 @@ class MemberTeamSelection{
       );
 
  static Widget MembersAssignToBottomSheet(mediaQuery
-      , Function(User) onRemoveTap, Function(User) onAddTap,
-      List<Member> members,
-      List<Member> ff,BuildContext context) =>
+      , Function(TeamUser) onRemoveTap, Function(TeamUser) onAddTap,
+      List<TeamUser> members,
+      List<TeamUser> ff,BuildContext context) =>
       SizedBox(
         height: mediaQuery.size.height / .9,
         width: double.infinity,
@@ -184,8 +199,8 @@ class MemberTeamSelection{
     ;
   }
 
- static  Padding AssignToPiece(mediaQuery, Function(User) onRemoveTap,
-      Function(User) onAddTap, List<User> members, List<User> ff) {
+ static  Padding AssignToPiece(mediaQuery, Function(TeamUser) onRemoveTap,
+      Function(TeamUser) onAddTap, List<TeamUser> members, List<TeamUser> ff) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: SingleChildScrollView(
@@ -250,24 +265,26 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
                return const LoadingWidget();
 
              case UserStatus.MembersLoaded:
+               var members = state.members.map((e)=>TeamUser(e)).toList();
                return RefreshIndicator(
                  onRefresh: () {
                    return RefreshMembers(context, SearchType.All, "");
                  },
                  child: type == assignType.Assign
-                     ? MembersDetails(state.members  , mediaQuery, (value) {}, (po) {}, ste.members)
-                     : BuildInviteComp(state.members, ste.members, team),
+                     ? MembersDetails(members  , mediaQuery, (value) {}, (po) {}, ste.members)
+                     : BuildInviteComp(members, ste.members, team),
                );
 
              case UserStatus.MemberByname:
                if (name.isNotEmpty) {
+                 var memberByName = state.memberByName.map((e)=>TeamUser((e))).toList();
                  return RefreshIndicator(
                    onRefresh: () {
                      return RefreshMembers(context, SearchType.Name, name);
                    },
                    child: type == assignType.Assign
-                       ? MembersDetails(state.memberByName, mediaQuery, (po) {}, (po) {}, ste.members)
-                       : BuildInviteComp(state.memberByName, ste.members, team),
+                       ? MembersDetails(memberByName, mediaQuery, (po) {}, (po) {}, ste.members)
+                       : BuildInviteComp(memberByName, ste.members, team),
                  );
                } else {
                  context.read<MembersBloc>().add(const GetAllMembersEvent(false));
@@ -303,8 +320,8 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
   }
 
 
- static Widget MembersDetails(List<User> members, mediaQuery,
-      Function(User) onRemoveTap, Function(User) onAddTap, List<User> ff) =>
+ static Widget MembersDetails(List<TeamUser> members, mediaQuery,
+      Function(TeamUser) onRemoveTap, Function(TeamUser) onAddTap, List<TeamUser> ff) =>
       ListView.separated(
 
         scrollDirection: Axis.vertical,
@@ -313,23 +330,24 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
         itemBuilder: (context, index) {
 
 
+          var list = ff.map((e)=>e.user).toList();
           return InkWell(
             onTap: (){
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (BuildContext context) {
-                    return  MemberSectionPage(id:members[index].id!);
+                    return  MemberSectionPage(id:members[index].user.id!);
                   },
                 ),);
 
 
 
 
-              context.read<MembersBloc>().add(GetMemberByIdEvent( MemberInfoParams(id: members[index].id!,status: true)));
+              context.read<MembersBloc>().add(GetMemberByIdEvent( MemberInfoParams(id: members[index].user.id!,status: true)));
 
             },
             child: MembersTeamContainer(
-                mediaQuery, members[index],TeamUtils. doesUserExist(ff, members[index]),onRemoveTap, onAddTap, context, ff),
+                mediaQuery, members[index],TeamUtils. doesUserExist(list, members[index].user),onRemoveTap, onAddTap, context, list),
           );
         },
         separatorBuilder: (BuildContext context, int index) {
@@ -342,7 +360,7 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
  static  Widget imageWidget(User item) {
     return Row(
         children: [
-          photo(item.Images[0].toString(), 50, 100),
+          photo(item.Images.isNotEmpty?  item.Images[0].toString():"", 50, 100),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SizedBox(
@@ -357,7 +375,7 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
   }
 
  static  Widget photo(String item, double height, double circle) {
-Logger().i("Image List: ${jsonEncode(item)}");
+
     return
       item.isEmpty
           ? ClipRRect(
@@ -390,7 +408,7 @@ Logger().i("Image List: ${jsonEncode(item)}");
         ),
       );
   }
- static Widget BuildInviteComp( List<User> members, List<User> filteredMembers,Team team ) {
+ static Widget BuildInviteComp( List<TeamUser> members, List<TeamUser> filteredMembers,Team team ) {
    return Padding(
      padding: paddingSemetricVertical(),
      child: GridView.builder(
@@ -407,12 +425,12 @@ Logger().i("Image List: ${jsonEncode(item)}");
          final member = members[index];
 
        return buildMemberGrid(member,
-           TeamUtils.   doesUserExist( team.members.members.map((e) => e). toList(), member),team);
+           TeamUtils.   doesUserExist( team.members.members.map((e) => e.user). toList(), member.user),team);
        },
      ),
    );
  }
- static Widget buildMemberGrid(User member,bool isAssign,Team team) {
+ static Widget buildMemberGrid( TeamUser member,bool isAssign,Team team) {
    return BlocBuilder<MembersTeamCubit, MembersTeamState>(
      builder: (context, state) {
        return InkWell(
@@ -423,7 +441,7 @@ Logger().i("Image List: ${jsonEncode(item)}");
            // Navigate to member profile
          },
          onLongPress: () {
-      NavigationUtils.     navigateToMemberProfile(context, member);
+      NavigationUtils.     navigateToMemberProfile(context, member.user);
          },
          child: Container(
            decoration: BoxDecoration(
@@ -447,7 +465,7 @@ Logger().i("Image List: ${jsonEncode(item)}");
                child: Column(
                  children: [
                    // Image
-                   member.Images.isEmpty ? Center(child: Container(
+                   member.user.Images.isEmpty ? Center(child: Container(
                      height: 60,
                      width: 60,
 
@@ -475,7 +493,7 @@ Logger().i("Image List: ${jsonEncode(item)}");
                            shape: BoxShape.circle,
                            border: Border.all(color: textColor, width: 2)
                        ),
-                       child: photo(member.Images[0].cast(), 60, 50))),
+                       child: photo(member.user.Images[0].cast(), 60, 50))),
 
                    // Badge
 
@@ -483,7 +501,7 @@ Logger().i("Image List: ${jsonEncode(item)}");
                    Padding(
                      padding: const EdgeInsets.all(8.0),
                      child: Text(
-                       '${member.firstName} ${member.lastName}',
+                       '${member.user.firstName} ${member.user.lastName}',
                        style: PoppinsRegular(
                          15.0,
                         isAssign

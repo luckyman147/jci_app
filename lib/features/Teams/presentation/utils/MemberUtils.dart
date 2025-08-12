@@ -4,6 +4,7 @@ import '../../../Home/Activity_Global.dart';
 import '../../../MemberSection/domain/usecases/MemberUseCases.dart';
 import '../../../MemberSection/presentation/pages/user/memberProfilPage.dart';
 import '../../domain/entities/Team/Team.dart';
+import '../../domain/entities/TeamUser.dart';
 import '../../domain/usecases/TeamUseCases.dart';
 import '../bloc/GetTeam/get_teams_bloc.dart';
 import '../bloc/members/members_cubit.dart';
@@ -12,9 +13,9 @@ class MemberUtils {
   static void toggleMember(
       BuildContext context,
       bool exists,
-      User user,
-      Function(User) onAdd,
-      Function(User) onRemove) {
+      TeamUser user,Function(TeamUser) onRemove,
+      Function(TeamUser) onAdd,
+      ) {
     if (exists) {
       context.read<MembersTeamCubit>().RemoveMember(user);
       onRemove(user);
@@ -23,15 +24,15 @@ class MemberUtils {
       onAdd(user);
     }
   }  static void InviteKickMember(
-      bool isAssign, Team team, User member, BuildContext context) {
+      bool isAssign, Team team, TeamUser member, BuildContext context) {
     if (!isAssign) {
       final teamfi =
-      TeamInput(team.meta.id, member.id, null, member);
+      TeamInput(team.meta.id, member.user.id, null, member);
       context.read<GetTeamsBloc>().add(InviteMembers(teamfi: teamfi));
       Navigator.pop(context);
     } else {
       final teamfi = TeamInput(
-          team.meta.id, member.id, "kick", member);
+          team.meta.id, member.user.id, "kick", member);
       context.read<GetTeamsBloc>().add(UpdateTeamMember(fields: teamfi));
       Navigator.pop(context);
     }

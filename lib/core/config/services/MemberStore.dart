@@ -1,150 +1,127 @@
 import 'dart:convert';
-
-
-
 import 'package:dartz/dartz.dart';
-import 'package:encrypt_shared_preferences/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive/hive.dart';
 
 import '../../MemberModel.dart';
 import '../../PrimitiveUser/UserModel.dart';
 
+class MemberStore {
+  final Box box = Hive.box('memberBox');
 
+  static const String _cachedMembersKey = 'CachedMembers';
+  static const String _cachedMembersRankKey = 'CachedMembersWithRanks';
+  static const String _userInfoKey = 'UserInfo';
+  static const String _userPrimInfoKey = 'UserPrimInfo';
+  static const String _memberRankKey = 'MemberRank';
 
-class MemberStore{
-  final EncryptedSharedPreferences storage;
-  const MemberStore(this.storage);
+  static String _memberID(String id) => 'Member_$id';
 
-  static const String _CachedMembersKey= 'CachedMembers';
-static const String _cachedMembersRank = 'CachedMembersWIthRanks';
-  static const String  _UserInfo = 'UserInfo';
-  static const String  _UserPrimInfo = 'UserPrimInfo';
-  static String _memberID(String id)=> 'Member_$id';
-  static String memberRank= 'MemberRank';
-
-  static Future<void> cacheMembers(List<UserModel> Members) async{
-    final pref = await SharedPreferences.getInstance();
-    List MembersModelToJson=Members.map((e) => e.toJson(true)).toList();
-    pref.setString(_CachedMembersKey, jsonEncode(MembersModelToJson));
+  // Cache list of primitive users
+  static Future<void> cacheMembers(List<UserModel> members) async {
+    final encoded = members.map((e) => e.toJson(true)).toList();
+    Hive.box('memberBox').put(_cachedMembersKey, jsonEncode(encoded));
   }
-  static Future<void> cacheMembersWithRanks(List<MemberModel> Members) async{
-    final pref = await SharedPreferences.getInstance();
-    List MembersModelToJson=Members.map((e) => e.toJson()).toList();
-    pref.setString(_cachedMembersRank, jsonEncode(MembersModelToJson));
-  }
-  static Future<List<MemberModel>> getCachedMembersWithRanks() async{
-    final pref = await SharedPreferences.getInstance();
-    final cachedMembers=pref.getString(_cachedMembersRank);
-    if(cachedMembers!=null){
-      List<dynamic> MembersJson=jsonDecode(cachedMembers);
-      return  MembersJson.map<MemberModel>((e) => MemberModel.fromJson(e)).toList();
+
+  // Retrieve primitive user list
+  static Future<List<UserModel>> getCachedMembers() async {
+    final data = Hive.box('memberBox').get(_cachedMembersKey);
+    if (data != null) {
+      final decoded = jsonDecode(data);
+      return (decoded as List).map<UserModel>((e) => UserModel.fromJson(e, true)).toList();
     }
     return [];
   }
-  //cadhe member rank
-  static Future<void> cacheMemberRank(MemberModel Members) async{
-    final pref = await SharedPreferences.getInstance();
-    final MembersModelToJson=Members.toJson();
-    pref.setString(memberRank, jsonEncode(MembersModelToJson));
+
+  // Cache members with ranks
+  static Future<void> cacheMembersWithRanks(List<MemberModel> members) async {
+    final encoded = members.map((e) => e.toJson()).toList();
+    Hive.box('memberBox').put(_cachedMembersRankKey, jsonEncode(encoded));
   }
-  static Future<MemberModel?> getCachedMemberRank() async{
-    final pref = await SharedPreferences.getInstance();
-    final cachedMembers=pref.getString(memberRank);
-    if(cachedMembers!=null){
-      return MemberModel.fromJson(jsonDecode(cachedMembers));
+
+  // Get members with ranks
+  static Future<List<MemberModel>> getCachedMembersWithRanks() async {
+    final data = Hive.box('memberBox').get(_cachedMembersRankKey);
+    if (data != null) {
+      final decoded = jsonDecode(data);
+      return (decoded as List).map<MemberModel>((e) => MemberModel.fromJson(e)).toList();
+    }
+    return [];
+  }
+
+  // Cache member rank
+  static Future<void> cacheMemberRank(MemberModel member) async {
+    final encoded = jsonEncode(member.toJson());
+    Hive.box('memberBox').put(_memberRankKey, encoded);
+  }
+
+  // Get cached member rank
+  static Future<MemberModel?> getCachedMemberRank() async {
+    final data = Hive.box('memberBox').get(_memberRankKey);
+    if (data != null) {
+      return MemberModel.fromJson(jsonDecode(data));
     }
     return null;
   }
 
-
-  static Future<List<UserModel>> getCachedMembers() async{
-    final pref = await SharedPreferences.getInstance();
-    final cachedMembers=pref.getString(_CachedMembersKey);
-    if(cachedMembers!=null){
-      List<dynamic> MembersJson=jsonDecode(cachedMembers);
-      return  MembersJson.map<UserModel>((e) => UserModel.fromJson(e,true)).toList();
-    }
-    return [];
-  }
-  static Future<void> clearCache() async{
-    final pref = await SharedPreferences.getInstance();
-    pref.remove(_CachedMembersKey);
+  // Save main MemberModel
+  Future<void> saveModel(MemberModel member) async {
+    final encoded = jsonEncode(member.toJson());
+    box.put(_userInfoKey, encoded);
   }
 
-   Future<void> saveModel(MemberModel auth) async {
-
-    final value = auth.toJson();
-
-
-    storage.setString(_UserInfo, jsonEncode(value));
+  // Save primitive UserModel
+  Future<void> savePrimitiveModel(UserModel user) async {
+    final encoded = jsonEncode(user.toJson(true));
+    box.put(_userPrimInfoKey, encoded);
   }
-   Future<void> savePrimitiveModel(UserModel auth) async {
 
-
-    final value = auth.toJson(true);
-
-
-    storage.setString(_UserPrimInfo, jsonEncode(value));
-  }
-   Future<UserModel> getPrimitiveModel()async{
-
-    final value = storage.getString(_UserPrimInfo);
-
-    if (value == null) {
+  // Get primitive UserModel
+  Future<UserModel> getPrimitiveModel() async {
+    final data = box.get(_userPrimInfoKey);
+    if (data == null || data.isEmpty) {
       throw Exception('No user found');
     }
-    if (value.isEmpty) {
-      throw Exception('No user found');
-    }
-
-    return UserModel.fromJson(jsonDecode(value),true);
-  }
-   Future<MemberModel?> getModel() async {
-
-    final value = await  storage.getString(_UserInfo);
-
-    if (value == null) {
-      return null;
-    }
-    if (value.isEmpty) {
-      return null;
-    }
-
-    return MemberModel.fromJson(jsonDecode(value));
-  }
-   Future<void> clearModel() async {
-
-    storage.setString(_UserInfo, '');
-  }
-   Future<Unit> saveMemberBYID(MemberModel auth,String id) async {
-
-    final value = auth.toJson();
-    storage.setString(_memberID(id), jsonEncode(value));
-return Future.value(unit);
-
-}
-   Future<MemberModel?> getMemberByID(String id) async {
-
-    final value = await  storage.getString(_memberID(id));
-
-    if (value == null) {
-      return null;
-    }
-    if (value.isEmpty) {
-      return null;
-    }
-
-    return MemberModel.fromJson(jsonDecode(value));
+    return UserModel.fromJson(jsonDecode(data), true);
   }
 
-   Future<void> clearMemberByID(String id) async {
-
-    storage.setString(_memberID(id), '');
-  }
-   Future<void> clearAll() async {
-
-    storage.clear();
-    //storage.putString(_CachedMembersKey, '');
+  // Get main MemberModel
+  Future<MemberModel?> getModel() async {
+    final data = box.get(_userInfoKey);
+    if (data == null || data.isEmpty) return null;
+    return MemberModel.fromJson(jsonDecode(data));
   }
 
+  // Clear main MemberModel
+  Future<void> clearModel() async {
+    await box.delete(_userInfoKey);
+  }
+
+  // Save MemberModel by ID
+  Future<Unit> saveMemberByID(MemberModel member, String id) async {
+    final encoded = jsonEncode(member.toJson());
+    box.put(_memberID(id), encoded);
+    return unit;
+  }
+
+  // Get MemberModel by ID
+  Future<MemberModel?> getMemberByID(String id) async {
+    final data = box.get(_memberID(id));
+    if (data == null || data.isEmpty) return null;
+    return MemberModel.fromJson(jsonDecode(data));
+  }
+
+  // Clear MemberModel by ID
+  Future<void> clearMemberByID(String id) async {
+    await box.delete(_memberID(id));
+  }
+
+  // Clear cached members list
+  static Future<void> clearCache() async {
+    await Hive.box('memberBox').delete(_cachedMembersKey);
+  }
+
+  // Clear all data
+  Future<void> clearAll() async {
+    await box.clear();
+  }
 }

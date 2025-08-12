@@ -77,7 +77,7 @@ class ProfileShimmer extends StatelessWidget {
 
                     // Contact info
                     _buildShimmerListItem(),
-                    _buildShimmerListItem(),
+
                   ],
                 ),
               ),

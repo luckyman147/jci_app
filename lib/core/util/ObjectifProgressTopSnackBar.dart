@@ -8,15 +8,16 @@ import 'dart:collection';
 import 'package:jci_app/features/auth/AuthWidgetGlobal.dart'; // Import for Queue
 
 class TopSnackbar {
-  static final Queue<UserObjectifInfos> _infosQueue = Queue(); // Queue to hold items
+  static final Queue<
+      UserObjectifInfos> _infosQueue = Queue(); // Queue to hold items
   static OverlayEntry? _overlayEntry; // Current overlay entry
   static Timer? _timer; // Timer for auto-dismiss
   static ScrollController? _scrollController; // ScrollController to detect scroll events
 
-  static void show(
-      List<UserObjectifInfos> infos,
+  static void show(List<UserObjectifInfos> infos,
       BuildContext context, {
-        Duration duration = const Duration(seconds: 5), // Default duration is 5 seconds
+        Duration duration = const Duration(
+            seconds: 2), // Default duration is 5 seconds
         ScrollController? scrollController, // Optional ScrollController
       }) {
     // Add all infos to the queue
@@ -36,7 +37,7 @@ class TopSnackbar {
 
   static void _showNext(BuildContext context, Duration duration) {
     if (_infosQueue.isEmpty) {
-      return; // Stop if the queue is empty
+      dismiss(); // Stop if the queue is empty
     }
 
     // Get the next info from the queue
@@ -44,39 +45,46 @@ class TopSnackbar {
 
     // Create an OverlayEntry for the current info
     _overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        top: MediaQuery.of(context).viewPadding.top + 10, // Position at the top with padding
-        left: 10,
-        right: 10,
-        child: Material(
-          color: Colors.transparent, // Transparent background
-          child: Container(
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-              AchievementWidget(
-              userObjectif: info.userObjectif,
-              objectif: info.objectif,
-              isExpanded: ValueNotifier(false),
-              memberid: "",
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorsApp.textColorWhite,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // Adjust the value for more or less roundness
+      builder: (context) =>
+          Positioned(
+            top: MediaQuery
+                .of(context)
+                .viewPadding
+                .top + 10, // Position at the top with padding
+            left: 10,
+            right: 10,
+            child: Material(
+              color: Colors.transparent, // Transparent background
+              child: Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    AchievementWidget(
+                      userObjectif: info.userObjectif,
+                      objectif: info.objectif,
+                      isExpanded: ValueNotifier(false),
+                      memberid: "",
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorsApp.textColorWhite,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              10), // Adjust the value for more or less roundness
+                        ),
+                      ),
+                      onPressed: dismiss, // Dismiss on button press
+                      child: Text(
+                          'Dismiss', style: PoppinsRegular(14, PrimaryColor)),
+                    )
+                  ],
                 ),
               ),
-              onPressed: () => dismiss(), // Dismiss on button press
-              child: Text('Dismiss', style: PoppinsRegular(14, PrimaryColor)),
-            )],
             ),
           ),
-        ),
-      ),
     );
 
     // Insert the overlay into the Overlay
@@ -91,32 +99,42 @@ class TopSnackbar {
   static void _onScroll() {
     if (_scrollController != null) {
       // Check if the user is scrolling up
-      if (_scrollController!.position.userScrollDirection == ScrollDirection.reverse) {
+      if (_scrollController!.position.userScrollDirection ==
+          ScrollDirection.reverse) {
         dismiss(); // Dismiss the snackbar
       }
     }
   }
 
   static void dismiss() {
-    // Cancel the current timer
+    // Avoid duplicate dismiss logic
+    if (_overlayEntry == null && _timer == null) return;
+
+    // Cancel any active timer
     _timer?.cancel();
     _timer = null;
 
-    // Remove the current overlay
-    if (_overlayEntry != null) {
-      _overlayEntry!.remove();
+    // Remove overlay from UI
+    try {
+      _overlayEntry?.remove();
+    } catch (_) {
+      // In case it's already removed or throws
+    } finally {
       _overlayEntry = null;
     }
 
-    // Clear the queue if it's not empty
-    if (_infosQueue.isNotEmpty) {
-      _infosQueue.clear();
-    }
+    // Clear any remaining queued snackbars
+    _infosQueue.clear();
 
-    // Remove the scroll listener
+    // Remove scroll listener safely
     if (_scrollController != null) {
-      _scrollController!.removeListener(_onScroll);
-      _scrollController = null;
+      try {
+        _scrollController!.removeListener(_onScroll);
+      } catch (_) {
+        // Do nothing, maybe it was already removed
+      } finally {
+        _scrollController = null;
+      }
     }
   }
 }

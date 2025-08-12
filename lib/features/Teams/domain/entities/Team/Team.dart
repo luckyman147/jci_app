@@ -32,6 +32,7 @@ class Team {
       meta: meta,
       stats: TeamStats(),
       members: TeamMembers(
+        membersIds: [],
         teamLeader: null, // or provide a default value
         members: [], // empty list for now, or populate if you have member data
       ),

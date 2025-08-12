@@ -30,6 +30,7 @@ import '../../../bloc/TaskIsVisible/task_visible_bloc.dart';
 
 
 class TeamComponent{
+/*
  static  Widget TaskdropButton(mediaQuery) => BlocBuilder<ActivityCubit, ActivityState>(
     builder: (context, ste) {
       return BlocBuilder<ToggleBooleanBloc, ToggleBooleanState>(
@@ -95,7 +96,7 @@ class TeamComponent{
         },
       );
     },
-  );
+  );*/
  static  Widget actionTeamRow(BuildContext context,
       mediaQuery, TeamAction action, IconData icon, String text,Function() onTap) =>
       InkWell(
@@ -257,75 +258,5 @@ static IconButton iconButton(BuildContext context,IconData icon, Function() onPr
 
 
 
-class myTaskButtons extends StatelessWidget {
-  const myTaskButtons({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-
-        children: [
-          for (var activity in TaskFilter.values)
-            _buildActivityButton(context, activity, mediaQuery),
-
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActivityButton(
-      BuildContext context, TaskFilter filter, mediaQuery) {
-    return BlocBuilder<TaskfilterBloc, TaskfilterState>(
-      builder: (context, state) {
-        return Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: mediaQuery.size.width / 50),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: state.selectedFilter == filter
-                  ? PrimaryColor
-                  : Colors.white,
-              foregroundColor: state.selectedFilter == filter
-                  ? textColorWhite
-                  : Colors.black,
-              shape: RoundedRectangleBorder(
-                side: const BorderSide(color: textColorBlack, width: 1.0),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-            ),
-            onPressed: () {
-              // Handle button press for the specific activity
-              _handleActivityButtonClick(context, filter,state);
-            },
-            child: Text(
-              filter.toString().split('.').last.tr(context),
-              style: PoppinBold(
-                  mediaQuery.size.width / 30,
-                  state.selectedFilter == filter
-                      ? textColorWhite
-                      : textColorBlack,
-                  TextDecoration.none),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _handleActivityButtonClick(
-      BuildContext context, TaskFilter filter,TaskfilterState state  ) {
-    context.read<TaskfilterBloc>().add((TaskfilterSelected(filter)));
-
-
-
-
-    // Add logic to handle the button press for the specific activity
-    // You can dispatch events to other blocs or perform any other actions here.
-  }
-}
 

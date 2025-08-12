@@ -9,22 +9,24 @@ import 'package:jci_app/features/Teams/domain/usecases/TaskUseCase.dart';
 
 import '../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
 import '../../../../core/util/snackbar_message.dart';
+import '../../domain/entities/Checklist.dart';
 import '../../domain/entities/Team/Team.dart';
+import '../../domain/entities/task/Task.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
 import '../bloc/TaskIsVisible/task_visible_bloc.dart';
 
 class CheckListWidget extends StatelessWidget {
-  final List<Map<String, dynamic>> checkList;
-  final Map<String, dynamic> tasks;
-  final Team team;
-  final String id;
+  final List<CheckList> checkList;
+  final Tasks tasks;
+  final String teamId;
+
 
   const CheckListWidget(
       {Key? key,
       required this.checkList,
-      required this.id,
+
       required this.tasks,
-      required this.team})
+      required this.teamId})
       : super(key: key);
 
   @override
@@ -45,17 +47,18 @@ class CheckListWidget extends StatelessWidget {
                         ),
                         child: Row(
                           children: <Widget>[
-                            AsyncComponents.buildFutureBuilder(
+
                                 buildCheckbox(index, context),
-                                PermissionType.canUpdate,
-                                ""),
+
+
                             Expanded(
-                              child: buildTextField(index, id, context),
+                              child: buildTextField(index, tasks.meta.id, context),
                             ),
-                            AsyncComponents.buildFutureBuilder(
+
                                 buildIconButton(context, index),
-                                PermissionType.canUpdate,
-                                ""),
+
+
+
                           ],
                         ),
                       ));
@@ -71,6 +74,9 @@ class CheckListWidget extends StatelessWidget {
   IconButton buildIconButton(BuildContext context, int index) {
     return IconButton(
       onPressed: () {
+
+        context.read<GetTaskBloc>().add(DeleteChecklistEvent(
+            teamId, tasks.meta.id, checkList[index].id));
 
         context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
       },
@@ -104,8 +110,10 @@ class CheckListWidget extends StatelessWidget {
       splashRadius: 70,
       checkColor: textColorWhite,
       side: const BorderSide(color: textColorBlack),
-      value: checkList[index]['isCompleted'],
+      value: checkList[index].isCompleted,
       onChanged: (bool? value) {
+        context.read<GetTaskBloc>().add(UpdateChecklistStatusEvent(teamId, tasks.meta.id, checkList[index].id, value?? false));
+
 
         context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
       },
@@ -123,11 +131,11 @@ class CheckListWidget extends StatelessWidget {
       },
       onChanged: (value) {},
       enabled: true,
-      controller: TextEditingController(text: checkList[index]['name']),
+      controller: TextEditingController(text: checkList[index].name),
       style: PoppinsSemiBold(
           MediaQuery.devicePixelRatioOf(context) * 4,
           textColorBlack,
-          checkList[index]['isCompleted']
+          checkList[index].isCompleted
               ? TextDecoration.lineThrough
               : TextDecoration.none),
       decoration: const InputDecoration(
@@ -140,11 +148,11 @@ class CheckListWidget extends StatelessWidget {
 
 Widget CheckListAddField(
         TextEditingController controller,
-        String id,
+        String taskId,
         FocusNode focus,
         mediaQuery,
-        Team team,
-        Map<String, dynamic> task,
+        String teamId,
+
         bool mounted) =>
     BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
       builder: (context, state) {
@@ -152,13 +160,13 @@ Widget CheckListAddField(
           padding: paddingSemetricVerticalHorizontal(h: 18),
           child: InkWell(
             onTap: () async {
-              if (state.WillAdded) {
+
                 if (!mounted) return;
                 context
                     .read<TaskVisibleBloc>()
-                    .add(const ToggleTaskVisible(false));
+                    .add(const ChangeWillAdded(true));
                 FocusScope.of(context).requestFocus(focus);
-              }
+
             },
             child: Container(
               decoration: BoxDecoration(
@@ -179,7 +187,7 @@ Widget CheckListAddField(
                               textColor),
                         ),
                       ))
-                  : textFieldcHECKLIST(focus, controller, context, state, id),
+                  : textFieldcHECKLIST(focus, controller, context, state, taskId,teamId),
             ),
           ),
         );
@@ -187,7 +195,7 @@ Widget CheckListAddField(
     );
 
 TextField textFieldcHECKLIST(FocusNode focus, TextEditingController controller,
-    BuildContext context, TaskVisibleState state, String id) {
+    BuildContext context, TaskVisibleState state, String taskId,String teamId) {
   return TextField(
     focusNode: focus,
     controller: controller,
@@ -210,17 +218,20 @@ TextField textFieldcHECKLIST(FocusNode focus, TextEditingController controller,
               SnackBarMessage.showErrorSnackBar(
                   message: "Empty Field".tr(context), context: context);
             } else {
+              context.read<GetTaskBloc>().add(AddChecklistEvent(
+               teamId,taskId,
+                  controller.text));
 
               controller.clear();
               context
                   .read<TaskVisibleBloc>()
-                  .add(const ChangeIsUpdatedEvent(true));
+                  .add(const ChangeIsUpdatedEvent(false));
             }
           },
           child: state.WillAdded
               ? const Icon(
                   Icons.check_circle,
-                  color: PrimaryColor,
+                  color: Colors.green,
                 )
               : const SizedBox()),
       hintText: '${"Add".tr(context)} ${"Subtask".tr(context)}',

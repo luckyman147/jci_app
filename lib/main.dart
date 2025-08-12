@@ -9,8 +9,7 @@ import 'injection_container.dart' as di;
 
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+
   await di.init();
   await  di.sll<AppInitializer>().init();
 

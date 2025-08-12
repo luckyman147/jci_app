@@ -63,7 +63,7 @@ class MemberLocalDatasoourcesImpl implements MemberLocalDatasoources {
 
   @override
   Future<Unit> saveMemberByID(MemberModel member, String id) {
-    memberStore.saveMemberBYID(member, id);
+    memberStore.saveMemberByID(member, id);
     return Future.value(unit);
   }
 

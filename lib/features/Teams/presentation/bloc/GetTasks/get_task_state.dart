@@ -2,23 +2,25 @@ part of 'get_task_bloc.dart';
 enum TaskStatus { initial, success, error,Changed,Loading,SuccessCheck,ErrorUpdate }
 class GetTaskState extends Equatable {
   final TaskStatus status;
+
   final List<Tasks> Todotasks;
   final List<Tasks> InProgresstasks;
   final List<Tasks> Completedtasks;
   final List<Tasks> Delayedtasks;
   final List<Tasks> clonetasks;
+  final List<Tasks> tasks;
 
   final String errorMessage;
   final Tasks? task;
-  final Uint8List? image;
+
 
 
 
   const GetTaskState( { this.status = TaskStatus.initial, this.errorMessage = "",
     this.clonetasks=const [],
     this.task,
-    this.image,
     this.Todotasks=const [],
+    this.tasks=const [],
 
     this.InProgresstasks=const [],
     this.Completedtasks=const [],
@@ -31,6 +33,7 @@ class GetTaskState extends Equatable {
 
   GetTaskState copyWith({
     Tasks? task,
+    List<Tasks>? tasks,
     List<Tasks>? Todotasks,
     List<Tasks>? InProgresstasks,
     List<Tasks>? Completedtasks,
@@ -42,10 +45,11 @@ class GetTaskState extends Equatable {
 
     TaskStatus? status,
     String? errorMessage,
-    Uint8List? image,
+
   }) {
     return GetTaskState(
       task: task ?? this.task,
+      tasks: tasks ?? this.tasks,
 
       Todotasks: Todotasks ?? this.Todotasks,
       InProgresstasks: InProgresstasks ?? this.InProgresstasks,
@@ -56,7 +60,7 @@ class GetTaskState extends Equatable {
 
 
       status: status ?? this.status,
-      image: image ?? this.image,
+
       errorMessage: errorMessage ?? this.errorMessage,
 
     );
@@ -69,9 +73,10 @@ class GetTaskState extends Equatable {
     InProgresstasks,
     Completedtasks,
     Delayedtasks,
+    tasks,
 
 
-    status, errorMessage,clonetasks,image];
+    status, errorMessage,clonetasks,];
 
 }
 

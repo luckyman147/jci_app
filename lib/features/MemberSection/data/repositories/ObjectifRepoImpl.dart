@@ -78,4 +78,18 @@ return await handler.handle(onCall: (){
       throw ServerFailure();
     } );
   }
+
+  @override
+  Future<Either<Failure, List<UserObjectifInfos>>> fetchObjectifsInProgress() async{
+    return await userProgressHandler.handle(onCall:  (){
+      return objectifDataSource.fetchObjectifsInProgress();
+
+
+    }, onError:(e){
+      if (e is Exception){
+        throw e;
+      }
+      throw ServerFailure();
+    } );
+  }
 }

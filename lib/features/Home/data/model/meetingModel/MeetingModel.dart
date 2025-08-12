@@ -1,6 +1,7 @@
 import 'package:jci_app/core/PrimitiveUser/UserModel.dart';
 import 'package:jci_app/features/Home/Activity_Global.dart';
 import 'package:jci_app/features/Home/data/model/meetingModel/AgendaModel.dart';
+import 'package:jci_app/features/Home/domain/entities/Agenda.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../../domain/entities/Activitys/ActivityBasics.dart';
@@ -20,7 +21,10 @@ class MeetingModel extends Meeting {
     required super.agenda,
     required super.activityBasics,
     required super.settings,
+     super.type="Meeting",
     required super.online,
+
+
     required super.participation,
   });
 
@@ -40,7 +44,10 @@ class MeetingModel extends Meeting {
   factory MeetingModel.fromJson(Map<String, dynamic> json, {bool isDecode = false}) {
     return MeetingModel(
       director: UserModel.fromJson(json['director'],isDecode), // Assuming UserModel handles the conversion
-      agenda: json['agenda'],
+      agenda: (json['agenda'] as List)
+          .map((e) => AgendaModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+
       activityBasics: ActivityBasics.fromJson(json['activityBasics']),
       settings: ActivitySettings.fromJson(json['settings']),
       online: OnlineSettings.fromJson(json['online']),
@@ -52,10 +59,11 @@ class MeetingModel extends Meeting {
   Map<String, dynamic> toJson({bool isDecode = false}) {
     return {
       'director': UserModel.fromEntity(director).toJson(isDecode), // Assuming UserModel has toJson method
-      'agenda': agenda,
+      'agenda': agenda.map((e) => e.toJson()).toList(),
       'activityBasics': activityBasics.toJson(),
       'settings': settings.toJson(),
       'online': online.toJson(),
+      "type": type,
       'participation': participation.toJson(),
     };
   }

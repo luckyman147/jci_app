@@ -157,7 +157,7 @@ final Store store;
       ) async {
 final id=await store.getUserId();
 
-    if (!event.isUpdated && state.user != null&& id==state.user!.id) {
+    if ( state.user != null&& id==state.user!.id) {
 
       emit(state.copyWith(
         userStatus: UserStatus.userLoaded,
@@ -165,6 +165,7 @@ final id=await store.getUserId();
       ));
       return;
     }
+    else{
     emit(state.copyWith(userStatus: UserStatus.Loading));
     final result = await getUserProfileUseCase(event.isUpdated);
     emit(_handleEitherResult<Member>(
@@ -172,7 +173,7 @@ final id=await store.getUserId();
       onSuccess: (member) => state.copyWith(user: member,userStatus: UserStatus.userLoaded),
       successStatus: UserStatus.userLoaded,
       successMessage: 'User Profile Loaded Successfully',
-    ));
+    ));}
   }
 
   void _handleGetAllMembers(

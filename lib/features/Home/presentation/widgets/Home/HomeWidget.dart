@@ -1,17 +1,22 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:jci_app/core/route/app_router.dart';
 import 'package:jci_app/features/Home/Activity_Global.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Functions/Listeners.dart';
 import 'package:jci_app/features/Home/presentation/widgets/components/stuff/Compoenents.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Home/HomeComp.dart';
+import 'package:jci_app/features/MemberSection/presentation/bloc/objectifs/objectif_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/GetTeam/get_teams_bloc.dart';
 import 'package:jci_app/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
 import '../../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/Bloc/permissions/permissions_bloc.dart';
+import '../../../../MemberSection/presentation/widgets/achivements/ObjectifImpl.dart';
 import '../../../../MemberSection/presentation/widgets/member/MemberImpl.dart';
 import '../../../../intro/presentation/widgets.global.dart';
 import '../../bloc/Activity/activity_cubit.dart';
 import '../Implementations/ActivtysImplementations.dart';
+import '../components/stuff/ActivitiOptionRow.dart';
 
 
 class HomeWidget extends StatefulWidget {
@@ -26,6 +31,8 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> {
   @override
   void initState() {
+    context.read<ObjectifBloc>().add(FetchTop3UserobjectifsEvent());
+    context.read<GetTeamsBloc>().add(GetTeamsOfuser());
 context.read<ParticpantsBloc>().add(LoadParticipantIdEvent());
     context.read<AcivityFBloc>().add(
         GetActivitiesOfMonthEvent(act: widget.Activity));
@@ -49,23 +56,36 @@ context.read<ParticpantsBloc>().add(LoadParticipantIdEvent());
         drawer: HomeComponents.buildDrawer(context, mediaQuery),
 
         appBar: AppBar(
-
+          backgroundColor: ColorsApp.backgroundColored,
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon:
+            Container(
+              padding: paddingSemetricVerticalHorizontal(),
+              decoration:
+              BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(offset: Offset(0, 5),color:ColorsApp.ThirdColor.withOpacity(0.2),spreadRadius: 1,blurRadius: 1 ),
+                  ],
+                  color: ColorsApp.textColorWhite
+                  ,
+                  borderRadius: BorderRadius.circular(10)
+              ),
+            child: Icon(Icons.menu_open)), // or your custom icon
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),
+          ),
           title: HomeComponents.buildHeader(mediaQuery),
 
 
-          centerTitle: true,
-          toolbarHeight: mediaQuery.size.height / 10,
-          backgroundColor: backgroundColored,
-          surfaceTintColor: backgroundColored,
-          foregroundColor: textColorBlack,
-          shadowColor: textColorWhite,
+
+
 
 
           actions: [
-            Padding(
-              padding: paddingSemetricHorizontal(),
-              child: const CalendarButton(
-                color: textColorWhite, IconColor: textColorBlack,),
+
+            const CalendarButton(
+                color: textColorWhite, IconColor: textColorBlack,
             ),
             IconButton(
               onPressed: () {
@@ -73,10 +93,20 @@ context.read<ParticpantsBloc>().add(LoadParticipantIdEvent());
                 context.replaceRoute(LoginRoute());
                 context.read<PermissionsBloc>().add(ResetListEvent());
               },
-              icon: const Icon(
+              icon: Container(
+                  padding: paddingSemetricVerticalHorizontal(),
+                  decoration:
+                BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(offset: Offset(0, 5),color:ColorsApp.ThirdColor.withOpacity(0.2),spreadRadius: 1,blurRadius: 1 ),
+                    ],
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(10)
+                ),
+                  child: Icon(
                 Icons.logout,
-                color: Colors.red,
-              ),
+                color: ColorsApp.textColorWhite,
+              )),
             ),
 
 
@@ -105,22 +135,19 @@ context.read<ParticpantsBloc>().add(LoadParticipantIdEvent());
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: mediaQuery.size.height / 38,
-                            horizontal: mediaQuery.size.width / 20),
+                            horizontal: mediaQuery.size.width / 25),
                         child: BlocBuilder<AuthBloc, AuthState>(
                           builder: (context, ste) {
                             return Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
+                                ObjectifsCarouselImpl(),
+                                ActivityOptionsRow(),
+
                                 Padding(
                                   padding: paddingSemetricVertical(),
                                   child: const MyActivityButtons(),
                                 ),
-
-
-                                BlocMonthlyWeeklyActivity(
-                                    state.selectedActivity,
-                                    mediaQuery),
-
 
                                 Padding(
                                   padding: paddingSemetricHorizontal(h: 16),
@@ -129,9 +156,15 @@ context.read<ParticpantsBloc>().add(LoadParticipantIdEvent());
 
                                   HomeComponents.TeamsWidget(
                                       mediaQuery, context),
-                                )
+                                ),
 
-                                ,
+                                BlocMonthlyWeeklyActivity(
+                                    state.selectedActivity,
+                                    mediaQuery),
+
+
+
+
                             //    MemberImpl.memberWithHighestRanks(mediaQuery)
                               ],
 

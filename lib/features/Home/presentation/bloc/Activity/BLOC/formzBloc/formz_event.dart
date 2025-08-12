@@ -134,12 +134,12 @@ class MemberFormzChanged extends FormzEvent {
   List<Object> get props => [memberFormz];
 }
 class EventChanged extends FormzEvent {
-  final Event eventChanged;
+  final ActivityBasics? eventChanged;
 
   const EventChanged({required this.eventChanged});
 
   @override
-  List<Object> get props => [eventChanged
+  List<Object> get props => [
   ];
 }
 class MembersTeamChanged extends FormzEvent {

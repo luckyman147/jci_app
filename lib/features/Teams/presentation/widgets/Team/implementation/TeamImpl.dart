@@ -28,6 +28,8 @@ Widget allTeams(String id,ScrollController scrollController,bool isHome) {
                 case TeamStatus.success:
                 case TeamStatus.LoadedTeams:
                 case TeamStatus.LoadedTeam:
+                case TeamStatus.LoadingJoin:
+                case TeamStatus.Created:
 
 
                   if (state.teams.isEmpty) {

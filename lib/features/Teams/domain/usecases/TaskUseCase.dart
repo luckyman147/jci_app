@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:jci_app/features/Teams/domain/repository/Tasks/TaskRepo.dart';
 
@@ -32,7 +34,7 @@ class AddTaskUseCase extends UseCase<Tasks, AddTaskParams> {
 
   @override
   Future<Either<Failure, Tasks>> call(AddTaskParams params) {
-    return repo.addTask(params.teamId, params.name);
+    return repo.addTask(params.teamId, params.name,params.status);
   }
 }
 
@@ -44,7 +46,7 @@ class DeleteTaskUseCase extends UseCase<Unit, AddTaskParams> {
 
   @override
   Future<Either<Failure, Unit>> call(AddTaskParams task) {
-    return repo.deleteTask(task.teamId, task.name);
+    return repo.deleteTask(task.teamId, task.taskId!);
   }
 }
 class updateTaskStatusUseCase extends UseCase<Unit, UpdateTaskParams> {
@@ -64,6 +66,14 @@ class updateTaskNameUseCase extends UseCase<Unit, UpdateTaskParams> {
   Future<Either<Failure, Unit>> call(UpdateTaskParams params) {
     return repo.updateTaskName(params.teamId!, params.taskId, params.name!);
   }
+}class updateTaskDescriptionUseCase extends UseCase<Unit, UpdateTaskParams> {
+  final TaskRepository repo;
+  updateTaskDescriptionUseCase(this.repo);
+
+  @override
+  Future<Either<Failure, Unit>> call(UpdateTaskParams params) {
+    return repo.updateTaskName(params.teamId!, params.taskId, params.descriptionb!);
+  }
 }
 
 class UpdateTaskTimeline  extends UseCase<Unit, UpdateTaskParams> {
@@ -81,6 +91,7 @@ class UpdateMembersUseCase extends UseCase<Unit, UpdateTaskParams> {
 
   @override
   Future<Either<Failure, Unit>> call(UpdateTaskParams params) {
-    return repo.updateMembers(params.teamId!, params.taskId, params.memberStatus!,params.memberId!);
+    log("UpdateMembersUseCase called with params: ${params.memberStatus}");
+    return repo.updateMembers(params.teamId!, params.taskId, params.memberStatus!,params.member!);
   }
 }

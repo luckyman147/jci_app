@@ -24,6 +24,18 @@ return await objectifRepo.updateUserObjectivesProgress(params);
 
 }
 
+class fetchTop3bjectivesProgressUsesCase extends UseCase<List<UserObjectifInfos>,NoParams>{
+  final ObjectifRepo objectifRepo;
+
+  fetchTop3bjectivesProgressUsesCase({required this.objectifRepo});
+
+  @override
+  Future<Either<Failure, List<UserObjectifInfos>>> call(NoParams params) async{
+return await objectifRepo.fetchObjectifsInProgress();
+  }
+
+}
+
 
 class AddObjectifUsesCase extends UseCase<Unit,Objectif>{
   final ObjectifRepo objectifRepo;

@@ -1,8 +1,9 @@
 part of 'get_teams_bloc.dart';
-enum TeamStatus { initial, success, error ,Deleted,DeletedError,IsRefresh,Loading,Created,Updated,LoadedTeams ,LoadedTeam}
+enum TeamStatus { initial, success, error ,LoadingJoin,Deleted,DeletedError,IsRefresh,Loading,Created,Updated,LoadedTeams ,LoadedTeam}
  class GetTeamsState extends Equatable {
    final TeamStatus status;
    final List<Team> teams;
+   final List<Team> homeTeams;
    final bool hasReachedMax;
    final String errorMessage;
    final List<dynamic> isExisted;
@@ -14,6 +15,7 @@ enum TeamStatus { initial, success, error ,Deleted,DeletedError,IsRefresh,Loadin
    this.hasReachedMax = false,
     this.lastDocument,
    this.teams = const [],
+    this.homeTeams=const [],
     this.isExisted = const[],
     this.teamById ,
 
@@ -28,12 +30,13 @@ enum TeamStatus { initial, success, error ,Deleted,DeletedError,IsRefresh,Loadin
      List<dynamic>? members,
      TeamStatus? status,
      List<Team>? teams,
+     List<Team>? homeTeams,
      bool? hasReachedMax,
      String? errorMessage,
      Team? teamById
    }) {
      return GetTeamsState(
-
+       homeTeams: homeTeams ?? this.homeTeams,
        lastDocument: lastDocument??this.lastDocument,
         isExisted: isExisted ?? this.isExisted,
         members: members ?? this.members,
@@ -46,7 +49,7 @@ enum TeamStatus { initial, success, error ,Deleted,DeletedError,IsRefresh,Loadin
    }
 
    @override
-   List<Object?> get props => [status,teamById, teams,members,isExisted, hasReachedMax, errorMessage];
+   List<Object?> get props => [status,homeTeams,teamById, teams,members,isExisted, hasReachedMax, errorMessage];
 }
 
 class GetTeamsInitial extends GetTeamsState {

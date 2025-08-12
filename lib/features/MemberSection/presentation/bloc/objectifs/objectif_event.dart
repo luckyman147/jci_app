@@ -21,6 +21,14 @@ class RemoveFirstIndexEvent extends ObjectifEvent{
   List<Object?> get props =>   [];
 }
 
+class FetchTop3UserobjectifsEvent extends ObjectifEvent {
+
+
+  const FetchTop3UserobjectifsEvent();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class DeleteObjectifEvent extends ObjectifEvent {
   final String objectifId;

@@ -34,6 +34,7 @@ import '../../../Teams/data/models/TeamModel.dart';
 import '../../../Teams/domain/entities/Team/Team.dart';
 import '../bloc/PageIndex/page_index_bloc.dart';
 import '../widgets/Activity/ActivityDetailsComponents.dart';
+import '../widgets/Functions/ActivityFunctions.dart';
 import '../widgets/components/stuff/CreateOptionButton.dart';
 @RoutePage()
 class HomePage extends StatefulWidget {
@@ -154,12 +155,12 @@ class _HomePageState extends State<HomePage> {
           child: Container(
             decoration: BoxDecoration(
               color: PrimaryColor, // Fill with PrimaryColor when selected
-              borderRadius: BorderRadius.circular(60), // Rounded corners
+              borderRadius: BorderRadius.circular(10), // Rounded corners
             ),
             child: const Icon(
               Icons.add, // Custom icon for the button
               color: ColorsApp.textColorWhite, // White icon when selected
-              size: 35,
+              size:40,
             ),
           ),
         ),
@@ -185,7 +186,11 @@ class _HomePageState extends State<HomePage> {
           selector: (state) => state,
           builder: (context, states) {
             if (states.userStatus == UserStatus.Loading) {
-              return LoadingWidget();
+              return CircleAvatar(
+                radius: 15,
+                backgroundImage: AssetImage(images.jci),
+                backgroundColor: Colors.transparent,
+              );
             }
             else if (states.user == null) {
               return _buildIconWithBorder(Icons.person, state.index == 4, null);
@@ -277,14 +282,14 @@ class _HomePageState extends State<HomePage> {
                     label: "Create an Event",
                     color: Colors.blue,
                     onTap: () {
-                    NavigateActivity(context,activity.Events);                      // Navigate to Create Event
+                      ActivityFunctions.   NavigateActivity(context,activity.Events);                      // Navigate to Create Event
                     }, permissionName: Constants.MANAGE_EVENTS,
                   ),
                   CreateOptionButton(
                     label: "Create a Meeting",
                     color: Colors.orange,
                     onTap: () {
-                   NavigateActivity(context,activity.Meetings);
+                      ActivityFunctions.  NavigateActivity(context,activity.Meetings);
                       // Navigate to Create Meeting
                     }, permissionName: Constants.MANAGE_MEETINGS,
                   ),
@@ -293,7 +298,7 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.green,
                     onTap: () {
 
-                    NavigateActivity(context,activity.Trainings);
+                      ActivityFunctions.  NavigateActivity(context,activity.Trainings);
                       // Navigate to Create Training
                     }, permissionName: Constants.MANAGE_TRAININGS,
                   ),
@@ -321,7 +326,7 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.red,
                     onTap: () {
                       context.pushRoute(
-                        ObjectifformpageRoute(
+                        ObjectifformPageRoute(
                           MemberId: context.read<MembersBloc>().state.user?.id??"",
                           event:  ObjectiveEvent.Create,
                           // or null
@@ -339,14 +344,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void NavigateActivity(BuildContext context,activity Activity) {
-       context.read<ActivityCubit>().selectActivity(Activity);
-      context.navigateTo(CreateUpdateActivityRoute(
-        id: 'id',
-        activity:Activity.name,
-        work:actionType.Add.name,
-        particpants: const [],
-      ));
-  }
+
 
 }

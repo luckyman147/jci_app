@@ -16,9 +16,15 @@ import 'package:jci_app/features/Teams/presentation/bloc/NumPages/num_pages_bloc
 import 'package:jci_app/features/Teams/presentation/bloc/TaskFilter/taskfilter_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/TaskIsVisible/task_visible_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/Timeline/timeline_bloc.dart';
+import 'package:jci_app/features/Teams/presentation/bloc/commentsdFile/comment_file_bloc.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/members/members_cubit.dart';
 
 import 'data/datasources/ChecklistRemoteDataSources.dart';
+import 'data/datasources/CommentFileRemoteDatasource.dart';
+import 'data/repositories/ChekListRepoImpl.dart';
+import 'data/repositories/CommentFileRepoImpl.dart';
+import 'domain/repository/Tasks/CheckListRepository.dart';
+import 'domain/repository/Tasks/TaskInteractionRepository.dart';
 import 'domain/usecases/CheckList_usescases.dart';
 import 'domain/usecases/TaskUseCase.dart';
 import 'domain/usecases/comments_files_usecases.dart';
@@ -31,9 +37,12 @@ Future<void> initTeams() async {
   sl.registerFactory(() => TimelineBloc());
   sl.registerFactory(() => TaskVisibleBloc());
   sl.registerFactory(() => TaskfilterBloc());
+  sl.registerFactory(() => CommentFileBloc(sl(),sl (),sl(),sl(),sl()));
 
   sl.registerFactory(() => NumPagesBloc());
   sl.registerFactory(() => GetTaskBloc(
+
+    UpdateTaskDescriptionUseCase: sl(),
 
       getTasksOfTeamUseCase: sl(),
       getTasksByIdUseCase: sl(),
@@ -43,18 +52,23 @@ Future<void> initTeams() async {
 
 
       updateTaskTimelineUseCase: sl(), updateMembersUseCase: sl(), UpdateTaskNameUseCase: sl(),
+
+    UpdateTaskStatusUseCase: sl(), addChecklistUseCase: sl(),
+    updateChecklistNameUseCase: sl(), updateChecklistStatusUseCase: sl(),
+    deleteChecklistUseCase: sl(),
 ));
 
   sl.registerFactory(() =>
-      GetTeamsBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+      GetTeamsBloc(sl(), sl(), sl(),sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   //datasources
 
   sl.registerLazySingleton<TaskRemoteDataSource>(
       () => TaskFirestoreRemote( sl()));
   sl.registerLazySingleton<ChecklistRemoteDataSource>(
       () => ChecklistRemoteDataSourceImpl( sl()));
-  sl.registerLazySingleton<ChecklistRemoteDataSource>(
-      () => ChecklistRemoteDataSourceImpl( sl()));
+  sl.registerLazySingleton<CommentFileRemoteDataSource>(
+      () => CommentFileRemoteDataSourceImpl( firestore: sl(), storage: sl()));
+
   sl.registerLazySingleton<TeamRemoteDataSource>(
       () => TeamRemoteDataSourceImpl(sl(), sl(),sl(),sl(),sl()));
   sl.registerLazySingleton<TeamLocalDataSource>(
@@ -66,15 +80,20 @@ Future<void> initTeams() async {
   sl.registerLazySingleton(() => getTeamByNameUseCase(sl()));
   sl.registerLazySingleton(() => UpdateChecklistNameUseCase(sl()));
   sl.registerLazySingleton(() => AddCommentUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateCommentUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteCommentUseCase(sl()));
+  sl.registerLazySingleton(() => GetAllTeamsUseCase(sl()));
+  sl.registerLazySingleton(() => UploadFilesUseCase(sl()));
 
   sl.registerLazySingleton(() => DeleteFileUseCase(sl()));
   sl.registerLazySingleton(() => updateTaskNameUseCase(sl()));
+  sl.registerLazySingleton(() => updateTaskDescriptionUseCase(sl()));
   sl.registerLazySingleton(() => UpdateFileUseCase(sl()));
   sl.registerLazySingleton(() => UpdateMembersUseCase(sl()));
   sl.registerLazySingleton(() => DeleteChecklistUseCase(sl()));
   sl.registerLazySingleton(() => DeleteTaskUseCase(sl()));
   sl.registerLazySingleton(() => UpdateTaskTimeline(sl()));
-  sl.registerLazySingleton(() => updateTaskNameUseCase(sl()));
+
   sl.registerLazySingleton(() => UpdateTeamMembersUseCase(sl()));
   //sl.registerLazySingleton(() => GetFil(sl()));
 
@@ -85,8 +104,8 @@ Future<void> initTeams() async {
   sl.registerLazySingleton(() => GetTasksOfTeamUseCase(sl()));
   sl.registerLazySingleton(() => GetTaskByIdUseCase(sl()));
 
-  sl.registerLazySingleton(() => GetAllTeamsUseCase(sl()));
   sl.registerLazySingleton(() => JoinTeamUseCase(sl()));
+  sl.registerLazySingleton(() => GetTeamsOfUserUseCase(sl()));
   sl.registerLazySingleton(() => GetTeamByIdUseCase(sl()));
   sl.registerLazySingleton(() => AddTeamUseCase(sl()));
   sl.registerLazySingleton(() => UpdateTeamUseCase(sl()));
@@ -101,5 +120,10 @@ Future<void> initTeams() async {
       ));
   sl.registerLazySingleton<TaskRepository>(() => TaskRepositoryImpl(
    sl(),sl(),sl(),remote: sl(), local: sl(),
+      )); sl.registerLazySingleton<ChecklistRepository>(() => CheckListRepoImpl(
+    unitHandler: sl(), checkHandler: sl(), checklistRemoteDataSource: sl(), handler: sl()
+      ));
+  sl.registerLazySingleton<TaskInteractionRepository>(() => CommentFileRepoImpl(
+   sl(),sl(),sl(), sl(),remoteDataSource: sl(),
       ));
 }

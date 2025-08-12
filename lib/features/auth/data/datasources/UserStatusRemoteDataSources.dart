@@ -90,7 +90,7 @@ class UserStatusRemoteDataSourceImpl implements UserStatusRemoteDataSource {
   }
   @override
   Future<String> getPreviousEmail() async {
-    final email = await store.getPreviousEmail(); // Assuming this is an async call
+    final email = await store.getEmail(); // Assuming this is an async call
 
     if (email != null) {
       return email; // Return the email if it's not null

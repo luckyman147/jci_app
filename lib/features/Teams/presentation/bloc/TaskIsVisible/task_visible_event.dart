@@ -3,6 +3,14 @@ part of 'task_visible_bloc.dart';
 abstract class TaskVisibleEvent extends Equatable {
   const TaskVisibleEvent();
 }
+//change willadded
+class ChangeWillAdded extends TaskVisibleEvent {
+  final bool willAdded;
+  const ChangeWillAdded(this.willAdded);
+  @override
+  List<Object> get props => [willAdded];
+}
+
 class ToggleTaskVisible extends TaskVisibleEvent {
   final bool WillVisible;
   const ToggleTaskVisible(this.WillVisible);
@@ -18,7 +26,12 @@ class ToggleTaskVisibleById extends TaskVisibleEvent {
   List<Object> get props => [taskId];
 }
 
-
+class ChangeIsColumn extends TaskVisibleEvent {
+  final bool isColumn;
+  const ChangeIsColumn(this.isColumn);
+  @override
+  List<Object> get props => [isColumn];
+}
 
 class resetTaskVisible extends TaskVisibleEvent {
   @override

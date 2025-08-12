@@ -25,6 +25,8 @@ class ChecklistRemoteDataSourceImpl implements ChecklistRemoteDataSource {
           .doc(taskId)
           .collection('checklists')
           .add(CheckListModel.toJsonForCreate(name));
+      // update the document with the generated ID
+      await docRef.update({'id': docRef.id});
 
       return CheckListModel(
         id: docRef.id,

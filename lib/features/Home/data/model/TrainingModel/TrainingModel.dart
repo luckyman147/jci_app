@@ -21,6 +21,7 @@ class TrainingModel extends Training {
     required super.activityBasics,
     required super.settings,
     required super.online,
+    super.type="Training",
     required super.participation,
   });
 
@@ -80,6 +81,7 @@ class TrainingModel extends Training {
       'activityBasics': activityBasics.toJson(),
       'settings': settings.toJson(),
       'online': online.toJson(),
+      "type":type,
       'participation': participation.toJson(),
     };
   }

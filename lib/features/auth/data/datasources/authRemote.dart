@@ -227,7 +227,7 @@ class AuthRemoteImpl implements AuthRemote {
     final userJson =
         AuthUserModel.fromJson(userDoc.data() as Map<String, dynamic>);
 
-    await store.SetEmail(user.email!);
+    await store.setEmail(user.email!);
 
     if (userJson.role != null) {
       await store.setRole(userJson.role!);

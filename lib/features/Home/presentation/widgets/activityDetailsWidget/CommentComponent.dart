@@ -12,6 +12,7 @@ import '../Activity/ActivityImplWidgets.dart';
 import '../Functions/ActivityDetailsFunctions.dart';
 import '../Implementations/CommentsImpl.dart';
 import '../components/pv&notes/SendingTextField.dart';
+import '../components/pv&notes/TextFieldComments.dart';
 import 'CommentWidget.dart';
 
 class CommentsScreen extends StatelessWidget {
@@ -28,7 +29,8 @@ class CommentsScreen extends StatelessWidget {
       builder: (context, state) {
         return Column(
           children: <Widget>[
-            Expanded(
+            SizedBox(
+              height: 450.h,
                 child: ActivityCommentImpl((comments) {
               return ListView.builder(
                   itemCount: comments.length,
@@ -46,94 +48,7 @@ class CommentsScreen extends StatelessWidget {
                     );
                   });
             }, activityId)),
-            Container(
-              width: mediaquery.size.width,
-              color: Colors.white,
-              child: Column(
-                children: [
-                  state.comment != null && state.isReply
-                      ? SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              width: mediaquery.size.width,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color:
-                                    ColorsApp.textColorBlack.withOpacity(0.8),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Reply To:",
-                                          style: PoppinsLight(
-                                            13.sp,
-                                            ColorsApp.textColorWhite,
-                                          ),
-                                        ),
-                                        IconButton(
-                                            onPressed: () {
-                                              context
-                                                  .read<ActivityCommentBloc>()
-                                                  .add(InitComment(
-                                                      state.comment!, true));
-                                            },
-                                            icon: const Icon(
-                                              Icons.close,
-                                              color: ColorsApp.textColorWhite,
-                                              size: 20,
-                                            ))
-                                      ],
-                                    ),
-                                    Text(
-                                      state.comment!.content,
-                                      style: PoppinsRegular(
-                                        15.sp,
-                                        ColorsApp.textColorWhite,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      : Container(),
-                  SendingTextField(
-                    controller: controller,
-                    activityId: activityId,
-                    onSend: (controller, content) async {
-                      if (controller.text.isEmpty) {
-                        return;
-                      }
-                      if (!state.isReply) {
-                        await ActivityDetailsFunctions.SendingCommentTextField(
-                            context, content, controller);
-                      } else {
-                        await ActivityDetailsFunctions.CreateReplyToComment(
-                            controller.text,
-                            context,
-                            activityId,
-                            state.comment!.Commentid);
-                        context
-                            .read<ActivityCommentBloc>()
-                            .add(InitComment(state.comment!, true));
-                        controller.clear();
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ),
+            CommentTextField(state: state,controller: controller,activityId: activityId,)
           ],
         );
       },

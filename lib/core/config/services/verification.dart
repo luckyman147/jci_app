@@ -30,7 +30,7 @@ class Verification {
   }
 
   Future<List<String?>> getTokens() async {
-    final tokens = await store.GetTokens();
+    final tokens = await store.getTokens();
     if (tokens[1] == null || tokens[1].toString().isEmpty) {
       throw EmptyCacheException();
     }

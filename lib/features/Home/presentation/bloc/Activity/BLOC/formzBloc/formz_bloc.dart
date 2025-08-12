@@ -14,6 +14,7 @@ import 'package:logger/logger.dart';
 import '../../../../../../../core/Member.dart';
 import '../../../../../../../core/PrimitiveUser/User.dart';
 import '../../../../../domain/entities/Activity/event/Event.dart';
+import '../../../../../domain/entities/Activitys/ActivityBasics.dart';
 import '../../../../../domain/entities/Formz/A ctivityName.dart';
 import '../../../../../domain/entities/Formz/Date.dart';
 import '../../../../../domain/entities/Formz/Description.dart';
