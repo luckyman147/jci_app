@@ -198,7 +198,7 @@ class FirstNameWithLabel extends StatelessWidget {
       child: Column(
         children: [
           HeaderLabel(text: "Last Name".tr(context)),
-          firstname(controller: lastnameController),
+          lastname(controller: lastnameController),
         ],
       ).animate(
         effects: [

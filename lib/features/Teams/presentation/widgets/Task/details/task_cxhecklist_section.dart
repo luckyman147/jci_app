@@ -6,6 +6,7 @@ import '../../../bloc/GetTasks/get_task_bloc.dart';
 import '../../../components/CheckList.dart';
 
 import '../../../../../../core/app_theme.dart';
+import '../components/TaskComponents.dart';
 
 class TaskChecklistSection extends StatelessWidget {
   final Tasks task;
@@ -13,9 +14,11 @@ class TaskChecklistSection extends StatelessWidget {
   final FocusNode checklistFocus;
   final TextEditingController controller;
   final MediaQueryData mediaQuery;
+  final bool hasPermissions;
 
   const TaskChecklistSection({
     super.key,
+    this.hasPermissions = false,
     required this.task,
     required this.team,
     required this.checklistFocus,
@@ -26,9 +29,16 @@ class TaskChecklistSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+
       decoration: taskdex,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+
         children: [
+          Padding(padding: paddingSemetricVerticalHorizontal(), child: buildText("Checklist", mediaQuery)),
+          Visibility(
+      visible: hasPermissions,
+      child:
           Padding(
             padding: paddingSemetricVertical(),
             child: CheckListAddField(
@@ -39,16 +49,18 @@ class TaskChecklistSection extends StatelessWidget {
               team.meta.id,
               true,
             ),
-          ),
+          )),
           BlocBuilder<GetTaskBloc, GetTaskState>(
             builder: (context, state) {
               final i = state.task!.content.checkLists.length;
               final height = i < 3 ? i * 100 : 277;
 
               return AnimatedContainer(
+                margin: const EdgeInsets.only(bottom: 10),
                 height: height.toDouble(),
                 duration: const Duration(milliseconds: 100),
                 child: CheckListWidget(
+                  hasPermission: hasPermissions,
                   checkList: task.content.checkLists,
 
                   tasks: state.task!,

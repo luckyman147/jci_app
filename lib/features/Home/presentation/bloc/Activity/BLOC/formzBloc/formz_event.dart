@@ -38,7 +38,7 @@ class ActivityNameChanged extends FormzEvent {
 }
 
 class LocationChanged extends FormzEvent {
-  final String location;
+  final Place location;
 
   const LocationChanged({required this.location});
 

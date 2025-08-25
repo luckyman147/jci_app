@@ -7,6 +7,7 @@ import 'package:jci_app/features/Home/Activity_Global.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Activity/ActivityImplWidgets.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Functions/Functions.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import '../../../../../core/app_theme.dart';
 import '../../../../auth/AuthWidgetGlobal.dart';
@@ -37,9 +38,11 @@ class ActivityDetail extends StatefulWidget {
 }
 
 class _ActivityDetailState extends State<ActivityDetail> {
+
   @override
   void initState() {
-    Logger().e(widget!.act);
+
+
     context.read<ParticpantsBloc>().add(LoadParticipantIdEvent());
     // TODO: implement initState
     super.initState();
@@ -59,7 +62,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
           BuildFirstPart(mediaQuery),
           Padding(
             padding: widget.act != activity.Meetings
-                ? EdgeInsets.symmetric(vertical: mediaQuery.size.height / 2.5)
+                ? EdgeInsets.symmetric(vertical: mediaQuery.size.height/2.5)
                 : EdgeInsets.symmetric(vertical: 40.h),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -96,7 +99,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
           ActivityDetailsComponent.Back(mediaQuery, context),
           ActivityDetailsComponent.header(
               mediaQuery, context, widget.act == activity.Meetings),
-          AddDots(widget.activitys, mediaQuery,widget.act),
+          AddDots(activitys:  widget.activitys,mediaQuery:  mediaQuery,Act: widget.act,),
           widget.activitys.activityBasics.coverImages.isNotEmpty
               ? ImageListCard(
                   images: widget.activitys.activityBasics.coverImages

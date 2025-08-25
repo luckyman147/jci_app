@@ -15,6 +15,7 @@ import '../../../../../../../core/Member.dart';
 import '../../../../../../../core/PrimitiveUser/User.dart';
 import '../../../../../domain/entities/Activity/event/Event.dart';
 import '../../../../../domain/entities/Activitys/ActivityBasics.dart';
+import '../../../../../domain/entities/Activitys/Place.dart';
 import '../../../../../domain/entities/Formz/A ctivityName.dart';
 import '../../../../../domain/entities/Formz/Date.dart';
 import '../../../../../domain/entities/Formz/Description.dart';
@@ -91,11 +92,11 @@ else {
 
   void _onLocationChanged(
       LocationChanged event, Emitter<FormzState> emit) {
-    final location = Location.dirty(event.location);
+
     emit(
       state.copyWith(
-          location: location,
-          isValid: Formz.validate([state.location, location])),
+          location:event. location,
+          ),
     );
   }
 

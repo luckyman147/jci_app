@@ -152,7 +152,7 @@ return await paginatedHandler.handle(onCall: ()async {
   }
 
   @override
-  Future<Either<Failure, Unit>> UpdateMembers(String teamid, String memberid, String Status)async {
+  Future<Either<Failure, Unit>> UpdateMembersRole(String teamid, String memberid, String Status)async {
 return
   await   unithandle.handle(onError: (e) {
   if (e is Exception) {
@@ -200,6 +200,19 @@ return
           throw e;
         }
       }, onCall: ()async => await teamRemoteDataSource.getTeamsOfUser());
+  }
+
+  @override
+  Future<Either<Failure, Unit>> kickMember(String id, String memberid) async{
+    return
+      await   unithandle.handle(onError: (e) {
+        if (e is Exception) {
+          return e.get_failure;
+        } else {
+          throw e;
+        }
+      }, onCall: ()async => await teamRemoteDataSource.kickMember(id, memberid));
+
   }
 
 

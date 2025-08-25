@@ -69,8 +69,9 @@ class HomeComponents{
                       return
                           SizedBox(
                         width: mediaQuery.size.width,
-                        height: MediaQuery.of(context).size.height/2,
-                        child: Column(
+
+                        child: Flex(
+                          direction: Axis.vertical,
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -217,7 +218,7 @@ static   Widget BuildPres(Function() onTap,String text, BuildContext context  ,S
       child: InkWell(
         onTap:onTap,
         //colors
-        splashColor: Colors.blue,
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -264,17 +265,14 @@ static   Widget BuildPres(Function() onTap,String text, BuildContext context  ,S
 
 static   Widget buildTeamWidget(MediaQueryData mediaQuery, BuildContext context,
       List<Team> teams) {
-    return teams.isNotEmpty ? Column(
+    return  Flex(
+      direction: Axis.vertical,
       children: [
-        buildteam(mediaQuery, context),
-        SizedBox(
+     buildteam(mediaQuery, context),
+ TeamHomeWidget(teams: teams),
 
-          height: mediaQuery.size.height / 6,
-
-          child: TeamHomeWidget(teams: teams),
-        )
       ],
-    ) : const SizedBox();
+    ) ;
   }
 
 static   Widget buildteam(MediaQueryData mediaQuery, BuildContext context) {
@@ -365,24 +363,32 @@ static   Widget buildteam(MediaQueryData mediaQuery, BuildContext context) {
 
 static   Widget TeamsWidget(MediaQueryData mediaQuery,BuildContext context) =>
 BlocBuilder<GetTeamsBloc,GetTeamsState>(builder: (ctx,state){
-  if (state.status==TeamStatus.LoadedTeams&& state.homeTeams .isNotEmpty) {
-    return buildTeamWidget(mediaQuery, context, state.homeTeams);
+  if ( state.homeTeams .isNotEmpty) {
+    return
+     RefreshIndicator(
+         onRefresh: (){
+            context.read<GetTeamsBloc>().add(GetTeamsOfuser());
+            return Future.value();
+         },
+
+         child:  buildTeamWidget(mediaQuery, context, state.homeTeams));
   }
   else if (state.homeTeams .isEmpty){
-    return Padding(
+    return
+
+      Padding(
       padding: paddingSemetricVertical(),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          AutoSizeText(
-            "No Teams Found".tr(context),
-            style: PoppinsSemiBold(16.sp, Colors.black, TextDecoration.none),
-          ),
+
+       SizedBox(),
         ],
       ),
     );
   }
-  return const SizedBox();
+  else
+  return const SizedBox.shrink();
   }
 
 );

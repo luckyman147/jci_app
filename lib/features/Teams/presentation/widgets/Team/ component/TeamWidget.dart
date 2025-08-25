@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:circle_progress_bar/circle_progress_bar.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -135,13 +135,17 @@ Widget body(List<Team> teams, int index, MediaQueryData mediaQuery,
                 builder: (context, state) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
+                    child:
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child:
+                    Row(
 
                       children: [
 
                         Padding(
                           padding: paddingSemetricHorizontal(h: 10),
-                          child: DeatailsTeamComponent.ImageCard(mediaQuery, teams[index].meta.coverImage, mediaQuery.size.height / 12.5,),
+                          child: DeatailsTeamComponent.ImageCard(mediaQuery, teams[index].meta.coverImage, mediaQuery.size.height / 16.5,),
                         ),
 
                         SingleChildScrollView(
@@ -152,7 +156,7 @@ Widget body(List<Team> teams, int index, MediaQueryData mediaQuery,
 
                       ],
                     ),
-                  );
+                  ));
                 },
               ),
             ),
@@ -376,8 +380,11 @@ class TeamHomeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
+    return
 
+      ListView.separated(
+      shrinkWrap: true, // <--- add this
+      physics: const NeverScrollableScrollPhysics(), // <--- add this
       itemCount: min(teams.length, 3),
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (ctx, index) {
@@ -388,21 +395,34 @@ class TeamHomeWidget extends StatelessWidget {
         double progress = totalTasks > 0 ? completedTasks / totalTasks : 0;
 
         return  ListTile(
+            onTap: () {
+              context.navigateTo(
+                TeamDetailsRoute(
+                  id: team.meta.id,
+                  index: index,
+                ),
+              );
+              context.read<GetTeamsBloc>().add(GetTeamById(
+                {"id": team.meta.id, "isUpdated": true},
+              ));
+            },
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: BorderSide(color: ColorsApp.BackWidgetColor, width: 2),
+            ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             leading: CircleAvatar(
               radius: 28,
               backgroundImage: NetworkImage(team.meta.coverImage),
-              backgroundColor: Colors.grey[200],
+              backgroundColor: ColorsApp.textColorWhite,
             ),
             title: Row(
               children: [
                 Expanded(
                   child: Text(
                     team.meta.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      color: Colors.black87,
+                    style:  PoppinsRegular(
+                    16.sp,ColorsApp.textColorBlack
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -428,11 +448,11 @@ class TeamHomeWidget extends StatelessWidget {
                     LinearProgressIndicator(
                       value: value,
                       backgroundColor: Colors.grey.shade300,
-                      color: Colors.orangeAccent,
+                      color: ColorsApp.PrimaryColor,
                       minHeight: 8,
                     ),
                     const SizedBox(height: 6),
-                    Text(
+                    AutoSizeText(
                       '$completedTasks / $totalTasks Tasks Completed',
                       style: PoppinsNorml(14, ColorsApp.textColorBlack)
                     ),
@@ -440,7 +460,8 @@ class TeamHomeWidget extends StatelessWidget {
                 );
               },
             ),
-            trailing: Images(teams, index),
+            trailing: SingleChildScrollView( scrollDirection :Axis.horizontal,
+                child:  SizedBox( width: 80,height: 60 ,child:Center(child:  Images(teams, index)))),
 
         );
       },

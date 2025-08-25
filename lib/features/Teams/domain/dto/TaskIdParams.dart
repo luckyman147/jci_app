@@ -36,6 +36,8 @@ class UpdateTaskParams {
   final TeamUser? member;
   final DateTime? startDate;
   final DateTime? Deadline;
+  final String? newRole;
+
 
   final TaskCompletionStatus? status;
 
@@ -43,6 +45,7 @@ class UpdateTaskParams {
   UpdateTaskParams(
       {required this.taskId, required this.task,
         this.teamId,
+        this.newRole,
         this.descriptionb,
         this.status, this.name, this.startDate, this.Deadline, this.memberStatus, this.member,
 

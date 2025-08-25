@@ -5,9 +5,15 @@ enum presidentsStates{Initial,Loading,Loaded,Error,Changed,ErrorCrete}
   final List<President> presidents;
   final bool hasReachedMax;
   final String message;
-  const PresidentsState({this.state=presidentsStates.Initial,this.presidents=const [],this.message='',this.hasReachedMax=false});
-  PresidentsState copyWith({presidentsStates? state,List<President>? presidents,String? message,bool? hasReachedMax}) {
-    return PresidentsState(state: state??this.state,presidents: presidents??this.presidents,message: message??this.message,hasReachedMax: hasReachedMax??this.hasReachedMax);
+  final DocumentSnapshot? lastDocument;
+  const PresidentsState({this.state=presidentsStates.Initial,this.presidents=const [],
+    this.lastDocument,
+    this.message='',this.hasReachedMax=false});
+  PresidentsState copyWith({presidentsStates? state,List<President>? presidents,String? message,
+    bool? hasReachedMax, DocumentSnapshot? lastDocument}) {
+    return PresidentsState(state: state??this.state,presidents: presidents??this.presidents,
+        lastDocument: lastDocument??this.lastDocument,
+        message: message??this.message,hasReachedMax: hasReachedMax??this.hasReachedMax);
   }
 
   @override

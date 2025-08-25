@@ -1,4 +1,8 @@
 // 7. member_utils.dart
+import 'package:jci_app/features/Teams/domain/dto/TaskIdParams.dart';
+
+import 'package:jci_app/features/Teams/domain/entities/task/Task.dart';
+
 import '../../../../core/PrimitiveUser/User.dart';
 import '../../../Home/Activity_Global.dart';
 import '../../../MemberSection/domain/usecases/MemberUseCases.dart';
@@ -27,12 +31,12 @@ class MemberUtils {
       bool isAssign, Team team, TeamUser member, BuildContext context) {
     if (!isAssign) {
       final teamfi =
-      TeamInput(team.meta.id, member.user.id, null, member);
+      TeamInput(team.meta.id, member.user.id, null, null,member);
       context.read<GetTeamsBloc>().add(InviteMembers(teamfi: teamfi));
       Navigator.pop(context);
     } else {
       final teamfi = TeamInput(
-          team.meta.id, member.user.id, "kick", member);
+          team.meta.id, member.user.id, "kick",null, member);
       context.read<GetTeamsBloc>().add(UpdateTeamMember(fields: teamfi));
       Navigator.pop(context);
     }
@@ -69,5 +73,25 @@ class MemberUtils {
     } else if (state.name.isEmpty) {
       context.read<MembersBloc>().add(const GetAllMembersEvent(false));
     }
+  }
+
+  static List<Tasks> updateMemberRoleInTasks(List<Tasks> tasks, UpdateTaskParams fields) {
+    return tasks.map((task) {
+      if (task.meta.assignToMembers.any((member) => member.user.id == fields.member?.user.id)) {
+        final updatedMembers = task.meta.assignToMembers.map((member) {
+          if (member.user.id == fields.member?.user.id) {
+            return member.copyWith(role:UserTeamRole.values.firstWhere((test)=>test.name== fields.newRole) ?? member.role);
+          }
+          return member;
+        }).toList();
+
+        return task.copyWith(
+          meta: task.meta.copyWith(assignToImages: updatedMembers),
+        );
+      }
+      return task;
+    }
+    ).toList();
+
   }
 }

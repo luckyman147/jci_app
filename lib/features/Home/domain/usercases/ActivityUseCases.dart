@@ -6,6 +6,7 @@ import 'package:jci_app/features/Home/domain/repsotories/ActivitiesRepo.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 
 import '../../../auth/AuthWidgetGlobal.dart';
+import '../entities/Activitys/Place.dart';
 
 
 class GetAllActivitiesUseCases extends UseCase<List<Activity>,activity >{
@@ -16,6 +17,25 @@ class GetAllActivitiesUseCases extends UseCase<List<Activity>,activity >{
   Future<Either<Failure, List<Activity>>> call(activity params) {
     return activitiesRepo.getAllActivities(params);
 
+  }
+}
+class GetSuggestedPlacesUseCases extends UseCase<List<Place>,String >{
+  final ActivitiesRepo activitiesRepo;
+
+  GetSuggestedPlacesUseCases({required this.activitiesRepo});
+
+  @override
+  Future<Either<Failure, List<Place>>> call( params) {
+    return activitiesRepo.SearchPlaces(params);
+  }
+}class GetSuggestedPlaceDetailsUseCases extends UseCase<Place,Place >{
+  final ActivitiesRepo activitiesRepo;
+
+  GetSuggestedPlaceDetailsUseCases({required this.activitiesRepo});
+
+  @override
+  Future<Either<Failure, Place>> call( params) {
+    return activitiesRepo.SearchPlacesDetails(params);
   }
 }
 

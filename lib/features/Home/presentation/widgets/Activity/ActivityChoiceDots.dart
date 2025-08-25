@@ -1,8 +1,11 @@
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jci_app/features/Home/domain/Dtos/ActivityParam.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/guests/guests_bloc.dart';
 import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 
 import '../../../Activity_Global.dart';
+import '../../../data/model/meetingModel/MeetingModel.dart';
+import '../../../domain/entities/Meeting.dart';
 import '../../bloc/PageIndex/page_index_bloc.dart';
 import '../Functions/ActivityFunctions.dart';
 import '../Implementations/GuestPartcipantsImpl.dart';
@@ -22,11 +25,12 @@ class ActivityChoiceDots extends StatelessWidget {
              padding: const EdgeInsets.all(16.0),
              child: Column(
                mainAxisSize: MainAxisSize.min,
+               crossAxisAlignment: CrossAxisAlignment.start,
                children: [
                  // Header
                  Text(
                    "Choose an Option",
-                   style: PoppinsSemiBold(17, ColorsApp.textColorBlack, TextDecoration.none),
+                   style: PoppinsSemiBold(22.sp, ColorsApp.textColorBlack, TextDecoration.none),
                  ),
                  const SizedBox(height: 20),
                  // Grid Buttons
@@ -34,15 +38,15 @@ class ActivityChoiceDots extends StatelessWidget {
                  GridView.count(
                    shrinkWrap: true,
                    crossAxisCount: 2,
-                   childAspectRatio: 1.9,
+                   childAspectRatio: 3 / 2,
                    mainAxisSpacing: 10,
                    crossAxisSpacing: 10,
                    children: [
-
+if (activity.runtimeType==Meeting || activity.runtimeType==MeetingModel)
                      actionRow(
                        mediaQuery,
                        activity,
-                       textColorBlack,
+                       ColorsApp.PrimaryColor,
                        Icons.play_arrow,
                        "Start Meeting",
                            () {
@@ -58,7 +62,7 @@ class ActivityChoiceDots extends StatelessWidget {
                      actionRow(
                        mediaQuery,
                        activity,
-                       textColorBlack,
+                       ColorsApp.SecondaryColor,
                        Icons.timer_rounded,
                        "Reminder",
                            () {
@@ -77,7 +81,7 @@ class ActivityChoiceDots extends StatelessWidget {
                      actionRow(
                        mediaQuery,
                        activity,
-                       textColorBlack,
+                       Colors.green,
                        Icons.edit,
                        "Update".tr(context),
                            () {
@@ -88,7 +92,7 @@ class ActivityChoiceDots extends StatelessWidget {
                      actionRow(
                        mediaQuery,
                        activity,
-                       textColorBlack,
+                       Colors.orange,
                        Icons.person_3,
                        "Participants",
                            () {
@@ -112,7 +116,7 @@ context.read<ParticpantsBloc>().add(
                      ), actionRow(
                        mediaQuery,
                        activity,
-                       textColorBlack,
+                       Colors.deepPurple,
                        FontAwesomeIcons.crown,
                        "Guests",
                            () {

@@ -43,7 +43,8 @@ dependencies:
   google_mlkit_translation:
   firebase_storage:
   firebase_database:
-
+  google_maps_flutter:
+  google_places_flutter:
   cloud_functions:
   firebase_performance: ^0.10.1+6
   firebase_remote_config:
@@ -52,8 +53,7 @@ dependencies:
   firebase_dynamic_links:
 
 
-
-
+  google_api_headers:
     # Bloc for state management
   flutter_bloc: ^9.1.0
   connectivity_plus:
@@ -112,6 +112,8 @@ dependencies:
   emoji_picker_flutter: ^4.3.0
   auto_size_text: ^3.0.0
   flutter_typeahead: ^5.2.0
+  syncfusion_flutter_calendar: ^30.2.5
+  showcaseview: ^4.0.1
 
 dev_dependencies:
   bloc_test:

@@ -3,6 +3,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/AddDeleteUpdateActivity/add_delete_update_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/PV/pv_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Participants/particpants_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Places/place__cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/guests/guests_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
@@ -32,6 +33,7 @@ List<SingleChildWidget> homeProviders = [
   BlocProvider(create: (_) => di.sll<PvBloc>()),
   BlocProvider(create: (_) => di.sll<FormzBloc>()),
   BlocProvider(create: (_) => di.sll<AddDeleteUpdateBloc>()),
+  BlocProvider(create: (_) => di.sll<PlaceCubit>()),
   BlocProvider(create: (_) => CalendarCubit()),
   BlocProvider(create: (_) => ActivityCubit()),
   BlocProvider(create: (_) => DescriptionBoolBloc()),

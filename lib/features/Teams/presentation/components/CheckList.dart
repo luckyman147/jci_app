@@ -18,12 +18,15 @@ import '../bloc/TaskIsVisible/task_visible_bloc.dart';
 class CheckListWidget extends StatelessWidget {
   final List<CheckList> checkList;
   final Tasks tasks;
+  final bool hasPermission;
   final String teamId;
 
 
   const CheckListWidget(
+
       {Key? key,
       required this.checkList,
+      required this.hasPermission,
 
       required this.tasks,
       required this.teamId})
@@ -47,16 +50,20 @@ class CheckListWidget extends StatelessWidget {
                         ),
                         child: Row(
                           children: <Widget>[
-
+Visibility(
+  visible: hasPermission,
+  child:
                                 buildCheckbox(index, context),
-
+),
 
                             Expanded(
                               child: buildTextField(index, tasks.meta.id, context),
                             ),
-
+Visibility(
+  visible: hasPermission,
+  child:
                                 buildIconButton(context, index),
-
+)
 
 
                           ],
@@ -112,11 +119,12 @@ class CheckListWidget extends StatelessWidget {
       side: const BorderSide(color: textColorBlack),
       value: checkList[index].isCompleted,
       onChanged: (bool? value) {
+        if (hasPermission){
         context.read<GetTaskBloc>().add(UpdateChecklistStatusEvent(teamId, tasks.meta.id, checkList[index].id, value?? false));
 
 
         context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
-      },
+      }},
     );
   }
 
@@ -130,7 +138,7 @@ class CheckListWidget extends StatelessWidget {
         context.read<TaskVisibleBloc>().add(const ChangeIsUpdatedEvent(true));
       },
       onChanged: (value) {},
-      enabled: true,
+      enabled: hasPermission,
       controller: TextEditingController(text: checkList[index].name),
       style: PoppinsSemiBold(
           MediaQuery.devicePixelRatioOf(context) * 4,

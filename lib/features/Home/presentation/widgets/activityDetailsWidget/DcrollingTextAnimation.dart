@@ -67,6 +67,7 @@ class _ScrollingTextAnimationState extends State<ScrollingTextAnimation>
               mainAxisAlignment: MainAxisAlignment.center,
 
               children: [
+              
                 Text(
                   widget.name,
 

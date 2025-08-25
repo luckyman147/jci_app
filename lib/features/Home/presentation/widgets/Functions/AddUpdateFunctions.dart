@@ -49,6 +49,7 @@ class AddUpdateFunctions {
   /// Resets all form fields and state to their initial values.
   static void resetForm(BuildContext context, TextEditingController price, List<String> participantsDetails) {
     price.text = "0"; // Reset price to default
+    
     context.read<FormzBloc>().add(BeginTimeChanged(date: DateTime.now())); // Reset begin time
     context.read<CategoryBloc>().add(InitCategoryEvent()); // Reset category
     context.read<TaskVisibleBloc>().add(const ChangeImageEvent("", ActionImage.PREVIOUS)); // Reset image

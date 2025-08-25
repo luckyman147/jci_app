@@ -20,6 +20,7 @@ import 'package:jci_app/features/Home/presentation/widgets/Functions/Functions.d
 import 'package:jci_app/features/changelanguages/presentation/bloc/locale_cubit.dart';
 
 import '../../../../../core/route/app_router.dart';
+import '../../../../../core/strings/Images.string.dart';
 import '../../../domain/enums/ActivityEnum.dart';
 import '../buttons/ParticpatedButton.dart';
 import '../buttons/PinnedButton.dart';
@@ -67,9 +68,10 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                   scrollDirection: Axis.horizontal,
                   child: Container(
                     margin: paddingSemetricHorizontal(),
-                    height: 150,
-                    width: mediaQuery.size.width * 1.1,
+
+                    width: mediaQuery.size.width * 1,
                     decoration: BoxDecoration(
+                      borderRadius: ActivityRaduis,
                       border: Border.all(color: textColor),
                     ),
                     child: Padding(
@@ -79,8 +81,7 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              widget.Activities[index].activityBasics.coverImages.isNotEmpty
-                                  ? InkWell(
+                              InkWell(
                                       highlightColor: Colors.transparent,
                                       onTap: () {
                                         context.pushRoute(ActivityDetailsRoute(
@@ -89,96 +90,82 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                                           index: index,
                                         ));
                                       },
-                                      child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          child: CachedNetworkImageWidget(
-                                            item: widget.Activities[index]
-                                                .activityBasics.coverImages[0],
-                                            height: mediaQuery.size.height / 6,
-                                            width: 130.w,
-                                          )),
-                                    )
-                                  : InkWell(
-                                      highlightColor: Colors.transparent,
-                                      onLongPress: () {
-                                        context.pushRoute(ActivityDetailsRoute(
-                                          id: widget.Activities[index].activityBasics.id,
-                                          activityType: state.selectedActivity.name,
-                                          index: index,
-                                        ));
-                                      },
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: SizedBox(
-                                          height: mediaQuery.size.height / 5.8,
-                                          width: 130.w,
-                                          child: Image.asset(
-                                            'assets/images/jci.png',
-                                            fit: BoxFit.contain,
-                                            scale: 0.1,
-                                          ),
-                                        ),
+                                      child:
+                                      imageActivity(
+                                        mediaQuery,
+                                        widget.Activities,
+                                        index,
+                                         150,
+                                        130,
                                       ),
                                     ),
                               BlocBuilder<localeCubit, LocaleState>(
                                 builder: (context, state) {
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 12.0),
+                                        horizontal: 12.0,vertical: 8),
                                     child: Column(
+                                      spacing: 5,
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         // Text("${"Start At".tr(context)} ${DateFormat('h:mm').format(widget.Activities[index].ActivityBeginDate)}",style: PoppinsRegular(mediaQuery.devicePixelRatio*5, isBefore?Colors.red:isBetween?Colors.green:textColorBlack),),
-                                        SizedBox(
-                                            width: mediaQuery.size.width / 3,
+                                        Container(
+                                          margin:  paddingSemetricHorizontal(),
+                                            width: mediaQuery.size.width / 2,
                                             child: AutoSizeText(
                                               widget.Activities[index].activityBasics.name
                                                   .toUpperCase(),
                                               overflow: TextOverflow.ellipsis,
                                               style: PoppinsSemiBold(
-                                                 16.sp,
+                                                 20.sp,
                                                   textColorBlack,
                                                   TextDecoration.none),
                                             )),
-                                          SizedBox(
+                                          Container(
+                                            margin: paddingSemetricHorizontal(),
 
                                           child: AutoSizeText(
-                                            "${DateFormat('EEEE MMM d  h:mm', state.locale == const Locale('en') ? 'en_US' : 'fr_FR').format(widget.Activities[index].activityBasics.activityBeginDate)} ",
+                                            "${DateFormat('EEEE MMMM dd  hh:mm', state.locale == const Locale('en') ? 'en_US' : 'fr_FR').format(widget.Activities[index].activityBasics.activityBeginDate).toUpperCase()} ",
                                             style: PoppinsRegular(
-                                                14.sp,
+                                                13.sp,
                                                 isBefore
                                                     ? Colors.red
                                                     : isBetween
                                                         ? Colors.green
-                                                        : textColorBlack,
+                                                        : ColorsApp.PrimaryColor,
                                                 ),
                                           ),
                                         ),
 
                                         SizedBox(
                                           child: Row(
+
+                                            spacing: 5,
                                             children: [
                                               const Icon(
                                                 Icons.location_on_outlined,
                                                 color: textColorBlack,
                                                 size: 20,
                                               ),
+
                                               SizedBox(
                                                 width:
-                                                    mediaQuery.size.width / 2,
-                                                child: AutoSizeText(
-                                                  widget.Activities[index]
-                                                      .activityBasics.activityAdress,
+                                                    mediaQuery.size.width /2,
+                                                child:
+                                             AutoSizeText(
+                                                    widget.Activities[index]
+                                                        .activityBasics.activityAdress,
 
-                                                  style: PoppinsLight(
-                                                    14.sp,
-                                                    textColorBlack,
+                                                    style: PoppinsLight(
+                                                      14.sp,
+                                                      textColorBlack,
+                                                    ),
                                                   ),
-                                                ),
+
+
                                               ),
                                             ],
                                           ),
@@ -302,7 +289,7 @@ padding: paddingSemetricVerticalHorizontal(),
                   mainAxisAlignment: MainAxisAlignment.start,
                   spacing: 10,
                   children: [
-                    images(
+                    imageActivity(
                       mediaQuery,
                       activities,
                       index,
@@ -336,16 +323,22 @@ padding: paddingSemetricVerticalHorizontal(),
 }
 
 
-ClipRRect images(mediaQuery, List<Activity> activity, int index, double height,
+ClipRRect imageActivity(mediaQuery, List<Activity> activity, int index, double height,
         double width) =>
     activity[index].activityBasics.coverImages.isNotEmpty
         ? ClipRRect(
             borderRadius: ActivityRaduis,
             child: Container(
-                height: height,
+             decoration:   BoxDecoration(
+                    borderRadius: ActivityRaduis,
+
+                    border: Border.all(color: ColorsApp.BackWidgetColor,width: 2),
+                ),
+                    height: height,
                 width: width,
-                color: Colors.grey,
+
                 child: CachedNetworkImageWidget(
+
                   item: activity[index].activityBasics.coverImages[0],
                   height: height,
                   width: height,
@@ -353,12 +346,16 @@ ClipRRect images(mediaQuery, List<Activity> activity, int index, double height,
         : ClipRRect(
             borderRadius: ActivityRaduis,
             child: Container(
+              padding: paddingSemetricVerticalHorizontal(),
               height: height,
               width: width,
-              decoration: const BoxDecoration(
+              decoration:  BoxDecoration(
+                borderRadius: ActivityRaduis,
+
+                border: Border.all(color: ColorsApp.BackWidgetColor,width: 2),
                   image: DecorationImage(
-                      image: AssetImage('assets/images/jci.png'),
-                      fit: BoxFit.cover)),
+                      image: AssetImage(images.jci),
+                      fit: BoxFit.contain)),
             ),
           );
 

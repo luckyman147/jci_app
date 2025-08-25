@@ -6,6 +6,9 @@ abstract class PresidentsEvent extends Equatable {
 class GetAllPresidentsEvent extends PresidentsEvent {
   @override
   List<Object> get props => [];
+}class GetMorePresidentsEvent  extends PresidentsEvent {
+  @override
+  List<Object> get props => [];
 }
 class CreatePresident extends PresidentsEvent {
   final President president;

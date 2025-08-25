@@ -9,6 +9,8 @@ abstract class LocalPresidentsDataSources {
   Future<Unit> CachePresidents(List<PresidentModel> presidents, String start,String limit);
   Future<Unit> CacheUpdated(bool isUpdated);
 
+  isCacheUpToDate() {}
+
 
 }
 class LocalPresidentsDataSourcesImpl implements LocalPresidentsDataSources {
@@ -34,5 +36,12 @@ await PresidentStore.cachePresidents(presidents,start,limit);
   Future<bool> getUpdated() async {
     return await PresidentStore.getUpdated();
 
+  }
+
+  @override
+  isCacheUpToDate() {
+
+    // TODO: implement isCacheUpToDate
+    throw UnimplementedError();
   }
   }

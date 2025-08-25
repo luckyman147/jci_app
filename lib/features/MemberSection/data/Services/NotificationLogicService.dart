@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../../../core/config/services/store.dart';
 import '../model/NotificationUserModel.dart';
 
 class NotificationLogicService{

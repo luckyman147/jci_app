@@ -19,9 +19,7 @@ final InputsState state;
       visible: state.inputsValue !=Inputs.Google,
       child: Padding(
         padding: paddingSemetricAll(),
-        child: Align(
-            alignment:  Alignment.centerRight,
-            child: InkWell(
+        child:  InkWell(
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onTap: (){
@@ -30,7 +28,7 @@ final InputsState state;
                   
                 },
                 child: LinkedText(text: "Forgot Password?".tr(context), size:  mediaquery.size.width/27.5))),
-      ),
+
     ).animate(
       effects: [
         FadeEffect(duration: 500.milliseconds),

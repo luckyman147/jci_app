@@ -9,8 +9,10 @@ import 'CommentTreeWidget.dart';
 class CommentsWidget extends StatefulWidget {
   final List<TaskComment> commentWidgets;
 final String teamId,taskId;
+final bool haspermission;
 
   const CommentsWidget({
+    required this.haspermission,
      required  this.teamId,required this.taskId,
     Key? key,
     required this.commentWidgets,
@@ -47,14 +49,16 @@ CommentsUtils.AddCommentFunction(context, teamId: widget.teamId, taskId: widget.
         const Divider(),
 
         // Comment input
-        Padding(
+       Visibility(
+           visible: widget.haspermission,
+           child:  Padding(
           padding: const EdgeInsets.all(8.0),
           child:
               // Input field
 
                CommentInputField(teamId: widget.teamId,taskId: widget.taskId, onSend:(s){ _submitComment(s);})
 
-        ),
+        )),
       ],
     );
   }

@@ -36,6 +36,7 @@ import '../../../bloc/GetTasks/get_task_bloc.dart';
 import '../../../bloc/GetTeam/get_teams_bloc.dart';
 import '../../../bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../../utils/MemberUtils.dart';
+import '../../common/RoleAssignWidget.dart';
 import '../CreateTeam/CreateTeamWIdgets.dart';
 import '../../member/MembersTeamSelection.dart';
 import '../../Task/components/TaskComponents.dart';
@@ -99,6 +100,9 @@ class DeatailsTeamComponent{
 
               GestureDetector(
                 onTap: () {
+
+                  context.read<MembersTeamCubit>().changeTypeMember(MembersChangeType.WillChange);
+                  context.read<MembersTeamCubit>().initMembers(team.members.members);
                   TeamMembersShett(context, mediaQuery,team,mounted);},
                 child: membersTeamImage(
                     context, mediaQuery, team.members.members.length, team.members.members,20,30),
@@ -191,6 +195,9 @@ class DeatailsTeamComponent{
             padding:paddingSemetricHorizontal(h: 10),
             child: BlocBuilder<ChangeSboolsCubit, ChangeSboolsState>(
               builder: (context, state) {
+                var isLeader = team.members.teamLeader!.id== member.user.id;
+                var hasPermission= isLeader || FunctionMember.IfIhavePermission(context. read<MembersTeamCubit>().state.members, context);
+                var ifMeLeader= FunctionMember.isOwnerWithContext(team.members.teamLeader!.id!, context);
                 return SizedBox(
                   width: MediaQuery.of(context).size.width/1.2,
                   child: InkWell(
@@ -205,11 +212,16 @@ class DeatailsTeamComponent{
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: SizedBox(
-                            width:  MediaQuery.of(context).size.width/1.6,
-                            child: Row(
 
+                            child: Row(
+spacing: 5,
                               children: [
+
+                                if (isLeader)
+
+                                const Icon(Icons.stars_sharp,color: PrimaryColor,),
                                 MemberTeamSelection.  imageWidget(members[members.length-index-1].user),
+
                         //        AsyncComponents.buildFutureBuilder(const Icon(Icons.person_sharp,),  true, Member.toMember(team.Members[team.Members.length-index-1]).id!, (p0) => FunctionMember.isOwner(Member.toMember(team.Members[team.Members.length-index-1]).id??""))
                               ],
                             ),
@@ -217,7 +229,15 @@ class DeatailsTeamComponent{
                         ),
                   //      FunctionMember.isChef(team, team.Members.length-index-1)?
                      //   AsyncComponents.buildFutureBuilder(KickButton(context, team, index), true, "", (p0) => FunctionMember.isChefAndSuperAdmin(team)):
-                        const Icon(Icons.stars_sharp,color: PrimaryColor,),
+                        RoleAssignWidget(item:members[members.length-index-1],onRoleChanged: (newRole,item){
+                          context.read<MembersTeamCubit>().changeMemberRole(item, newRole);
+
+                          final TeamInput tam=TeamInput(team.meta.id, item.user.id.toString(), "kick",newRole,members[members.length-index-1]);
+                          context.read<GetTeamsBloc>().add(UpdateTeamMember(fields: tam));
+
+
+                        }, isLeader: isLeader, isMeLeader: ifMeLeader, hasPermission: hasPermission,
+                        )
                       ],
                     ),
                   ),
@@ -233,7 +253,7 @@ class DeatailsTeamComponent{
   static Widget KickButton(BuildContext context, Team team, int index) {
     return TextButton(onPressed: () {
       var members = team.members.members;
-      final TeamInput tam=TeamInput(team.meta.id, members[members.length-index-1].user.id.toString(), "kick",members[members.length-index-1]);
+      final TeamInput tam=TeamInput(team.meta.id, members[members.length-index-1].user.id.toString(), "kick",null,members[members.length-index-1]);
       context.read<GetTeamsBloc>().add(UpdateTeamMember(fields: tam));
       Navigator.pop(context);
     }, child: const Icon( Icons.remove_circle,color: Colors.red,),);
@@ -334,6 +354,10 @@ class DeatailsTeamComponent{
   static   Widget Header(BuildContext contex, mediaQuery,Team team,bool mounted) =>
      BlocBuilder<PageIndexBloc, PageIndexState>(
           builder: (context, state) {
+            var ifMeLeader= FunctionMember.isOwnerWithContext(team.members.teamLeader!.id!, context);
+
+            var hasTeamModify = FunctionMember.IfIhavePermission(team. members.members, context);
+            var canUpdate= hasTeamModify || ifMeLeader;
             return BlocBuilder<TaskVisibleBloc, TaskVisibleState>(
               builder: (context, ste) {
                 return
@@ -371,7 +395,7 @@ class DeatailsTeamComponent{
                                   ),
                                 ),
 
-                                AsyncComponents.buildFutureBuilder(IconButton(onPressed: (){}, icon:Icon(Icons.edit) ), PermissionType.canUpdate, Constants.MANAGE_TEAMS)
+                                AsyncComponents.buildFutureBuilder(IconButton(onPressed: (){}, icon:Icon(Icons.edit) ), PermissionType.canUpdate, Constants.MANAGE_TEAMS,secondPermission: canUpdate)
 
                               ],
                             ),

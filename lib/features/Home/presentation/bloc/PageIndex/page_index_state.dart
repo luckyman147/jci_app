@@ -12,7 +12,7 @@ enum Viewsection{Initial,About ,Description,Agenda,Comment,Poll,PV}
   }
 
 
-   const PageIndexState({this.section=0,this.index=0,this.viewsection=Viewsection.Initial,this.ParticipantIndex=0});
+   const PageIndexState({this.section=0,this.index=4,this.viewsection=Viewsection.Initial,this.ParticipantIndex=0});
   @override
   List<Object> get props => [index,section,viewsection,ParticipantIndex];
 }

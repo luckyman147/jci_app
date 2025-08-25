@@ -9,6 +9,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityF/
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 
 import '../../../../core/app_theme.dart';
+import '../../../../core/strings/Images.string.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../Home/domain/entities/Activitys/Activity.dart';
 import '../../../Home/domain/entities/Activity/event/Event.dart';
@@ -172,17 +173,27 @@ Widget EventsDetails(List<Event> Events,mediaQuery)=>ListView.separated(
       item.coverImages.isEmpty
           ?  ClipRRect(
         borderRadius: BorderRadius.circular(100),
-        child: Container(
-          height: 50,
+        child: Image.asset(
+          images.jcihammem,
           width: 50,
-          color: textColor,
+          height: 40,
+          fit: BoxFit.cover,
         ),
 
       )
-          :
+          : item .coverImages.first.startsWith("http")?
       ClipRRect(
 
 
+        borderRadius: BorderRadius.circular(100),
+        child:  Image.network(
+          item.coverImages.first??"",
+          width: 50,
+          height: 40,
+          fit: BoxFit.cover,
+        ),
+      ):
+      ClipRRect(
         borderRadius: BorderRadius.circular(100),
         child: Image.memory(
           base64Decode(item.coverImages.first??""),

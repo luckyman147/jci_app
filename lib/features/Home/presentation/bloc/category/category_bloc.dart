@@ -54,10 +54,18 @@ on<ChangeIndex>((event, emit) {
       GetAllCategoriesEvent event,
       Emitter<CategoryState> emit
       ) async{
-    emit(state.copyWith(isLoading: true));
-    final result = await GetAllCategoriesUseCase(NoParams());
-    emit(_mapFailureEither<List<Category>>((categories) => state.copyWith(categories: categories, Clonecategories: categories, isLoading: false), result));
-  }
+    if (state.categories.isNotEmpty && event.isRefreshed == false) {
+      emit(state.copyWith(Clonecategories: state.categories, isLoading: false));
+      return;
+    }
+    else {
+      emit(state.copyWith(isLoading: true));
+      final result = await GetAllCategoriesUseCase(NoParams());
+      emit(_mapFailureEither<List<Category>>((categories) =>
+          state.copyWith(categories: categories,
+              Clonecategories: categories,
+              isLoading: false), result));
+    } }
 
 
   CategoryState _mapFailureEither<T>(

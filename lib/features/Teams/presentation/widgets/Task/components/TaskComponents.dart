@@ -25,6 +25,7 @@ import '../../../../domain/usecases/TaskUseCase.dart';
 import '../../../bloc/GetTasks/get_task_bloc.dart';
 import '../../../bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../../bloc/Timeline/timeline_bloc.dart';
+import '../../../bloc/members/members_cubit.dart';
 import '../../common/FilerowWidget.dart';
 import '../../member/MembersTeamSelection.dart';
 import '../Implementation/CommentsImpl.dart';
@@ -39,7 +40,7 @@ Widget BuildActions(Function( )act1,Function()act2)=>Row(
 );
 
 
-Widget buildComments(BuildContext context,String id,MediaQueryData media,int numComments) {
+Widget buildComments(BuildContext context,String id,MediaQueryData media,int numComments,bool hasPermissionComment) {
   return BlocBuilder<GetTaskBloc, GetTaskState>(
     builder: (context, state) {
       return
@@ -63,7 +64,7 @@ Widget buildComments(BuildContext context,String id,MediaQueryData media,int num
                   SizedBox(
                       height: numComments==0?150: 150+ (numComments* 40),
 
-                      child:     Commentsimpl(teamId: id,))
+                      child:     Commentsimpl(teamId: id, hasPermission: hasPermissionComment,))
 
                 ],
               ),
@@ -363,7 +364,6 @@ void AssignBottomSheetBuilder(BuildContext context, MediaQueryData mediaQuery,
     Team team,
 
     ) {
-
   showModalBottomSheet(
     context: context,
     builder: (ctx) {
@@ -373,6 +373,7 @@ void AssignBottomSheetBuilder(BuildContext context, MediaQueryData mediaQuery,
           var members = team.members.members;
           var ff = state.task!.meta.assignToMembers;
 
+context. read<MembersTeamCubit>().initMembers(ff);
 
           if (state.status== TaskStatus.Loading || state.status== TaskStatus.error ) {
             return const Text("");

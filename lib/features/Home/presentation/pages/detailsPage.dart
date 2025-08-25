@@ -9,6 +9,7 @@ import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/PV/pv_bloc
 import 'package:jci_app/features/Home/presentation/bloc/Poll/poll_bloc.dart';
 import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 import 'package:logger/logger.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import '../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/Bloc/permissions/permissions_bloc.dart';
 import '../../../../core/util/ObjectifProgressTopSnackBar.dart';
@@ -71,7 +72,12 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AcivityFBloc, AcivityFState>(
+    return
+      ShowCaseWidget(
+
+
+          builder: (context)=>
+      BlocBuilder<AcivityFBloc, AcivityFState>(
       builder: (context, state) {
         return Scaffold(
           body: RefreshIndicator(
@@ -85,7 +91,7 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
           ),
         );
       },
-    );
+    ));
   }
 
   Widget _buildBlocListeners() {

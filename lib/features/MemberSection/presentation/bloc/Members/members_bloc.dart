@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
@@ -155,7 +157,8 @@ final Store store;
       GetUserProfileEvent event,
       Emitter<MembersState> emit,
       ) async {
-final id=await store.getUserId();
+final id= await store.getUserId();
+    log ('GetUserProfileEvent called with isUpdated: ${id}');
 
     if ( state.user != null&& id==state.user!.id) {
 
@@ -163,7 +166,7 @@ final id=await store.getUserId();
         userStatus: UserStatus.userLoaded,
         user: state.user,
       ));
-      return;
+
     }
     else{
     emit(state.copyWith(userStatus: UserStatus.Loading));

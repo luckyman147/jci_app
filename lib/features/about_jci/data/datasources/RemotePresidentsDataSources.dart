@@ -1,133 +1,112 @@
-import 'dart:convert';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:flutter/foundation.dart';
-import 'package:jci_app/core/config/services/verification.dart';
 import 'package:jci_app/features/about_jci/data/models/PresidentModel.dart';
-
-import 'package:http/http.dart' as http;
-import '../../../../core/config/env/urls.dart';
 import '../../../../core/error/Exception.dart';
 
 abstract class RemotePresidentsDataSources {
-  Future<List<PresidentModel>> getPresidents(String start, String limit);
-  Future<PresidentModel> CreatePresident(PresidentModel president);
-  Future<Unit> DeletePresident(String id);
-  Future<PresidentModel> UpdatePresident(PresidentModel president);
-  Future<PresidentModel> UpdateImagePresident(PresidentModel president);
+
+  Future<(List<PresidentModel>, DocumentSnapshot?)> getPresidents(
+      int limit, {
+        DocumentSnapshot? lastDocument,
+      });
+        Future<PresidentModel> createPresident(PresidentModel president);
+  Future<Unit> deletePresident(String id);
+  Future<PresidentModel> updatePresident(PresidentModel president);
+  Future<PresidentModel> updateImagePresident(String id, String imageUrl);
 }
 
 class RemotePresidentsDataSourcesImpl implements RemotePresidentsDataSources {
-  final http.Client client;
+  final FirebaseFirestore firestore;
 
-  RemotePresidentsDataSourcesImpl({required this.client});
+  RemotePresidentsDataSourcesImpl({required this.firestore});
+
+  CollectionReference get _presidentsCollection =>
+      firestore.collection('presidents');
   @override
-  Future<PresidentModel> CreatePresident(PresidentModel president) async {
-    final body = president.toJson();
-    debugPrint(body.toString());
+  Future<PresidentModel> createPresident(PresidentModel president) async {
+    try {
+      // Add new president (without id first)
+      final docRef = await _presidentsCollection.add(president.toJson());
 
-    return client
-        .post(
-      Uri.parse(CreatePresidents()),
-      headers: {
-        "Content-Type": "application/json",
-        //    "Authorization": "Bearer ${tokens[1]}"
-      },
-      body: json.encode(body),
-    )
-        .then((response) async {
-      debugPrint(response.statusCode.toString());
-      if (response.statusCode == 201) {
-        final Map<String, dynamic> decodedJson = json.decode(response.body);
-        final presidents = PresidentModel.fromJson(decodedJson);
+      // Update the same doc with its generated id
+      await docRef.update({"id": docRef.id});
 
-        return presidents;
-      } else if (response.statusCode == 400) {
-        throw WrongCredentialsException();
-      } else if (response.statusCode == 401) {
-        throw UnauthorizedException();
-      } else {
-        throw ServerException();
+      // Fetch the updated document
+      final newDoc = await docRef.get();
+
+      return PresidentModel.fromJson(newDoc.data() as Map<String, dynamic>)
+          .copyWith(id: newDoc.id);
+    } catch (e) {
+      throw ServerException();
+    }
+  }
+
+
+  @override
+  Future<Unit> deletePresident(String id) async {
+    try {
+      await _presidentsCollection.doc(id).delete();
+      return unit;
+    } catch (e) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<(List<PresidentModel>, DocumentSnapshot?)> getPresidents(
+      int limit, {
+        DocumentSnapshot? lastDocument,
+      }) async {
+    try {
+      Query query = _presidentsCollection
+          .orderBy("year", descending: true)
+          .limit(limit);
+
+      // Apply pagination if lastDocument exists
+      if (lastDocument != null) {
+        query = query.startAfterDocument(lastDocument);
       }
-    });
+
+      final querySnapshot = await query.get();
+
+      final presidents = querySnapshot.docs
+          .map((doc) => PresidentModel.fromJson(doc.data() as Map<String, dynamic>)
+          .copyWith(id: doc.id))
+          .toList();
+
+      // Get the last document of this page (for next pagination call)
+      final newLastDocument =
+      querySnapshot.docs.isNotEmpty ? querySnapshot.docs.last : null;
+
+      return (presidents, newLastDocument);
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
-  Future<PresidentModel> uploadimagefunct(Map<String, dynamic> decodedJson,
-      PresidentModel president, PresidentModel presidents) async {
-    throw ServerException();
+
+  @override
+  Future<PresidentModel> updatePresident(PresidentModel president) async {
+    try {
+      await _presidentsCollection.doc(president.id).update(president.toJson());
+      final updatedDoc =
+      await _presidentsCollection.doc(president.id).get();
+      return PresidentModel.fromJson(updatedDoc.data() as Map<String, dynamic>)
+          .copyWith(id: updatedDoc.id);
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
-  Future<Unit> DeletePresident(String id) async {
-    //  final tokens = await getTokens();
-    return client.delete(
-      Uri.parse(DeletePresidents(id)),
-      headers: {
-        "Content-Type": "application/json",
-        //    "Authorization": "Bearer ${tokens[1]}"
-      },
-    ).then((response) async {
-      debugPrint(response.statusCode.toString());
-      if (response.statusCode == 204) {
-        return Future.value(unit);
-      } else if (response.statusCode == 400) {
-        throw WrongCredentialsException();
-      } else if (response.statusCode == 401) {
-        throw UnauthorizedException();
-      } else {
-        throw ServerException();
-      }
-    });
-  }
-
-  @override
-  Future<PresidentModel> UpdateImagePresident(
-      PresidentModel presidentModel) async {
-    throw ServerException();
-  }
-
-  @override
-  Future<PresidentModel> UpdatePresident(PresidentModel president) async {
-    //final tokens = await getTokens();
-    final body = president.toJson();
-    return client
-        .patch(
-      Uri.parse(UpdatePresidents(president.id)),
-      headers: {
-        "Content-Type": "application/json",
-        //  "Authorization": "Bearer ${tokens[1]}"
-      },
-      body: json.encode(body),
-    )
-        .then((response) async {
-      debugPrint(response.statusCode.toString());
-      if (response.statusCode == 201) {
-        final Map<String, dynamic> decodedJson = json.decode(response.body);
-        final president = PresidentModel.fromJson(decodedJson);
-        return president;
-      } else if (response.statusCode == 400) {
-        throw WrongCredentialsException();
-      } else if (response.statusCode == 401) {
-        throw UnauthorizedException();
-      } else {
-        throw ServerException();
-      }
-    });
-  }
-
-  @override
-  Future<List<PresidentModel>> getPresidents(String start, String limit) {
-    return client
-        .get(Uri.parse(getAllPresidents(start, limit)))
-        .then((response) {
-      if (response.statusCode == 200) {
-        final List<dynamic> decodedJson = json.decode(response.body);
-        return decodedJson
-            .map((json) => PresidentModel.fromJson(json))
-            .toList();
-      } else {
-        throw ServerException();
-      }
-    });
+  Future<PresidentModel> updateImagePresident(String id, String imageUrl) async {
+    try {
+      await _presidentsCollection.doc(id).update({"CoverImage": imageUrl});
+      final updatedDoc = await _presidentsCollection.doc(id).get();
+      return PresidentModel.fromJson(updatedDoc.data() as Map<String, dynamic>)
+          .copyWith(id: updatedDoc.id);
+    } catch (e) {
+      throw ServerException();
+    }
   }
 }

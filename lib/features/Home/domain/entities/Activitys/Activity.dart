@@ -3,6 +3,7 @@ import 'ActivityBasics.dart';
 import 'ActivitySettings.dart';
 import 'OnlineSettings.dart';
 import 'ParicipationStatus.dart';
+import 'Place.dart';
 
 class Activity extends Equatable {
   final ActivityBasics activityBasics;
@@ -63,7 +64,7 @@ class Activity extends Equatable {
         description: "description",
         activityBeginDate: DateTime.now(),
         activityEndDate: DateTime.now(),
-        activityAdress: "ActivityAdress",
+        activityAdress: "descripotion",
         coverImages: const [],
       ),
       settings: ActivitySettings(

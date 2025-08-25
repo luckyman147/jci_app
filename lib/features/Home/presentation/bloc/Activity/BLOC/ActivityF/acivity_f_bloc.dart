@@ -99,7 +99,7 @@ class AcivityFBloc extends Bloc<AcivityFEvent, AcivityFState> {
   void _getActivityOfMonth(
       GetActivitiesOfMonthEvent event, Emitter<AcivityFState> emit) async {
     if (
-        [ActivityFetchState.ACtivityLoadedMonth,ActivityFetchState.ActivityLoaded,].contains(state.activityfetchState ) && state.activities.isNotEmpty) {
+        [ActivityFetchState.ACtivityLoadedMonth,ActivityFetchState.ActivityLoaded,].contains(state.activityfetchState ) || state.activities.isNotEmpty) {
       emit(state.copyWith(
           activityfetchState: ActivityFetchState.ACtivityLoadedMonth));
       return;
@@ -124,18 +124,18 @@ class AcivityFBloc extends Bloc<AcivityFEvent, AcivityFState> {
     emit(state.copyWith(
         activityfetchState: ActivityFetchState.LoadingButton,
         eventid: event.act.Eventid));
-    final result = await participateActivityUseCases(event.act);
     final user = await store.getUserId();
-    emit(_mapSuccessFailureActivity(result, (act) {
+
       final activitys = state.activities
           .firstWhere((element) => element.activityBasics.id == event.act.Eventid);
       final index = state.activities
           .indexWhere((element) => element.activityBasics.id == event.act.Eventid);
       final activitiesPartcipants = activitys.participation.participants;
       activitiesPartcipants.add(user ?? "");
-      return CopyActivity(event.act.type, activitys, activitiesPartcipants,
-          index, ActivityFetchState.Participate);
-    }));
+     emit(CopyActivity(event.act.type, activitys, activitiesPartcipants,
+          index, ActivityFetchState.Participate));
+
+   await participateActivityUseCases(event.act);
   }
 
   AcivityFState CopyActivity(
@@ -211,19 +211,20 @@ class AcivityFBloc extends Bloc<AcivityFEvent, AcivityFState> {
     emit(state.copyWith(
         activityfetchState: ActivityFetchState.LoadingButton,
         eventid: event.act.Eventid));
-
-    final result = await leaveActivityUseCases(event.act);
     final user = await store.getUserId();
-    emit(_mapSuccessFailureActivity(result, (act) {
-      final activitys = state.activities
-          .firstWhere((element) => element.activityBasics.id == event.act.Eventid);
-      final index = state.activities
-          .indexWhere((element) => element.activityBasics.id == event.act.Eventid);
-      final activitiesPartcipants = activitys.participation.participants;
-      activitiesPartcipants.remove(user);
+    final activitys = state.activities
+        .firstWhere((element) => element.activityBasics.id == event.act.Eventid);
+    final index = state.activities
+        .indexWhere((element) => element.activityBasics.id == event.act.Eventid);
+    final activitiesPartcipants = activitys.participation.participants;
+    activitiesPartcipants.remove(user);
 
-      return CopyActivity(event.act.type, activitys, activitiesPartcipants,
-          index, ActivityFetchState.Left);
+  emit(CopyActivity(event.act.type, activitys, activitiesPartcipants,
+        index, ActivityFetchState.Left));
+    final result = await leaveActivityUseCases(event.act);
+
+    emit(_mapSuccessFailureActivity(result, (act) {
+
     }));
   }
 

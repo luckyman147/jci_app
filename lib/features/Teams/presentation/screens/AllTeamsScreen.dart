@@ -11,6 +11,8 @@ import 'package:jci_app/features/Teams/presentation/widgets/Team/%20component/Te
 
 import 'package:jci_app/features/Teams/presentation/widgets/Team/implementation/TeamImpl.dart';
 
+import '../../../../core/BuildingBlocks-Permissions/Permissions/Presentation/Bloc/permissions/permissions_bloc.dart';
+import '../../../../core/config/env/Constants.dart';
 import '../../../Home/domain/enums/Privacy.dart';
 import '../bloc/GetTasks/get_task_bloc.dart';
 
@@ -32,7 +34,14 @@ class _AllTeamsScreenState extends State<AllTeamsScreen> {
      context.read<GetTaskBloc>().add(resetevent());
     context.read<GetTeamsBloc>().add( GetTeams(null,true,isPrivate: false));
     context.read<TaskVisibleBloc>().add(const changePrivacyEvent(Privacy.Primary));
+    context.read<PermissionsBloc>().add(LoadPermissionOfMasterEvent(featuresId: [
 
+      Constants.MANAGE_PROJECTS,
+      Constants.MANAGE_EVENTS,
+
+      Constants.MANAGE_TEAMS,
+
+      Constants.MANAGE_MEETINGS,Constants.MANAGE_TRAININGS]));
 
      _scrollController.addListener(_onScroll);
 

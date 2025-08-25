@@ -18,4 +18,5 @@ abstract class TaskRepository {
   Future<Either<Failure, Unit>> updateTimeline(String teamId,String taskId, DateTime startDate, DateTime deadline);
   Future<Either<Failure, Unit>> updateDescription(String teamId,String taskId, String description);
   Future<Either<Failure, Unit>> updateMembers(String teamId,String taskId, bool status, TeamUser member);
+  Future<Either<Failure,Unit>> updateMembersRole(String teamId, String taskId, String newRole, String memberId);
 }

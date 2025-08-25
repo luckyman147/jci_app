@@ -115,5 +115,11 @@ final Handler<Unit> unitHandler;
 
     return await _handleUnit(remote.updateTaskDescription(teamId, taskId, description));
   }
+
+  @override
+  Future<Either<Failure, Unit>> updateMembersRole(String teamId, String taskId, String newRole, String memberId) async{
+    return await _handleUnit(remote.updateMembersRole(teamId, taskId, newRole, memberId));
+
+  }
 }
 

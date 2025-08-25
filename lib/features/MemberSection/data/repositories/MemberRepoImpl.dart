@@ -33,12 +33,16 @@ final Handler<List<User>> UsersListHandler;
 return await memberHandler.handle(onCall: ()async{
     final members = await membersLocalDataSource.getUserProfile();
   if (isUpdated) {
-    if (members == null) {
+
       final members = await memberRemote.getUserProfile();
       membersLocalDataSource.ChangeUserProfile(members);
       return members;
-    }
+
+
+  }  else if (members != null) {
     return members;
+
+
   }
 
   else{
@@ -53,8 +57,15 @@ return await memberHandler.handle(onCall: ()async{
 }, onError: (error){
   if (error is Exception) throw error;
 
-}
+},
+onFailConnection: ()async{
+  final members = await membersLocalDataSource.getUserProfile();
+  if (members==null){
+    throw EmptyCacheFailure();
+  }
+  return members;
 
+}
 );
   }
 

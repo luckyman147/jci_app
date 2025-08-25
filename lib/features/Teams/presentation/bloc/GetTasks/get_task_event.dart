@@ -100,6 +100,13 @@ final UpdateTaskParams fields;
   @override
   List<Object> get props => [fields];
 }
+class UpdateMemberRoleEvent extends GetTaskEvent {
+  final UpdateTaskParams fields;
+
+  const UpdateMemberRoleEvent(this.fields, );
+  @override
+  List<Object> get props => [fields,];
+}
 class UpdateMember extends GetTaskEvent {
   final UpdateTaskParams fields;
   final TeamUser Member;

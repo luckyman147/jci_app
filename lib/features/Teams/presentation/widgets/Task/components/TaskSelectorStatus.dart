@@ -12,8 +12,10 @@ class TaskStatusSelector extends StatelessWidget {
     required this.status,
     required this.teamId,
     required this.taskId,
-  });
+    this.hasPermission = true,
 
+  });
+final bool hasPermission;
   final TaskCompletionStatus status;
   final String teamId;
   final Tasks taskId;
@@ -21,13 +23,16 @@ class TaskStatusSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _showStatusBottomSheet(context),
+      onTap: () {
+        if (hasPermission) {
+          _showStatusBottomSheet(context);
+        }},
       child: Container(
         width: 150,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
-          border: Border.all(color: TeamConstants.taskStatusColors[status]!,width: 2),
-          borderRadius: BorderRadius.circular(11),
+          border: Border.all(color: ColorsApp.textColor,width: 2),
+          borderRadius: BorderRadius.circular(110),
         ),
         child: Row(
 
@@ -36,7 +41,7 @@ class TaskStatusSelector extends StatelessWidget {
             buildStatusCircle(status),
             Text(
               status.name.doublesWords,
-              style: PoppinsRegular(14, TeamConstants.taskStatusColors[status]!),
+              style: PoppinsRegular(14, ColorsApp.textColor),
             ),
 
           ],

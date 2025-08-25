@@ -144,77 +144,100 @@ class ParticpantsComponents{
                       SizedBox(width: 200.w, child: AutoSizeText(participant.partcipantName!, style: PoppinsSemiBold(15, textColorBlack, TextDecoration.none))),
                     ],
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      participant.status!=Attendance.Absent?
-                      AbsenceButton(participant, activityid, ctx,Icons.close,()async{
-                        final param = ParticipantsParams(activityid, partcipantImage: participant.partcipantImage, status: Attendance.Absent, partcipantName: participant.partcipantName, partipantId: participant.partipantId);
-                        ctx.read<ParticpantsBloc>().add(CheckAbsenceEvent(params: param));
-                        ctx.read<UserObjectifProgressCubit>().updateProgressUserObjective(
-                          UpdateObjectiveProgressDTO(
-                              userId:  "", // Provide the actual user ID
-                              actionType: ObjectifActionType.CheckIn.name,
-                              feature: [FeaturesType.Members.name ],
-                              progress: -1
-                          ),
-                        );
-                        // Add a delay before the second update
-                        await Future.delayed(const Duration(seconds: 1)); // Adjust the duration as needed
-
-// Second update
-                        if (!ctx.mounted) return;
-
-                        ctx.read<UserObjectifProgressCubit>().updateProgressUserObjective(
-                          UpdateObjectiveProgressDTO(
-                              userId:  participant.partipantId, // Provide the actual user ID
-                              actionType: ObjectifActionType.Attend.name,
-                              feature: [FeaturesType.Activities.name,  ctx.read<ActivityCubit>().state.selectedActivity.name, ],
-                              progress: -1
-                          ),
-                        );
-                      }):const SizedBox(),
-                      participant.status!=Attendance.Present?
-                      AbsenceButton(participant, activityid, ctx, Icons.check, ()async {
-                        final param = ParticipantsParams( activityid, partcipantImage: participant.partcipantImage, status: Attendance.Present, partcipantName: participant.partcipantName, partipantId: participant.partipantId);
-                        ctx.read<ParticpantsBloc>().add(CheckAbsenceEvent(params: param));
-
-                        ctx.read<UserObjectifProgressCubit>().updateProgressUserObjective(
-                          UpdateObjectiveProgressDTO(
-                              userId:  "", // Provide the actual user ID
-                              actionType: ObjectifActionType.CheckIn.name,
-                              feature: [FeaturesType.Members.name ],
-                              progress: 1
-                          ),
-                        );
-Logger().i(participant.ActivityId);
-// Add a delay before the second update
-                        await Future.delayed(const Duration(seconds: 10)); // Adjust the duration as needed
-
-// Second update
-                        if (!ctx.mounted) return;
-
-                        ctx.read<UserObjectifProgressCubit>().updateProgressUserObjective(
-                          UpdateObjectiveProgressDTO(
-                              userId:  participant.partipantId, // Provide the actual user ID
-                              actionType: ObjectifActionType.Attend.name,
-                              feature: [FeaturesType.Activities.name,  ctx.read<ActivityCubit>().state.selectedActivity.name, ],
-                              progress: 1
-                          ),
-                        );
-
-
-                      }):const SizedBox()
-
-                    ],
-                  ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (participant.status != Attendance.Absent)
+                    AbsenceButton(
+                      participant,
+                      activityid,
+                      ctx,
+                      Icons.close,
+                          () => _handleAttendanceUpdate(
+                        ctx,
+                        participant,
+                        activityid,
+                        Attendance.Absent,
+                        -1,
+                      ),
+                    ),
+                  if (participant.status != Attendance.Present)
+                    AbsenceButton(
+                      participant,
+                      activityid,
+                      ctx,
+                      Icons.check,
+                          () => _handleAttendanceUpdate(
+                        ctx,
+                        participant,
+                        activityid,
+                        Attendance.Present,
+                        1,
+                      ),
+                    ),
                 ],
+              )
+
+              ],
               ),
             ),
           ),
         ),
       ),
     );
+  }
+  static Future<void> _handleAttendanceUpdate(
+      BuildContext ctx,
+      ParticipantsParams participant,
+      String activityId,
+      Attendance status,
+      int progressChange,
+      ) async {
+    final params = ParticipantsParams(
+      activityId,
+      partcipantImage: participant.partcipantImage,
+      status: status,
+      partcipantName: participant.partcipantName,
+      partipantId: participant.partipantId,
+    );
+
+    // Dispatch bloc event
+    ctx.read<ParticpantsBloc>().add(CheckAbsenceEvent(params: params));
+
+    // Create both DTOs
+  /*  final checkInDto = UpdateObjectiveProgressDTO(
+      userId: "", // TODO: replace with actual user ID
+      actionType: ObjectifActionType.CheckIn.name,
+      feature: [FeaturesType.Members.name],
+      progress: progressChange,
+    );
+
+    final attendDto = UpdateObjectiveProgressDTO(
+      userId: participant.partipantId,
+      actionType: ObjectifActionType.Attend.name,
+      feature: [
+        FeaturesType.Activities.name,
+        ctx.read<ActivityCubit>().state.selectedActivity.name,
+      ],
+      progress: progressChange,
+    );
+
+    // Run in parallel
+    await Future.wait([
+      _updateWithDelay(ctx, checkInDto, Duration.zero),
+      _updateWithDelay(ctx, attendDto, const Duration(seconds: 20)),
+    ]);*/
+  }
+static  Future<void> _updateWithDelay(
+      BuildContext ctx,
+      UpdateObjectiveProgressDTO dto,
+      Duration delay,
+      ) async {
+    if (delay > Duration.zero) {
+      await Future.delayed(delay);
+    }
+    if (!ctx.mounted) return;
+    ctx.read<UserObjectifProgressCubit>().updateProgressUserObjective(dto);
   }
 
   static IconButton AbsenceButton(ParticipantsParams participant, String activityid, BuildContext ctx,IconData icon,Function() onPressed) {

@@ -67,7 +67,7 @@ class TrainingRemoteDataSourceImpl implements TrainingRemoteDataSource {
       logger.i("Activity document created successfully with ID: $documentId");
 
       // Update the document with the generated document ID
-      await activityDocRef.update({'id': documentId});
+      await activityDocRef.update({'activityBasics.id': documentId});
       logger.i("Activity document updated with the generated ID.");
 
       // return the document event

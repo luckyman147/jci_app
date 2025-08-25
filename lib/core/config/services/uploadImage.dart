@@ -55,8 +55,10 @@ class FirebaseImageUploader {
       }
       return uploadedUrls;
     } catch (error) {
-
-      rethrow;
+rethrow;
+    } finally {
+      // Close the stream controller when done
+      _uploadStreamController.close();
     }
   }
   Future<String> _uploadAssetImage(String assetPath, FirebaseStorage storage) async {

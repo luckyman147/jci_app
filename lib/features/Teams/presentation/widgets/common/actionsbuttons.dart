@@ -137,8 +137,7 @@ class MyTaskButtons extends StatelessWidget {
           icon: Icons.task_alt,
           title: "Create Task",
           onTap: () {
-            print("Settings clicked");
-            Navigator.pop(context); // Close the menu
+    // Close the menu
           },
         ),
         MenuItem(

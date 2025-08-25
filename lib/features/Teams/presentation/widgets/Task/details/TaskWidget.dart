@@ -3,6 +3,7 @@ import 'package:jci_app/features/Teams/presentation/utils/TaskUtils.dart';
 
 import '../../../../../Home/Activity_Global.dart';
 import '../../../../domain/entities/task/Task.dart';
+import '../../../bloc/GetTeam/get_teams_bloc.dart';
 import '../../../constants/TeamConstants.dart';
 import '../components/TaskColumn.dart';
 
@@ -33,8 +34,10 @@ class TaskStatusBoard extends StatelessWidget {
 scrollDirection:!isVertical? Axis.horizontal: Axis.vertical, // Change to vertical if needed
       itemCount: statuses.length,
       itemBuilder: (context, index) {
-        final status = statuses[index];
-        final statusTasks = tasks.where((t) => t.meta.status == status).toList();
+  final status = statuses[index];
+      final statusTasks = tasks.where((t) => t.meta.status == status).toList();
+
+
 
         return
 

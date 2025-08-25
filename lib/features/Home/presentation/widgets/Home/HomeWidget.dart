@@ -31,9 +31,11 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> {
   @override
   void initState() {
+    context.read<MembersBloc>().add(GetUserProfileEvent(true));
     context.read<ObjectifBloc>().add(FetchTop3UserobjectifsEvent());
     context.read<GetTeamsBloc>().add(GetTeamsOfuser());
 context.read<ParticpantsBloc>().add(LoadParticipantIdEvent());
+
     context.read<AcivityFBloc>().add(
         GetActivitiesOfMonthEvent(act: widget.Activity));
     /*context.read<MembersBloc>().add(
@@ -144,19 +146,16 @@ context.read<ParticpantsBloc>().add(LoadParticipantIdEvent());
                                 ObjectifsCarouselImpl(),
                                 ActivityOptionsRow(),
 
+
+                                  HomeComponents.TeamsWidget(
+                                      mediaQuery, context),
+
+
                                 Padding(
                                   padding: paddingSemetricVertical(),
                                   child: const MyActivityButtons(),
                                 ),
 
-                                Padding(
-                                  padding: paddingSemetricHorizontal(h: 16),
-                                  child:
-
-
-                                  HomeComponents.TeamsWidget(
-                                      mediaQuery, context),
-                                ),
 
                                 BlocMonthlyWeeklyActivity(
                                     state.selectedActivity,

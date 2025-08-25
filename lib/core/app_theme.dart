@@ -149,6 +149,8 @@ const ActivityRaduis=BorderRadius.only(
 
   topLeft: Radius.circular(15),
   topRight: Radius.circular(15),
+  bottomLeft: Radius.circular(15),
+  bottomRight: Radius.circular(15),
 );
 final decoration=BoxDecoration(
   color: PrimaryColor,

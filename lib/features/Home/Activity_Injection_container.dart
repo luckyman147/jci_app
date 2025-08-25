@@ -23,6 +23,7 @@ import 'package:jci_app/features/Home/domain/repsotories/PollRepositories.dart';
 import 'package:jci_app/features/Home/domain/usercases/PvUseCases.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/ActivityComment/activity_comment_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/PV/pv_bloc.dart';
+import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/Places/place__cubit.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/BLOC/guests/guests_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Poll/poll_bloc.dart';
 import 'package:jci_app/features/Home/presentation/bloc/category/category_bloc.dart';
@@ -31,6 +32,7 @@ import '../../core/Handlers/Handler.dart';
 import 'Activity_Global.dart';
 
 import 'data/datasources/activities/ActivityRemote.dart';
+import 'domain/entities/Activitys/Place.dart';
 import 'domain/entities/PVEntity/PV.dart';
 import 'domain/entities/guest/ActivityGuest.dart';
 import 'domain/entities/poll/Poll.dart';
@@ -46,7 +48,7 @@ Future<void> initActivities() async {
       sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(
       () => PollBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
-
+sl.registerFactory(()=>PlaceCubit(sl(),sl()));
   sl.registerFactory(() => AcivityFBloc(
         sl(),
         sl(),
@@ -183,6 +185,8 @@ Future<void> initActivities() async {
   sl.registerLazySingleton(() => getCategoryByName(sl()));
   sl.registerLazySingleton(() => updateCategoryUseCase(sl()));
   sl.registerLazySingleton(() => createCategoryUseCase(sl()));
+  sl.registerLazySingleton(() => GetSuggestedPlacesUseCases(activitiesRepo: sl()));
+  sl.registerLazySingleton(() => GetSuggestedPlaceDetailsUseCases(activitiesRepo: sl()));
   sl.registerLazySingleton(() => fetchCategoriesByIdsUseCase(sl()));
   sl.registerLazySingleton(() => GetPollAsTemplatesUseCase(sl()));
   sl.registerLazySingleton(
@@ -192,7 +196,7 @@ Future<void> initActivities() async {
 
   // Repositories
   sl.registerLazySingleton<ActivitiesRepo>(() => ActivityRepoImpl(
-      sl(), sl(), sl(), sl(),
+      sl(), sl(), sl(), sl(),sl(),sl(),
       meetingLocalDataSource: sl(),
       eventLocalDataSource: sl(),
       meetingRemoteDataSource: sl(),
@@ -249,6 +253,8 @@ Future<void> initActivities() async {
   sl.registerFactory(
       () => Handler<List<ActivityGuest>>(sl(), networkInfo: sl()));
   sl.registerFactory(() => Handler<ActivityGuest>(sl(), networkInfo: sl()));
+  sl.registerFactory(() => Handler<Place>(sl(), networkInfo: sl()));
+  sl.registerFactory(() => Handler<List<Place>>(sl(), networkInfo: sl()));
   sl.registerFactory(() => ActivityRemoteDataSource(
         store: sl(),
       ));

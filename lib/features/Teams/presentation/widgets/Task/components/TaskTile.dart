@@ -20,8 +20,9 @@ import 'TaskTileTitle.dart';
 class TaskTile extends StatelessWidget {
   final Tasks task;
   final Team team;
+  final bool hasPermission;
 
-  const TaskTile({super.key, required this.task, required this.team});
+  const TaskTile({super.key, required this.task,required this.hasPermission, required this.team});
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +31,7 @@ class TaskTile extends StatelessWidget {
         final isVisible = state.SelectedTaskId == task.meta.id;
 
         return Card(
+          elevation: 2,
           child: ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: 5.w,),
             key: Key(task.meta.id),
@@ -39,9 +41,10 @@ class TaskTile extends StatelessWidget {
             ),
             tileColor: Colors.white,
             isThreeLine: true,
-            subtitle: TaskTileSubtitle(task: task, teamId: team.meta.id,),
+            subtitle: TaskTileSubtitle(task: task, teamId: team.meta.id, hasPermission: hasPermission,),
             title: TaskTileTitle(
               task: task,
+              hasPermission: hasPermission,
               team: team,
               isVisible: isVisible,
             ),

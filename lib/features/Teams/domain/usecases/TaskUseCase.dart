@@ -95,3 +95,13 @@ class UpdateMembersUseCase extends UseCase<Unit, UpdateTaskParams> {
     return repo.updateMembers(params.teamId!, params.taskId, params.memberStatus!,params.member!);
   }
 }
+class UpdateMembersRoleUseCase extends UseCase<Unit, UpdateTaskParams> {
+  final TaskRepository repo;
+  UpdateMembersRoleUseCase(this.repo);
+
+  @override
+  Future<Either<Failure, Unit>> call(UpdateTaskParams params) {
+    log("UpdateMembersRoleUseCase called with params: ${params.member!.user.id}");
+    return repo.updateMembersRole(params.teamId!, params.taskId, params.newRole!,params.member!.user.id!);
+  }
+}

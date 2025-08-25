@@ -13,6 +13,7 @@ import 'package:jci_app/features/Home/data/model/TrainingModel/TrainingModel.dar
 import 'package:jci_app/features/Home/data/model/meetingModel/MeetingModel.dart';
 
 import 'package:jci_app/features/Home/domain/entities/Activitys/Activity.dart';
+import 'package:jci_app/features/Home/domain/entities/Activitys/Place.dart';
 
 
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
@@ -38,8 +39,10 @@ final Handler<bool> boolhandler;
 final Handler<Activity> activityHandler;
 final Handler<List<Activity>> ListactivityHandler;
 final Handler<String> StringHandler;
+final Handler<List<Place>> placesHandler;
+final Handler<Place> placeHandler;
 
-  ActivityRepoImpl(this.activityHandler, this.ListactivityHandler, this.boolhandler, this.StringHandler, {required this.eventRemoteDataSource, required this.eventLocalDataSource, required this.meetingRemoteDataSource, required this.meetingLocalDataSource, required this.trainingRemoteDataSource, required this.trainingLocalDataSource, required this.Unithandler});
+  ActivityRepoImpl(this.activityHandler, this.ListactivityHandler, this.boolhandler, this.StringHandler, this.placesHandler, this.placeHandler, {required this.eventRemoteDataSource, required this.eventLocalDataSource, required this.meetingRemoteDataSource, required this.meetingLocalDataSource, required this.trainingRemoteDataSource, required this.trainingLocalDataSource, required this.Unithandler});
 
 
 /// This function is used to create an activity
@@ -372,6 +375,38 @@ return result;
     return await ListactivityHandler.handle(onCall: ()async{
       final  result=await eventRemoteDataSource.GetactivityByName(name, act);
       if (result.isEmpty){
+        throw NotFoundException();
+      }
+      return result;
+    }, onError: (e){
+      if (e is Exception){
+        return e.get_failure;
+      }
+      throw e;
+    });
+  }
+
+  @override
+  Future<Either<Failure, List<Place>>> SearchPlaces(String name) async{
+    return await placesHandler.handle(onCall: ()async{
+      final result=await eventRemoteDataSource.getPlacesByName(name);
+      if (result.isEmpty){
+        throw NotFoundException();
+      }
+      return result;
+    }, onError: (e){
+      if (e is Exception){
+        return e.get_failure;
+      }
+      throw e;
+    });
+  }
+
+  @override
+  Future<Either<Failure, Place>> SearchPlacesDetails(Place name) async{
+    return await placeHandler.handle(onCall: ()async{
+      final result=await eventRemoteDataSource.getPlaceDetail(name);
+      if (result==null){
         throw NotFoundException();
       }
       return result;

@@ -6,10 +6,12 @@ import 'package:jci_app/features/Teams/presentation/widgets/Task/details/task_cx
 import '../../../../../../core/app_theme.dart';
 import '../../../../../Home/domain/enums/Privacy.dart';
 
+import '../../../../../MemberSection/presentation/functions/functionMember.dart';
 import '../../../../domain/dto/TaskIdParams.dart';
 import '../../../../domain/entities/Team/Team.dart';
 import '../../../../domain/entities/task/Task.dart';
 import '../../../bloc/GetTasks/get_task_bloc.dart';
+import '../../../bloc/GetTeam/get_teams_bloc.dart';
 import '../../../bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../../utils/TaskUtils.dart';
 import '../components/TaskComponents.dart';
@@ -53,7 +55,14 @@ late TextEditingController TaskName;
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
+    var ifMeLeader= FunctionMember.isOwnerWithContext(context.read<GetTeamsBloc>().state.teamById!.members.teamLeader!.id!, context);
 
+    var hasModify = FunctionMember.IfIhavePermission( widget.task.meta.assignToMembers, context);
+    var hasTeamModify = FunctionMember.IfIhavePermission( widget.team.members.members, context);
+    var hasComment = FunctionMember.IfIhavePermissionComment( widget.task.meta.assignToMembers, context);
+    var hasTeamComment = FunctionMember.IfIhavePermissionComment( widget.team.members.members, context);
+    var hasPermission= ifMeLeader || hasModify || hasTeamModify ;
+    var hasPermissionComment= hasPermission||hasComment || hasTeamComment;
     return SingleChildScrollView(
       child: Padding(
         padding: paddingSemetricHorizontal(h: 8),
@@ -65,7 +74,10 @@ late TextEditingController TaskName;
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
-           TaskNameEditor(mediaQuery: mediaQuery, task: widget.task, taskNameFocusNode: taskNameFocusNode, taskNameController: TaskName,)
+           TaskNameEditor(
+             hasPermission: hasPermission,
+
+             mediaQuery: mediaQuery, task: widget.task, taskNameFocusNode: taskNameFocusNode, taskNameController: TaskName,)
           ,
 Container(
   decoration: taskdex,
@@ -74,9 +86,11 @@ Container(
   BlocBuilder<GetTaskBloc, GetTaskState>(
     builder: (context, state) {
       final task = state.task;
+
       if (task == null) {
         return const SizedBox.shrink(); // Or show a loading spinner if needed
       }
+
 
       return
 
@@ -87,6 +101,7 @@ Container(
           const SizedBox(width: 10),
           Flexible(
             child: TaskStatusSelector(
+              hasPermission: hasPermission,
               status: task.meta.status,
               teamId: widget.team.meta.id,
               taskId: widget.task,
@@ -104,23 +119,26 @@ Container(
               team: widget.team,
               mediaQuery: mediaQuery,
               controller: controller,
-              taskNameFocusNode: taskNameFocusNode,
+              taskNameFocusNode: taskNameFocusNode, hasPermissionAll: hasPermission,
             ),
             const SizedBox(height: 10),
             TaskChecklistSection(
+              hasPermissions: hasPermission,
               task: widget.task,
               team: widget.team,
               checklistFocus: checklistFocus,
               controller: controller,
               mediaQuery: mediaQuery,
             ),
-            buildComments(context,widget.team.meta.id,mediaQuery,widget.task.communication.comments.length),
+            buildComments(context,widget.team.meta.id,mediaQuery,widget.task.communication.comments.length,hasPermissionComment),
 
-
+Visibility(
+    visible: hasPermission,
+    child:
             buildDeleteButton((){
               TaskUtils.DeleteTaskFunction(context, widget.task,widget. team.meta.id,isAnotherpage: true);
 
-            }, context)
+            }, context))
           ],
         ),
 

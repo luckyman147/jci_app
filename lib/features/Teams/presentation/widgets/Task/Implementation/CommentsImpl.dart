@@ -9,8 +9,9 @@ import '../../common/CommentTextField.dart';
 import '../comments/CommentWidget.dart';
 
 class Commentsimpl extends StatelessWidget {
-  const Commentsimpl({super.key ,required this.teamId, });
+  const Commentsimpl({super.key, required this.hasPermission ,required this.teamId, });
   final String teamId;
+  final bool hasPermission ;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class Commentsimpl extends StatelessWidget {
       BlocConsumer<GetTaskBloc, GetTaskState>(builder: (context,state){
       var id2 = state.task!.meta.id;
       if (state.task !=null && state.task!.communication.comments.isNotEmpty){
-        return CommentsWidget(commentWidgets: state.task!.communication.comments, teamId: teamId,taskId: id2,);
+        return CommentsWidget(commentWidgets: state.task!.communication.comments, teamId: teamId,taskId: id2, haspermission: hasPermission,);
       }
   else {
         return
@@ -42,10 +43,13 @@ class Commentsimpl extends StatelessWidget {
         spacing: 10,
         children: [
         AutoSizeText("No comments Found in this task",style: PoppinsRegular(16, ColorsApp.ThirdColor),),
-          Expanded(child: CommentInputField(teamId: teamId,taskId: id2, onSend: (String ) {
+         Visibility(
+             visible: hasPermission,
+
+             child:  Expanded(child: CommentInputField(teamId: teamId,taskId: id2, onSend: (String ) {
             CommentsUtils.AddCommentFunction(context, teamId: teamId, taskId: id2, content: String);
 
-          },))
+          },)))
         ],
       );
       }

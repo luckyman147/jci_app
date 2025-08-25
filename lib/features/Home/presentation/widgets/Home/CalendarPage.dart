@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -6,16 +5,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
+import 'package:jci_app/features/Home/presentation/widgets/Activity/EventListWidget.dart';
+import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
 import '../../../../../core/app_theme.dart';
+import '../../../../../core/config/env/Constants.dart';
 import '../../../../../core/route/app_router.dart';
 import '../../../../changelanguages/presentation/bloc/locale_cubit.dart';
 import '../../../domain/Dtos/ActivityParam.dart';
 import '../../../domain/entities/Activitys/Activity.dart';
 import '../../bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import '../../bloc/calendar/calendar_cubit.dart';
+import '../Functions/ActivityFunctions.dart';
+import '../components/calendar/EventTimelineCalendar.dart';
 
 class CalendarPage extends StatefulWidget {
   final List<Activity> activities;
@@ -31,7 +35,8 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     context.read<CalendarCubit>().selectDate(DateTime.now());
-    _selectedEvents = ValueNotifier(_getEventsForDay(DateTime.now()));
+    context.read<CalendarCubit>().selectActivity(
+_getEventsForDay(DateTime.now()));
 
     // TODO: implement initState
     super.initState();
@@ -50,7 +55,10 @@ class _CalendarPageState extends State<CalendarPage> {
 
                 calendar(state),
                 const SizedBox(height: 20,),
-                EvnetBuilder(state)],
+                EventTimeline(state)
+            //
+
+              ],
 
             ),
           );
@@ -58,45 +66,129 @@ class _CalendarPageState extends State<CalendarPage> {
 
     );
 
-  }
+  }Widget EventTimeline(LocaleState ste) {
+    final hours = List.generate(16, (index) => 5 + index); // 08:00 → 23:00
 
-  Widget EvnetBuilder(LocaleState ste) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height/3,
-                width: MediaQuery.of(context).size.width,
-                child: ValueListenableBuilder(valueListenable: _selectedEvents, builder: (context, value, child) {
-                  return BlocBuilder<ActivityCubit, ActivityState>(
-  builder: (context, state) {
-    return ListView.builder(
-                    itemCount: value.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: paddingSemetricHorizontal(),
-                        child: Container(
-                     decoration: BoxDecoration(
-                       borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: textColorBlack, width: 2),
-                     gradient: const LinearGradient(
-                     begin: Alignment.topLeft,
-                     end: Alignment.bottomRight,
-                     stops: [0.1, 0.9],
-                     colors: [PrimaryColor, PrimaryColor]),
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      decoration: BoxDecoration(
+        color: ColorsApp.textColorWhite,
+        border: Border.all(color: ColorsApp.PrimaryColor, width: 2),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      height: MediaQuery.of(context).size.height / 2,
+      child: BlocBuilder<CalendarCubit, CalendarState>(
+        builder: (context, state) {
+          Logger().w(widget.activities.length);
 
+          return ListView.builder(
+            itemCount: hours.length,
+            itemBuilder: (context, index) {
+              final hour = hours[index];
 
-                     ),
-                          child: listTileCalendar(context, value, index, state,ste),
-                        ),
-                      );
-                    },
-                  );
-  },
-);
-                }
+              // Find events that start OR are ongoing during this hour
+              final matchingEvents = state.activities.where((e) {
+                final start = e.activityBasics.activityBeginDate;
+                final end = e.activityBasics.activityEndDate;
+                return hour >= start.hour && hour <= end.hour;
+              }).toList();
 
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Hour label
+                    SizedBox(
+                      width: 60,
+                      height: 39,
+                      child: Text(
+                        "${hour.toString().padLeft(2, '0')}:00",
+                        textAlign: TextAlign.center,
+                        style: PoppinsRegular(18, ColorsApp.textColorBlack),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
 
+                    // Timeline vertical line
+                    SizedBox(
+                      height: 60,
+                      width: 40,
+                      child: VerticalDivider(
+                        color: ColorsApp.SecondaryColor,
+                        width: 10,
+                        thickness: 3,
+                      ),
+                    ),
+
+                    // Events
+                    Expanded(
+                      child: matchingEvents.isEmpty
+                          ? const SizedBox(height: 60)
+                          : GridView.count(
+                        crossAxisCount: matchingEvents.length > 1 ? 2 : 1,
+                        crossAxisSpacing: 5,
+                        mainAxisSpacing: 7,
+                             childAspectRatio:2,
+
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: matchingEvents.map((event) {
+
+                          return
+
+                            InkWell(
+                              onTap: (){
+                                context.pushRoute(ActivityDetailsRoute(
+                                  id: event.activityBasics.id,
+                                  activityType: context.read<ActivityCubit>().state.selectedActivity.name,
+                                  index: widget.activities.indexOf(event),
+                                ));
+                              },
+
+                                child:
+                            Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: ColorsApp.PrimaryColor,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  event.activityBasics.name,
+                                  style: PoppinsSemiBold(
+                                    16,
+                                    ColorsApp.textColorWhite,
+                                    TextDecoration.none,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  event.activityBasics.activityAdress,
+                                  style: PoppinsRegular(
+                                    12,
+                                    ColorsApp.textColorWhite,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ));
+                        }).toList(),
+                      ),
+                    ),
+                  ],
                 ),
               );
+            },
+          );
+        },
+      ),
+    );
   }
+
 
   ListTile listTileCalendar(BuildContext context, List<Activity> value, int index, ActivityState state,LocaleState lste) {
     String formattedDate = DateFormat('dd MMM yyyy', lste.locale == const Locale("en") ? "en_US" : "fr_FR").format(value[index].activityBasics.activityBeginDate);
@@ -177,88 +269,112 @@ class _CalendarPageState extends State<CalendarPage> {
     }
       ,);
   }
-
   BlocBuilder<CalendarCubit, CalendarState> calendar(LocaleState state) {
     return BlocBuilder<CalendarCubit, CalendarState>(
-                builder: (context, se) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      color: Colors.white,
-                      surfaceTintColor:backgroundColored,
-                      elevation: 9,
-                      child: TableCalendar(
+      builder: (context, se) {
+     return   BlocBuilder<ActivityCubit,ActivityState>(builder: (context,Astate)=>
+         Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Card(
+            color: ColorsApp.PrimaryColor, // ✅ Primary color background
+            elevation: 9,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  TableCalendar(
 
-                        calendarStyle: CalendarStyle(
-                       markersAutoAligned: true,
-
-                          markerDecoration: BoxDecoration(
-                            color: PrimaryColor,
-                            border: Border.all(color: PrimaryColor),
-                          ),
-                    weekNumberTextStyle: PoppinsRegular(16, textColorWhite),
-
-                          todayTextStyle: PoppinsRegular(16, textColorBlack),
-                          selectedTextStyle: PoppinsRegular(16, textColorBlack),
-                      markersAlignment: Alignment.topCenter,
-                          selectedDecoration: const BoxDecoration(
-
-                              border: Border(
-
-                                top: BorderSide(color: SecondaryColor,width: 2),
-                              )
-                          ),
-                          todayDecoration: const BoxDecoration(
-
-                           border: Border(
-
-                             top: BorderSide(color: PrimaryColor,width: 2),
-                           )
-                          ),
-                          defaultTextStyle: PoppinsRegular(16, textColorBlack),
-                          outsideTextStyle: PoppinsRegular(16, textColorBlack),
-                          outsideDecoration: const BoxDecoration(
-                            color: Colors.transparent,
-                            shape: BoxShape.circle,
-                          ),
-
-                          outsideDaysVisible: true,
-                         ),
-                        eventLoader: (day) => _getEventsForDay(day),
-                        locale: state.locale==const Locale("en")?"en_Us":"fr_FR",
-                        rowHeight: 40,
-                        headerStyle: HeaderStyle(
-                          titleTextStyle: PoppinsSemiBold(20, textColorBlack, TextDecoration.none),
-                          formatButtonVisible: false,
-                          leftChevronIcon: const Icon(Icons.arrow_back_ios_rounded,color: textColorBlack,),
-                          rightChevronIcon: const Icon(Icons.arrow_forward_ios_rounded,color: textColorBlack,),
-                          titleCentered: true,
-                          headerPadding: const EdgeInsets.all(0),
-                          headerMargin: const EdgeInsets.all(0),
-
-
-                        ),
-                        onDaySelected: (selectedDay, focusedDay) {
-                          setState(() {
-
-                            context.read<CalendarCubit>().selectDate(selectedDay);
-                      _selectedEvents.value = _getEventsForDay(selectedDay);
-                            log('${se.selectedDate}');
-                          });
-
-
-
-                        },
-                        selectedDayPredicate: (day) {
-                          return isSameDay(se.selectedDate, day);
-                        }
-                        ,
-                        availableGestures: AvailableGestures.all,
-                        focusedDay: se.selectedDate!, firstDay: DateTime(2024,1,1), lastDay: DateTime.now().add(const Duration(days: 356)),),
+                    daysOfWeekStyle: DaysOfWeekStyle(
+                      weekdayStyle: PoppinsRegular(10, ColorsApp.textColorWhite),
+                      weekendStyle:  PoppinsRegular(10, ColorsApp.textColorWhite),
                     ),
-                  );
-                },
-              );
+
+                    calendarFormat: CalendarFormat.week,
+                    availableCalendarFormats: const {
+                      CalendarFormat.week: 'Week', // ✅ Only week view
+                    },
+                    startingDayOfWeek: StartingDayOfWeek.sunday,
+                    calendarStyle: CalendarStyle(
+                      markersAutoAligned: true,
+                      markerDecoration: BoxDecoration(
+                        color: Colors.white, // Markers white
+                        shape: BoxShape.circle,
+                      ),
+                      todayTextStyle: PoppinsRegular(16, Colors.white),
+                      selectedTextStyle: PoppinsRegular(16, ColorsApp.PrimaryColor),
+                      markersAlignment: Alignment.topCenter,
+                      selectedDecoration: const BoxDecoration(
+                        shape: BoxShape.circle, // ✅ Circle for selected day
+                        color: Colors.white,
+                      ),
+                      todayDecoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                      weekendTextStyle: PoppinsRegular(16, Colors.white), // ✅ weekends
+                      defaultTextStyle: PoppinsRegular(16, Colors.white),
+                      outsideTextStyle: PoppinsRegular(16, Colors.white.withOpacity(0.5)),
+                      outsideDaysVisible: true,
+                    ),
+                    eventLoader: (day) => _getEventsForDay(day),
+                    locale: state.locale == const Locale("en") ? "en_US" : "fr_FR",
+                    rowHeight: 40,
+                    headerStyle: HeaderStyle(
+                      titleTextStyle: PoppinsSemiBold(20, Colors.white, TextDecoration.none),
+                      formatButtonVisible: false,
+                      leftChevronIcon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+                      rightChevronIcon: const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white),
+                      titleCentered: true,
+                    ),
+                    onDaySelected: (selectedDay, focusedDay) {
+
+                        context.read<CalendarCubit>().selectDate(selectedDay);
+                        context.read<CalendarCubit>().selectActivity(_getEventsForDay(selectedDay));
+
+
+                    },
+                    selectedDayPredicate: (day) => isSameDay(se.selectedDate, day),
+                    availableGestures: AvailableGestures.all,
+                    focusedDay: se.selectedDate!,
+                    firstDay: DateTime(2024, 1, 1),
+                    lastDay: DateTime.now().add(const Duration(days: 356)),
+                  ),
+                  const SizedBox(height: 12),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white, // ✅ White button
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      onPressed: () {
+                        ActivityFunctions.   NavigateActivity(context,Astate.selectedActivity);                      // Navigate to Create Event
+
+                        // TODO: Navigate to Create Activity screen
+                      },
+                      icon: Icon(Icons.add, color: ColorsApp.PrimaryColor),
+                      label: Text(
+                        "Create Activity",
+                        style: PoppinsSemiBold(16, ColorsApp.PrimaryColor, TextDecoration.none),
+                      ),
+                    ),
+                  ).withPermission(PermissionType.canCreate,  Astate.selectedActivity==activity.Events?
+                  Constants.MANAGE_EVENTS
+                      :   Astate.selectedActivity==activity.Trainings?
+                  Constants.MANAGE_TRAININGS
+                      :Constants.MANAGE_MEETINGS)
+                ],
+              ),
+            ),
+          ),
+        ));
+      },
+    );
   }
 
   List<Activity> _getEventsForDay(DateTime dateTime) {

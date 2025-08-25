@@ -2,10 +2,12 @@ import 'dart:convert';
 
 import 'dart:math';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
+import 'package:jci_app/features/MemberSection/domain/entity/Objectif.dart';
 
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
 
@@ -24,47 +26,123 @@ import '../../../../Home/domain/enums/SearchType.dart';
 import '../../../../Home/presentation/widgets/components/stuff/ErrorDisplayMessage.dart';
 import '../../../../MemberSection/domain/usecases/MemberUseCases.dart';
 import '../../../../MemberSection/presentation/bloc/Members/members_bloc.dart';
+import '../../../../MemberSection/presentation/functions/functionMember.dart';
 import '../../../../MemberSection/presentation/pages/user/memberProfilPage.dart';
 import '../../../../../core/Member.dart';
+import '../../../domain/dto/TaskIdParams.dart';
 import '../../../domain/entities/Team/Team.dart';
 import '../../../domain/entities/TeamUser.dart';
+import '../../bloc/GetTeam/get_teams_bloc.dart';
+import '../common/RoleAssignWidget.dart';
 
 class MemberTeamSelection{
 
  static  Widget MembersTeamContainer(mediaQuery, TeamUser item,bool isExisted,
       Function(TeamUser) onRemoveTap, Function(TeamUser) onAddTap,
       BuildContext context, List<User> ff) =>
-     
+     BlocBuilder<MembersTeamCubit,MembersTeamState>(builder: (context, members) =>
        BlocBuilder<GetTaskBloc, GetTaskState>(
             builder: (context, state) {
-                return   Row(
+             
+              var TeamLeaderId = context.read<GetTeamsBloc>().state.teamById!.members.teamLeader!.id!;
+              var ifMeLeader= FunctionMember.isOwnerWithContext(TeamLeaderId, context);
+                var isLeader = context.read<GetTeamsBloc>().state.teamById!.members.teamLeader!.id==item.user.id;
+                var hasModify = FunctionMember.IfIhavePermission( members.members, context);
+              var hasPermission= ifMeLeader || hasModify;
+                return   Flex(
+
+                  direction: Axis.horizontal,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    imageWidget(item.user),
-                    DropdownButton<UserTeamRole>(
-                      value: item.role, // Current selected role
-                      items: UserTeamRole.values.map((role) {
-                        return DropdownMenuItem<UserTeamRole>(
-                          value: role,
-                          child: Text(role.name), // role.name gives "canRead", "canModify", etc.
-                        );
-                      }).toList(),
-                      onChanged: (UserTeamRole? newValue) {
-                        if (newValue != null) {
-                  context.read<MembersTeamCubit>().changeMemberRole(item, newValue);
-                        }
-                      },
-                    ),
-
-
+                    Row(
+                      spacing: 5,
+                      children: [
+                        Visibility(
+                            visible: hasPermission,
+                            child:
                     SelectionButton(
-                        mediaQuery, ff, item, isExisted,context, onRemoveTap, onAddTap),
+                        mediaQuery, ff, item, isExisted,context, onRemoveTap, onAddTap)),
+                    imageWidget(item.user),
+
+                    ],),
+                    RoleAssignWidget(item: item,
+                    isLeader:isLeader,
+                    onRoleChanged: (role,item){
+                      context.read<MembersTeamCubit>().changeMemberRole(item, role);
+                      context.read<GetTaskBloc>().add(UpdateMemberRoleEvent(
+                        UpdateTaskParams(
+                            teamId: context.read<GetTeamsBloc>().state.teamById!.meta.id,
+                            taskId: state.task!.meta.id,
+                            newRole: role.name, task: state.task!,
+                            member: item
+                        ),
+                      ));
+
+
+                    }, isMeLeader: ifMeLeader, hasPermission: hasPermission,
+
+                    )
+
+
                   ],);
 
 
             },
-          );
-    
+       ));
+
+ static  Widget AddMembersTeamContainer(mediaQuery, TeamUser item,bool isExisted,
+      Function(TeamUser) onRemoveTap, Function(TeamUser) onAddTap,
+      BuildContext context, List<User> ff) =>
+     BlocBuilder<MembersTeamCubit,MembersTeamState>(builder: (context, members) =>
+       BlocBuilder<GetTaskBloc, GetTaskState>(
+            builder: (context, state) {
+
+
+
+                return   Flex(
+
+                  direction: Axis.horizontal,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      spacing: 5,
+                      children: [
+                        Visibility(
+                            visible: true,
+                            child:
+                    SelectionButton(
+                        mediaQuery, ff, item, isExisted,context, onRemoveTap, onAddTap)),
+                    imageWidget(item.user),
+
+                    ],),
+                    RoleAssignWidget(item: item,
+                    isLeader:true,
+                    onRoleChanged: (role,item){
+                      context.read<MembersTeamCubit>().changeMemberRole(item, role);
+                      context.read<GetTaskBloc>().add(UpdateMemberRoleEvent(
+                        UpdateTaskParams(
+                            teamId: context.read<GetTeamsBloc>().state.teamById!.meta.id,
+                            taskId: state.task!.meta.id,
+                            newRole: role.name, task: state.task!,
+                            member: item
+                        ),
+                      ));
+
+
+                    }, isMeLeader: true , hasPermission: true,
+
+                    )
+
+
+                  ],);
+
+
+            },
+       ));
+
+
+
+
 
 
  static  Widget SelectionButton(mediaQuery, List<User> ff, TeamUser item, bool isExisted,
@@ -74,29 +152,31 @@ class MemberTeamSelection{
       builder: (context, state) {
         return BlocBuilder<GetTaskBloc, GetTaskState>(
           builder: (context, state) {
-            return SizedBox(
-              width: mediaQuery.size.width / 3,
-              child:
-
-              ElevatedButton(
-                  style:
-                  ff.isEmpty ? bottondec(false) :
-                  bottondec(isExisted),
-                  onPressed: () {
-
-                MemberUtils.    toggleMember(context,isExisted, item, onRemoveTap, onAddTap);
-                  }, child: Text(
-                isExisted ? "Selected".tr(context) : "Select".tr(context)
-
-
-                , style: PoppinsSemiBold(13,
-                  isExisted ? textColorWhite : textColorBlack
-                  , TextDecoration.none),)
-             .animate()
-                  .fadeIn(duration: 600.ms)
-
+            return Checkbox(
+              key: Key(item.user.id!),
+              activeColor: PrimaryColor,
+              checkColor: Colors.white,
+              tristate: false,
+              side: BorderSide(
+                width: 3,
+                color: isExisted ? PrimaryColor : textColor,
               ),
-            );
+              value: isExisted,
+              onChanged: (bool? value) {
+                MemberUtils.toggleMember(
+                  context,
+                  isExisted,
+                  item,
+                  onRemoveTap,
+                  onAddTap,
+                );
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4), // square-like edges
+              ),
+            )
+                .animate()
+                .fadeIn(duration: 600.ms);
           },
         );
       },
@@ -322,7 +402,8 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
 
  static Widget MembersDetails(List<TeamUser> members, mediaQuery,
       Function(TeamUser) onRemoveTap, Function(TeamUser) onAddTap, List<TeamUser> ff) =>
-      ListView.separated(
+
+  BlocSelector<MembersTeamCubit,MembersTeamState,bool>(selector:( state)=>state.type==MembersChangeType.WillCreate , builder: (context,isEdit)=>    ListView.separated(
 
         scrollDirection: Axis.vertical,
 
@@ -346,7 +427,12 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
               context.read<MembersBloc>().add(GetMemberByIdEvent( MemberInfoParams(id: members[index].user.id!,status: true)));
 
             },
-            child: MembersTeamContainer(
+            child:
+            isEdit?
+            AddMembersTeamContainer(
+                mediaQuery, members[index],TeamUtils. doesUserExist(list, members[index].user),onRemoveTap, onAddTap, context, list):
+
+            MembersTeamContainer(
                 mediaQuery, members[index],TeamUtils. doesUserExist(list, members[index].user),onRemoveTap, onAddTap, context, list),
           );
         },
@@ -354,20 +440,20 @@ static  Padding SeachMemberWidget(mediaQuery, BuildContext context, Function(Str
           return const SizedBox(height: 10,);
         },
 
-      );
+      ));
 
 
  static  Widget imageWidget(User item) {
     return Row(
         children: [
-          photo(item.Images.isNotEmpty?  item.Images[0].toString():"", 50, 100),
+          photo(item.Images.isNotEmpty?  item.Images[0].toString():"", 30, 100),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SizedBox(
               width: 100,
-              child: Text(item.firstName,
+              child: AutoSizeText("${item.firstName} ${item.lastName}",
                 overflow: TextOverflow.ellipsis,
-                style: PoppinsSemiBold(15, textColorBlack, TextDecoration.none),),
+                style: PoppinsSemiBold(14, textColorBlack, TextDecoration.none),),
             ),
           ),
 

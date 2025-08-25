@@ -32,6 +32,8 @@ import '../../../MemberSection/presentation/bloc/memberPermissions/member_permis
 import '../../../MemberSection/presentation/bloc/objectifs/objectif_bloc.dart';
 import '../../../Teams/data/models/TeamModel.dart';
 import '../../../Teams/domain/entities/Team/Team.dart';
+import '../bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
+import '../bloc/Activity/BLOC/Participants/particpants_bloc.dart';
 import '../bloc/PageIndex/page_index_bloc.dart';
 import '../widgets/Activity/ActivityDetailsComponents.dart';
 import '../widgets/Functions/ActivityFunctions.dart';
@@ -47,16 +49,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-    context.read<PermissionsBloc>().add(LoadPermissionOfMasterEvent(featuresId: [
+    context.read<ParticpantsBloc>().add(LoadParticipantIdEvent());
+    context.read<ObjectifBloc>().add(FetchTop3UserobjectifsEvent());
+    context.read<GetTeamsBloc>().add(GetTeamsOfuser());
 
-      Constants.MANAGE_PROJECTS,
-      Constants.MANAGE_EVENTS,
-      Constants.MANAGE_OBJECTIFS,
-      Constants.MANAGE_TEAMS,
 
-      Constants.MANAGE_MEETINGS,Constants.MANAGE_TRAININGS]));
-
-    context.read<MembersBloc>().add(GetUserProfileEvent(false));
     super.initState();
   }
 
@@ -193,6 +190,13 @@ class _HomePageState extends State<HomePage> {
               );
             }
             else if (states.user == null) {
+              context.read<ObjectifBloc>().add(FetchTop3UserobjectifsEvent());
+              context.read<GetTeamsBloc>().add(GetTeamsOfuser());
+              context.read<ParticpantsBloc>().add(LoadParticipantIdEvent());
+              context.read<MembersBloc>().add(GetUserProfileEvent(false));
+
+              context.read<AcivityFBloc>().add(
+                  GetActivitiesOfMonthEvent(act: activity.Events));
               return _buildIconWithBorder(Icons.person, state.index == 4, null);
             } else if (states.user!.Images.isEmpty) {
               return CircleAvatar(

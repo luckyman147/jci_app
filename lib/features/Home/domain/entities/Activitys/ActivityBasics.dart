@@ -1,3 +1,5 @@
+import 'Place.dart';
+
 class ActivityBasics {
   final String id;
   final String name;
@@ -26,7 +28,7 @@ class ActivityBasics {
       description: '',
       activityBeginDate: DateTime.now(),
       activityEndDate: DateTime.now(),
-      activityAdress: '',
+      activityAdress:"",
       coverImages: [],
     );
   }
@@ -59,7 +61,7 @@ class ActivityBasics {
       description: json['description'] ?? '',
       activityBeginDate: DateTime.parse(json['activityBeginDate'] ?? json['ActivityBeginDate'] ?? DateTime.now().toIso8601String()),
       activityEndDate: DateTime.parse(json['activityEndDate'] ?? json['ActivityEndDate'] ?? DateTime.now().toIso8601String()),
-      activityAdress: json['activityAdress'] ?? json['ActivityAdress'] ?? '',
+      activityAdress: json['activityAdress'] ?? json['ActivityAdress'] ??"",
       coverImages: List<String>.from(json['coverImages'] ?? json['CoverImages'] ?? []),
     );
   }

@@ -22,6 +22,7 @@ abstract class TaskRemoteDataSource {
   Future<Unit> updateTaskDescription(String teamId, String taskId, String name);
   Future<Unit> updateTimeline(String teamId, String taskId, DateTime startDate, DateTime deadline);
   Future<Unit> updateMembers(String teamId, String taskId, bool status, TeamUser memberId);
+  Future<Unit> updateMembersRole(String teamId, String taskId, String  newrole, String memberId);
 }
 
 class TaskFirestoreRemote implements TaskRemoteDataSource {
@@ -38,7 +39,6 @@ class TaskFirestoreRemote implements TaskRemoteDataSource {
           .collection('tasks')
           .get();
 
-      if (tasksSnapshot.docs.isEmpty) throw EmptyDataException();
 
       final tasks = await Future.wait(
         tasksSnapshot.docs.map((doc) => _getTaskWithFiles(teamId: teamId, taskDoc: doc)),
@@ -334,5 +334,48 @@ Logger().e('Error updating members: $e');
       throw ServerException();
     }
   }
+
+  @override
+  Future<Unit> updateMembersRole(String teamId, String taskId, String newRole, String memberId)async {
+    try {
+      final teamRef = _firestore.collection('teams').doc(teamId);
+      final taskRef = teamRef.collection('tasks').doc(taskId);
+
+      final taskSnap = await taskRef.get();
+
+      if (!taskSnap.exists) {
+        Logger().w('Task not found: $taskId in team $teamId');
+        throw EmptyDataException();
+      }
+
+      final taskData = taskSnap.data()!;
+      final List<dynamic> assignToMembers = taskData['meta']['assignToMembers'] ?? [];
+
+      // Update the role of the matching member
+      final updatedMembers = assignToMembers.map((member) {
+        if (member['user']['id'] == memberId) {
+          Logger().w('updating role for member: ${member['user']['id']} to $newRole');
+
+
+
+          return {
+            ...member,
+            'role': newRole,
+          };
+        }
+        return member;
+      }).toList();
+
+      await taskRef.update({
+        'meta.assignToMembers': updatedMembers,
+      });
+
+      return unit;
+    } catch (e) {
+      Logger().e('Error updating member role: $e');
+      throw ServerFailure();
+    }
+  }
+
 
 }

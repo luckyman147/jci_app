@@ -148,7 +148,9 @@ class AuthRemoteImpl implements AuthRemote {
       );
 
       final authuser = AuthUserModel.fromEntity(signin.member!);
-      await RegisterInUSer(authuser, db);
+      await RegisterInUSer(authuser.copyWith(
+        role: await getRoleReferenceByName("Member"),
+      ), db);
 
       return Future.value(unit);
     } on FirebaseAuthException catch (e) {
@@ -171,6 +173,7 @@ class AuthRemoteImpl implements AuthRemote {
   @override
   Future<Unit> logInWithEmail(LoginWithEmailDtos login) async {
     try {
+      logger.i("Attempting to log in with email: ${login.email}");
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
         email: login.email,
         password: login.password,

@@ -8,6 +8,10 @@ enum ObjectifDifficulty{ Extreme,Hard,Meduim,Basic }
       Trainings,
       teams,
       Votes,
+      Tasks,
+      Projects,
+      Strategies,
+      Subtasks,
       Comments,
       Replys,
       Emojis,
@@ -40,7 +44,24 @@ class UserObjectif{
   final bool isCompleted;
   final dynamic assignedAt;
   UserObjectif(this.isCompleted, this.assignedAt, {required this.objectifId, this.currentProgress=0,});
-}extension StringExtension on String {
+
+  Map<String, dynamic> toJson() {
+    return {
+      'objectifId': objectifId,
+      'currentProgress': currentProgress,
+      'isCompleted': isCompleted,
+      'assignedAt': assignedAt.toIso8601String(),
+    };
+  }
+  factory UserObjectif.fromId(String id) {
+    return UserObjectif(
+      false,
+      DateTime.now(),
+      objectifId: id,
+    );
+
+  }}
+extension StringExtension on String {
   String get doublesWords {
     return replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (match) {
       return "${match.group(1)} ${match.group(2)}";

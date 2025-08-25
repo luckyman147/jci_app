@@ -57,7 +57,7 @@ class JoinTeamDialog extends StatelessWidget {
               onJoin: (pincode) {
                 context.read<GetTeamsBloc>().add(
                   JoinTeam(
-                    inputs: TeamInput(TeamId, "", "", user),
+                    inputs: TeamInput(TeamId, "", "",null, user),
                   ),
                 );
               },

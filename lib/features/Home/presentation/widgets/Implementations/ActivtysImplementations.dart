@@ -3,6 +3,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
 import 'package:jci_app/core/config/env/Constants.dart';
 import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import '../../../Activity_Global.dart';
 import '../../../domain/Dtos/ActivityParam.dart';
@@ -109,7 +110,11 @@ Widget ShowCalendarWidget() =>
             case ActivityFetchState.Empty:
               return const SizedBox();
             case ActivityFetchState.ActivityLoaded:
-              return CalendarPage(activities: state.activitiesSearch,);
+            case ActivityFetchState.ActivityChanged:
+            case ActivityFetchState.ACtivityLoadedMonth:
+
+
+              return CalendarPage(activities: state.activities,);
             default:
               return const SizedBox();
           }}
@@ -165,40 +170,57 @@ Widget AddButtonWi(Color color, Color IconColor, IconData ICON,
   );
 }
 
-Widget AddDots(
-    Activity activitys,
-    MediaQueryData mediaQuery,
-    activity Act,
-    ) {
-  return BlocBuilder<AddDeleteUpdateBloc, AddDeleteUpdateState>(
-    builder: (context, state) {
-      return
-        Positioned(
+class AddDots extends StatelessWidget {
+  final Activity activitys;
+  final MediaQueryData mediaQuery;
+  final activity Act;
+
+  AddDots({
+    super.key,
+    required this.activitys,
+    required this.mediaQuery,
+    required this.Act,
+
+
+
+  });
+
+  // Define global keys for showcases
+
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AddDeleteUpdateBloc, AddDeleteUpdateState>(
+      builder: (context, state) {
+        return Positioned(
           top: mediaQuery.size.height / 34,
           right: 10,
-          child:
-        Row(
-        spacing: 10,
+          child: Row(
+            spacing: 10,
+            children: [
+              // Showcase for pinned button
+            Pinnedbutton(
+                  onTap: (Activity act) {
+                    // Handle your logic here (pin/unpin)
+                  },
+                  isPinned: false,
+                  activity: activitys,
+                ),
 
-        children: [  Pinnedbutton(
-          onTap: (Activity act) {
-            // Handle your logic here (pin/unpin)
-          },
-          isPinned: false, // You can bind this to a value from a Bloc or State
-          activity: activitys,
-        ),
 
-          // Dots with async permission check
-          AsyncComponents.buildFutureBuilder(
-            ActivityDetailsComponent.dots(context, mediaQuery, activitys),
-            PermissionType.canUpdate,
-            ActivityAction.findConstantType(Act),
+              // Showcase for dots menu
+
+              AsyncComponents.buildFutureBuilder(
+                  ActivityDetailsComponent.dots(context, mediaQuery, activitys),
+                  PermissionType.canUpdate,
+                  ActivityAction.findConstantType(Act),
+
+              ),
+            ],
           ),
-
-          // Pinned button (always shown for now — you can wrap it with conditions if needed)
-
-        ],
-      ));
-    },
-  );
+        );
+      },
+    );
+  }
 }
+

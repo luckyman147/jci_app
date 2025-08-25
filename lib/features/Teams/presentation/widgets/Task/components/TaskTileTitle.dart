@@ -14,9 +14,12 @@ class TaskTileTitle extends StatelessWidget {
   final Tasks task;
   final Team team;
   final bool isVisible;
+  final bool hasPermission;
 
   const TaskTileTitle({
+
     super.key,
+    required this.hasPermission,
     required this.task,
     required this.team,
     required this.isVisible,
@@ -31,15 +34,19 @@ class TaskTileTitle extends StatelessWidget {
       Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        if (!isLeft && !isVisible)
+        if (!isLeft && !isVisible && hasPermission)
           TaskTileStatusButton.backward(task: task, team: team, context: context),
 
         Expanded(
-          child: isVisible
+          child: isVisible && hasPermission
               ? EditableTextField(
             onChanged: (s) {},
             initialText: task.meta.name,
             onConfirm: (newName) {
+              if ( !hasPermission && newName.isEmpty || newName == task.meta.name) {
+                context.read<TaskVisibleBloc>().add(ToggleTaskVisibleById(""));
+                return;
+              }
               context.read<GetTaskBloc>().add(UpdateTaskNameEvent(
                 UpdateTaskParams(
                   task: task,
@@ -74,7 +81,7 @@ class TaskTileTitle extends StatelessWidget {
           ),
         )),
 
-        if (!isRight && !isVisible)
+        if (!isRight && !isVisible && hasPermission)
           TaskTileStatusButton.forward(task: task, team: team, context: context),
       ],
     );

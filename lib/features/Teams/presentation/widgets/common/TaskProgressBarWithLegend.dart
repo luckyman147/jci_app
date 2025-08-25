@@ -51,6 +51,7 @@ class TaskProgressBarWithLegend extends StatelessWidget {
         )),
         const SizedBox(height: 8),
         // LEGEND (REFERENCE)
+        if (tasks.isNotEmpty)
         Wrap(
           spacing: 12,
           runSpacing: 8,

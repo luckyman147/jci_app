@@ -6,6 +6,7 @@ import '../../Activitys/ActivityBasics.dart';
 import '../../Activitys/ActivitySettings.dart';
 import '../../Activitys/OnlineSettings.dart';
 import '../../Activitys/ParicipationStatus.dart';
+import '../../Activitys/Place.dart';
 
 class Event extends Activity {
   final User leaderName;
@@ -47,7 +48,7 @@ class Event extends Activity {
       description: "hola",
       activityBeginDate: DateTime.now(),
       activityEndDate: DateTime.now(),
-      activityAdress: "hhhh",
+      activityAdress:'',
       coverImages: const [],
     ),
     settings: ActivitySettings(

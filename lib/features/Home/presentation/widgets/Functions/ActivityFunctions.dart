@@ -20,6 +20,7 @@ import '../../../data/model/events/EventModel.dart';
 import '../../../data/model/meetingModel/MeetingModel.dart';
 import '../../../domain/Dtos/ActivityParam.dart';
 import '../../../domain/entities/Activity/event/Event.dart';
+import '../../../domain/entities/Activitys/Place.dart';
 import '../../../domain/entities/Meeting.dart';
 import '../../../domain/entities/training.dart';
 import '../../pages/CreateUpdateActivityPage.dart';
@@ -120,7 +121,7 @@ class ActivityFunctions{
             statef,
             action,
             context,
-            vis
+            vis,state
           );
         }
     }
@@ -194,7 +195,7 @@ class ActivityFunctions{
 
 
   static Activity MeetingAction(GlobalKey<FormState> formKey, TextEditingController namecontroller, TextEditingController descriptionController, FormzState ste, DateTime dur, TextEditingController LocationController, TextEditingController Points, List<String> part, String id, TextFieldState statef, String action, BuildContext context,
-      VisibleState vis
+      VisibleState vis,TaskVisibleState state
       ) {
 
     return
@@ -204,7 +205,7 @@ class ActivityFunctions{
           agenda: ActivityAction. combineTextFields(
               statef.textFieldControllers),
 
-          activityBasics:fillActivityBasics(id, namecontroller, descriptionController, ste, dur, LocationController),
+          activityBasics:fillActivityBasics(id, namecontroller, descriptionController, state,ste, dur, LocationController),
           settings: fillActivitySettings(Points, context, vis)  ,
           online: fillOnlineSettings(vis),
           participation: fillpartipationsSettings(ste));
@@ -231,8 +232,8 @@ class ActivityFunctions{
             isPaid: false,
             price:  0, isPublic: !vis.isPrivate);
   }
-
-  static ActivityBasics fillActivityBasics(String id, TextEditingController namecontroller, TextEditingController descriptionController, FormzState ste, DateTime dur, TextEditingController LocationController) {
+//Todo: Add the location to the activity basics
+  static ActivityBasics fillActivityBasics(String id, TextEditingController namecontroller, TextEditingController descriptionController,TaskVisibleState stae, FormzState ste, DateTime dur, TextEditingController LocationController) {
     return ActivityBasics(id: id,
             name: namecontroller.text,
             description: descriptionController.text,
@@ -241,8 +242,8 @@ class ActivityFunctions{
                 DateTime.now(),
             activityEndDate: ste.endTimeInput.value ??
                 dur,
-            activityAdress: LocationController.text,
-            coverImages: const []);
+            activityAdress:  LocationController.text,
+            coverImages: stae.images);
   }
 
   static Activity TrainingAction(GlobalKey<FormState> formKey, FormzState ste, String id, TextEditingController ProfesseurName, TextEditingController namecontroller, TextEditingController descriptionController, DateTime dur, TextEditingController LocationController, TextEditingController Points, VisibleState vis, TextEditingController Price,
@@ -252,7 +253,7 @@ class ActivityFunctions{
       Training(
           professeurName: ProfesseurName.text,
           duration: 0,
-          activityBasics:fillActivityBasics(id, namecontroller, descriptionController, ste, dur, LocationController) ,
+          activityBasics:fillActivityBasics(id, namecontroller, descriptionController,taskS, ste, dur, LocationController) ,
           settings: fillActivitySettings(Points, context, vis),
           online: fillOnlineSettings(vis), participation: fillpartipationsSettings(ste));
 
@@ -270,7 +271,7 @@ class ActivityFunctions{
           registrationDeadline: ste
               .registrationTimeInput
               .value ?? dur,
-          activityBasics: fillActivityBasics(id, namecontroller, descriptionController, ste, dur, LocationController),
+          activityBasics: fillActivityBasics(id, namecontroller, descriptionController,taskS, ste, dur, LocationController),
           settings: fillActivitySettings(Points, context, vis),
           online: fillOnlineSettings(vis),
           participation: fillpartipationsSettings(ste));

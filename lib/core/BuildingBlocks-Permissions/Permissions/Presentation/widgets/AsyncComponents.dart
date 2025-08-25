@@ -6,13 +6,32 @@ import '../../../../../features/MemberSection/presentation/widgets/utils/Shimmer
 
 class AsyncComponents {
 
-  static  Widget buildFutureBuilder(Widget body,PermissionType type,String featureId,{Widget? loadingWidget}){
+  static  Widget buildFutureBuilder(Widget body,PermissionType type,String featureId,{Widget? loadingWidget,bool secondPermission=false}){
     return TypePermissionStrategy(
+      secondPermission: secondPermission,
        hasPermissionsWidget: body,
-      noPermissionsWidget: SizedBox(),
+      noPermissionsWidget: SizedBox.shrink(),
       loadingWidget:loadingWidget??ShimmerGridView.padding(20 , 20),
       type: type, feature: featureId ,
     );
+
   }
 
+}
+
+extension PermissionWidgetExtension on Widget {
+  Widget withPermission(
+      PermissionType type,
+      String featureId, {
+        Widget? loadingWidget,
+        bool secondPermission = false,
+      }) {
+    return AsyncComponents.buildFutureBuilder(
+      this,
+      type,
+      featureId,
+      loadingWidget: loadingWidget,
+      secondPermission: secondPermission,
+    );
+  }
 }

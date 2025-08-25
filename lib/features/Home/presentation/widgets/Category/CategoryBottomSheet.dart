@@ -225,7 +225,15 @@ class MainCategoryComponent extends StatelessWidget {
                   );
                 }
 
-                return CategoryDetails(state.Clonecategories,mediaQuery);
+                return
+                  RefreshIndicator(
+                      onRefresh:()async {
+                        context.read<CategoryBloc>().add(throwError(message: ""));
+                        context.read<CategoryBloc>().add(GetAllCategoriesEvent(isRefreshed: true));
+
+                      },
+                      child:
+                  CategoryDetails(state.Clonecategories,mediaQuery));
 
 
 

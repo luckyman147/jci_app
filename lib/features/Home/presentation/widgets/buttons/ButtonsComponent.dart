@@ -23,10 +23,12 @@ class StatusButton extends StatelessWidget {
   final String textOn;
   final String textOff;
   final Color colorOn;
+  final Color colorOff;
   final String labelText;
 
   const StatusButton({super.key, required this.Status, required this.onPressed,
     required this.isOn, required this.isOff,
+    this.colorOff=Colors.green,
     required this.textOn, required this.textOff, required this.colorOn, required this.labelText});
 
 
@@ -50,7 +52,7 @@ class StatusButton extends StatelessWidget {
             },
             style: ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(
-                Status ?colorOn : textColorWhite, // Green if public, Red if private
+                Status ?colorOn : colorOff, // Green if public, Red if private
               ),
               //change raduis
               shape: WidgetStatePropertyAll(
@@ -65,12 +67,12 @@ class StatusButton extends StatelessWidget {
               children: [
                 Icon(
                   Status ? isOn : isOff,
-                  color:!Status? colorOn:textColorWhite, // White icon color
+                  color:textColorWhite, // White icon color
                 ),
                 const SizedBox(width: 8),
                 Text(
                   Status ? textOn : textOff,
-                  style: PoppinsSemiBold(18.sp ,!Status?ColorsApp.textColorBlack: ColorsApp.textColorWhite, TextDecoration.none)
+                  style: PoppinsSemiBold(18.sp , ColorsApp.textColorWhite, TextDecoration.none)
                 ),
               ],
             ),

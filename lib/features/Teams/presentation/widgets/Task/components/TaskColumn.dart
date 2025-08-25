@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
 import 'package:jci_app/features/Teams/presentation/bloc/GetTasks/get_task_bloc.dart';
+import '../../../../../MemberSection/presentation/functions/functionMember.dart';
 import '../../../../domain/entities/Team/Team.dart';
 import '../../../../domain/entities/task/Task.dart';
+import '../../../bloc/GetTeam/get_teams_bloc.dart';
 import '../../common/TasKInputField.dart';
 import '../../common/TaskHeader.dart';
 import 'TaskTile.dart';
@@ -20,6 +22,7 @@ class TaskColumn extends StatelessWidget {
 
   const TaskColumn({
 
+
     super.key,
     required this.teamId,
 
@@ -32,6 +35,10 @@ class TaskColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var ifMeLeader= FunctionMember.isOwnerWithContext(team.members.teamLeader!.id!, context);
+
+  var hasTeamModify = FunctionMember.IfIhavePermission(team. members.members, context);
+  var hasPermission= ifMeLeader || hasTeamModify;
     return Container(
       width: 300,
 
@@ -49,13 +56,20 @@ class TaskColumn extends StatelessWidget {
         Padding(padding: paddingSemetricVerticalHorizontal(), child: Column(
           children: [
        Padding(padding: paddingSemetricVerticalHorizontal(),child:TaskHeader(title: title, color: color,numTasks: tasks.length,), ),
-
-            TaskInputField(status: status, teamId: teamId,color: color,),
+Visibility(
+  visible: hasPermission,
+    child:
+            TaskInputField(status: status, teamId: teamId,color: color,)),
             const SizedBox(height: 8),
             Expanded(
               child: ListView.builder(
                 itemCount: tasks.length,
-                itemBuilder: (context, index) => TaskTile(task: tasks[index], team: team,),
+                itemBuilder: (context, index) {
+                  final task = tasks[index];
+                  var hasTaskModify = FunctionMember.IfIhavePermission(task. meta.assignToMembers, context);
+
+
+                  return  TaskTile(task: tasks[index], team: team, hasPermission: hasPermission || hasTaskModify,);},
               ),
             ),
           ],
@@ -63,10 +77,6 @@ class TaskColumn extends StatelessWidget {
       ),
     )));
   }
-  double _calculateTaskListHeight(int taskCount) {
-    const double baseHeightPerTask = 75.0;
-    const double maxListHeight = 400.0;
-    return (taskCount * baseHeightPerTask).clamp(75.0, maxListHeight);
-  }
+
 
 }

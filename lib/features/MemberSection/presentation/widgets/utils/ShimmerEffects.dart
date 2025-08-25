@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../../../core/app_theme.dart';
-class ShimmerListView extends StatelessWidget {
+class ShimmerProfileListView extends StatelessWidget {
   final int itemCount;
   final double itemHeight;
   final EdgeInsetsGeometry padding;
 
-  const ShimmerListView({
+  const ShimmerProfileListView({
     super.key,
     this.itemCount = 6,
     this.itemHeight = 80.0,
@@ -60,7 +60,7 @@ class ShimmerListView extends StatelessWidget {
                 // Title placeholder
                 Container(
                   width: double.infinity,
-                  height: 16.0,
+                  height: 10.0,
                   color: Colors.white,
                 ),
                 const SizedBox(height: 8.0),

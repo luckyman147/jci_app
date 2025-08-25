@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:jci_app/core/config/env/Constants.dart';
 
 import 'package:jci_app/core/config/env/urls.dart';
 
@@ -18,11 +19,14 @@ import 'package:jci_app/features/Home/data/model/events/EventModel.dart';
 import 'package:jci_app/features/Home/presentation/bloc/Activity/activity_cubit.dart';
 
 import '../../../../../auth/AuthWidgetGlobal.dart';
+import '../../../../domain/entities/Activitys/Place.dart';
 import '../../../../domain/enums/ParticipantWithEvents.dart';
 
 abstract class EventRemoteDataSource {
   Future<List<EventModel>> getAllEvents();
   Future<EventModel> getEventById(String id);
+  Future< List<Place>> getPlacesByName(String name);
+  Future< Place> getPlaceDetail(Place place);
 
   Future<List<EventModel>> getEventsOfTheMonth();
   Future<List<ActivityModel>> GetactivityByName(String name, activity act);
@@ -60,6 +64,8 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
       await FirebaseMessaging.instance.subscribeToTopic("all_users");
       // Log the beginning of the addMeeting process
       logger.i("Starting the process to add a new event.");
+      logger.i("Starting the process to add a new ${event.activityBasics.coverImages}.");
+
       final images =
           await firebaseImageUploader.uploadImagesToFirebase(event.activityBasics.coverImages);
       logger.i("Images uploaded successfully");
@@ -244,6 +250,67 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
     } catch (e) {
       logger.e("Error fetching events by name: $e");
       return [];
+    }
+  }
+
+  @override
+  Future<Place> getPlaceDetail(Place place) async{
+    final url =
+        "https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.placeId}&key=${Constants.API_KEY}";
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      final result = json['result'];
+
+      return Place(
+        name: result['name'],
+        address: place.address,
+        lat: result['geometry']['location']['lat'],
+        lng: result['geometry']['location']['lng'],
+        placeId: place.placeId,
+      );
+    } else {
+      throw Exception("Failed to load place details");
+    }
+  }
+
+  @override
+  Future<List<Place>> getPlacesByName(String name)async {
+
+    final url =
+        "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$name&key=${Constants.API_KEY}&types=geocode&language=en";
+    try {
+      logger.i("Fetching places by name: $name");
+      final response = await http.get(Uri.parse(url));
+logger.i("Response status code: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        logger.i("Response body: ${json['predictions']}");
+        final predictions = json['predictions'] as List;
+
+
+        return predictions
+            .map((p) =>
+            Place(
+              name: p['structured_formatting']['main_text'] ?? '',
+              address: p['structured_formatting']['secondary_text'] ?? '',
+              lat: 0,
+              lng: 0,
+              placeId: p['place_id'],
+            ))
+            .toList();
+      }
+      else if (response.statusCode == 400) {
+        logger.e("Bad request while fetching places by name: $name");
+        throw WrongCredentialsException();
+      } else {
+        logger.e("Error fetching places by name: $name, Status code: ${response.statusCode}");
+        throw ServerException();
+      }
+    } catch (e) {
+      logger.e("Error fetching places by name: $e");
+      throw ServerException();
     }
   }
 }

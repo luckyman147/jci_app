@@ -18,11 +18,11 @@ class StatusCubit extends Cubit<StatusState> {
 
 
 
-    final language = await store.getLocaleLanguage();
-    final isFirstEntry = await store.isFirstEntry();
+    final language =  store.getLocaleLanguage();
+    final isFirstEntry =  store.isFirstEntry();
 
     // Handle Either results
-    final isLoggedIn = await store.isLoggedIn();
+    final isLoggedIn =  store.isLoggedIn() && store.getUserId() !=null && store.getUserId() !='' ;
 
     Logger().w(isLoggedIn);
     Logger().w(language);

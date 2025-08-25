@@ -13,6 +13,7 @@ import '../../../../domain/entities/task/Task.dart';
 import '../../../bloc/GetTasks/get_task_bloc.dart';
 import '../../../bloc/TaskIsVisible/task_visible_bloc.dart';
 import '../../../bloc/Timeline/timeline_bloc.dart';
+import '../../../bloc/members/members_cubit.dart';
 import '../../../utils/FileStorage.dart';
 import '../../../utils/TaskUtils.dart';
 import '../../Team/Detail/DetailTeamComponents.dart';
@@ -32,11 +33,16 @@ class TaskMiscSections extends StatelessWidget {
   final MediaQueryData mediaQuery;
   final TextEditingController controller;
   final FocusNode taskNameFocusNode;
+  final bool hasPermissionAll;
+
 
   const TaskMiscSections({
     super.key,
     required this.task,
     required this.team,
+    required this.hasPermissionAll,
+
+
     required this.mediaQuery,
     required this.controller,
     required this.taskNameFocusNode,
@@ -75,7 +81,11 @@ class TaskMiscSections extends StatelessWidget {
                 children: [
                   state.task!.meta.assignToMembers.isNotEmpty
                       ? GestureDetector(
-                    onTap: () => _openAssignBottomSheet(context, state),
+                    onTap: () {
+                      context.read<MembersTeamCubit>().changeTypeMember(MembersChangeType.WillChange);
+
+                      _openAssignBottomSheet
+                    (context, state);},
                     child: DeatailsTeamComponent.membersTeamImage(
                       context,
                       mediaQuery,
@@ -86,10 +96,13 @@ class TaskMiscSections extends StatelessWidget {
                     ),
                   )
                       : const SizedBox(),
+                  Visibility(
+                      visible: hasPermissionAll ,
+                      child:
                   Padding(
                     padding: paddingSemetricHorizontal(),
                     child: buildAddButton(() => _openAssignBottomSheet(context, state)),
-                  )
+                  ))
                 ],
               )
             ],
@@ -112,7 +125,7 @@ class TaskMiscSections extends StatelessWidget {
                   // Ensure that the text and widgets below are laid out only once the layout phase is ready
                   const SizedBox(height: 10),
 
-                  if (states is! CommentFileUploading)
+                  if (states is! CommentFileUploading && hasPermissionAll)
                     AddFileButton(() async {
                       final files = await FileStorage.pickFiles();
 
@@ -127,7 +140,7 @@ class TaskMiscSections extends StatelessWidget {
                       }
                     }),
                   // Make sure FileUploadWidget is handled with proper constraints
-                  if (states is CommentFileUploading)
+                  if (states is CommentFileUploading && hasPermissionAll)
                     SizedBox(
                       height: 100,
                       width: constraints.maxWidth,
@@ -160,7 +173,7 @@ class TaskMiscSections extends StatelessWidget {
             children: [
               buildText('Description', mediaQuery),
               const SizedBox(height: 10),
-state.textFieldsDescription==TextFieldsDescription.Active || (controller.text.isEmpty && task.content.description.isEmpty)?
+state.textFieldsDescription==TextFieldsDescription.Active || (controller.text.isEmpty && task.content.description.isEmpty) && hasPermissionAll?
     EditableTextField(
       minLines: 3,
       hintText: "Description here",
@@ -210,11 +223,12 @@ state.textFieldsDescription==TextFieldsDescription.Active || (controller.text.is
           buildText("Timeline", mediaQuery),
           InkWell(
             onTap: () {
+              if (hasPermissionAll){
               context.read<TimelineBloc>().add(initTimeline({
                 'StartDate': task.meta.startDate,
                 'Deadline': task.meta.deadline,
               }));
-              _showTimelineBottomSheet(context);
+              _showTimelineBottomSheet(context);}
             },
             child: BlocBuilder<GetTaskBloc, GetTaskState>(
               buildWhen: (prev, curr) => prev.status != curr.status,

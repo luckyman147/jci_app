@@ -1,7 +1,10 @@
 
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jci_app/core/util/snackbar_message.dart';
 import 'package:jci_app/features/auth/domain/dtos/LoginWithEmailDto.dart';
 import 'package:jci_app/features/auth/domain/dtos/SignInDtos.dart';
 import 'package:jci_app/features/auth/presentation/bloc/SignUp/sign_up_bloc.dart';
@@ -36,7 +39,15 @@ class SubmitFunctions{
   }
   static void Login(BuildContext context, LoginState state, GlobalKey<FormState> keyConr, void Function() resetform){
     if (keyConr.currentState!.validate()) {
-
+      if (state.email.value.isEmpty || state.password.value.isEmpty) {
+        SnackBarMessage.showErrorSnackBar(context: context
+         , message: "Please fill in all fields",
+        );
+        return;
+      }
+      // Create the LoginWithEmailDtos object
+log('Login with email: ${state.email.value}, password: ${state.password.value}');
+      // Dispatch the event to the LoginBloc
 final loginDtos=LoginWithEmailDtos(email: state.email.value, password: state.password.value);
       context.read<LoginBloc>().add(LoginWithEmailSubmitted(loginDtos));
       resetform();

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/core/app_theme.dart';
+import 'package:jci_app/core/config/env/Constants.dart';
 import 'package:jci_app/core/config/locale/app__localizations.dart';
 import 'package:jci_app/core/BuildingBlocks-Permissions/Permissions/Presentation/widgets/AsyncComponents.dart';
 import 'package:jci_app/features/MemberSection/presentation/components/ProfileComponents.dart';
@@ -37,7 +38,7 @@ class _PresidentsPageState extends State<PresidentsPage> {
   }
 
   void _onScroll() {
-    if (_isBottom) context.read<PresidentsBloc>().add(GetAllPresidentsEvent());
+    if (_isBottom) context.read<PresidentsBloc>().add(GetMorePresidentsEvent());
   }
 
   bool get _isBottom {
@@ -57,7 +58,7 @@ class _PresidentsPageState extends State<PresidentsPage> {
             AsyncComponents.buildFutureBuilder(buildAddButton(() {
 
 Dialogs.ShoUpdateAddPresident(context, null, PresidentsAction.Add);
-            }), PermissionType.canUpdate,"")
+            }), PermissionType.canUpdate,Constants.MANAGE_MEMBERS)
           ],
         ),
       ),

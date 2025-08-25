@@ -290,7 +290,7 @@ context.navigateTo(CreateUpdateActivityRoute(
                       child: Text(
                         "${state.selectedActivity.name.tr(context)} Details",
                         style: PoppinsSemiBold(
-                            mediaQuery.devicePixelRatio * 6,
+                            mediaQuery.devicePixelRatio * 3,
                             isMeeting
                                 ? ColorsApp.textColorBlack
                                 : ColorsApp.PrimaryColor,
@@ -648,25 +648,28 @@ Widget actionRow(mediaQuery, Activity activity, Color color, IconData icon,
       child: Padding(
         padding: paddingSemetricVerticalHorizontal(),
         child: Container(
+padding:paddingSemetricVerticalHorizontal(),
           width: mediaQuery.size.width / 4,
           decoration: BoxDecoration(
-            border: Border.all(color: color),
+            color: ColorsApp.textColorWhite,
+            border: Border.all(color: ColorsApp.textColorBlack),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 icon,
                 color: color,
-                size: 20,
+
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "$action ${activity.runtimeType.toString().split("Model")[0].tr(context)}",
-                  textAlign: TextAlign.center,
-                  style: PoppinsRegular(mediaQuery.devicePixelRatio * 4, color),
+                  "$action",
+
+                  style: PoppinsRegular(17.sp, color),
                 ),
               ),
             ],

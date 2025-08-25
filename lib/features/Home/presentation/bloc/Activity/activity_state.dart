@@ -8,6 +8,7 @@ class ActivityState extends Equatable {
   final activity selectedActivity;
   final activity selectedSearchActivity;
   final StateChange stateChange;
+
 final int index;
 final int noteIndex;
 final bool isSearching ;

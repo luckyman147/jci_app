@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/error/Failure.dart';
 import '../entities/Activitys/Activity.dart';
 import '../../presentation/bloc/Activity/activity_cubit.dart';
+import '../entities/Activitys/Place.dart';
 
 
 abstract class ActivitiesRepo{
@@ -18,6 +19,8 @@ abstract class ActivitiesRepo{
   Future<Either<Failure, Unit>> leaveActivity(String id, activity act);
   Future<Either<Failure, Unit>> participateActivity(String id, activity act);
 
+  Future<Either<Failure, List<Place>>> SearchPlaces(String name, );
+  Future<Either<Failure, Place>> SearchPlacesDetails(Place name, );
   Future<Either<Failure, bool>> checkPermissions(activity act);
 }
 

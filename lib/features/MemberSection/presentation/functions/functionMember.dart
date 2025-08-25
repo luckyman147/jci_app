@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jci_app/features/MemberSection/presentation/bloc/memberBloc/member_management_bloc.dart';
@@ -10,6 +11,7 @@ import '../../../../core/PrimitiveUser/User.dart';
 import '../../../../core/config/services/MemberStore.dart';
 import '../../../../core/config/services/store.dart';
 import '../../../Teams/domain/entities/Team/Team.dart';
+import '../../../Teams/domain/entities/TeamUser.dart';
 import '../../domain/repositories/MemberRepo.dart';
 import '../../domain/usecases/AdminMembersUsesCase.dart';
 import '../../domain/usecases/MemberUseCases.dart';
@@ -93,8 +95,7 @@ class FunctionMember {
         email: member.email,
         Images: [imagepath],
         cotisation: member.cotisation,
-        teams: member.teams,
-        Activities: member.Activities,
+
         points: member.points,
         PreviousPoints: member.PreviousPoints,
         IsSelected: member.IsSelected,
@@ -132,6 +133,43 @@ class FunctionMember {
     final member = await store.getUserId();
 
     return member == id;
+  }
+  static bool isOwnerWithContext(String id,BuildContext context)  {
+    final member = context.read<MembersBloc>().state.user!.id;
+
+    return member == id;
+  }
+  static bool IfIhavePermission(List<TeamUser> allMembers,BuildContext context){
+    final myId=context.read<MembersBloc>().state.user!.id;
+    if (allMembers.isEmpty) {
+      return false;
+    }
+    final myRole=allMembers.firstWhereOrNull((element) => element.user.id==myId)  ;
+    if (myRole==null){
+      return false;
+    }
+    if(myRole. role==UserTeamRole.canModify){
+      return true;
+    }else{
+      return false;
+    }
+
+  }
+  static bool IfIhavePermissionComment(List<TeamUser> allMembers,BuildContext context){
+    final myId=context.read<MembersBloc>().state.user!.id;
+    if (allMembers.isEmpty) {
+      return false;
+    }
+    final myRole=allMembers.firstWhereOrNull((element) => element.user.id==myId)  ;
+    if (myRole==null){
+      return false;
+    }
+    if(myRole. role==UserTeamRole.canComment){
+      return true;
+    }else{
+      return false;
+    }
+
   }
 
   static void Showinfo(BuildContext context, Member member) {

@@ -31,21 +31,7 @@ class MembersDetailsWidget extends StatelessWidget {
           builder: (context, state) {
             return InkWell(
               onTap: () {
-                // Navigate to the member details page
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return MemberSectionPage(id: members[index].id!);
-                    },
-                  ),
-                );
 
-                // Fetch member details using the BLoC event
-                context.read<MembersBloc>().add(
-                  GetMemberByIdEvent(
-                    MemberInfoParams(id: members[index].id!, status: true),
-                  ),
-                );
               },
               child: MemberContainer(item:  members[index]), // Display member's data in a container
             );

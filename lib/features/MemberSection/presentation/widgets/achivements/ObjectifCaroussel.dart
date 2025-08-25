@@ -32,7 +32,7 @@ class _ObjectifCarouselCardState extends State<ObjectifCarouselCard> {
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             shape: RoundedRectangleBorder(
                 side: BorderSide(color: ColorsApp.textColorWhite, width: 2),
-                borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.circular(13)),
             color: ColorsApp.PrimaryColor,
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -74,7 +74,7 @@ SingleChildScrollView(scrollDirection: Axis.horizontal,
 Icon(ObjectifIcons().objectifIcons[obj.objectif.feature]!.icon,color: ColorsApp.textColorWhite,size: 30,),
                             SizedBox(width: 10,),
                                SizedBox(
-                                 width: MediaQuery.of(context).size.width / 2.5,
+                                 width: MediaQuery.of(context).size.width / 2.7,
                                  child: AutoSizeText(
                                    "${obj.objectif.objectifActionType.name.doublesWords} ${ obj.objectif.target!=0? obj.objectif.target:""} ${obj.objectif.feature.name}",                                  style: PoppinsSemiBold(16, Colors.white, TextDecoration.none),
                                 ),),

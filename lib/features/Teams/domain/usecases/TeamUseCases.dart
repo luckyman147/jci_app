@@ -82,14 +82,24 @@ class getTeamByNameUseCase  extends UseCase<List<Team>, Map<String,dynamic>>{
     return _teamRepository.getTeamsOfUser();
   }
 }
-class UpdateTeamMembersUseCase  extends UseCase<Unit, TeamInput>{
+class UpdateTeamMembersRoleUseCase  extends UseCase<Unit, TeamInput>{
   final TeamRepo _teamRepository;
 
-  UpdateTeamMembersUseCase(this._teamRepository);
+  UpdateTeamMembersRoleUseCase(this._teamRepository);
 
   @override
   Future<Either<Failure, Unit>> call( params) {
-    return _teamRepository.UpdateMembers(params.id,params.memberid!,params.Status!);
+    return _teamRepository.UpdateMembersRole(params.id,params.memberid!,params.newRole!.name);
+  }
+}
+class RemoveMemberUseCase  extends UseCase<Unit, TeamInput>{
+  final TeamRepo _teamRepository;
+
+  RemoveMemberUseCase(this._teamRepository);
+
+  @override
+  Future<Either<Failure, Unit>> call( params) {
+    return _teamRepository.kickMember(params.id,params.memberid!);
   }
 }
 class InviteMemberUseCase  extends UseCase<Unit, TeamInput>{
@@ -115,10 +125,11 @@ class JoinTeamUseCase  extends UseCase<Unit, TeamInput>{
 class TeamInput{
   final String id;
   final String? memberid;
-  final String? Status;
+  final UserTeamRole? newRole;
   final TeamUser? member;
+  final String? Status;
 
 
-  TeamInput(this.id, this.memberid, this.Status, this.member);
+  TeamInput(this.id,this.memberid,this.Status,  this.newRole, this.member);
 }
 

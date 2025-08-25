@@ -59,7 +59,9 @@ class _CreateUpdateActivityPageState extends State<CreateUpdateActivityPage> {
     );
 
     context.read<MembersBloc>().add(const GetAllMembersEvent(false));
+    context.read<CategoryBloc>().add(throwError(message: ""));
     context.read<CategoryBloc>().add(GetAllCategoriesEvent());
+
     // TODO: implement initState
     super.initState();
   }

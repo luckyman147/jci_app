@@ -51,7 +51,11 @@ final result=await getPreviousEmailUseCase(NoParams());
 
 result.fold(
         (l) => emit(ErrorLogin(message: mapFailureToMessage(l))),
-        (r) => emit(GetUserEmailState(emai: r))
+        (r) {
+          final email = Email.dirty(r);
+     return   emit(state.copyWith(email: email));
+
+        }
 );
   }
   void _handleuserEvent(
@@ -64,7 +68,15 @@ result.fold(
     ResetFormLogin event,
     Emitter<LoginState> emit,
   ) {
-    emit(LoadingLoginWithEmail());
+    emit(
+      state.copyWith(
+        email: Email.pure(),
+        password: Password.pure(),
+        phone: PhoneNumber.pure(),
+        isValid: false,
+        status: FormzSubmissionStatus.initial,
+      ),
+    );
   }
 void _onGoogleSign(
     SignInWithGoogleEvent event,

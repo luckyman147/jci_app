@@ -18,7 +18,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MemberImpl {
   // Common widget for showing loading state
-  static Widget _buildLoadingState() => const ShimmerListView();
+  static Widget _buildLoadingState() => const ShimmerProfileListView();
 
   // Main member widget with refresh functionality
   static Widget memberWidget(String id, GlobalKey<ScaffoldState> scaffoldKey) {

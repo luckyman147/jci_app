@@ -49,7 +49,15 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
   FocusNode pointsFocusNode = FocusNode();
   @override
   void initState() {
-    context.read<PermissionsBloc>().add(LoadPermissionOfMasterEvent(featuresId: [Constants.MANAGE_POINTS  , Constants.MANAGE_OBJECTIFS ,Constants.MANAGE_MEMBERS]));
+    context.read<PermissionsBloc>().add(LoadPermissionOfMasterEvent(featuresId: [Constants.MANAGE_POINTS  , Constants.MANAGE_OBJECTIFS ,
+      Constants.MANAGE_TEAMS,
+      Constants.MANAGE_EVENTS,
+      Constants.MANAGE_MEETINGS,
+      Constants.MANAGE_TRAININGS,
+
+
+
+      Constants.MANAGE_MEMBERS]));
     context.read<MemberPermissionBloc>().add(checkIsowner(widget.member.id!));
 
     image();
@@ -138,7 +146,13 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
                       mainAxisAlignment: MainAxisAlignment.start,
 
                       children: [
-
+                        InfoButtonMember(
+                          header: 'Admin Dashboard'.tr(context),
+                          onClick: () => ObjectifsPage.show( context,widget.member,  ste),
+                          icon: Icons.dashboard,
+                          type: PermissionType.canRead,
+                          featureId: Constants.MANAGE_MEMBERS,
+                        ),
                     MemberImpl.isOwner(
                         InfoButtonMember(
                         featureId: Constants.MANAGE_MEMBERS,
@@ -165,14 +179,14 @@ class _MemberSectionWidgetState extends State<MemberSectionWidget> {
                           ),
                           header: 'My Activities'.tr(context),
                         ),
-                 /*       InfoButtonMember(
+                   InfoButtonMember(
                           featureId: Constants.MANAGE_OBJECTIFS,
                           type: PermissionType.canRead,
                           icon: Icons.workspaces,
                           onClick: () => TeamsComponent(member: widget.member),
                           header: 'My Teams'.tr(context),
                         ),
-*/
+
                       ],
                     ),
                                     )

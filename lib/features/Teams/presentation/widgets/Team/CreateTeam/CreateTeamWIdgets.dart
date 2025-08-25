@@ -24,7 +24,9 @@ import '../../../../../Home/domain/entities/Activity/event/Event.dart';
 import '../../../../../Home/domain/entities/Activitys/ActivityBasics.dart';
 import '../../../../../Home/domain/enums/ActionImage.dart';
 import '../../../../../Home/domain/enums/Privacy.dart';
+import '../../../../../Home/presentation/bloc/Activity/BLOC/ActivityF/acivity_f_bloc.dart';
 import '../../../../../Home/presentation/bloc/Activity/BLOC/formzBloc/formz_bloc.dart';
+import '../../../../../Home/presentation/bloc/Activity/activity_cubit.dart';
 import '../../../../../Home/presentation/bloc/IsVisible/bloc/visible_bloc.dart';
 import '../../../../../Home/presentation/bloc/PageIndex/page_index_bloc.dart';
 
@@ -137,7 +139,7 @@ void addOrUpdateTeam({
         description:descriptionController.text ,
         coverImage: formState.images.isNotEmpty ? formState.images[0] : '',
         event:formzState.eventFormz.value ,
-        status:visibleState.isPaid ),
+        status:visibleState.isPrivate ),
     members: TeamMembers(teamLeader: currentTeam.isEmpty ? null :
     currentTeam.members.teamLeader, members: membersState.members, membersIds: membersState.members.map((e) => e.user.id??"").toList()),
     stats: TeamStats(
@@ -253,6 +255,7 @@ Widget bottomMembersSheet(BuildContext context, MediaQueryData mediaQuery,
     padding: const EdgeInsets.symmetric(horizontal: 16.0,),
     child: InkWell(
       onTap: () {
+        context.read<MembersTeamCubit>().changeTypeMember(MembersChangeType.WillCreate);
         MemberBottomSheetBuilder(context, mediaQuery,assign,team);
       },
       child:Container(
@@ -338,6 +341,8 @@ Widget bottomEventSheet(BuildContext context, MediaQueryData mediaQuery,
     padding: const EdgeInsets.symmetric(horizontal: 16.0,),
     child: InkWell(
       onTap: () {
+        context.read<AcivityFBloc>().add(const GetAllActivitiesEvent(act: activity.Events));
+
         showModalBottomSheet(
           context: context,
           builder: (ctx) {
@@ -387,23 +392,23 @@ Widget StatusWidget(mediaQuery) => Padding(
 
 
       onTap: (){
-        if(state.isPaid) {
-          context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent(false));
+        if(state.isPrivate) {
+          context.read<VisibleBloc>().add(ChangePrivacy(false));
         } else {
-          context.read<VisibleBloc>().add(VisibleIsPaidToggleEvent(true));
+          context.read<VisibleBloc>().add(ChangePrivacy(true));
         }
 
       }, child: Container(
     width: mediaQuery.size.width * .3,
       decoration: BoxDecoration(
-      color: !state.isPaid?Colors.red:Colors.green,
+      color: state.isPrivate?Colors.red:Colors.green,
       borderRadius: BorderRadius.circular(15.0),
       ),
 
 
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Center(child: Text(!state.isPaid?"Private".tr(context):"Public",style: PoppinsRegular(18, textColorWhite),)),
+        child: Center(child: Text(state.isPrivate?"Private".tr(context):"Public",style: PoppinsRegular(18, textColorWhite),)),
       )),
   ),
   ],

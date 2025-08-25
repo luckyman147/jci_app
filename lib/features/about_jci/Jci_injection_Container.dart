@@ -32,7 +32,7 @@ Future<void> initJci() async {
 
   sl.registerFactory(()=>ActionJciCubit());
   sl.registerLazySingleton<LocalPresidentsDataSources>(()=>LocalPresidentsDataSourcesImpl());
-  sl.registerLazySingleton<RemotePresidentsDataSources>(()=>RemotePresidentsDataSourcesImpl(client: sl())); 
+  sl.registerLazySingleton<RemotePresidentsDataSources>(()=>RemotePresidentsDataSourcesImpl(firestore: sl())); 
   sl.registerLazySingleton<LocalBoardDataSources>(()=>LocalBoardDataSourcesImpl());
   sl.registerLazySingleton<RemoteBoardDataSources>(()=>RemoteBoardDataSourcesImpl(client: sl()));
   
@@ -61,7 +61,7 @@ Future<void> initJci() async {
   ));
   sl.registerLazySingleton<PresidentsRepo>(() => PresidentRepoImpl(
     localPresidentsDataSources: sl(),
-    remotePresidentsDataSources: sl(), networkInfo: sl(),
+    remotePresidentsDataSources: sl(), Preshandler: sl(), Unithandler: sl(), Combohandler: sl(), 
   ));
   
 }

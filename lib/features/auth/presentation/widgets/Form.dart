@@ -71,9 +71,9 @@ final mediaquery = MediaQuery.of(context);
               child: BlocBuilder<LoginBloc, LoginState>(
   builder: (context, state) {
     return Column(
-                mainAxisSize: MainAxisSize.min,
-                 mainAxisAlignment: MainAxisAlignment.start,
 
+                 mainAxisAlignment: MainAxisAlignment.center,
+crossAxisAlignment: CrossAxisAlignment.center,
 
                    children: [
 
@@ -81,8 +81,8 @@ final mediaquery = MediaQuery.of(context);
                      Image.asset(randomNumber==0?images.hello:images.team,
                          width: 300.w, height: 280.h, fit: BoxFit.contain).animate(effects: [const FadeEffect()]),
                       LoginWithEmailButton(state: sta,),
-                     EmailWithText(emailController: _emailController,  inputState: sta, onTap: (String ) {
-                       context.read<LoginBloc>().add(LoginEmailnameChanged(String));
+                     EmailWithText(emailController: _emailController,  inputState: sta, onTap: (name ) {
+                       context.read<LoginBloc>().add(LoginEmailnameChanged(name));
                      },),
                      //PhoneWithText(mediaquery: mediaquery,  state: state, inputState: sta, PhoneController: _PhoneController),
 

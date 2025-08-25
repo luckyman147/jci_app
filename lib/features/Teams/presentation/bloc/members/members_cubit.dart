@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../../core/Member.dart';
 import '../../../../../core/PrimitiveUser/User.dart';
+import '../../../../auth/AuthWidgetGlobal.dart';
 import '../../../domain/entities/TeamUser.dart';
 
 part 'members_state.dart';
@@ -19,16 +20,22 @@ void RemoveMember(TeamUser member){
 }
 
   void changeMemberRole(TeamUser member, UserTeamRole newRole) {
-    final currentMembers = state.members;
+    final currentMembers =List<TeamUser>.from( state.members);
+    Logger().d('Current Members: ${currentMembers.length}');
 
     final updatedMembers = currentMembers.map((m) {
-      if (m.user == member.user) {
+      if (m.user.id == member.user.id) {
+        Logger().d('Changing role of ${m.user.id} from ${m.role} to $newRole');
         return m.copyWith(role: newRole);
       }
       return m;
     }).toList();
 
     emit(state.copyWith(members: updatedMembers));
+  }
+  void changeTypeMember(MembersChangeType type){
+  if (state.type==type) return;
+    emit(state.copyWith(type: type));
   }
 void AddMember(TeamUser member){
   final currentMembers = state.members;

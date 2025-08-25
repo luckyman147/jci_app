@@ -6,6 +6,7 @@ import '../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/
 import '../../../../core/app_theme.dart';
 import '../../global-pres.dart';
 import '../constants/decoration.dart';
+import '../widgets/utils/ShimmerEffects.dart';
 import 'AboutMemberComponent.dart';
 
 class InfoButtonMember extends StatelessWidget {
@@ -28,7 +29,15 @@ class InfoButtonMember extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: paddingSemetricVertical(),
+
       child: AsyncComponents.buildFutureBuilder(
+
+      loadingWidget:
+      SizedBox(
+          height: 100,
+          width: MediaQuery.of(context).size.width,
+          child:
+      ShimmerProfileListView(itemCount: 1,)),
         InkWell(
           onTap: onClick,
           child: Container(

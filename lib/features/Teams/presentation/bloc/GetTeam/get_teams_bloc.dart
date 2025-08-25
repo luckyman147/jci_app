@@ -45,9 +45,11 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
   final InviteMemberUseCase inviteMemberUseCase;
   final getTeamByNameUseCase TeamByNameUseCase;
   final MemberStore memberStore;
-  final UpdateTeamMembersUseCase updateTeamMembersUseCase;
+  final UpdateTeamMembersRoleUseCase updateTeamMembersRoleUseCase;
   final JoinTeamUseCase joinTeamUseCase;
+  final RemoveMemberUseCase removeMemberUseCase;
   GetTeamsBloc(
+      this.removeMemberUseCase,
       this.getAllTeamsUseCase,
       this.getTeamByIdUseCase,
       this.addTeamUseCase,
@@ -55,7 +57,7 @@ class GetTeamsBloc extends Bloc<GetTeamsEvent, GetTeamsState> {
       this.updateTeamUseCase,
       this.deleteTeamUseCase,
       this.TeamByNameUseCase,
-      this.updateTeamMembersUseCase,
+      this.updateTeamMembersRoleUseCase,
       this.inviteMemberUseCase,
       this.joinTeamUseCase,
       this.memberStore)
@@ -74,13 +76,19 @@ on<GetTeamsOfuser> (_getteamsofuser);
     on<JoinTeam>(_joinTeam);
   }
 void  _getteamsofuser ( GetTeamsOfuser event,Emitter<GetTeamsState> emit) async {
+  if ( state.homeTeams.isNotEmpty) {
+      emit(state.copyWith(status: TeamStatus.LoadedTeams));
+
+    }
+  else {
     try {
       emit(state.copyWith(status: TeamStatus.Loading));
       final result = await getTeamsOfUserUseCase(NoParams());
       emit(_mapFailureOrTeamOfUserToState(result));
     } catch (error) {
-      emit(state.copyWith(status: TeamStatus.error));
+      emit(state.copyWith(status: TeamStatus.error, homeTeams: []));
     }
+  }
   }
   void _joinTeam(JoinTeam event, Emitter<GetTeamsState> emit) async {
     try {
@@ -254,7 +262,23 @@ void  _getteamsofuser ( GetTeamsOfuser event,Emitter<GetTeamsState> emit) async 
   void _updateMember(
       UpdateTeamMember event, Emitter<GetTeamsState> emit) async {
     try {
-      final result = await updateTeamMembersUseCase(event.fields);
+// update member role in state.teamById first
+      final index = state.teamById!.members.members.indexWhere(
+          (element) => element.user.id == event.fields.memberid);
+      if (index != -1) {
+        final updatedMember = state.teamById!.members.members[index]
+            .copyWith(role: event.fields.newRole);
+        final updatedMembers = List<TeamUser>.from(state.teamById!.members.members);
+        updatedMembers[index] = updatedMember;
+     final updatedTeam=  state.teamById!.copyWith(
+          members: state.teamById!.members.copyWith(members: updatedMembers),
+        );
+        emit(state.copyWith(teamById: updatedTeam));
+
+      }
+
+
+      final result = await updateTeamMembersRoleUseCase(event.fields);
 
       emit(_mapFailureOrUpdateMemberToState(result, event.fields));
     } catch (error) {

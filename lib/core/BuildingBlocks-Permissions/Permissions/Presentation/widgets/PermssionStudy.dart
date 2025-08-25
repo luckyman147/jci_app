@@ -17,11 +17,13 @@ class TypePermissionStrategy extends StatelessWidget {
   final Widget loadingWidget;
   final PermissionType type;
   final String feature;
+  final bool secondPermission;
 
   const TypePermissionStrategy({
     required this.hasPermissionsWidget,
     required this.noPermissionsWidget,
     required this.type,
+    this.secondPermission = false,
     required this.feature,
     required this.loadingWidget,
     super.key,
@@ -44,7 +46,7 @@ class TypePermissionStrategy extends StatelessWidget {
         if (hasPermission == null) {
           return loadingWidget; // Show loading widget if the state is loading
         }
-        return hasPermission ? hasPermissionsWidget : noPermissionsWidget;
+        return hasPermission || secondPermission ? hasPermissionsWidget : noPermissionsWidget;
       },
     );
   }

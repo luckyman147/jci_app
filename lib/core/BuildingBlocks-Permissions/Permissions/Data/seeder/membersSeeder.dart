@@ -40,8 +40,7 @@ class MemberSeeder {
           .element(['President', 'VP', 'Secretary', null]),
       language: _faker.randomGenerator.element(['en', 'fr', 'ar']),
       cotisation: List.generate(2, (_) => _faker.randomGenerator.boolean()),
-      Activities: List.generate(3, (_) => _faker.randomGenerator.string(10)),
-      teams: List.generate(2, (_) => _faker.randomGenerator.string(10)),
+
       Images: images ??
           [
             _faker.image.image(width: 200, height: 200),

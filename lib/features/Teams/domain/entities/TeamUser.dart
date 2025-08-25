@@ -23,7 +23,7 @@ class TeamUser {
     return TeamUser(
       UserModel.fromJson(json['user'] as Map<String, dynamic>,true),
       role: UserTeamRole.values.firstWhere(
-            (e) => e.toString() == 'UserTeamRole.${json['role']}',
+            (e) => e.name == json['role'],
         orElse: () => UserTeamRole.canRead,
       ),
     );
@@ -32,7 +32,7 @@ class TeamUser {
   Map<String, dynamic> toJson() {
     return {
       'user':UserModel.fromEntity(user).toJson(true),
-      'role': role.toString().split('.').last,
+      'role': role.name,
     };
   }
 }

@@ -1,4 +1,6 @@
 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jci_app/core/config/env/Constants.dart';
 import 'package:jci_app/features/Home/domain/enums/Privacy.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Activity/AddActivityWidgets.dart';
 import 'package:jci_app/features/Home/presentation/widgets/Fields/meetLinkTextField.dart';
@@ -7,6 +9,9 @@ import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 
 import '../../../../../core/widgets/CommonTextField.dart';
 import '../../../Activity_Global.dart';
+import '../../../domain/entities/Activitys/Place.dart';
+import '../../bloc/Activity/BLOC/Places/place__cubit.dart';
+import 'PlaceSeachBottomSheet.dart';
 
 class LocationVisibility extends StatelessWidget {
   const LocationVisibility({
@@ -26,16 +31,15 @@ class LocationVisibility extends StatelessWidget {
             StatusButton(Status:        state.IsOnline, onPressed: (){
               context.read<VisibleBloc>().add(ChangeOnline( !state.IsOnline));
             }, isOn: Icons.online_prediction, isOff: Icons.place, textOn: "Online", textOff: "Local", colorOn: PrimaryColor, labelText: "Is Online")
-            ,Visibility(
-              visible:!state.IsOnline,
-              child: TextfieldNormal(name: "Location",
-                 hintText:  "Location Here".tr(context),
-                 controller:  _LocationController,
-                      onChanged: (value){
-                    context.read<FormzBloc>().add(LocationChanged(location: value));
-                  }),
+            ,Visibility( visible:!state.IsOnline,
 
-            ),
+
+              child: TextfieldNormal(name: "Location",
+
+
+                  hintText: "Location Here".tr(context), controller: _LocationController,
+                  onChanged: (value){ }), ),
+
             Visibility(
               visible:state.IsOnline,
               child: TextFieldWithIcons(controller: _LocationController),

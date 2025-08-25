@@ -31,6 +31,7 @@ abstract class TeamRemoteDataSource {
   Future<Unit> updateMembers(String teamid, String memberid, String Status);
 
   Future<Unit> inviteMember(String id, String memberid);
+  Future<Unit> kickMember(String id, String memberid);
 
   Future<Unit> joinTeam(TeamUser user,String id);
 }
@@ -246,10 +247,40 @@ Future<Unit> deleteTeam(String id) async {
   }
 
   @override
-  Future<Unit> updateMembers(String teamid, String memberid, String Status) {
-    // TODO: implement updateMembers
-    throw UnimplementedError();
+  Future<Unit> updateMembers(String teamId, String memberid, String newrole) async{
+    final teamRef = firestore.collection('teams').doc(teamId);
+
+    await firestore.runTransaction((transaction) async {
+      final snapshot = await transaction.get(teamRef);
+
+      if (!snapshot.exists) {
+        throw Exception("Team not found");
+      }
+
+      final data = snapshot.data()!;
+      final List<dynamic> members = data['members']['members'] ?? [];
+
+      // Find and update the role
+      final updatedMembers = members.map((member) {
+        if (member['user']['id'] == memberid) {
+          return {
+            ...member,
+            'role':newrole, // store as string
+          };
+        }
+        return member;
+      }).toList();
+
+      // Update Firestore
+      transaction.update(teamRef, {'members.members': updatedMembers});
+      return unit;
+    }).catchError((error) {
+      throw ServerFailure();
+    });
+    return unit;
   }
+
+
 
   @override
   Future<List<TeamModel>> getTeamsOfUser() async {
@@ -271,6 +302,33 @@ Future<Unit> deleteTeam(String id) async {
       // handle error, log or rethrow
       throw Exception('Failed to get teams for user : $e');
     }
+  }
+
+  @override
+  Future<Unit> kickMember(String id, String memberid) async{
+    final teamRef = firestore.collection('teams').doc(id);
+
+    await firestore.runTransaction((transaction) async {
+      final snapshot = await transaction.get(teamRef);
+
+      if (!snapshot.exists) {
+        throw Exception("Team not found");
+      }
+
+      final data = snapshot.data()!;
+      final List<dynamic> members = data['members']['members'] ?? [];
+      final List<String> membersIds = List<String>.from(data['members']['membersIds'] ?? []);
+
+      // Remove the member from the list
+      final updatedMembers = members.where((member) => member['userId'] != memberid).toList();
+      final updatedMembersIds = membersIds.where((memberId) => memberId != memberid).toList();
+
+      // Update Firestore
+      transaction.update(teamRef, {'members.members': updatedMembers, 'members.membersIds': updatedMembersIds});
+    }).catchError((error) {
+      throw ServerFailure();
+    });
+    return unit;
   }
 
 

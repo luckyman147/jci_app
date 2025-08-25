@@ -1,6 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:logger/logger.dart';
-
 import '../../../../core/error/Exception.dart';
 import '../../../auth/AuthWidgetGlobal.dart';
 import '../../domain/dto/UpdateObjectiveProgressDTO.dart';
@@ -111,7 +108,7 @@ class ObjectifService {
                 },
               );
             }
-            if (await store.getUserId() == updateDto.userId) {
+            if ( store.getUserId() == updateDto.userId) {
               // Add the updated objective info to the result list.
               updatedUserObjectifsInfos.add(
                 userObjectifsInfosModel(
@@ -209,7 +206,7 @@ class ObjectifService {
   UserObjectifsModel _updateUserProgress(
       UserObjectifsModel userObjectifModel, int progress, Objectif objectif) {
     // Calculate the updated progress.
-    final int current = userObjectifModel.currentProgress ?? 0;
+    final int current = userObjectifModel.currentProgress ;
     final int updatedProgress =
         (current + progress) < 0 ? 0 : (current + progress);
 

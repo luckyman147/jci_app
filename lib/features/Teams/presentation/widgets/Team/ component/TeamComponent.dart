@@ -12,7 +12,9 @@ import 'package:jci_app/core/route/app_router.dart';
 import 'package:jci_app/features/Teams/presentation/utils/TeamUtils.dart';
 import 'package:jci_app/features/Teams/presentation/widgets/Team/implementation/TeamImpl.dart';
 
+import '../../../../../../core/BuildingBlocks-Permissions/Permissions/domain/Entities/Permission.dart';
 import '../../../../../../core/app_theme.dart';
+import '../../../../../../core/config/env/Constants.dart';
 import '../../../../../../core/strings/app_strings.dart';
 import '../../../../../Home/domain/enums/Privacy.dart';
 import '../../../../../Home/presentation/bloc/Activity/activity_cubit.dart';
@@ -209,14 +211,16 @@ static  Row SecondRowPart(TaskVisibleState state, BuildContext context) {
     );
   }
 
-static AddButton AddTeamButton(BuildContext context) {
-  return AddButton(color: PrimaryColor, IconColor: textColorBlack, icon: Icons.add_rounded,
+static Widget AddTeamButton(BuildContext context) {
+  return
+    AsyncComponents.buildFutureBuilder(
+    AddButton(color: PrimaryColor, IconColor: textColorBlack, icon: Icons.add_rounded,
 onPressed: () {
 context.pushRoute(CreateTeamRoute(team: TeamModel.empty()));
 
 //context.
 //context.go('/CreateTeam?team=$team');
-});
+}), PermissionType.canCreate, Constants.MANAGE_TEAMS);
 }
 
 static IconButton iconButton(BuildContext context,IconData icon, Function() onPressed) {

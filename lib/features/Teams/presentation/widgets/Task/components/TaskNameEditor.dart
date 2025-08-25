@@ -14,9 +14,11 @@ class TaskNameEditor extends StatelessWidget {
   final Tasks task;
   final FocusNode taskNameFocusNode;
   final TextEditingController taskNameController;
+final bool hasPermission;
 
   const TaskNameEditor({
     Key? key,
+    this.hasPermission=true,
     required this.mediaQuery,
     required this.task,
     required this.taskNameFocusNode,
@@ -39,6 +41,11 @@ class TaskNameEditor extends StatelessWidget {
               Expanded(
                 child: _buildTextField(context, state),
               ),
+              Visibility(
+                  visible: hasPermission,
+                  child:
+              buildActionsTaskButtons()
+              )
             ],
           ),
           ),
@@ -79,14 +86,22 @@ class TaskNameEditor extends StatelessWidget {
       isActive,
       taskNameController,
           () {
-        context
+     if (hasPermission) {
+       context
             .read<TaskVisibleBloc>()
             .add(const ChangeTextFieldsTitle(TextFieldsTitle.Active));
+     }
         FocusScope.of(context).requestFocus(taskNameFocusNode);
       },
       "TaskName here",
       mediaQuery,
           () {
+     if (!hasPermission &&
+         (taskNameController.text.isEmpty ||
+            taskNameController.text.length < 3) ){
+          // Show some error or feedback to the user
+          return;
+        }
         final input =
         UpdateTaskParams.fromName(taskNameController.text, task);
         context.read<GetTaskBloc>().add(UpdateTaskNameEvent(input));
@@ -100,3 +115,24 @@ class TaskNameEditor extends StatelessWidget {
     );
   }
 }
+
+Row buildActionsTaskButtons() {
+  return Row(
+    children: [
+      IconButton(
+        onPressed: () {
+          // TODO: share logic
+        },
+        icon:  Icon(Icons.share,color: ColorsApp.ThirdColor,size: 22, ),
+      ),
+
+      IconButton(
+          onPressed: () {
+            // TODO: another share logic
+          },
+          icon:  Icon(Icons.access_alarm, color: ColorsApp.ThirdColor,size: 22, )
+      ),
+    ],
+  );
+}
+

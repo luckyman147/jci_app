@@ -55,11 +55,12 @@ Future<void> initTeams() async {
 
     UpdateTaskStatusUseCase: sl(), addChecklistUseCase: sl(),
     updateChecklistNameUseCase: sl(), updateChecklistStatusUseCase: sl(),
-    deleteChecklistUseCase: sl(),
+    deleteChecklistUseCase: sl(), updateMembersRoleUseCase: sl(),
 ));
 
   sl.registerFactory(() =>
-      GetTeamsBloc(sl(), sl(), sl(),sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+      GetTeamsBloc(sl(),sl(), sl(), sl(),sl(),
+          sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   //datasources
 
   sl.registerLazySingleton<TaskRemoteDataSource>(
@@ -90,11 +91,15 @@ Future<void> initTeams() async {
   sl.registerLazySingleton(() => updateTaskDescriptionUseCase(sl()));
   sl.registerLazySingleton(() => UpdateFileUseCase(sl()));
   sl.registerLazySingleton(() => UpdateMembersUseCase(sl()));
+
   sl.registerLazySingleton(() => DeleteChecklistUseCase(sl()));
   sl.registerLazySingleton(() => DeleteTaskUseCase(sl()));
   sl.registerLazySingleton(() => UpdateTaskTimeline(sl()));
 
-  sl.registerLazySingleton(() => UpdateTeamMembersUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateTeamMembersRoleUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateMembersRoleUseCase(sl()));
+
+  sl.registerLazySingleton(() => RemoveMemberUseCase(sl()));
   //sl.registerLazySingleton(() => GetFil(sl()));
 
   sl.registerLazySingleton(() => UpdateChecklistStatusUseCase(sl()));

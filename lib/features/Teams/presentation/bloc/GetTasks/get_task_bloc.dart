@@ -39,7 +39,7 @@ class GetTaskBloc extends Bloc<GetTaskEvent, GetTaskState> {
   final DeleteChecklistUseCase deleteChecklistUseCase;
   final AddChecklistUseCase addChecklistUseCase;
   final UpdateChecklistStatusUseCase updateChecklistStatusUseCase;
-
+final UpdateMembersRoleUseCase updateMembersRoleUseCase;
   final updateTaskNameUseCase UpdateTaskNameUseCase;
   final updateTaskDescriptionUseCase UpdateTaskDescriptionUseCase;
  // final UpdateFileUseCase updateFileUseCase;
@@ -50,6 +50,7 @@ class GetTaskBloc extends Bloc<GetTaskEvent, GetTaskState> {
  // final AddCommentUseCase addCommentUseCase;
   //final GetFileUseCase getFileUseCase;
   GetTaskBloc({ required this.getTasksOfTeamUseCase,
+     required this.updateMembersRoleUseCase,
 
     required this.addChecklistUseCase,
     required this.updateChecklistNameUseCase,
@@ -73,6 +74,23 @@ class GetTaskBloc extends Bloc<GetTaskEvent, GetTaskState> {
 
       : super(const GetTaskInitial()) {
     on<GetTasks>(onGetTasks,);
+    on<UpdateMemberRoleEvent>((event,emit) async {
+      try{
+        final updatedTasks = MemberUtils.updateMemberRoleInTasks(
+          state.tasks, event.fields,
+        );
+        emit(state.copyWith(
+          task: updatedTasks.firstWhere((task) => task.meta.id == event.fields.taskId, ),
+
+          tasks: updatedTasks,
+          clonetasks: updatedTasks,
+          status: TaskStatus.success,
+        ));
+        await updateMembersRoleUseCase(event.fields);
+      }catch(e){
+        emit(state.copyWith(errorMessage: "$e"));
+      }
+    });
     on<GetTaskById>(onGetTaskById);
     on<CreateTask>(_CreateTask);
     on<AddInitCommentEvent>((event,emit){

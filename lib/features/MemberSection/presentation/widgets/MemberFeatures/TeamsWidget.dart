@@ -33,12 +33,13 @@ class TeamsComponent extends StatelessWidget {
         constraints: BoxConstraints(
           maxHeight: mediaQuery.size.height * 0.6,
         ),
-        child: member.teams.isEmpty
-            ? _buildAddTeamsWidget(context)
-            : _buildTeamsList(mediaQuery.size.width / 2,mediaQuery),
+        child:
+
+            _buildAddTeamsWidget(context)
       ),
     );
-  }
+  } //member.teams.isEmpty
+  //  : _buildTeamsList(mediaQuery.size.width / 2,mediaQuery),
 
   Widget _buildAddTeamsWidget(BuildContext context) {
     return AsyncComponents.buildFutureBuilder(
@@ -72,7 +73,7 @@ class TeamsComponent extends StatelessWidget {
           child: const Divider(color: textColor, height: 12),
         );
       },
-      itemCount: member.teams.length,
+      itemCount:1,
     );
   }
 
@@ -83,7 +84,7 @@ class TeamsComponent extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildTeamDetails(index,mediaQuery),
-          IsPublic(member.teams[index]['status'])
+       //   IsPublic(member.teams[index]['status'])
         ],
       ),
     );
@@ -92,17 +93,17 @@ class TeamsComponent extends StatelessWidget {
   Widget _buildTeamDetails(int index,MediaQueryData mediaQuery) {
     return Row(
       children: [
-        DeatailsTeamComponent.ImageCard(
-          mediaQuery,
-          TeamModel.fromJson(member.teams[index]).meta.coverImage,
-          40,
-        ),
+  //      DeatailsTeamComponent.ImageCard(
+   //       mediaQuery,
+        //  TeamModel.fromJson(member.teams[index]).meta.coverImage,
+     //     40,
+       // ),
         Padding(
           padding: paddingSemetricHorizontal(),
           child: SizedBox(
             width: mediaQuery.size.width / 2.5,
             child: Text(
-              member.teams[index]['name'],
+             "",
               overflow: TextOverflow.ellipsis,
               style: PoppinsRegular(17, textColorBlack),
             ),

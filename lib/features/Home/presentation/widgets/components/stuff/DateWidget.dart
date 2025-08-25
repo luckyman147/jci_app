@@ -139,6 +139,10 @@ class _DateFieldWidgetState extends State<DateFieldWidget> {
 
     if (widget.timeType == TimeType.begin) {
       context.read<FormzBloc>().add(BeginTimeChanged(date: combinedDateTime));
+      context.read<FormzBloc>().add(EndTimeChanged(date: combinedDateTime.add(Duration(hours: 2))));
+      context.read<FormzBloc>().add(RegistraTimeChanged(date: combinedDateTime.subtract(Duration(days: 1))));
+      
+      
     } else if (widget.timeType == TimeType.end) {
       context.read<FormzBloc>().add(EndTimeChanged(date: combinedDateTime));
     } else {

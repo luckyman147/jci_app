@@ -55,7 +55,7 @@ class MeetingRemoteDataSourceImpl implements MeetingRemoteDataSource {
       final documentId = activityDocRef.id;
 
       // Update the document with the generated document ID
-      await activityDocRef.update({'id': documentId});
+      await activityDocRef.update({'activityBasics.id': documentId});
       logger.i("Activity document updated with the generated ID.");
 
       return MeetingModel.fromJson(

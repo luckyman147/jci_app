@@ -12,6 +12,7 @@ import 'package:jci_app/features/Teams/presentation/widgets/Task/Implementation/
 import 'package:jci_app/features/Teams/presentation/widgets/Team/%20component/TeamComponent.dart';
 
 
+import '../ component/ActivityInfoTile.dart';
 import '../../../../../../core/app_theme.dart';
 
 
@@ -86,7 +87,9 @@ class _TeamDetailWidgetState extends State<TeamDetailWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
 
-                state.tasks.isEmpty ? const SizedBox() :
+
+if (widget.team.meta.event != null)
+  ActivityInfoTile(activity:  widget.team.meta.event!),
 
 
 

@@ -94,10 +94,9 @@ class ListenerLoginFunctions{
 
       context.replaceRoute(HomeRoute());
 
-      context.read<PageIndexBloc>().add(SetIndexEvent(index:0));
+      context.read<PageIndexBloc>().add(SetIndexEvent(index:4));
 
       context.read<MembersBloc>().add(const GetUserProfileEvent(true));
-      context.read<AcivityFBloc>().add(const GetActivitiesOfMonthEvent(act:activity.Events));
     }
     else if (state is RegisterGoogle) {
 

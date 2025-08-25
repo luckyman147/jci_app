@@ -20,8 +20,8 @@ abstract class TeamRepo{
   Future<Either<Failure,Unit>> uploadTeamImage(String id, String path);
   Future<Either<Failure,Unit>> InviteMember(String id, String memberid);
   Future<Either<Failure,Unit>> JoinTeam(TeamUser user,String TeamId );
-
-  Future<Either<Failure,Unit>> UpdateMembers(String teamid, String memberid, String Status);
+  Future<Either<Failure,Unit>> kickMember(String id, String memberid);
+  Future<Either<Failure,Unit>> UpdateMembersRole(String teamid, String memberid, String newRole);
 
 
 }

@@ -47,6 +47,8 @@ if (!widget.team .isEmpty) {
 
 else{
   context.read<MembersBloc>().add(const GetAllMembersEvent(false));
+  context.read<TaskVisibleBloc>().add(InitImagesEvent([]));
+  
   context.read<AcivityFBloc>().add(const GetAllActivitiesEvent(act: activity.Events));
   context.read<FormzBloc>().add(EventChanged( eventChanged: null));
   context.read<MembersTeamCubit>().initMembers([]);

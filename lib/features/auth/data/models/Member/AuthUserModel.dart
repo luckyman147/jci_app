@@ -31,6 +31,31 @@ class AuthUserModel extends AuthUser{
       role: authUser.role, language: authUser.language, password: authUser.password, isEmailVerified: authUser.isEmailVerified,) ;
 
   }
+  //Copy with
+  AuthUserModel copyWith({
+    String? id,
+    String? email,
+    String? firstName,
+    String? lastName,
+    List<dynamic>? Images,
+    DocumentReference? role,
+    String? language,
+    String? password,
+    bool? isEmailVerified,
+  }) {
+    return AuthUserModel(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      Images: Images ?? this.Images,
+      role: role ?? this.role, language:  language ?? this.language,
+      password: password ?? this.password,
+      isEmailVerified: isEmailVerified ?? this.isEmailVerified,
+
+
+    );
+  }
 
 
     //from json

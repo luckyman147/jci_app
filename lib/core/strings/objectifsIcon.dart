@@ -22,7 +22,18 @@ class ObjectifIcons {
     FeaturesType.Meetings:
     ObjectifIconData(icon: Icons.groups, color: Colors.orange), // 👥 Meetings
     FeaturesType.Trainings:
-    ObjectifIconData(icon: Icons.school, color: Colors.red), // 🎓 Trainings
+    ObjectifIconData(icon: Icons.school, color: Colors.red),
+    // 🎓 Trainings
+    FeaturesType.Subtasks:
+    ObjectifIconData(icon: Icons.check_circle, color: Colors.blue),
+    FeaturesType.Tasks:
+        ObjectifIconData(icon: Icons.task, color: Colors.indigo),
+    FeaturesType.Projects:
+        ObjectifIconData(icon: Icons.folder, color: Colors.teal),
+    FeaturesType.Strategies:
+    ObjectifIconData(icon: Icons.star_rate, color: Colors.amber), // 🎯
+    // ✅ Sub
+
     FeaturesType.teams: ObjectifIconData(
         icon: Icons.supervised_user_circle, color: Colors.purple), // 🏆 Teams
     FeaturesType.Votes:

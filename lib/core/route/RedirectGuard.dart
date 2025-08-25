@@ -13,7 +13,8 @@ class LastRouteRedirectGuard extends AutoRouteGuard {
       router.replacePath(lastRoute);
     } else {
       // Only call resolver.next if no redirection is done
-      resolver.next(true);
+
+      resolver.next();
     }
   }
 }

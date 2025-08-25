@@ -28,8 +28,7 @@ factory MemberModel.fromEntity(Member member) {
       email: member.email,
 
       IsSelected: member.IsSelected,
-      teams: member.teams,
-      Activities: member.Activities,  language: member.language, rank: member.rank, description: member.description,
+    language: member.language, rank: member.rank, description: member.description,
       board: member.board, isEmailVerified: member.isEmailVerified, userObjectifs: member.userObjectifs,
     );
   }
@@ -49,8 +48,7 @@ factory MemberModel.fromEntity(Member member) {
       email: email,
 
       IsSelected: IsSelected,
-      teams: teams,
-      Activities: Activities, userObjectifs: userObjectifs, language: language,
+ userObjectifs: userObjectifs, language: language,
       rank: rank,
       description: description,
       board: board, isEmailVerified: isEmailVerified, unreadNotificationCount: unreadNotificationCount,notificationCount: notificationCount
@@ -88,20 +86,13 @@ factory MemberModel.fromEntity(Member member) {
 
 
         IsSelected:false,
-        teams: json['teams'] == null ? [] :json['teams'] as List<dynamic>,
-        Activities:
-
-        json['Activities'] == null ? [] :
-
-        (json['Activities'] as List<dynamic>)
-            .map((e) => e )
-            .toList(), language: json['language'] ?? 'fr', rank: json['rank'] ?? json['Rank'] ?? 0, description: json['description'] ?? '', board: json['boardRole'] ?? '', isEmailVerified: json['isEmailVerified'] ?? false,
+     language: json['language'] ?? 'fr', rank: json['rank'] ?? json['Rank'] ?? 0, description: json['description'] ?? '', board: json['boardRole'] ?? '', isEmailVerified: json['isEmailVerified'] ?? false,
     notificationCount:
     json["notificationCount"]??0,
     unreadNotificationCount: json["unreadNotificationCount"]??0
       );}
    MemberModel({required super.id, required super.role, required super.is_validated, required super.cotisation, required super.Images, required super.firstName, required super.lastName, required super.phone, required super.email,
-      required super.IsSelected, required super.Activities, required super.teams, required super.points,
+      required super.IsSelected,required super.points,
      required super.notificationCount,required super.unreadNotificationCount,
 
      required super.language, required super.rank, required super.description, required super.board, required super.PreviousPoints,
@@ -126,7 +117,7 @@ factory MemberModel.fromEntity(Member member) {
 
 
       'IsSelected': IsSelected,
-      'teams': teams,
+
       'Activities': [],
       'language': language,
       'rank': rank,
@@ -172,8 +163,7 @@ MemberModel copyWith({
     phone: phone ?? this.phone,
     email: email ?? this.email,
     IsSelected: IsSelected ?? this.IsSelected,
-    Activities: Activities ?? this.Activities,
-    teams: teams ?? this.teams,
+
     points: points ?? this.points,
     notificationCount: notificationCount ?? this.notificationCount,
     unreadNotificationCount: unreadNotificationCount ?? this.unreadNotificationCount,

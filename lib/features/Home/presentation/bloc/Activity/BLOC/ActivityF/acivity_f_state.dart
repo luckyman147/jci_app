@@ -5,7 +5,7 @@ class AcivityFState extends Equatable {
   final bool isLoading;
   final List<Activity>activities;
   final List<Activity>activitiesSearch;
-
+final   List<Activity> activitiesOfMonth;
   final Activity? activityById;
 final String? eventid;
   final String? errorMessage;
@@ -15,6 +15,7 @@ final String? eventid;
     this.activityfetchState = ActivityFetchState.Initial,
     this.isLoading = false,
     this.activities=const [],
+    this.activitiesOfMonth=const [],
     this.activitiesSearch=const   [],
     this.activityById,
     this.eventid,
@@ -28,6 +29,7 @@ final String? eventid;
     bool? isLoading,
     String?eventid,
     List<Activity>? activities,
+    List<Activity>? activitiesOfMonth,
     List<Activity>? activitiesSearch,
     Activity? activityById,
     List<Category>? categories,
@@ -35,6 +37,7 @@ final String? eventid;
 
   }) {
     return AcivityFState(
+      activitiesOfMonth:  activitiesOfMonth ?? this.activitiesOfMonth,
       activityfetchState: activityfetchState ?? this.activityfetchState,
       isLoading: isLoading ?? this.isLoading,
       eventid: eventid??this.eventid,
@@ -55,6 +58,7 @@ final String? eventid;
     activitiesSearch,
     errorMessage,
     activityfetchState,
+    activitiesOfMonth,
   ];
 }
 class AcivityFInitial extends AcivityFState {

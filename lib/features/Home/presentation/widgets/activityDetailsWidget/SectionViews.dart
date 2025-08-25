@@ -62,15 +62,18 @@ class _SectionViewerState extends State<SectionViewer> {
       children: [
         // 🔹 Header Tabs Row
     Container(
+
       decoration: BoxDecoration(
-        color: ColorsApp.BackWidgetColor,
+
 
 
       ),
         child:     SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment:  CrossAxisAlignment.center,
+
+          mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(tabs.length, (index) {
             return _buildHeaderTab(
            index:    index,
@@ -171,6 +174,8 @@ class _SectionViewerState extends State<SectionViewer> {
               ),
 
               // Page 4 - Poll
+              SingleChildScrollView(
+                child:
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -185,7 +190,7 @@ class _SectionViewerState extends State<SectionViewer> {
                     ),
 
                 ],
-              ),
+              )),
             ],
           ),
         ),
@@ -243,7 +248,7 @@ class _SectionViewerState extends State<SectionViewer> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
           decoration: BoxDecoration(
             color: isSelected ? ColorsApp.PrimaryColor : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: AutoSizeText(
             text,

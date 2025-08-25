@@ -13,6 +13,10 @@ class PresidentModel extends President {
     CoverImage: json['CoverImage'],
     year: json['year'],
   );
+// copy with
+
+
+
 
   PresidentModel({
 required String id ,
@@ -39,6 +43,20 @@ required String id ,
     'CoverImage': CoverImage,
     'year': year,
   };
+  PresidentModel copyWith({
+    String? id,
+    String? name,
+    String? CoverImage,
+    String? year,
+  }) {
+    return PresidentModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      CoverImage: CoverImage ?? this.CoverImage,
+      year: year ?? this.year,
+    );
+  }
+
 }
 
 

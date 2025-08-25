@@ -9,6 +9,7 @@ import 'package:jci_app/core/config/services/PresidentsStore.dart';
 import 'package:jci_app/core/strings/failures.dart';
 import 'package:jci_app/core/strings/messages.dart';
 import 'package:jci_app/features/about_jci/Domain/entities/President.dart';
+import 'package:jci_app/features/auth/AuthWidgetGlobal.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 import '../../../../core/error/Failure.dart';
@@ -36,36 +37,90 @@ class PresidentsBloc extends Bloc<PresidentsEvent, PresidentsState> {
     });
     on<CreatePresident>(_onCreatePresident);
     on<DeletePresident>(_onDeletePresident);
-    on<GetAllPresidentsEvent>(_onGetAllPresidents,transformer: throttleDroppable(throttleDuration));
+    on<GetAllPresidentsEvent>(onGetPresidents,transformer: throttleDroppable(throttleDuration));
+    on<GetMorePresidentsEvent >(onGetMorePresidents,transformer: throttleDroppable(throttleDuration));
     on<UpdateImagePresident>(_onUpdateImagePresident);
     on<UpdatePresident>(_onUpdatePresident);
   }
-  Future<void> _onGetAllPresidents(GetAllPresidentsEvent event,Emitter<PresidentsState> emit)async {
-    if (state.hasReachedMax) return;
+  Future<void> onGetMorePresidents(
+      GetMorePresidentsEvent event,
+      Emitter<PresidentsState> emit,
+      ) async {
+    if (state.hasReachedMax || state.state == presidentsStates.Loading) return;
+
     try {
-      if (state.state== presidentsStates.Initial) {
-        final result = await getPresidentsUseCases();
-        return emit(state.copyWith(state: presidentsStates.Loaded,presidents:
-        result.getOrElse(() => []),hasReachedMax: false)
-        );
-      }
-      final result = await getPresidentsUseCases(start: state.presidents.length.toString());
-      final pres=result.getOrElse(() => []);
-     if (pres.isEmpty) {
-     await PresidentStore.setUpdated(false);
-     }
-      emit(pres.isEmpty?state.copyWith(hasReachedMax: true):
-      state.copyWith(
-        state: presidentsStates.Loaded,presidents: List.of(state.presidents)..addAll(pres),
-        hasReachedMax: false
-      )
+      emit(state.copyWith(state: presidentsStates.Loading));
+
+      final result = await getPresidentsUseCases.call(
+        10,
+        lastDocument: state.lastDocument,
       );
 
-    }
-    catch(e){
-      emit(state.copyWith(state: presidentsStates.Error,message: e.toString()));
+      final res = result.getOrElse(() => ([], null));
+      final newPresidents = res.$1;
+      final newLastDoc = res.$2;
+
+      if (newPresidents.isEmpty) {
+        emit(state.copyWith(
+          hasReachedMax: true,
+          state: presidentsStates.Loaded,
+        ));
+        return;
+      }
+
+      final updatedPresidents = List.of(state.presidents)..addAll(newPresidents);
+
+      emit(state.copyWith(
+        state: presidentsStates.Loaded,
+        presidents: updatedPresidents,
+        lastDocument: newLastDoc,
+        hasReachedMax: false,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        state: presidentsStates.Error,
+        message: e.toString(),
+      ));
     }
   }
+
+  Future<void> onGetPresidents(
+      GetAllPresidentsEvent event,
+      Emitter<PresidentsState> emit,
+      ) async {
+    try {
+      // if already loaded, just return
+      if (state.state == presidentsStates.Loaded && state.presidents.isNotEmpty) {
+        emit(state.copyWith(state: presidentsStates.Loaded));
+        return;
+      }
+
+      emit(state.copyWith(
+        state: presidentsStates.Loading,
+        hasReachedMax: false,
+        lastDocument: null,
+      ));
+
+      final result = await getPresidentsUseCases.call(10, lastDocument: null);
+
+      final res = result.getOrElse(() => ([], null));
+      final presidents = res.$1;
+      final lastDoc = res.$2;
+
+      emit(state.copyWith(
+        state: presidentsStates.Loaded,
+        presidents: presidents,
+        lastDocument: lastDoc,
+        hasReachedMax: presidents.isEmpty,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        state: presidentsStates.Error,
+        message: e.toString(),
+      ));
+    }
+  }
+
   void _onCreatePresident(CreatePresident event,Emitter<PresidentsState> emit)async {
     try {
       emit(state.copyWith(state: presidentsStates.Loading));

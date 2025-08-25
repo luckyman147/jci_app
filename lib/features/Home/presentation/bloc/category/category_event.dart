@@ -18,8 +18,11 @@ class ChangeIndex extends CategoryEvent {
   List<Object> get props => [index];
 }
 class GetAllCategoriesEvent extends CategoryEvent {
+   final bool isRefreshed;
+   //Constrator
+    GetAllCategoriesEvent({this.isRefreshed = false});
   @override
-  List<Object> get props => [];
+  List<Object> get props => [isRefreshed];
 }
 class GetCategoryByNameEvent extends CategoryEvent {
   final String name;

@@ -135,19 +135,10 @@ class ParticpantsBloc extends Bloc<ParticpantsEvent, ParticpantsState> {
 
   void changeStatus(
       CheckAbsenceEvent event, Emitter<ParticpantsState> emit) async {
-    emit(state.copyWith(status: ParticpantsStatus.loading));
+
 
     try {
-      // Update participant's attendance status using UseCases
-      final result = await UpdateAbsenceUseCases(event.params);
 
-      if (result.isLeft()) {
-        // Handle error if status update fails
-        final failure = result.fold((failure) => failure, (_) => null);
-        Logger().w("Status change failed: $failure");
-        emit(state.copyWith(status: ParticpantsStatus.failed));
-        return;
-      }
 
       final updatedStatus = event.params.status;
       final memberId = event.params.partipantId;
@@ -189,6 +180,9 @@ class ParticpantsBloc extends Bloc<ParticpantsEvent, ParticpantsState> {
 
       Logger().i(
           "Participant ${event.params.partipantId} updated to $updatedStatus");
+      // Update participant's attendance status using UseCases
+      final result = await UpdateAbsenceUseCases(event.params);
+
     } catch (e) {
       Logger().e("Error changing status for participant: $e");
       emit(state.copyWith(status: ParticpantsStatus.failed));

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jci_app/features/Home/domain/entities/Meeting.dart';
 
 import '../../../../../core/app_theme.dart';
@@ -141,44 +142,81 @@ class AgendaListView extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Container(
-            decoration:const  BoxDecoration(
-
-              border: Border(
-                right: BorderSide(
-                  color: ThirdColor,
-                  width: 3,
+            height: 70.h,
+            decoration:  BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: const Offset(0, 3), // changes position of shadow
                 ),
-              )
+              ],
+
+              border: Border.all(
+                color: PrimaryColor,
+                width: 1.5,
+              ),
+
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
 
-                    width: mediaQuery.size.width,
-                    child: Text(
-                      '${index + 1}. ${i.title}',
+
+                    width: mediaQuery.size.width/2,
+                    child:
+                    Row(
+                        spacing: 5.w,
+                        children: [
+                      Container(
+                        height: 40.h,
+                        width: 40.w,
+                        decoration: BoxDecoration(
+                          color: ColorsApp.PrimaryColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${index + 1}',
+                            style: PoppinsSemiBold(
+                              18.sp,
+                              ColorsApp.PrimaryColor,
+                              TextDecoration.none,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      Text(
+                      ' ${i.title}',
                       overflow: TextOverflow.ellipsis,
                       style: PoppinsSemiBold(
-                        mediaQuery.devicePixelRatio * 6,
+                        18.sp,
                         textColorBlack,
                         TextDecoration.none,
                       ),
-                    ),
-                  ),
+                    ),]
+
+
+                  )),
                   Padding(
                     padding:paddingSemetricHorizontal(),
                     child: SizedBox(
 
-                      width: mediaQuery.size.width * 0.2,
+
                       child: Text(
                         "${i.endTime} min",
                         overflow: TextOverflow.ellipsis,
                         style: PoppinsRegular(
-                          mediaQuery.devicePixelRatio * 6,
-                          ThirdColor,
+                          16.sp,
+                          ColorsApp.SecondaryColor,
                         ),
                       ),
                     ),

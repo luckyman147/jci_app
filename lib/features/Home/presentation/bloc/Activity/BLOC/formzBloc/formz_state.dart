@@ -8,7 +8,7 @@ part of 'formz_bloc.dart';
 
 
     this.activityName = const ActivityName.pure(),
-    this.location = const Location.pure(),
+    this.location,
     this.description = const Description.pure(),
     this.imageInput = const ImageInput.pure(),
     this.beginTimeInput = const BeginTimeInput.pure(),
@@ -41,7 +41,7 @@ part of 'formz_bloc.dart';
   final FormzSubmissionStatus status;
   final LeaderName leaderName;
   final ActivityName activityName;
-  final Location location;
+  final Place? location;
   final BeginTimeInput beginTimeInput;
 final String Error;
 
@@ -63,7 +63,7 @@ final String Error;
         MemberFormz? memberFormz,
         ProfesseurName?professeurName,
         ActivityName? activityName,
-        Location? location,
+        Place? location,
         Description? description,
         ImageInput? imageInput,
 
