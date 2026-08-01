@@ -141,3 +141,10 @@ This video shows the member section. Each member has his own space, contact, bio
 
 
 
+
+## Why This Project Stands Out
+
+- **Mobile First** - Native Flutter experience on iOS and Android
+- **Firebase Powered** - Real-time data and authentication out of the box
+- **Community Focus** - Designed to bring JCI members together
+- **Event Management** - Organize and promote events effortlessly
